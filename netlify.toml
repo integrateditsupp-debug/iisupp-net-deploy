@@ -11,7 +11,14 @@
 
 [functions]
   node_bundler = "esbuild"
-  external_node_modules = ["stripe", "@netlify/blobs"]
+  # pdfkit is CommonJS and calls require('stream') internally. esbuild bundling it into an ESM
+  # function turns that into a stub that throws "Dynamic require of \"stream\" is not supported"
+  # AT MODULE LOAD — the lambda never initialises, never writes a response, and Netlify surfaces
+  # "error decoding lambda response: unexpected end of JSON input" as a 502. Every ca-* function
+  # imports lib/content-assurance.mjs, which imports pdfkit, so all six went down at once and the
+  # Content Assurance preview broke. jszip/pdf-parse/mammoth/busboy are externalised for the same
+  # class of reason (CJS interop + runtime file reads that do not survive inlining).
+  external_node_modules = ["stripe", "@netlify/blobs", "pdfkit", "jszip", "pdf-parse", "mammoth", "busboy"]
   # The authed /api/axis-state function reads the worker-emitted full state. Bundle that non-public file with
   # the functions; it is NOT served at a public URL (/netlify/* is redirect-blocked).
   included_files = ["netlify/functions/_axis-state-full.json", "netlify/functions/_axis-snapshots-seed.json"]
@@ -22,6 +29,25 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "microphone=(self), camera=(), geolocation=(self)"
+
+# ARIA Sentinel binaries. The publish dir is "." so the installer physically lives at
+# /public/sentinel-binaries/..., but src/shared/update-manifest.mjs builds electron-updater
+# feed URLs as https://iisupp.net/sentinel-binaries/<file> — which 404'd, silently breaking
+# auto-update. This rewrite makes the documented path real. Keep it above the 404 rules.
+[[redirects]]
+  from = "/sentinel-binaries/*"
+  to = "/public/sentinel-binaries/:splat"
+  status = 200
+
+# HELD — the public Windows download link is intentionally NOT live. Restore this block
+# only when the Authenticode EV cert is bought AND the installer is rebuilt from the
+# current source tree (shipped binary is v0.1.0, source is v0.1.16). Full restore steps:
+# docs/held-releases/downloads-available-now.html
+#
+# [[redirects]]
+#   from = "/downloads/aria-sentinel-windows.exe"
+#   to = "/public/sentinel-binaries/<NEW-SIGNED-INSTALLER>.exe"
+#   status = 200
 
 # Internal-only paths â€” blocked from public access (return 404).
 # force=true is required so the rule overrides the physically-present static files.
@@ -374,6 +400,14 @@
 [[redirects]]
   from = "/terms"
   to = "/terms.html"
+  status = 200
+[[redirects]]
+  from = "/disclaimer"
+  to = "/disclaimer.html"
+  status = 200
+[[redirects]]
+  from = "/disclaimer/"
+  to = "/disclaimer.html"
   status = 200
 [[redirects]]
   from = "/extension"

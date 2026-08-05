@@ -1,941 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=1280">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>ARIA · Command Center</title>
+<title>AXIS · Command Center</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0b0d'/%3E%3Cpath d='M16 6 L24 26 H20.2 L18.6 21.5 H13.4 L11.8 26 H8 Z M14.4 18.4 H17.6 L16 13.6 Z' fill='%23d4af37'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-/* ============================================================================
-   ARIA Command Center — redesign (Emil-Kowalski-inspired: restraint, hierarchy,
-   purposeful motion). Login flow, the live ARIA data contract, and the shared
-   spider-web mesh embed are all preserved. Single accent, hairline borders,
-   spring motion, count-ups, full prefers-reduced-motion support.
-   ============================================================================ */
-:root{
-  --bg:#06080e; --bg-soft:#080b13;
-  --surface:#0b0f1a; --surface-2:#0e1320; --surface-3:#11182a;
-  --line:rgba(255,255,255,.07); --line-2:rgba(255,255,255,.12);
-  --txt:#e8edf6; --txt-2:#9aa7bd; --txt-3:#62718b;
-  --accent:#22e1ff; --accent-2:#0fb8d8; --accent-ink:#04141a;
-  --ok:#34d399; --warn:#fbbf24; --crit:#fb7185; --info:#7aa2ff; --violet:#a78bfa;
-  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
-  --sans:'Inter',system-ui,-apple-system,sans-serif;
-  --r:14px; --r-sm:9px;
-  --ease:cubic-bezier(.22,1,.36,1);
-  --shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 24px 48px -28px rgba(0,0,0,.8);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:100vh;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-body{overflow-x:hidden;line-height:1.5}
-body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(120% 80% at 50% -10%,rgba(34,225,255,.07),transparent 55%),radial-gradient(90% 70% at 100% 100%,rgba(167,139,250,.05),transparent 55%)}
-a{color:var(--accent);text-decoration:none}
-::selection{background:rgba(34,225,255,.25);color:#fff}
-*::-webkit-scrollbar{width:9px;height:9px}
-*::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:6px;border:2px solid transparent;background-clip:content-box}
-*::-webkit-scrollbar-track{background:transparent}
-
-.mono{font-family:var(--mono)}
-.eyebrow{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--txt-3)}
-
-/* focus a11y */
-a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
-
-/* ── LOGIN ─────────────────────────────────────────────────────────── */
-#login{position:relative;z-index:1;padding:48px 24px 28px}
-.login-shell{width:100%;max-width:1480px;margin:0 auto;display:grid;grid-template-columns:minmax(320px,392px) minmax(0,1fr);gap:18px;align-items:start}
-#login .login-card-wrap{display:flex;justify-content:center}
-#login .card{width:100%;max-width:392px;background:linear-gradient(180deg,rgba(14,19,32,.9),rgba(11,15,26,.85));backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:18px;padding:38px 34px;box-shadow:var(--shadow);animation:rise .7s var(--ease) both;position:sticky;top:24px}
-#login .mark{width:46px;height:46px;border-radius:13px;background:linear-gradient(140deg,var(--accent),var(--violet));display:flex;align-items:center;justify-content:center;color:var(--accent-ink);font-weight:700;font-size:22px;margin-bottom:22px;box-shadow:0 8px 28px -8px rgba(34,225,255,.6)}
-#login h1{font-size:19px;font-weight:600;letter-spacing:-.01em}
-#login .sub{font-family:var(--mono);font-size:11px;color:var(--txt-3);letter-spacing:.08em;margin:6px 0 26px}
-#login label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3);margin:0 0 7px}
-#login input{width:100%;background:rgba(0,0,0,.32);border:1px solid var(--line-2);color:var(--txt);padding:13px 14px;font-size:14px;margin-bottom:16px;border-radius:10px;outline:none;transition:border-color .2s,box-shadow .2s}
-#login input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(34,225,255,.12)}
-#login button{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent-2));border:none;color:var(--accent-ink);padding:13px;font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:.02em;cursor:pointer;border-radius:10px;transition:transform .14s var(--ease),box-shadow .25s,filter .2s}
-#login button:hover{transform:translateY(-1px);box-shadow:0 12px 30px -10px rgba(34,225,255,.55)}
-#login button:active{transform:translateY(0) scale(.99)}
-#login .err{color:var(--crit);font-size:12px;margin-top:12px;min-height:17px;font-family:var(--mono)}
-.public-axis{padding:24px;overflow:hidden}
-.public-axis-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:8px 0 16px}
-.public-axis-copy h2{font-size:28px;line-height:1.05;letter-spacing:-.04em;font-weight:650;max-width:12ch}
-.public-axis-copy p{max-width:62ch;color:var(--txt-2);font-size:14px;line-height:1.7;margin-top:10px}
-.public-axis-badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.public-axis-log{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;margin-bottom:12px;min-height:120px;padding-right:4px}
-.public-axis-input{display:flex;gap:8px;align-items:center}
-.public-axis-input input{margin:0}
-.public-axis-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:10px}
-.axis-quick{display:flex;gap:8px;flex-wrap:wrap}
-#login .axis-quick button,#login .axis-voice-btn,#login .axis-send-btn,#login .axis-mic-btn{width:auto;background:transparent;border:1px solid var(--line-2);color:var(--txt-2);cursor:pointer;transition:all .18s var(--ease);box-shadow:none}
-#login .axis-quick button{padding:6px 11px;border-radius:999px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
-#login .axis-quick button:hover,#login .axis-voice-btn:hover,#login .axis-send-btn:hover,#login .axis-mic-btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px);box-shadow:none}
-#login .axis-quick button:active,#login .axis-voice-btn:active,#login .axis-send-btn:active,#login .axis-mic-btn:active{transform:translateY(0) scale(.99)}
-#login .axis-mic-btn,#login .axis-send-btn{padding:9px 14px;font-size:12px;border-radius:8px;white-space:nowrap}
-#login .axis-voice-btn{padding:5px 12px;font-size:11px;border-radius:999px;white-space:nowrap}
-.public-axis-note{font-family:var(--mono);font-size:10.5px;line-height:1.55;color:var(--txt-3)}
-body.aperture-authenticated #login{padding:20px 24px 0}
-body.aperture-authenticated .login-shell{grid-template-columns:minmax(0,1fr)}
-body.aperture-authenticated #login .login-card-wrap{display:none}
-body.aperture-authenticated .public-axis{margin-bottom:20px}
-@media(max-width:980px){
-  .login-shell{grid-template-columns:1fr}
-  #login .card{position:relative;top:auto}
-  .public-axis-copy h2{max-width:none}
-}
-@media(max-width:640px){
-  #login{padding:28px 14px 18px}
-  body.aperture-authenticated #login{padding:14px 14px 0}
-  .public-axis{padding:18px}
-  .public-axis-head{flex-direction:column}
-  .public-axis-copy h2{font-size:24px}
-  .public-axis-input{flex-wrap:wrap}
-  .public-axis-input input{width:100%}
-  .public-axis-input .axis-send-btn,.public-axis-input .axis-mic-btn{flex:1}
-}
-
-/* ── APP SHELL ─────────────────────────────────────────────────────── */
-#app{display:none;position:relative;z-index:1;max-width:1480px;margin:0 auto;padding:20px 24px 56px}
-@media(max-width:760px){#app{padding:16px 14px 40px}}
-
-.topbar{display:flex;align-items:center;gap:18px;padding:14px 4px 22px;border-bottom:1px solid var(--line);margin-bottom:26px}
-.brand{display:flex;align-items:center;gap:13px}
-.brand .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,var(--accent),var(--violet));display:flex;align-items:center;justify-content:center;color:var(--accent-ink);font-weight:700;font-size:18px;box-shadow:0 6px 22px -8px rgba(34,225,255,.6)}
-.brand h1{font-size:16px;font-weight:600;letter-spacing:-.01em;line-height:1.1}
-.brand .tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3);margin-top:2px}
-.spacer{flex:1}
-.pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:6px 12px;border-radius:999px;border:1px solid var(--line-2);color:var(--txt-2);background:rgba(255,255,255,.02)}
-.pill .led{width:7px;height:7px;border-radius:50%;background:var(--txt-3)}
-.pill.live{color:var(--ok);border-color:rgba(52,211,153,.4)}
-.pill.live .led{background:var(--ok);box-shadow:0 0 9px var(--ok);animation:breathe 2s var(--ease) infinite}
-.pill.down{color:var(--warn);border-color:rgba(251,191,36,.4)}
-.pill.down .led{background:var(--warn);animation:breathe 1.2s var(--ease) infinite}
-.clock{font-family:var(--mono);font-size:13px;color:var(--txt-2);letter-spacing:.04em;font-variant-numeric:tabular-nums}
-.ghost-btn{background:transparent;border:1px solid var(--line-2);color:var(--txt-2);padding:8px 14px;font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;border-radius:9px;transition:all .18s var(--ease)}
-.ghost-btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
-
-/* ── PANELS / GRID ─────────────────────────────────────────────────── */
-.panel{background:linear-gradient(180deg,var(--surface-2),var(--surface));border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);position:relative;animation:rise .6s var(--ease) both}
-.panel-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-.panel-h h2{font-size:13px;font-weight:600;letter-spacing:-.005em;color:var(--txt)}
-.panel-h .hint{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-3)}
-.chip{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.08em;padding:3px 9px;border-radius:999px;border:1px solid var(--line-2);color:var(--txt-2)}
-.chip.ok{color:var(--ok);border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.07)}
-.chip.warn{color:var(--warn);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.07)}
-.chip.crit{color:var(--crit);border-color:rgba(251,113,133,.4);background:rgba(251,113,133,.08)}
-.chip.accent{color:var(--accent);border-color:rgba(34,225,255,.35);background:rgba(34,225,255,.07)}
-
-.grid{display:grid;gap:16px;margin-bottom:16px}
-.g-stats{grid-template-columns:repeat(4,1fr)}
-.g-director{grid-template-columns:1.05fr 1.2fr 1fr}
-.g-ops{grid-template-columns:1.35fr 1fr 1fr}
-.g-intel{grid-template-columns:1.2fr 1.4fr 1fr}
-@media(max-width:1100px){.g-stats{grid-template-columns:repeat(2,1fr)}.g-director,.g-ops,.g-intel{grid-template-columns:1fr}}
-@media(max-width:560px){.g-stats{grid-template-columns:1fr}}
-
-/* stat cards */
-.stat{padding:18px 20px;overflow:hidden}
-.stat .label{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt-3);margin-bottom:14px}
-.stat .num{font-size:42px;font-weight:600;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
-.stat .num .unit{font-size:20px;font-weight:500;color:var(--txt-2);margin-left:2px}
-.stat .meta{font-family:var(--mono);font-size:11px;color:var(--txt-2);margin-top:11px;letter-spacing:.02em}
-.stat .meta b{color:var(--txt)}
-.stat .accent{color:var(--accent)}
-.bar{height:5px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:14px}
-.bar>span{display:block;height:100%;width:0;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--violet));transition:width 1s var(--ease)}
-.split{display:flex;gap:18px;margin-top:13px}
-.split .s{flex:1}
-.split .s .v{font-family:var(--mono);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
-.split .s .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-3);margin-top:3px}
-.split .s.esc .v{color:var(--warn)} .split .s.res .v{color:var(--ok)}
-
-/* mesh wrapper */
-.mesh-wrap{padding:18px 20px 20px}
-/* compact spider-web: cap width + flatten + lower the 460px floor (scoped to this page only) */
-.mesh-stage-cap{max-width:760px;margin:6px auto 0}
-.mesh-wrap .mw-stage{min-height:300px!important}
-.mesh-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
-.mesh-bar .lead{display:flex;align-items:center;gap:11px}
-.mesh-bar .lead .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
-
-/* command-center stage */
-.ops-stage{padding:16px;overflow:hidden}
-.ops-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:14px}
-.ops-title{display:flex;align-items:center;gap:12px}
-.ops-title .sig{width:34px;height:34px;border-radius:8px;border:1px solid rgba(34,225,255,.45);display:grid;place-items:center;font-family:var(--mono);font-size:14px;color:var(--accent);background:rgba(34,225,255,.06);box-shadow:0 0 22px rgba(34,225,255,.14)}
-.ops-title h2{font-size:15px;font-weight:650;letter-spacing:.01em}
-.ops-title .sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3);margin-top:3px}
-.ops-status{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.ops-layout{display:grid;grid-template-columns:220px minmax(0,1fr) 220px;gap:12px;align-items:stretch}
-.ops-rail{border:1px solid var(--line);border-radius:10px;background:rgba(3,8,16,.72);padding:12px;min-height:420px}
-.ops-rail h3{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:10px}
-.ops-feed{display:flex;flex-direction:column;gap:9px}
-.ops-feed-item{display:grid;grid-template-columns:7px 1fr auto;gap:8px;align-items:start;border-bottom:1px solid var(--line);padding-bottom:9px}
-.ops-feed-item:last-child{border-bottom:0;padding-bottom:0}
-.ops-feed-item .light{width:7px;height:7px;border-radius:50%;margin-top:6px;background:var(--ok);box-shadow:0 0 8px var(--ok)}
-.ops-feed-item.warn .light{background:var(--warn);box-shadow:0 0 8px var(--warn)}
-.ops-feed-item.crit .light{background:var(--crit);box-shadow:0 0 8px var(--crit)}
-.ops-feed-item .t{font-size:12px;color:var(--txt);line-height:1.35}
-.ops-feed-item .s{font-family:var(--mono);font-size:9.5px;color:var(--txt-3);margin-top:3px}
-.ops-feed-item .tm{font-family:var(--mono);font-size:9.5px;color:var(--txt-3)}
-.ops-viewport{position:relative;min-height:420px;border-radius:10px;overflow:hidden;border:1px solid rgba(34,225,255,.22);background:#030814;box-shadow:inset 0 0 0 1px rgba(255,255,255,.03),0 28px 90px -50px rgba(34,225,255,.55)}
-.ops-viewport::after{content:"";position:absolute;inset:0;background:radial-gradient(closest-side at 50% 58%,rgba(34,225,255,.14),transparent 58%),linear-gradient(180deg,rgba(3,8,16,.04),rgba(3,8,16,.22));pointer-events:none}
-.office-scene{position:absolute;inset:0;z-index:1;background:
-  linear-gradient(180deg,rgba(6,13,25,.9),rgba(2,6,14,.98)),
-  radial-gradient(circle at 50% 15%,rgba(34,225,255,.13),transparent 28%);overflow:hidden}
-.office-scene::before{content:"";position:absolute;left:-8%;right:-8%;top:8%;height:54%;background:
-  repeating-linear-gradient(90deg,rgba(34,225,255,.12) 0 1px,transparent 1px 58px),
-  linear-gradient(180deg,rgba(9,20,38,.94),rgba(5,12,24,.4));transform:perspective(760px) rotateX(58deg);transform-origin:50% 100%;border-top:1px solid rgba(34,225,255,.18);border-bottom:1px solid rgba(34,225,255,.08);opacity:.78}
-.office-scene::after{content:"";position:absolute;left:-15%;right:-15%;bottom:-22%;height:56%;background:
-  linear-gradient(90deg,rgba(34,225,255,.08) 1px,transparent 1px),
-  linear-gradient(0deg,rgba(34,225,255,.07) 1px,transparent 1px),
-  radial-gradient(ellipse at 50% 0%,rgba(34,225,255,.16),transparent 58%);background-size:48px 48px,48px 48px,100% 100%;transform:perspective(640px) rotateX(64deg);transform-origin:50% 0%;opacity:.86}
-.office-horizon{position:absolute;inset:0 0 auto;height:46%;background:linear-gradient(180deg,rgba(0,0,0,.28),transparent 72%);border-bottom:1px solid rgba(34,225,255,.08)}
-.office-board{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:min(42%,360px);padding:10px 14px;border:1px solid rgba(34,225,255,.2);border-radius:10px;background:rgba(2,7,15,.62);box-shadow:0 0 28px rgba(34,225,255,.12);text-align:center}
-.office-board .brandline{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
-.office-board .subline{font-family:var(--mono);font-size:9px;color:var(--txt-3);letter-spacing:.12em;text-transform:uppercase;margin-top:5px}
-.office-core{position:absolute;z-index:4;left:50%;top:55%;transform:translate(-50%,-50%);width:96px;height:96px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(34,225,255,.42);background:rgba(3,8,16,.56);font-family:var(--mono);font-size:12px;color:var(--accent);box-shadow:0 0 0 12px rgba(34,225,255,.04),0 0 46px rgba(34,225,255,.35);animation:breathe 2.4s var(--ease) infinite}
-.office-core span{display:block;text-align:center}.office-core small{display:block;color:var(--txt-3);font-size:8px;letter-spacing:.16em;text-transform:uppercase;margin-top:3px}
-.office-agents{position:absolute;inset:0;z-index:3}
-.office-agent{position:absolute;width:154px;min-height:108px;transform:translate(-50%,-50%);filter:drop-shadow(0 18px 22px rgba(0,0,0,.42))}
-.oa-research{left:20%;top:29%}.oa-security{left:41%;top:31%}.oa-report{left:71%;top:31%}.oa-support{left:20%;top:66%}.oa-data{left:47%;top:68%}.oa-code{left:76%;top:65%}
-.agent-desk{position:absolute;left:8px;right:8px;bottom:0;height:48px;border:1px solid rgba(34,225,255,.17);border-radius:8px;background:linear-gradient(180deg,rgba(20,41,65,.9),rgba(5,13,26,.96));box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
-.agent-screen{position:absolute;right:13px;bottom:34px;width:58px;height:36px;border:1px solid rgba(34,225,255,.35);border-radius:5px;background:linear-gradient(135deg,rgba(18,59,92,.95),rgba(6,15,30,.98));box-shadow:0 0 16px rgba(34,225,255,.12);overflow:hidden}
-.agent-screen::before{content:"";position:absolute;inset:8px 6px;background:repeating-linear-gradient(0deg,rgba(34,225,255,.72) 0 1px,transparent 1px 6px);opacity:.5}
-.agent-person{position:absolute;left:28px;bottom:34px;width:56px;height:64px}
-.agent-head{position:absolute;left:15px;top:5px;width:25px;height:27px;border-radius:45% 45% 50% 50%;background:linear-gradient(145deg,#b88d66,#6f4c39);box-shadow:inset -4px -4px 6px rgba(0,0,0,.2)}
-.agent-head::before{content:"";position:absolute;left:-3px;top:-4px;width:31px;height:14px;border-radius:14px 14px 7px 7px;background:linear-gradient(145deg,#182335,#070b13)}
-.agent-head::after{content:"";position:absolute;left:6px;top:11px;width:3px;height:3px;border-radius:50%;background:#06111a;box-shadow:9px 0 0 #06111a}
-.agent-body{position:absolute;left:8px;top:34px;width:42px;height:28px;border-radius:13px 13px 5px 5px;background:linear-gradient(145deg,#182437,#0a101b);border:1px solid rgba(34,225,255,.12)}
-.agent-arm{position:absolute;left:42px;top:40px;width:28px;height:7px;border-radius:999px;background:linear-gradient(90deg,#73513f,#b88d66);transform-origin:0 50%;animation:typingArm 1.1s ease-in-out infinite}
-.agent-status{position:absolute;left:0;right:0;top:0;border:1px solid rgba(34,225,255,.22);border-radius:9px;background:rgba(2,7,15,.78);backdrop-filter:blur(8px);padding:6px 8px;transform:translateY(-16px)}
-.agent-status .name{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;color:#e7fbff;font-weight:600;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.agent-status .name i{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);flex:0 0 auto}
-.agent-status .doing{font-size:10px;color:var(--txt-2);line-height:1.35;margin-top:4px;min-height:26px}
-.agent-status .talk{font-family:var(--mono);font-size:8.5px;color:var(--accent);letter-spacing:.06em;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.agent-time{position:absolute;left:12px;bottom:8px;font-family:var(--mono);font-size:9px;color:var(--gold, var(--warn));letter-spacing:.08em}
-.agent-pulse{position:absolute;left:50%;top:50%;width:12px;height:12px;border-radius:50%;border:1px solid rgba(34,225,255,.5);transform:translate(-50%,-50%);animation:agentPing 2.2s ease-out infinite;opacity:.7}
-.office-agent.is-standby .agent-pulse{display:none}
-.office-agent.is-standby .agent-arm{animation:none;opacity:.5}
-.office-agent.is-standby .agent-screen::before{opacity:.18}
-.office-agent.is-standby .agent-status .name i{box-shadow:none}
-.office-caption{position:absolute;left:16px;right:16px;bottom:14px;z-index:5;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid rgba(34,225,255,.18);border-radius:10px;background:rgba(2,7,15,.78);backdrop-filter:blur(10px);padding:10px 12px}
-.office-caption .live{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
-.office-caption .line{font-size:12px;color:var(--txt);line-height:1.45;margin-top:2px}
-.office-caption .time{font-family:var(--mono);font-size:11px;color:var(--txt-2);font-variant-numeric:tabular-nums}
-@keyframes typingArm{0%,100%{transform:rotate(8deg)}50%{transform:rotate(-7deg)}}
-@keyframes agentPing{0%{width:4px;height:4px;opacity:.65}100%{width:46px;height:46px;opacity:0}}
-.ops-dock{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
-.dock-tile{border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.025);padding:11px 12px}
-.dock-tile .v{font-family:var(--mono);font-size:18px;font-weight:600;color:var(--txt);font-variant-numeric:tabular-nums}
-.dock-tile .k{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-3);margin-top:4px}
-@media(max-width:1180px){.ops-layout{grid-template-columns:1fr}.ops-rail{min-height:auto}.ops-viewport{min-height:430px}.ops-dock{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:760px){.office-agent{width:136px}.oa-research{left:28%;top:31%}.oa-security{left:70%;top:33%}.oa-report{display:none}.oa-support{left:28%;top:65%}.oa-data{left:70%;top:66%}.oa-code{display:none}.office-board{width:72%;top:14px}.office-core{width:78px;height:78px}.office-caption{grid-template-columns:1fr}.office-caption .time{display:none}}
-@media(max-width:620px){.ops-head{align-items:flex-start;flex-direction:column}.ops-status{justify-content:flex-start}.ops-viewport{min-height:360px}.office-agent{width:124px}.agent-status .doing{display:none}.agent-screen{width:48px}.agent-person{transform:scale(.88);transform-origin:bottom left}.ops-dock{grid-template-columns:1fr}}
-
-/* lists */
-.rows{display:flex;flex-direction:column}
-.row{display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}
-.row:last-child{border-bottom:none}
-.row:hover{background:rgba(255,255,255,.02)}
-.row .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:6px}
-.dot.crit{background:var(--crit);box-shadow:0 0 7px var(--crit)} .dot.high{background:var(--warn);box-shadow:0 0 7px var(--warn)}
-.dot.norm{background:var(--info)} .dot.ok{background:var(--ok)} .dot.low{background:var(--txt-3)}
-.row .body{flex:1;min-width:0}
-.row .body .t{color:var(--txt);line-height:1.45}
-.row .body .t b{font-weight:600}
-.row .sub{font-family:var(--mono);font-size:10.5px;color:var(--txt-3);margin-top:3px;letter-spacing:.02em}
-.row .ts{font-family:var(--mono);font-size:10.5px;color:var(--txt-3);flex-shrink:0;font-variant-numeric:tabular-nums}
-.tappable{cursor:pointer;border-radius:8px;margin:0 -8px;padding-left:8px;padding-right:8px;transition:background .15s}
-.tappable:hover{background:rgba(34,225,255,.05)}
-
-/* ticket priority tag */
-.pri{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:5px;flex-shrink:0}
-.pri.critical{background:rgba(251,113,133,.16);color:var(--crit)} .pri.high{background:rgba(251,191,36,.16);color:var(--warn)}
-.pri.normal{background:rgba(122,162,255,.16);color:var(--info)} .pri.low{background:rgba(255,255,255,.07);color:var(--txt-2)}
-
-/* sla rows */
-.kv{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
-.kv:last-child{border-bottom:none}
-.kv .k{color:var(--txt-2)}
-.kv .v{font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums}
-.kv .v.ok{color:var(--ok)} .kv .v.warn{color:var(--warn)} .kv .v.bad{color:var(--crit)}
-
-/* agent activity */
-.agent-row{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
-.agent-row:last-child{border-bottom:none}
-.agent-row .led{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);flex-shrink:0;animation:breathe 1.8s var(--ease) infinite}
-.agent-row .nm{flex:1;font-weight:500;color:var(--txt)}
-.agent-row .age{font-family:var(--mono);font-size:10.5px;color:var(--txt-3)}
-.mini-btn{background:transparent;border:1px solid var(--line-2);color:var(--txt-2);padding:3px 9px;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;border-radius:6px;cursor:pointer;transition:all .15s}
-.mini-btn:hover{border-color:var(--accent);color:var(--accent)}
-.mini-btn:disabled{opacity:.5;cursor:default}
-
-/* Senior Director visibility */
-.director-card{border-color:rgba(34,225,255,.13)}
-.director-hero{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
-.director-metric{border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.022);padding:12px 13px;min-width:0}
-.director-metric .v{font-family:var(--mono);font-size:22px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;color:var(--txt)}
-.director-metric .k{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-3);margin-top:7px;white-space:normal}
-.director-metric.hot .v{color:var(--warn)}
-.director-list{display:flex;flex-direction:column;gap:9px}
-.director-item{border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02);padding:10px 11px;font-size:12.5px;line-height:1.45}
-.director-item .top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.director-item .name{font-weight:600;color:var(--txt)}
-.director-item .sub{font-family:var(--mono);font-size:10px;color:var(--txt-3);margin-top:4px;letter-spacing:.02em}
-.director-item a{color:var(--accent)}
-.director-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.director-note{font-family:var(--mono);font-size:10.5px;color:var(--txt-3);line-height:1.6;margin-top:10px}
-/* B4 — AXIS chat bubbles */
-.axis-bubble{padding:8px 12px;border-radius:8px;font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;max-width:100%}
-.axis-user{background:rgba(34,225,255,.10);border:1px solid rgba(34,225,255,.18);color:var(--txt);align-self:flex-end}
-.axis-axis{background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--txt-2);align-self:flex-start}
-@media(max-width:680px){.director-hero{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:420px){.director-hero{grid-template-columns:1fr}}
-
-/* roster chips */
-.roster{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
-.r-chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.03em;color:var(--txt-2);background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:7px;padding:4px 9px}
-.r-chip .led{width:5px;height:5px;border-radius:50%;background:var(--txt-3)}
-.r-chip.born .led{background:var(--accent);box-shadow:0 0 6px var(--accent)}
-.r-chip.born{color:var(--txt);border-color:rgba(34,225,255,.28)}
-
-/* learning telemetry tiles */
-.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-.tile{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:10px;padding:12px 13px}
-.tile .v{font-family:var(--mono);font-size:21px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1}
-.tile .k{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-3);margin-top:6px}
-
-/* comms bit stream */
-.comms{max-height:330px;overflow-y:auto;margin:-4px -6px 0;padding:4px 6px}
-.bit{padding:11px 12px;margin-bottom:9px;background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:10px;border-left:2px solid var(--accent);transition:border-color .2s,background .2s}
-.bit:hover{background:rgba(34,225,255,.04)}
-.bit.alert{border-left-color:var(--crit)}
-.bit .h{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:11px;margin-bottom:6px}
-.bit .h .route{color:var(--accent)} .bit .h .route .to{color:var(--violet)}
-.bit .h .ts{color:var(--txt-3);font-variant-numeric:tabular-nums}
-.bit .hash{font-family:var(--mono);font-size:9.5px;color:var(--txt-3);letter-spacing:.06em;background:rgba(0,0,0,.3);border-radius:5px;padding:3px 7px;margin-bottom:6px;word-break:break-all}
-.bit .msg{font-size:12.5px;color:var(--txt);line-height:1.5}
-.composer{display:flex;gap:8px;margin-top:12px}
-.composer input{flex:1;background:rgba(0,0,0,.3);border:1px solid var(--line-2);color:var(--txt);padding:10px 12px;font-family:var(--mono);font-size:12px;border-radius:9px;outline:none;transition:border-color .2s}
-.composer input:focus{border-color:var(--accent)}
-.composer button{background:linear-gradient(135deg,var(--accent),var(--accent-2));border:none;color:var(--accent-ink);padding:10px 16px;font-weight:600;font-size:12px;cursor:pointer;border-radius:9px;transition:transform .14s var(--ease)}
-.composer button:active{transform:scale(.97)}
-
-/* sparkline */
-.spark{width:100%;height:54px;margin-top:8px;display:block}
-
-/* empty */
-.empty{font-family:var(--mono);font-size:11px;color:var(--txt-3);text-align:center;padding:26px 0;letter-spacing:.04em}
-
-/* footer */
-.footer{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:26px;padding-top:18px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--txt-3)}
-.footer a{color:var(--txt-2)}.footer a:hover{color:var(--accent)}
-
-/* Reference command-center first viewport */
-@media (min-width:1000px){
-  #app.reference-command{max-width:none;padding:0 0 40px}
-  #app.reference-command .topbar,
-  #app.reference-command #stat-band{display:none}
-  #app.reference-command .ops-stage{
-    min-height:100dvh;padding:0;border:0;border-radius:0;background:#02070f;box-shadow:none;
-    display:flex;align-items:center;justify-content:center;overflow:hidden;
-  }
-  #app.reference-command .ops-head,
-  #app.reference-command .ops-rail,
-  #app.reference-command .ops-dock{display:none}
-  #app.reference-command .ops-layout{display:block;width:100%;height:100dvh}
-  #app.reference-command .ops-viewport{
-    width:100%;height:100dvh;min-height:0;border:0;border-radius:0;background:#02070f;box-shadow:none;
-  }
-  #app.reference-command .ops-viewport::after{display:none}
-  #app.reference-command .office-scene{inset:0}
-  #app.reference-command .command-exit{display:block}
-  #app.reference-command > .mesh-wrap,
-  #app.reference-command > .grid,
-  #app.reference-command > .footer{max-width:1480px;margin-left:auto;margin-right:auto}
-  #app.reference-command > .mesh-wrap{margin-top:18px}
-}
-.command-exit{
-  display:none;position:fixed;right:18px;top:16px;z-index:20;
-  background:rgba(2,7,15,.72);border:1px solid rgba(34,225,255,.28);color:var(--accent);
-  padding:8px 12px;border-radius:8px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;
-  text-transform:uppercase;cursor:pointer;backdrop-filter:blur(10px);
-}
-.command-exit:hover{border-color:var(--accent);box-shadow:0 0 24px rgba(34,225,255,.16)}
-
-/* modal */
-#modal-bg{display:none;position:fixed;inset:0;z-index:9999;background:rgba(4,6,12,.78);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:24px;animation:fade .25s var(--ease)}
-#modal-bg.show{display:flex}
-#modal{width:100%;max-width:720px;max-height:82vh;overflow-y:auto;background:linear-gradient(180deg,var(--surface-3),var(--surface));border:1px solid var(--line-2);border-radius:18px;padding:26px;box-shadow:0 40px 90px rgba(0,0,0,.7);position:relative;animation:rise .35s var(--ease)}
-#modal h3{font-size:15px;font-weight:600;margin-bottom:16px;font-family:var(--mono);letter-spacing:.04em}
-#modal .x{position:absolute;top:18px;right:20px;background:none;border:none;color:var(--txt-3);font-size:22px;cursor:pointer;line-height:1;transition:color .15s}
-#modal .x:hover{color:var(--txt)}
-#modal pre{background:rgba(0,0,0,.45);border:1px solid var(--line);border-radius:10px;padding:16px;font-family:var(--mono);font-size:11.5px;color:var(--txt-2);overflow:auto;max-height:56vh;line-height:1.6}
-
-/* motion */
-@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@keyframes fade{from{opacity:0}to{opacity:1}}
-@keyframes breathe{0%,100%{opacity:1}50%{opacity:.35}}
-.stagger>*{animation:rise .6s var(--ease) both}
-.stagger>*:nth-child(2){animation-delay:.06s}.stagger>*:nth-child(3){animation-delay:.12s}.stagger>*:nth-child(4){animation-delay:.18s}
-@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/axis-tokens.css">
+  <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 </head>
 <body>
 
-<!-- ── LOGIN ─────────────────────────────────────────────────────────── -->
-<div id="login">
-  <div class="login-shell">
-    <div class="login-card-wrap" id="login-card-wrap">
-      <div class="card">
-        <div class="mark">A</div>
-        <h1>ARIA Command Center</h1>
-        <div class="sub">Restricted · operator access required</div>
-        <label for="user">Operator ID</label>
-        <input id="user" type="text" placeholder="you@iisupp.net" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
-        <label for="pass">Access key</label>
-        <input id="pass" type="password" placeholder="••••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-        <button onclick="doLogin()">Authenticate</button>
-        <div class="err" id="login-err"></div>
-      </div>
-    </div>
-
-    <section class="public-axis panel" id="axis-public">
-      <div class="eyebrow">AXIS · voice-first operator layer</div>
-      <div class="public-axis-head">
-        <div class="public-axis-copy">
-          <h2>Ask AXIS what is live right now.</h2>
-          <p>Public mode gives the honest status, next steps, and what needs Ahmad. Sign in to unlock the private director queue, lead detail, and the full command-center data.</p>
-        </div>
-        <div class="public-axis-badges">
-          <span class="chip accent">Same brain</span>
-          <span class="chip">Short replies</span>
-          <span class="chip">Voice on-device</span>
-        </div>
-      </div>
-
-      <div id="axis-chat-log" class="public-axis-log">
-        <div class="axis-bubble axis-axis" style="opacity:.78;font-style:italic">Ask: status, what needs Ahmad, what is next, or help. Public answers stay honest. Private details unlock after sign-in.</div>
-      </div>
-
-      <div class="public-axis-input">
-        <input id="axis-chat-in" type="text" placeholder="e.g. give me the status of everything" autocomplete="off">
-        <button id="axis-mic" class="axis-mic-btn" onclick="axisMicToggle()" title="Push to talk (Chrome/Edge)">🎙 Talk</button>
-        <button id="axis-chat-send" class="axis-send-btn" onclick="axisChatSend()">Send</button>
-      </div>
-
-      <div class="public-axis-meta">
-        <div class="axis-quick">
-          <button type="button" onclick="axisQuickAsk('give me the status of everything')">Status</button>
-          <button type="button" onclick="axisQuickAsk('what is next')">Next</button>
-          <button type="button" onclick="axisQuickAsk('what needs Ahmad')">Approvals</button>
-          <button type="button" onclick="axisQuickAsk('help')">Help</button>
-        </div>
-        <button id="axis-speak" class="axis-voice-btn" onclick="axisVoiceToggle()" title="Toggle spoken replies">🔊 Voice on</button>
-      </div>
-
-      <div class="public-axis-note">Wake word and always-on mode are not enabled here. This page uses your browser mic only when you tap Talk, and spoken replies stay on your device.</div>
-    </section>
-  </div>
-</div>
-
-<!-- ── APP ───────────────────────────────────────────────────────────── -->
-<div id="app">
-  <button class="command-exit" onclick="logout()">Sign out</button>
-
-  <div class="topbar">
-    <div class="brand">
-      <div class="mark">A</div>
-      <div>
-        <h1>ARIA Command Center</h1>
-        <div class="tag">Autonomous IT operations · live</div>
-      </div>
-    </div>
-    <div class="spacer"></div>
-    <span class="pill" id="conn"><span class="led"></span><span id="conn-txt">Connecting…</span></span>
-    <span class="clock" id="clock">—</span>
-    <button class="ghost-btn" onclick="logout()">Sign out</button>
-  </div>
-
-  <!-- HERO STATS -->
-  <div class="grid g-stats stagger" id="stat-band">
-    <div class="panel stat">
-      <div class="label">Autonomy <span class="eyebrow" id="auto-target">· target 95%</span></div>
-      <div class="num" id="auto-num">—<span class="unit">%</span></div>
-      <div class="bar"><span id="auto-bar"></span></div>
-      <div class="meta" id="auto-note">Resolved without a human</div>
-    </div>
-    <div class="panel stat">
-      <div class="label">Tickets</div>
-      <div class="num" id="tix-open">—</div>
-      <div class="meta">open right now</div>
-      <div class="split">
-        <div class="s res"><div class="v" id="tix-res">—</div><div class="k">Resolved</div></div>
-        <div class="s esc"><div class="v" id="tix-esc">—</div><div class="k">Escalated</div></div>
-        <div class="s"><div class="v" id="tix-logged">—</div><div class="k">Logged</div></div>
-      </div>
-    </div>
-    <div class="panel stat">
-      <div class="label">Knowledge</div>
-      <div class="num" id="bits-num">—</div>
-      <div class="meta"><b id="kb-live">—</b> live KB entries · <span id="queue-depth">—</span> queued</div>
-    </div>
-    <div class="panel stat">
-      <div class="label">Agents</div>
-      <div class="num" id="agents-active">—</div>
-      <div class="meta">in ARIA roster · <span id="agents-born">0</span> evolved this run</div>
-    </div>
-  </div>
-
-  <!-- SENIOR DIRECTOR VISIBILITY -->
-  <div class="grid g-director" id="director-band">
-    <div class="panel director-card" style="animation-delay:.04s">
-      <div class="panel-h">
-        <h2>Senior Director Agent</h2>
-        <span class="chip accent" id="director-status">loading</span>
-      </div>
-      <div class="eyebrow" id="director-updated">Operating board sync pending</div>
-      <div class="director-hero">
-        <div class="director-metric"><div class="v" id="director-agents">-</div><div class="k">Agents active</div></div>
-        <div class="director-metric"><div class="v" id="director-queue">-</div><div class="k">Queued work</div></div>
-        <div class="director-metric hot"><div class="v" id="director-hot">-</div><div class="k">Hot leads</div></div>
-        <div class="director-metric"><div class="v" id="director-scanned">-</div><div class="k">Sources scanned</div></div>
-      </div>
-      <div class="director-actions">
-        <button class="ghost-btn" onclick="directorBrief()">Generate Director brief</button>
-        <a class="ghost-btn" href="/growth-command-center" target="_blank" rel="noopener">Open Growth Center</a>
-      </div>
-      <div class="director-note" id="director-mission">Mission: grow IIS revenue and profit while protecting approval gates. AXIS stays pinned above this dashboard for public status plus private detail after sign-in.</div>
-    </div>
-
-    <div class="panel director-card" style="animation-delay:.08s">
-      <div class="panel-h">
-        <h2>Lead radar and actions</h2>
-        <span class="chip" id="director-lead-chip">-</span>
-      </div>
-      <div class="director-list" id="director-leads">
-        <div class="empty">Waiting for Director lead scan...</div>
-      </div>
-    </div>
-
-    <div class="panel director-card" style="animation-delay:.12s">
-      <div class="panel-h">
-        <h2>Work and approval gates</h2>
-        <span class="chip ok" id="director-attention-chip">watching</span>
-      </div>
-      <div class="director-list" id="director-work">
-        <div class="empty">Waiting for Director queue...</div>
-      </div>
-      <div class="eyebrow" style="margin:14px 0 8px">Requires Ahmad</div>
-      <div class="director-list" id="director-approvals">
-        <div class="empty">Approval policy loading...</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- COMMAND CENTER STAGE -->
-  <div class="panel ops-stage" style="animation-delay:.08s">
-    <div class="ops-head">
-      <div class="ops-title">
-        <div class="sig">A</div>
-        <div>
-          <h2>Agent Operations Room</h2>
-          <div class="sub">ARIA command center - real telemetry + safety gates</div>
-        </div>
-      </div>
-      <div class="ops-status">
-        <span class="chip accent">Telemetry-gated</span>
-        <span class="chip ok">Ahmad final-action gate</span>
-        <span class="chip warn">No synthetic live work</span>
-      </div>
-    </div>
-    <div class="ops-layout">
-      <aside class="ops-rail">
-        <h3>Notification board</h3>
-        <div class="ops-feed">
-          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Telemetry source</div><div class="s">Authenticated mesh events fill this board</div></div><span class="tm">ready</span></div>
-          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Safety gates</div><div class="s">No send, spend, deploy, or sign without Ahmad</div></div><span class="tm">locked</span></div>
-          <div class="ops-feed-item warn"><span class="light"></span><div><div class="t">Runner bridge</div><div class="s">Infinity STOP must be linked to the local runner before live use</div></div><span class="tm">review</span></div>
-          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Public view</div><div class="s">Counts only; no names, prompts, or sensitive notes</div></div><span class="tm">safe</span></div>
-        </div>
-      </aside>
-      <div class="ops-viewport" aria-label="ARIA agent operations room">
-        <div class="office-scene" id="agent-office">
-          <div class="office-horizon"></div>
-          <div class="office-board">
-            <div class="brandline">ARIA OPERATIONS ROOM</div>
-            <div class="subline" id="office-shift">telemetry source pending</div>
-          </div>
-          <div class="office-agents" id="office-agents" aria-live="polite"></div>
-          <div class="office-core"><span>ARIA<small>router</small></span></div>
-          <div class="office-caption">
-            <div>
-              <div class="live">telemetry state</div>
-              <div class="line" id="office-caption-line">Waiting for authenticated agent events. No synthetic live work is shown.</div>
-            </div>
-            <div class="time" id="office-caption-time">00:00</div>
-          </div>
-        </div>
-      </div>
-      <aside class="ops-rail">
-        <h3>History board</h3>
-        <div class="ops-feed">
-          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Run ledger</div><div class="s">Completed events appear here after auth</div></div><span class="tm">live</span></div>
-          <div class="ops-feed-item warn"><span class="light"></span><div><div class="t">Approvals</div><div class="s">Final-action items stay with Ahmad</div></div><span class="tm">gate</span></div>
-          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Learning</div><div class="s">Knowledge promotions are logged before display</div></div><span class="tm">audit</span></div>
-          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Reports</div><div class="s">Email reports remain operator-triggered</div></div><span class="tm">manual</span></div>
-        </div>
-      </aside>
-    </div>
-    <div class="ops-dock">
-      <div class="dock-tile"><div class="v" id="dock-resolved">&mdash;</div><div class="k">Tickets resolved</div></div>
-      <div class="dock-tile"><div class="v" id="dock-tasks">&mdash;</div><div class="k">Open tasks</div></div>
-      <div class="dock-tile"><div class="v" id="dock-health">&mdash;</div><div class="k">Health signal</div></div>
-      <div class="dock-tile"><div class="v" id="dock-agents">&mdash;</div><div class="k">Roster visible</div></div>
-    </div>
-  </div>
-
-  <!-- AGENT MESH (shared topology with Aperture) -->
-  <div class="panel mesh-wrap" style="animation-delay:.1s">
-    <div class="mesh-bar">
-      <div class="lead"><span class="dot"></span>
-        <div>
-          <div style="font-size:13px;font-weight:600">Agent Mesh · live topology</div>
-          <div class="eyebrow" style="margin-top:3px">Same web rendered on Aperture · shared event bus</div>
-        </div>
-      </div>
-      <a class="ghost-btn" href="/aperture" target="_blank" rel="noopener">Open in Aperture ↗</a>
-    </div>
-    <div class="mesh-stage-cap"><div data-aria-mesh-web data-accent="#22e1ff" data-height="1 / 0.5"></div></div>
-  </div>
-
-  <!-- OPERATIONS -->
-  <div class="grid g-ops">
-    <div class="panel" style="animation-delay:.06s">
-      <div class="panel-h"><h2>Live tickets</h2><span class="chip" id="tkt-chip">—</span></div>
-      <div class="rows" id="tkt-list"><div class="empty">No tickets logged</div></div>
-    </div>
-    <div class="panel" style="animation-delay:.12s">
-      <div class="panel-h"><h2>SLA performance</h2><span class="chip" id="sla-chip">—</span></div>
-      <div class="kv"><span class="k">First-contact resolution</span><span class="v ok" id="sla-fcr">—</span></div>
-      <div class="kv"><span class="k">Avg response time</span><span class="v" id="sla-resp">—</span></div>
-      <div class="kv"><span class="k">Avg resolution (escalated)</span><span class="v" id="sla-rest">—</span></div>
-      <div class="kv"><span class="k">Target · respond ≤1h, resolve ≤2bd</span><span class="v ok" id="sla-state">—</span></div>
-    </div>
-    <div class="panel" style="animation-delay:.18s">
-      <div class="panel-h"><h2>Agents working</h2><span class="chip accent" id="active-chip">0 active</span></div>
-      <div class="rows" id="active-list"><div class="empty">No agent activity in last 3 min</div></div>
-    </div>
-  </div>
-
-  <!-- LIVE AGENT ACTIVITY (mesh) -->
-  <div class="grid" style="grid-template-columns:1fr">
-    <div class="panel" style="animation-delay:.06s">
-      <div class="panel-h"><h2>Live agent activity · what each agent is doing</h2><span class="chip accent" id="mesh-chip">—</span></div>
-      <div class="rows" id="mesh-list" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));display:grid;gap:8px"><div class="empty">Awaiting mesh activity…</div></div>
-    </div>
-  </div>
-
-  <!-- INTELLIGENCE -->
-  <div class="grid g-intel">
-    <div class="panel" style="animation-delay:.06s">
-      <div class="panel-h"><h2>Learning loop</h2><span class="chip ok" id="loop-chip">running</span></div>
-      <div class="tiles">
-        <div class="tile"><div class="v" id="loop-bits">—</div><div class="k">Bits learned</div></div>
-        <div class="tile"><div class="v" id="loop-kb">—</div><div class="k">Live KBs</div></div>
-        <div class="tile"><div class="v" id="loop-queue">—</div><div class="k">In queue</div></div>
-      </div>
-      <div class="eyebrow" style="margin-bottom:8px">Currently studying</div>
-      <div class="rows" id="loop-now"><div class="empty">Idle · awaiting topics</div></div>
-      <div class="eyebrow" style="margin:16px 0 8px">Agent roster</div>
-      <div class="roster" id="roster"><div class="empty">—</div></div>
-    </div>
-
-    <div class="panel" style="animation-delay:.12s">
-      <div class="panel-h"><h2>Live agent comms</h2><span class="hint">BIT stream</span></div>
-      <div class="comms" id="comms"><div class="empty">Awaiting agent activity…</div></div>
-      <div class="composer">
-        <input id="composer-in" type="text" placeholder="@agent message…" onkeydown="if(event.key==='Enter')postBit()">
-        <button onclick="postBit()">Send</button>
-      </div>
-    </div>
-
-    <div class="panel" style="animation-delay:.18s">
-      <div class="panel-h"><h2>System health</h2><span class="chip ok" id="health-chip">—</span></div>
-      <div class="num" id="health-num" style="font-size:38px;font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums">—<span class="unit" style="font-size:18px;color:var(--txt-2)">%</span></div>
-      <div class="meta" style="font-family:var(--mono);font-size:11px;color:var(--txt-2);margin-top:9px">concern-free operation</div>
-      <svg class="spark" viewBox="0 0 280 54" preserveAspectRatio="none">
-        <polyline fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1" stroke-dasharray="2 4" points="0,27 280,27"/>
-        <polyline id="spark" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" points=""/>
+<!-- Login gate: the static page carries NO prospect data; everything renders only after a valid Aperture session. -->
+<div class="login" id="login">
+  <div class="login-card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+        <circle cx="15" cy="15" r="13.5" fill="none" stroke="var(--gold)" stroke-width="1" opacity="0.55"/>
+        <ellipse cx="15" cy="15" rx="13.5" ry="5.5" fill="none" stroke="var(--gold)" stroke-width="0.8" opacity="0.35"/>
+        <text x="15" y="19.5" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="650" fill="var(--gold)">A</text>
       </svg>
-      <div class="eyebrow" style="margin:16px 0 8px">Recent activity</div>
-      <div class="rows" id="timeline"><div class="empty">No events yet</div></div>
-      <button class="ghost-btn" style="width:100%;margin-top:14px" onclick="sendReportNow()">Send operations report now</button>
+      <div><div style="font-weight:650">AXIS · Command Center</div><div class="eyebrow">Integrated IT Support</div></div>
     </div>
+    <input id="email" type="email" placeholder="email" autocomplete="username">
+    <input id="pass" type="password" placeholder="password" autocomplete="current-password">
+    <button id="loginBtn">Sign in</button>
+    <div id="loginErr" style="color:var(--crit);font-size:11px;margin-top:8px;min-height:14px"></div>
   </div>
 
-  <!-- ───── INFINITY WISDOM — autonomous branching agent engine (BEHIND the aperture login) ───── -->
-  <section id="infinity-wisdom" class="panel" style="grid-column:1/-1;animation-delay:.2s">
-    <div class="panel-h">
-      <h2><span class="iw-glyph">&#8734;</span> Infinity Wisdom <span class="hint">autonomous branching agent engine</span></h2>
-      <span class="chip" id="iw-status">connecting…</span>
+  <!-- Public AXIS — generic program status ONLY (headline feed + canned lines). No prospect data,
+       no counts, no names pre-auth. Voice is browser-local. -->
+  <section class="axis-public" id="axisPublic" aria-label="Ask AXIS — public status">
+    <div style="display:flex;align-items:center;gap:11px">
+      <span class="axis-orb axis-orb-sm" data-orb></span>
+      <div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="eyebrow" style="color:var(--gold)">AXIS · Director</span>
+          <span class="axis-state-word" id="axisPubState" aria-live="polite">idle</span>
+        </div>
+        <div style="font-size:12.5px;color:var(--txt-2);margin-top:2px">Ask AXIS what is live right now.</div>
+      </div>
     </div>
-    <div class="iw-primer">
-      Monitor agents, review completions, branch next-best paths, route to the best-fit agent, and create new agents only inside hard caps. Live execution stays locked until the web STOP flag, local runner kill-switch, final-action gates, replay protection, and concurrency caps all pass together.
+    <div class="axis-pub-log" id="axisPubLog" hidden></div>
+    <div class="axis-input" style="border-top:none;padding:0">
+      <input id="axisPubInput" placeholder="Ask AXIS…" autocomplete="off" aria-label="Ask AXIS a public question">
+      <button class="chip" id="axisPubMic" title="Push to talk (Chrome / Edge)" aria-label="Push to talk">🎙</button>
+      <button class="chip" id="axisPubVoice" title="Toggle spoken replies" aria-pressed="false" aria-label="Toggle spoken replies">🔊</button>
+      <button class="chip" id="axisPubSend">Ask</button>
     </div>
-    <div class="iw-tiles">
-      <div class="iw-tile"><div class="v" id="iw-agents">—</div><div class="k">Agents active</div></div>
-      <div class="iw-tile"><div class="v" id="iw-tasks">—</div><div class="k">Tasks reviewed</div></div>
-      <div class="iw-tile"><div class="v" id="iw-branches">—</div><div class="k">Branches spawned</div></div>
-      <div class="iw-tile"><div class="v" id="iw-newagents">—</div><div class="k">New agents</div></div>
-      <div class="iw-tile"><div class="v" id="iw-approvals">—</div><div class="k">Pending approval</div></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="chip" data-pub-q="status">Status</button>
+      <button class="chip" data-pub-q="next">Next</button>
+      <button class="chip" data-pub-q="help">Help</button>
     </div>
-    <div class="iw-toolbar">
-      <button id="iw-stop" class="iw-stop-btn" type="button" onclick="iwStop()">&#9632;&nbsp; STOP the workflow</button>
-      <span class="iw-foot">Controlled infinity - capped per cycle, safe-only, risky&nbsp;&rarr;&nbsp;approvals. Live run locked until bridge tests pass. <span id="iw-updated">—</span></span>
-    </div>
-    <div class="iw-readiness" aria-label="Infinity Wisdom live readiness gates">
-      <div class="iw-gate ok"><span>Public asset</span><b>counts-only</b></div>
-      <div class="iw-gate warn"><span>STOP bridge</span><b>web flag must halt local runner</b></div>
-      <div class="iw-gate warn"><span>Final-action gate</span><b>deny submit/apply/sign/create</b></div>
-      <div class="iw-gate warn"><span>Growth caps</span><b>concurrency + new-agent caps verified</b></div>
-      <div class="iw-gate warn"><span>Replay guard</span><b>consume branches once</b></div>
-    </div>
-    <div id="iw-source" class="iw-source-note">Waiting for authenticated Infinity state. Public fallback is counts-only and never exposes names, prompts, or vault notes.</div>
-    <div class="iw-eyebrow">Authed branching tree &middot; agents &rarr; tasks &rarr; completions &rarr; new branches</div>
-    <div id="iw-tree" class="iw-tree"><div class="iw-empty">Connecting to the engine…</div></div>
+    <div class="eyebrow">public mode · general status only · sign in for the director view</div>
   </section>
+</div>
 
-  <div class="footer">
-    <span>ARIA Command Center · IIS · <span id="build-id">v2</span></span>
-    <span><a href="/aperture" target="_blank" rel="noopener">Aperture</a> · <a href="https://iisupp.net" target="_blank" rel="noopener">iisupp.net</a> · refresh 4s</span>
+<!-- App shell (hidden until authed) -->
+<div class="app" id="app" style="display:none">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+        <circle cx="15" cy="15" r="13.5" fill="none" stroke="var(--gold)" stroke-width="1" opacity="0.55"/>
+        <ellipse cx="15" cy="15" rx="13.5" ry="5.5" fill="none" stroke="var(--gold)" stroke-width="0.8" opacity="0.35"/>
+        <text x="15" y="19.5" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="650" fill="var(--gold)">A</text>
+      </svg>
+      <span class="brand-text">AXIS</span>
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <div class="search" id="search">🔍 Search <span class="kbd">⌘K</span></div>
+      <span class="tick" id="tick">connecting…</span>
+      <span class="dot dot-ok" id="health" title="system health"></span>
+      <button class="iconbtn" id="themeBtn" title="toggle theme">◐</button>
+      <button class="iconbtn" id="logoutBtn" title="sign out">⎋</button>
+    </header>
+    <main class="content" id="content"><div class="skeleton" style="height:120px"></div></main>
+  </div>
+
+  <!-- AXIS dock -->
+  <button class="axis-fab" id="axisFab" title="Ask AXIS" aria-label="Ask AXIS — open the director dock">
+    <span class="axis-orb" data-orb></span>
+    <span class="axis-fab-pill">Ask AXIS</span>
+  </button>
+  <section class="axis-dock" id="axisDock" hidden aria-label="AXIS director">
+    <header class="axis-dock-head">
+      <span style="display:flex;align-items:center;gap:9px">
+        <span class="axis-orb axis-orb-xs" data-orb></span>
+        <span class="eyebrow" style="color:var(--gold)">AXIS · Director</span>
+        <span class="axis-state-word" id="axisStateWord" aria-live="polite">idle</span>
+      </span>
+      <button class="iconbtn" id="axisClose" aria-label="Close AXIS dock" style="padding:2px 7px">✕</button></header>
+    <div class="axis-log" id="axisLog"></div>
+    <div class="axis-input"><input id="axisInput" placeholder="Tell AXIS…" autocomplete="off"><button class="chip" id="axisMic" title="Push to talk (Chrome / Edge)" aria-label="Push to talk">🎙</button><button class="chip" id="axisVoice" title="Toggle spoken replies" aria-pressed="false" aria-label="Toggle spoken replies">🔊</button><button class="chip" id="axisSend">Send</button></div>
+  </section>
+</div>
+
+<!-- ⌘K command palette -->
+<div class="palette" id="palette" hidden>
+  <div class="palette-box">
+    <input id="paletteInput" placeholder="Type a command or screen…" autocomplete="off">
+    <div class="palette-list" id="paletteList"></div>
   </div>
 </div>
 
-<!-- modal -->
-<div id="modal-bg" onclick="if(event.target.id==='modal-bg')closeModal()">
-  <div id="modal"><button class="x" onclick="closeModal()">&times;</button><h3 id="modal-title">Ticket</h3><div id="modal-body"></div></div>
-</div>
-
-<script src="/assets/aperture-learning.js" defer></script>
-
-<!-- ARIA MESH SPIDER-WEB — shared component (also embedded on /aperture) -->
-<script src="/assets/aria-mesh-web.js" defer></script>
-<!-- IIS Loops Panel — live registry + ledger + observer (additive; safe to remove) -->
-<script src="/assets/loops-panel.js" defer></script>
-
-<!-- ───── ARIA Autonomous Loop · live counter widget (2026-06-18) ───── -->
-<style id="aria-loop-counter-style">
-#ariaLoopCounter { position:fixed; right:18px; bottom:18px; z-index:9000;
-    background:linear-gradient(165deg,rgba(10,8,5,.96) 0%,rgba(20,15,8,.96) 100%);
-    border:1px solid rgba(197,160,89,.55); border-radius:14px; padding:14px 18px;
-    font-family:'Inter',system-ui,sans-serif; color:#f1dca7; font-size:11px;
-    width:min(320px, 90vw); box-shadow:0 24px 60px rgba(0,0,0,.6);
-    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-  }
-  #ariaLoopCounter .alc-head { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
-  #ariaLoopCounter .alc-dot { width:7px; height:7px; border-radius:50%; background:#4ade80;
-    box-shadow:0 0 8px #4ade80; animation:alcPulse 1.6s ease-in-out infinite; flex-shrink:0; }
-  @keyframes alcPulse { 0%,100%{opacity:1} 50%{opacity:.35} }
-  #ariaLoopCounter .alc-label { color:#c5a059; font-family:'Cinzel',serif; font-size:10px;
-    letter-spacing:.24em; font-weight:700; text-transform:uppercase; }
-  #ariaLoopCounter .alc-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px 14px; margin-top:8px; }
-  #ariaLoopCounter .alc-tile .v { font-family:'Cinzel',serif; color:#fff; font-size:18px; font-weight:700; line-height:1.05; display:block; }
-  #ariaLoopCounter .alc-tile .k { color:rgba(255,255,255,.55); font-size:9px; letter-spacing:.14em; text-transform:uppercase; margin-top:3px; display:block; }
-  #ariaLoopCounter .alc-bar { height:4px; border-radius:2px; background:rgba(255,255,255,.10); margin-top:12px; overflow:hidden; }
-  #ariaLoopCounter .alc-bar > i { display:block; height:100%; background:linear-gradient(90deg,#c5a059,#f1dca7);
-    width:0%; transition:width .8s ease-out; box-shadow:0 0 10px rgba(197,160,89,.4); }
-  #ariaLoopCounter .alc-foot { color:rgba(255,255,255,.45); font-size:9.5px; margin-top:8px; line-height:1.45; }
-  #ariaLoopCounter .alc-foot strong { color:#f1dca7; font-weight:600; }
-  #ariaLoopCounter .alc-close { position:absolute; top:8px; right:10px; background:transparent; border:0;
-    color:rgba(255,255,255,.45); cursor:pointer; font-size:16px; padding:2px 6px; border-radius:4px; }
-  #ariaLoopCounter .alc-close:hover { color:#f1dca7; background:rgba(197,160,89,.10); }
-  @media (max-width:520px) { #ariaLoopCounter { right:10px; bottom:10px; padding:12px 14px; } }
-</style>
-<div id="ariaLoopCounter" role="status" aria-live="polite" aria-label="ARIA autonomous learning loop status">
-  <button class="alc-close" type="button" aria-label="Hide" onclick="this.parentNode.style.display='none'">×</button>
-  <div class="alc-head">
-    <span class="alc-dot"></span>
-    <span class="alc-label">ARIA LEARNING LOOP · LIVE</span>
+<script type="module" src="/assets/axis-app.js"></script>
+<!-- iis-fineprint:start -->
+<div class="iis-fineprint" role="note" aria-label="Site content disclaimer">
+  <div class="iis-fineprint__inner">
+    <span class="iis-fineprint__label">Disclaimer</span>
+    <p class="iis-fineprint__text">Content on iisupp.net and its sub-sites is general information only. Any troubleshooting step, instruction, tool, estimate or data taken from this site is <strong style="color:rgba(255,255,255,.5);font-weight:600">used at your own risk</strong>, and information may be out of date &mdash; please do your own due diligence before acting on it.</p>
+    <p class="iis-fineprint__text">No published guide can account for every factor in a live environment. If the system matters, don&rsquo;t guess &mdash; call <a href="tel:+16475813182">(647) 581-3182</a> and have it done safely. Full <a href="/disclaimer.html">disclaimer</a> &middot; <a href="/terms.html">terms</a> &middot; <a href="/governance/privacy">privacy</a>.</p>
   </div>
-  <div class="alc-grid">
-    <div class="alc-tile"><span class="v" id="alc-cum">—</span><span class="k">cum. scenarios</span></div>
-    <div class="alc-tile"><span class="v" id="alc-pass">—</span><span class="k">last pass rate</span></div>
-    <div class="alc-tile"><span class="v" id="alc-fixes">—</span><span class="k">fixes shipped</span></div>
-    <div class="alc-tile"><span class="v" id="alc-corpus">—</span><span class="k">corpus size</span></div>
-  </div>
-  <div class="alc-bar" title="Progress toward 150K enterprise-grade target"><i id="alc-bar-fill"></i></div>
-  <p class="alc-foot">
-    <strong id="alc-pct">—</strong> of 150K-scenario enterprise-grade target ·
-    next run <strong id="alc-next">—</strong>
-  </p>
 </div>
-<script>
-(function(){
-  // Fetch run-stats.json + populate the widget. Falls back silently if missing.
-  function fmt(n){ try { return Number(n).toLocaleString(); } catch(e){ return String(n); } }
-  function rel(iso){
-    try {
-      var d = new Date(iso); if (isNaN(d.getTime())) return iso;
-      var diff = (d.getTime() - Date.now()) / 60000;
-      if (diff < -1440) return "earlier";
-      if (diff < 0) return Math.abs(Math.round(diff)) + "m ago";
-      if (diff < 60) return "in " + Math.round(diff) + "m";
-      if (diff < 1440) return "in " + Math.round(diff/60) + "h";
-      return d.toISOString().slice(0,10);
-    } catch(e){ return iso; }
-  }
-  fetch('/tests/run-stats.json', { cache: 'no-store' })
-    .then(function(r){ return r.ok ? r.json() : null; })
-    .then(function(d){
-      if (!d) return;
-      var $ = function(id){ return document.getElementById(id); };
-      if ($('alc-cum')) $('alc-cum').textContent = fmt(d.cumulative_scenarios);
-      if ($('alc-pass')) $('alc-pass').textContent = (d.last_pass_rate_pct || 0).toFixed(1) + '%';
-      if ($('alc-fixes')) $('alc-fixes').textContent = fmt(d.cumulative_fixes_shipped);
-      if ($('alc-corpus')) $('alc-corpus').textContent = fmt(d.current_corpus_size);
-      if ($('alc-pct')) $('alc-pct').textContent = (d.coverage_pct_of_target || 0).toFixed(1) + '%';
-      if ($('alc-next')) $('alc-next').textContent = rel(d.next_run_at);
-      var bar = $('alc-bar-fill');
-      if (bar) bar.style.width = Math.min(100, (d.coverage_pct_of_target || 0)) + '%';
-    })
-    .catch(function(){ /* silent */ });
-})();
-</script>
-
-<!-- ───── INFINITY WISDOM — styles + live data (additive; safe to remove) ───── -->
-<style id="infinity-wisdom-style">
-  #infinity-wisdom .iw-glyph{color:#f1dca7;font-size:20px;text-shadow:0 0 16px rgba(241,220,167,.5);margin-right:2px}
-  #infinity-wisdom .iw-primer{border:1px solid rgba(241,220,167,.18);border-radius:12px;background:linear-gradient(135deg,rgba(241,220,167,.07),rgba(34,225,255,.035));color:var(--txt-2);font-size:13px;line-height:1.65;padding:13px 15px;margin:12px 0 14px}
-  #infinity-wisdom .iw-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:14px 0 4px}
-  @media(max-width:720px){#infinity-wisdom .iw-tiles{grid-template-columns:repeat(2,1fr)}}
-  #infinity-wisdom .iw-tile{background:linear-gradient(165deg,rgba(197,160,89,.07),rgba(34,225,255,.04));border:1px solid var(--line);border-radius:12px;padding:13px 14px}
-  #infinity-wisdom .iw-tile .v{font-size:26px;font-weight:700;letter-spacing:-.02em;color:#fff;font-variant-numeric:tabular-nums;line-height:1}
-  #infinity-wisdom .iw-tile .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--txt-3);margin-top:7px}
-  #infinity-wisdom .iw-toolbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:16px 0 6px}
-  #infinity-wisdom .iw-stop-btn{background:linear-gradient(135deg,#d97560,#b3372a);border:1px solid rgba(217,117,96,.6);color:#fff;font-weight:700;letter-spacing:.04em;font-size:12.5px;padding:11px 20px;border-radius:10px;cursor:pointer;transition:transform .14s,box-shadow .25s,filter .2s;box-shadow:0 8px 24px -10px rgba(217,117,96,.7)}
-  #infinity-wisdom .iw-stop-btn:hover{transform:translateY(-1px);filter:brightness(1.08);box-shadow:0 14px 32px -10px rgba(217,117,96,.8)}
-  #infinity-wisdom .iw-stop-btn:disabled{filter:grayscale(.7) brightness(.7);cursor:default;transform:none;box-shadow:none}
-  #infinity-wisdom .iw-foot{font-family:var(--mono);font-size:10.5px;color:var(--txt-3);letter-spacing:.02em}
-  #infinity-wisdom .iw-readiness{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:14px 0 10px}
-  #infinity-wisdom .iw-gate{border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.025);padding:10px 11px;min-height:72px}
-  #infinity-wisdom .iw-gate span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-3);margin-bottom:8px}
-  #infinity-wisdom .iw-gate b{display:block;font-size:12px;line-height:1.35;color:var(--txt);font-weight:600}
-  #infinity-wisdom .iw-gate.ok{border-color:rgba(109,186,133,.28);background:rgba(109,186,133,.055)}
-  #infinity-wisdom .iw-gate.warn{border-color:rgba(241,220,167,.24);background:rgba(241,220,167,.055)}
-  #infinity-wisdom .iw-source-note{border:1px solid rgba(34,225,255,.18);border-radius:10px;background:rgba(34,225,255,.04);color:var(--txt-2);font-family:var(--mono);font-size:10.5px;line-height:1.55;padding:9px 11px;margin:10px 0}
-  #infinity-wisdom .iw-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3);margin:14px 0 10px}
-  #infinity-wisdom .iw-tree{max-height:420px;overflow:auto;padding:4px 2px}
-  #infinity-wisdom .iw-empty{font-family:var(--mono);font-size:12px;color:var(--txt-3);padding:18px;text-align:center}
-  #infinity-wisdom .iw-node{display:flex;align-items:center;gap:10px;padding:7px 0;position:relative;animation:iwIn .5s var(--ease,cubic-bezier(.2,.7,.2,1)) both}
-  @keyframes iwIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
-  #infinity-wisdom .iw-branch{flex:none;width:18px;height:1px;background:linear-gradient(90deg,transparent,rgba(34,225,255,.55))}
-  #infinity-wisdom .iw-dot{flex:none;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle,#f1dca7,#c5a059);box-shadow:0 0 10px rgba(197,160,89,.55)}
-  #infinity-wisdom .iw-node[data-kind="new-agent"] .iw-dot{background:radial-gradient(circle,#7fe7ff,#22e1ff);box-shadow:0 0 12px rgba(34,225,255,.7)}
-  #infinity-wisdom .iw-ttl{font-size:13px;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  #infinity-wisdom .iw-tag{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-3);border:1px solid var(--line);border-radius:5px;padding:2px 6px;flex:none}
-  #infinity-wisdom .iw-agent{font-family:var(--mono);font-size:10px;color:#c5a059;flex:none}
-  #infinity-wisdom .chip.iw-stopped{background:rgba(217,117,96,.16);color:#ffb4a6;border-color:rgba(217,117,96,.5)}
-  #infinity-wisdom .chip.iw-running{background:rgba(109,186,133,.16);color:#9fe6b8;border-color:rgba(109,186,133,.45)}
-  #infinity-wisdom .chip.iw-limited{background:rgba(241,220,167,.12);color:#f1dca7;border-color:rgba(241,220,167,.38)}
-  #infinity-wisdom .chip.iw-offline{background:rgba(255,255,255,.06);color:var(--txt-3);border-color:var(--line)}
-  @media(max-width:980px){#infinity-wisdom .iw-readiness{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media(max-width:560px){#infinity-wisdom .iw-readiness{grid-template-columns:1fr}}
-</style>
-<script>
-(function(){
-  function $(id){ return document.getElementById(id); }
-  function tok(){ try{ return localStorage.getItem('aperture_jwt')||''; }catch(e){ return ''; } }
-  function n(v){ try{ return Number(v||0).toLocaleString(); }catch(e){ return '0'; } }
-  function note(msg){ var el=$('iw-source'); if(el)el.textContent=msg; }
-  function setCounts(c){
-    if($('iw-agents'))$('iw-agents').textContent=n(c.agentsActive);
-    if($('iw-tasks'))$('iw-tasks').textContent=n(c.tasksDone);
-    if($('iw-branches'))$('iw-branches').textContent=n(c.branchesSpawned);
-    if($('iw-newagents'))$('iw-newagents').textContent=n(c.newAgentsTotal);
-    if($('iw-approvals'))$('iw-approvals').textContent=n(c.approvalsPending);
-  }
-  function setStatus(stopped, mode){
-    var el=$('iw-status'); if(!el)return;
-    mode = mode || 'live';
-    if(mode==='offline'){
-      el.textContent='NOT DEPLOYED';
-      el.className='chip iw-offline';
-    } else if(mode==='public'){
-      el.textContent=stopped?'STOPPED':'PUBLIC COUNTS';
-      el.className='chip '+(stopped?'iw-stopped':'iw-limited');
-    } else {
-      el.textContent = stopped?'STOPPED':'RUNNING';
-      el.className='chip '+(stopped?'iw-stopped':'iw-running');
-    }
-    var b=$('iw-stop');
-    if(b){
-      var liveReady = mode==='live';
-      b.disabled = !liveReady || !!stopped;
-      b.textContent = stopped?'STOPPED':(liveReady?'STOP web flag':'Live endpoint required');
-    }
-  }
-  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
-  function renderTree(nodes){
-    var box=$('iw-tree'); if(!box)return;
-    if(!nodes||!nodes.length){ box.innerHTML='<div class="iw-empty">No branches yet — the engine enqueues the next best paths as tasks complete.</div>'; return; }
-    var html='';
-    nodes.slice(0,80).forEach(function(node,i){
-      var depth=Math.max(0,Math.min(6,Number(node.depth)||0));
-      var indent=depth*22;
-      html+='<div class="iw-node" data-kind="'+esc(node.kind)+'" style="margin-left:'+indent+'px;animation-delay:'+(i*0.012)+'s">'
-        +(depth>0?'<span class="iw-branch"></span>':'')
-        +'<span class="iw-dot"></span>'
-        +'<span class="iw-tag">'+esc(node.kind||'task')+'</span>'
-        +'<span class="iw-ttl">'+esc(node.title||node.id)+'</span>'
-        +(node.agent?'<span class="iw-agent">@'+esc(node.agent)+'</span>':'')
-        +'</div>';
-    });
-    box.innerHTML=html;
-  }
-  function fallbackPublic(reason){
-    // Unauthenticated / engine-not-synced: show the counts-only public asset (no tree, no names).
-    fetch('/infinity-wisdom-public.json',{cache:'no-store'}).then(function(r){ if(r.status===404){ setStatus(false,'offline'); return null; } return r.ok?r.json():null; }).then(function(d){
-      if(!d){ note('Infinity Wisdom public projection is unavailable on this deployment. Keep live execution locked.'); return; }
-      setCounts(d); setStatus(d.stopped===true,'public');
-      if($('iw-updated'))$('iw-updated').textContent = d.updatedAt? ('updated '+new Date(d.updatedAt).toLocaleTimeString()) : '';
-      var box=$('iw-tree'); if(box&&!box.dataset.full)box.innerHTML='<div class="iw-empty">Sign in for the full live branching tree. (Public view: counts only.)</div>';
-      note((reason?reason+' ':'')+'Showing counts-only public state. Full tree and controls require authenticated live state.');
-    }).catch(function(){ setStatus(false,'offline'); note('Infinity Wisdom state could not be reached. No live control is implied.'); });
-  }
-  function load(){
-    var t=tok();
-    if(!t){ fallbackPublic(); return; }
-    fetch('/.netlify/functions/infinity-wisdom-state',{headers:{'Authorization':'Bearer '+t},cache:'no-store'})
-      .then(function(r){ if(r.status===401){ throw new Error('unauth'); } return r.ok?r.json():null; })
-      .then(function(j){
-        if(!j||!j.state){ fallbackPublic('Authenticated Infinity state unavailable.'); return; }
-        var s=j.state;
-        setCounts(s.counts||{}); setStatus(s.stopped===true,'live');
-        if($('iw-updated'))$('iw-updated').textContent = s.updatedAt? ('updated '+new Date(s.updatedAt).toLocaleTimeString()) : '';
-        var box=$('iw-tree'); if(box)box.dataset.full='1';
-        renderTree(s.nodes||[]);
-        note('Authenticated Infinity state loaded. Controls only post the web flag; live execution still requires local runner bridge verification.');
-      })
-      .catch(function(){ fallbackPublic('Authenticated Infinity state unavailable.'); });
-  }
-  window.iwStop=function(){
-    var t=tok();
-    if(!t){ alert('Sign in to control the workflow.'); return; }
-    if(!confirm('STOP posts the authenticated Infinity web stop flag. Live use is approved only after the local runner also reads that flag. Continue?'))return;
-    fetch('/.netlify/functions/infinity-wisdom-state',{method:'POST',headers:{'Authorization':'Bearer '+t,'Content-Type':'application/json'},body:JSON.stringify({action:'stop'})})
-      .then(function(r){return r.ok?r.json():null;}).then(function(j){ if(j&&j.stopped){ setStatus(true,'live'); note('STOP flag accepted by the web endpoint. Verify local runner halt before any live run.'); } else { alert('STOP request was not accepted.'); } })
-      .catch(function(){ alert('Network error sending STOP.'); });
-  };
-  // Only poll once the dashboard is visible (post-login). Cheap + silent.
-  function tick(){ var app=$('app'); if(app&&app.style.display!=='none')load(); }
-  tick(); setInterval(tick, 6000);
-})();
-</script>
-
+<!-- iis-fineprint:end -->
 </body>
 </html>

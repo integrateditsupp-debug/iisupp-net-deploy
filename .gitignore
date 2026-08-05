@@ -126,3 +126,4 @@ outputs/
 # Filesystem / editor junk
 **/.fuse_hidden*
 /tests/.residual-tmp.js
+.bid-sweep-seen.json

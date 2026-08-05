@@ -52,6 +52,7 @@
     </style>
     <link rel="stylesheet" href="/assets/iis-motion.css?v=20260710L">
     <link rel="stylesheet" href="/assets/legal-suite.css?v=20260710L">
+  <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 </head>
 <body class="ca-page">
     <nav class="fixed w-full z-50 py-6 px-10 flex justify-between items-center bg-black/90 backdrop-blur-xl border-b border-white/5">
@@ -188,24 +189,32 @@
             <aside class="ca-panel">
                 <span class="ca-section-eyebrow">Commercial model</span>
                 <h2 class="ca-section-title">Unlock the <em>bundle</em></h2>
-                <div class="ca-pricing-grid">
-                    <article class="ca-price-card">
-                        <small>Single</small>
-                        <strong>$5</strong>
-                        <p>One report unlock for a non-subscriber. Good for occasional review or pilot testing.</p>
-                    </article>
-                    <article class="ca-price-card">
-                        <small>Monthly</small>
-                        <strong>$20</strong>
-                        <p>Twenty report credits for the current 30-day cycle in this MVP implementation.</p>
-                    </article>
-                    <article class="ca-price-card">
-                        <small>Overage</small>
-                        <strong>$2</strong>
-                        <p>One additional credit when an active monthly allowance has already been used up.</p>
-                    </article>
-                </div>
-                <div class="ca-legal-grid" style="margin-top:18px;">
+                <p class="ca-panel-copy">The on-screen preview is always free. You only pay to unlock the delivery bundle &mdash; PDF, ZIP, and JSON.</p>
+                <ul class="ca-price-list">
+                    <li class="ca-price-row">
+                        <span class="ca-price-amount">$5<small>per report</small></span>
+                        <span class="ca-price-body">
+                            <b>Single unlock</b>
+                            <span>One report, no subscription. For occasional reviews and pilot testing.</span>
+                        </span>
+                    </li>
+                    <li class="ca-price-row is-featured">
+                        <span class="ca-price-amount">$20<small>per month</small></span>
+                        <span class="ca-price-body">
+                            <b>Monthly &middot; 20 credits <em class="ca-price-tag">Best value</em></b>
+                            <span>Twenty report credits per 30-day cycle &mdash; $1 a report, a fifth of the single-unlock price.</span>
+                        </span>
+                    </li>
+                    <li class="ca-price-row">
+                        <span class="ca-price-amount">$2<small>per extra</small></span>
+                        <span class="ca-price-body">
+                            <b>Overage credit</b>
+                            <span>One additional report once an active monthly allowance is used up.</span>
+                        </span>
+                    </li>
+                </ul>
+                <p class="ca-price-note">Credits are tied to the checkout email and expire at the end of the 30-day cycle. Unused credits do not roll over in this MVP.</p>
+                <div class="ca-legal-grid" style="margin-top:22px;">
                     <article class="ca-legal-card">
                         <h3>Data handling</h3>
                         <p>Only minimal billing and usage metadata persist. Source text and extracted PII are not stored as reusable artifacts.</p>
@@ -338,5 +347,14 @@
     </script>
     <script src="/assets/content-assurance.js"></script>
   <script src="/assets/iis-motion.js?v=20260710L" defer></script>
+<!-- iis-fineprint:start -->
+<div class="iis-fineprint" role="note" aria-label="Site content disclaimer">
+  <div class="iis-fineprint__inner">
+    <span class="iis-fineprint__label">Disclaimer</span>
+    <p class="iis-fineprint__text">Content on iisupp.net and its sub-sites is general information only. Any troubleshooting step, instruction, tool, estimate or data taken from this site is <strong style="color:rgba(255,255,255,.5);font-weight:600">used at your own risk</strong>, and information may be out of date &mdash; please do your own due diligence before acting on it.</p>
+    <p class="iis-fineprint__text">No published guide can account for every factor in a live environment. If the system matters, don&rsquo;t guess &mdash; call <a href="tel:+16475813182">(647) 581-3182</a> and have it done safely. Full <a href="/disclaimer.html">disclaimer</a> &middot; <a href="/terms.html">terms</a> &middot; <a href="/governance/privacy">privacy</a>.</p>
+  </div>
+</div>
+<!-- iis-fineprint:end -->
 </body>
 </html>

@@ -69,6 +69,7 @@
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
   @media (max-width:640px){.hero h1{font-size:29px}}
 </style>
+  <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 </head>
 <body>
 <header class="site">
@@ -108,6 +109,9 @@
 
 <main>
   <div class="wrap">
+<!-- iis-riskbar:start -->
+<div class="iis-riskbar" role="note" aria-label="Risk notice"><b>Before you follow these steps.</b> These are general instructions. They may be out of date, and no written guide can account for every factor in a live environment. Back up first, verify against your own systems, and proceed <b>at your own risk</b>. Not sure it is safe? Call <a href="tel:+16475813182">(647)&nbsp;581-3182</a> and have it done properly. <a href="/disclaimer.html">Full disclaimer</a>.</div>
+<!-- iis-riskbar:end -->
     <section class="faq-section" data-cat="printing" id="cat-printing">
     <h2>Printing</h2>
     <details class="faq-item" data-search="older hp / brother / canon printer stops printing after windows update your printer is older than the latest windows version, and microsoft tightened up how windows talks to printers a few years back to stop hackers. we&#39;ve got three options: a) use a universal driver from the printer maker, b) trick windows into talking to it through a different protocol, or c) replace the printer with one that just works. the first one is free and usually works within 15 minutes. path a — use vendor&#39;s latest universal driver (preferred): 1. download hp universal print driver (upd) pcl6 or postscript from hp support site. works for most hp devices 2005 onward. 2. for brother: download &quot;brother universal printer driver&quot; from brother.com support. 3. for canon: try canon generic plus pcl6 / ufr ii driver. 4. install the universal driver. add the printer using the new driver: settings → bluetooth &amp; devices → printers &amp; scanners → add device → &quot;the printer i want isn&#39;t listed&quot; → add a local printer or network printer with manual settings. path b — force inbox / microsoft ipp driver (when vendor has no win 11 driver): 1. settings → printers &amp; scanners → add device → &quot;the printer i want isn&#39;t listed&quot;. 2. select &quot;add a printer using an ip address or hostname&quot;. 3. device type: &quot;tcp/ip device&quot;. enter printer ip. wait for detection. 4. when prompted for driver: pick microsoft ipp class driver or generic / text only. 5. test print. path c — usb-only printer with no signed driver: 1. buy a small print server (tp-link tl-wps510u, startech netprint2) or convert via a raspberry pi running cups. 2. the print server speaks ipp / ipps to windows — bypasses the vendor driver dependency entirely. 3. on the pc, add the printer as an ipp network printer using microsoft ipp class driver. path d — replace the printer (recommended for pre-2012 models being used in a business): 1. modern entry-level laser: brother hl-l2460dw ($230). modern entry-level inkjet: hp officejet pro 8135e ($230). 2. both support airprint, mopria, ipp — no driver hell on any os.">
@@ -1292,5 +1296,14 @@
   q.addEventListener('input',apply);
 })();
 </script>
+<!-- iis-fineprint:start -->
+<div class="iis-fineprint" role="note" aria-label="Site content disclaimer">
+  <div class="iis-fineprint__inner">
+    <span class="iis-fineprint__label">Disclaimer</span>
+    <p class="iis-fineprint__text">Content on iisupp.net and its sub-sites is general information only. Any troubleshooting step, instruction, tool, estimate or data taken from this site is <strong style="color:rgba(255,255,255,.5);font-weight:600">used at your own risk</strong>, and information may be out of date &mdash; please do your own due diligence before acting on it.</p>
+    <p class="iis-fineprint__text">No published guide can account for every factor in a live environment. If the system matters, don&rsquo;t guess &mdash; call <a href="tel:+16475813182">(647) 581-3182</a> and have it done safely. Full <a href="/disclaimer.html">disclaimer</a> &middot; <a href="/terms.html">terms</a> &middot; <a href="/governance/privacy">privacy</a>.</p>
+  </div>
+</div>
+<!-- iis-fineprint:end -->
 </body>
 </html>

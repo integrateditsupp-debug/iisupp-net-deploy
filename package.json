@@ -33,12 +33,17 @@
     "contracts:bids:result": "node scripts/contracts-bids-submit-result-agent.mjs",
     "autonomy:once": "node scripts/autonomy-supervisor-agent.mjs",
     "cleanup:once": "node scripts/workspace-cleanup-agent.mjs",
-    "site:hygiene": "node scripts/check-public-route-hygiene.mjs",
+    "site:hygiene": "node scripts/check-public-route-hygiene.mjs && node scripts/check-held-release-markers.mjs && node scripts/check-disclaimer-coverage.mjs",
+    "disclaimer:inject": "node scripts/inject-disclaimer.mjs",
+    "riskbar:inject": "node scripts/inject-riskbar.mjs",
+    "disclaimer:all": "node scripts/inject-disclaimer.mjs && node scripts/inject-riskbar.mjs",
+    "check:disclaimer": "node scripts/check-disclaimer-coverage.mjs",
     "director:once": "node scripts/senior-director-worker.mjs --once",
     "director:worker": "node scripts/senior-director-worker.mjs",
     "probe:deploy-safety": "node scripts/probe-deploy-safety.mjs",
     "probe:deploy-safety:watch": "node scripts/probe-deploy-safety.mjs --watch 30",
-    "vision:test": "node tests/vision-diagnose.test.mjs && node tests/vision-diagnose-handler.test.mjs"
+    "vision:test": "node tests/vision-diagnose.test.mjs && node tests/vision-diagnose-handler.test.mjs",
+    "check:held": "node scripts/check-held-release-markers.mjs"
   },
   "dependencies": {
     "@netlify/blobs": "^7.4.0",
