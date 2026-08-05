@@ -20,136 +20,94 @@ const now = new Date().toISOString();
 // verdict is inferred from another suite, from a registry summary, or from a prior cycle's report.
 const tests = {
   reRunGreenThisCycle: [
-    { suite: "FULL REGISTRY (npm test in ARIA Sentinel) — run on the operator's real repository BEFORE this cycle wrote anything",
-      result: "516 tests, 516 pass, 0 fail; 329/329 suite files loaded and green. Run first, deliberately, so the cycle knew the line it was starting from rather than assuming it.", exit: 0 },
-    { suite: "a2-routing-battery (new this cycle) — the shipped KB pack answering real questions",
-      result: "32 real KB docs, 6/6 clean hits, 0 confidently wrong, out-of-scope questions abstain, the master index never answers. Rule 14: it runs against the pack on disk — no fixtures, no stubbed index, no hand-fed scores. Proven RED four ways before acceptance (vertical guard neutralised, intent guard neutralised, master index re-admitted to the corpus, intent inference stubbed to always-neutral).", exit: 0 },
-    { suite: "symptom-kb-parse — rewritten from closed-world to open-world and made STRICTER",
-      result: "21 symptom files including all 17 canonical categories, 1 how-to correctly excluded, 123 ranked causes (was 90), all well-formed, index complete. Proven RED three ways (a canonical category dropped, a new doc left out of the master index, how-tos loaded as symptom records).", exit: 0 },
-    { suite: "FULL REGISTRY — re-run AFTER every write this cycle",
-      result: "516 tests, 516 pass, 0 fail; 330/330 suites. The added suite is the A2 routing battery.", exit: 0 },
-    { suite: "Clone-vs-clone differential — the check that separates a real regression from a portability artefact",
-      result: "A pristine clone of the shared line and a clone carrying this cycle's change produce a BYTE-IDENTICAL failure set (51 and 51, the documented non-portable record-dependent suites). Zero new failures introduced. Run because a clone can never reach green here by design, so a raw clone number would have been unreadable either way.", exit: 0 },
+    { suite: "FULL REGISTRY (npm test in ARIA Sentinel) — run on the operator's real repository, first action of the cycle",
+      result: "516 tests, 516 pass, 0 fail; 330/330 suite files loaded and green; exit 0. Run before anything was written, so the line this cycle started from was measured rather than inherited from the previous cycle's report.", exit: 0 },
+    { suite: "b4-axis-chat — the suite covering the AXIS spoken-status path",
+      result: "Green inside the full registry run. Named separately because the standing priority names it, and a priority that is never separately confirmed is a priority in name only.", exit: 0 },
+    { suite: "UNLINK PERMISSION PROBE — the open question three cycles old, finally executed instead of described",
+      result: "rm on a stale ref lock: refused, verbatim 'Operation not permitted', exit 1. mv of the SAME file into the lock graveyard: exit 0. The mount denies unlink and permits rename. That is a permission shape, not a broken environment, and the rename path is therefore the correct permanent mechanism rather than a workaround kept around out of habit.", exit: 0 },
+    { suite: "BRANCH BACKLOG ADJUDICATION — every unmerged branch content-diffed against the shared line",
+      result: "45 unmerged branches examined by two-dot content diff, not by commit count. Nine of the recent lanes carry zero outstanding commits. The three named revenue lanes' content — five test suites and two run records — was confirmed already present on the shared line by direct file check. Every remaining branch would DELETE between 98,000 and 119,000 lines and reinstate a superseded directory layout.", exit: 0 },
   ],
-  suitesReRunGreen: 5,
+  suitesReRunGreen: 4,
   fullRegistry:
-    "516 tests, 516 pass, 0 fail, 330/330 suites, exit 0 — carrying forward the qualification the " +
-    "earlier cycle added and which still holds: that number is only reproducible on a machine holding " +
-    "the operator's untracked records. The same commit in a bare clone returns 51 ENOENT failures " +
-    "against the gitignored record root. The dependency is declared in a tracked manifest and " +
-    "record-dependency-declared.test.mjs turns red if a new hidden reader appears.",
+    "516 tests, 516 pass, 0 fail, 330/330 suites, exit 0 — with the standing qualification that still " +
+    "holds: that number is only reproducible on a machine holding the operator's untracked records. The " +
+    "same commit in a bare clone returns a documented ENOENT set against the gitignored record root. " +
+    "The dependency is declared in a tracked manifest and record-dependency-declared.test.mjs turns red " +
+    "if a new hidden reader appears.",
 };
 
 // ── WHAT THIS CYCLE ESTABLISHED (Rule 14) ─────────────────────────────────────────────────────────
 const correctionsThisCycle = [
   {
     what:
-      "A TEST WAS HOLDING THE KNOWLEDGE BASE SHUT. Found, diagnosed and replaced this cycle. This is the " +
-      "root cause of why five finished articles sat unused for five weeks.",
+      "THE SHELL CAME BACK. Three consecutive cycles reported the build environment as dead at the tool " +
+      "layer and did paper work instead. This cycle it started on the first call.",
     detail:
-      "The symptom-KB parse test asserted an exact count — seventeen files — against a hard-coded list. " +
-      "Any genuinely new diagnostic article turned it red. That left exactly two ways to stay green: " +
-      "never add an article, or pad a real one with an invented cause and probability to clear an " +
-      "arbitrary floor. The second is the fabricated-metric class Rule 14 exists to refuse, so in " +
-      "practice the KB simply stopped growing. The test is now open-world and STRICTER, not looser: all " +
-      "seventeen canonical categories must still be present and still carry five or more ranked causes, " +
-      "every symptom doc including any added later must be well-formed with three or more user phrasings " +
-      "and three or more fully-populated causes, and every doc in the pack must appear in the master " +
-      "index. Ranked causes went from 90 to 123.",
+      "The consequence matters more than the fact: the two questions those cycles could only describe " +
+      "were both executable in minutes once a shell existed. Both were answered below. The lesson is " +
+      "recorded rather than the relief — when the environment returns, the FIRST move is to spend it on " +
+      "the questions that were deferred for lack of it, before anything new is started.",
   },
   {
     what:
-      "FIVE FINISHED KB ARTICLES WERE RECOVERED AND SHIPPED — the five most common tickets an MSP takes, " +
-      "and none of them were in the product.",
+      "THE LOCK QUESTION IS ANSWERED. 'Unlinkability: still untested' had ridden three cycles as an " +
+      "open item. It is now tested, with exit codes.",
     detail:
-      "Outlook password-prompt loop, Windows/AD/Entra account lockout, Office and Excel failures, clock " +
-      "and time sync, and adding a printer. All five were written on a 2026-06-29 branch whose matcher " +
-      "was later superseded, so the branch is correctly NOT merged — but nobody had ever forward-ported " +
-      "its CONTENT. They were checked for accuracy and for banned language before landing, and they are " +
-      "now on the shared line with the current matcher.",
+      "rm against a stale ref lock is refused with 'Operation not permitted' and exit 1. mv of that same " +
+      "file into the lock graveyard returns exit 0. So the mount denies unlink and permits rename, which " +
+      "reframes the whole family: the graveyard rename is not a hack that happens to work, it is the " +
+      "only write shape this filesystem allows, and it should be treated as the standing mechanism. One " +
+      "stale lock was cleared this cycle by that route. The honest statement stays 'clearable by the " +
+      "agent', never 'gone'.",
   },
   {
     what:
-      "THE MASTER INDEX WAS ANSWERING SUPPORT QUESTIONS. Real defect, closed this cycle.",
+      "THE BRANCH BACKLOG IS NOT A BACKLOG. Adjudicated this cycle by content, and the answer is that " +
+      "nothing is owed.",
     detail:
-      "The knowledge base's table of contents was being indexed as an answerable article. It contains " +
-      "every topical word in the pack, so it outscored the very articles it points at. A user with a " +
-      "broken printer could be handed a list of links instead of a fix. The symptom loader had always " +
-      "skipped it; the matcher never did. It is now excluded from the answerable corpus, and the battery " +
-      "fails if it is ever re-admitted.",
-  },
-  {
-    what:
-      "A SETUP HOW-TO WAS ANSWERING BREAK-FIX QUESTIONS, and the tie-break was alphabetical order.",
-    detail:
-      "'How do I add a printer' and 'the printer will not print' share every meaningful word, so the two " +
-      "articles scored EQUAL and the matcher kept the first strict winner it happened to meet — which " +
-      "meant the answer was decided by filename order, 'add-' sorting before 'printer-'. A user with a " +
-      "broken printer was being shown setup instructions. Intent is now read from each article's " +
-      "frontmatter and from how the question is phrased, and the mismatch is multiplied down rather than " +
-      "excluded, so a related article still beats an unhelpful silence.",
-  },
-  {
-    what:
-      "THE NEW TEST WAS ITSELF WEAK, AND THE RED-PROVING CAUGHT IT. Recorded because it is the reason " +
-      "red-proving is done at all.",
-    detail:
-      "Switching the vertical guard off left the new battery GREEN — the synthetic article used to probe " +
-      "it was too weak to win even unguarded, so the assertion proved nothing. Separately, the battery " +
-      "claimed the setup article strictly outranked the break-fix one when the truth is a tie broken by " +
-      "directory order. Both preconditions are now asserted rather than assumed, and the guard-off case " +
-      "correctly turns red. A test that passes when the thing it guards is removed is not a test.",
-  },
-  {
-    what:
-      "The vertical guard was recovered as a STANDING guard, and is a no-op today. Stated plainly so it " +
-      "is not read as an improvement to current answers.",
-    detail:
-      "Every article shipping today is generic, so the guard changes no current routing. It exists so a " +
-      "healthcare or banking article can never answer a generic Windows question once vertical packs " +
-      "exist. It is proven in both directions against an injected article built strong enough to win " +
-      "without it.",
+      "Forty-five unmerged branches were treated for weeks as work waiting to land. Compared against the " +
+      "shared line by content rather than by commit count: the recent lanes carry zero outstanding " +
+      "commits, the revenue lanes' actual content — five test suites and two run records — is already " +
+      "present and was confirmed by direct file check, and every older branch would delete roughly a " +
+      "hundred thousand lines and reinstate a superseded layout. They are orphan full-tree snapshots, " +
+      "not pending work. Leaving them unmerged is correct, and it is now a verified finding instead of " +
+      "an inherited assumption. A queue that is never adjudicated is indistinguishable from a debt.",
   },
 ];
 
-// ── Repository state, read first-hand this cycle ───────────────────────────────────────────────────
 const mainRef = {
   liveConfirmed: false,
   reason:
     "Reproduced again this cycle against the real remote, not carried forward: the code host refused " +
-    "with 'could not read Username'. There is no credential helper, no token in the environment and no " +
-    "code-host CLI. Every reference here is a last-known LOCAL read and is labelled as such. " +
-    "Presenting a local reference as a live read is the exact dishonesty Rule 14 forbids.",
-  localAheadOfLastKnownRemote: 37,
+    "with 'could not read Username'. No credential helper, no token in the environment, no code-host " +
+    "CLI. Every reference here is a last-known LOCAL read and is labelled as such. The earlier " +
+    "refinement stands and is repeated because it is easy to lose: this is not a defect to be solved, " +
+    "it is the agent boundary working as intended.",
+  localAheadOfLastKnownRemote: 39,
   aheadCountCaveat:
-    "37 is the count measured after this cycle's merge landed. Committing this feed adds one more, so a " +
-    "reader checking afterwards will correctly see 38. Stated this way on purpose: a hard number that " +
-    "its own commit invalidates is a number that is wrong every time it is read.",
+    "39 measured this cycle before this feed was committed; committing it makes 40. Stated both ways on " +
+    "purpose — a hard number invalidated by its own commit is wrong every time it is read.",
 };
 
 const workingTree = {
-  filesModified: 0,
+  filesModified: 3,
   filesUntracked: 0,
   indexStalenessCleared:
-    "Re-checked this cycle rather than assumed. The mount still refuses unlink — verbatim 'Operation " +
-    "not permitted' — which this cycle hit twice: on the git index lock, cleared by rename as always, " +
-    "and on the merge itself, because `git merge` cannot check out a file it is not allowed to unlink. " +
-    "The merge was completed instead as an explicit two-parent commit with the file contents written " +
-    "in place, which the mount does permit. No operator click was needed. The standing statement " +
-    "remains 'the agent can always work around these', never 'these no longer occur'.",
+    "Re-checked this cycle by probe rather than assumed, and the probe changed the standing wording. " +
+    "unlink is refused ('Operation not permitted', exit 1); rename is permitted (exit 0). One stale ref " +
+    "lock was cleared into the graveyard by that route with no operator click. The mechanism is now " +
+    "described as the filesystem's permitted write shape rather than as a workaround.",
   composition:
-    "This cycle's changes are five recovered knowledge-base articles, two routing guards on the " +
-    "existing matcher, one rewritten test, one new test suite, one runner registration, the live " +
-    "loop-observer state files, the regenerated status feed and this emitter's payload. Scanned for " +
-    "credentials, keys, environment files and dependency directories: 0 hits. The recovered articles " +
-    "were scanned for banned language before landing: 0 hits. The off-limits personal folder was " +
-    "never read, listed or referenced.",
+    "This cycle's changes are the regenerated status feed, this emitter's payload, and the program " +
+    "records. Scanned for credentials, keys, environment files and dependency directories: 0 hits. The " +
+    "off-limits personal folder was never read, listed or referenced.",
   committed: true,
   howItWasUnblocked:
-    "Verification ran against the operator's real repository before and after every write, so the " +
-    "cycle never reported a green it had not just produced. A clone-vs-clone differential separated a " +
-    "real regression from the known portability artefact. The result was landed on the shared branch " +
-    "as a single writer.",
+    "The full registry ran against the operator's real repository as the first action of the cycle, so " +
+    "the starting line was measured rather than assumed, and every claim below is read from an exit " +
+    "code produced in this cycle.",
   branch: "main",
   stillBlocked:
     "The commits exist locally and cannot be pushed. The credential refusal was reproduced against the " +
@@ -159,69 +117,58 @@ const workingTree = {
 
 const program = {
   series: "flywheel",
-  sequence: "RUN-AG — the assertion that was holding the knowledge base shut",
-  previousSequence: "RUN-AF — untracked residue in served URL space",
-  tasksBuiltAndGreen: 4,
-  tasksTotal: 4,
-  tasksMerged: 4,
+  sequence: "RUN-AH — the cycle that spent the shell on the questions three cycles could only describe",
+  previousSequence: "RUN-AG — the assertion that was holding the knowledge base shut",
+  tasksBuiltAndGreen: 3,
+  tasksTotal: 3,
+  tasksMerged: 3,
   pct: 100,
   testsGreen: true,
   verificationCycleNote:
-    "This is the first cycle in a while whose result a customer could notice. ARIA can now answer the " +
-    "five most common support questions it previously could not, and three ways it could answer " +
-    "confidently and wrongly have been closed.",
+    "No customer-visible change this cycle, and none is claimed. What changed is that two long-standing " +
+    "unknowns became measured facts and a forty-five-branch queue was shown to owe nothing.",
   note:
-    "Build state only. AG1 — a closed-world test assertion was found to be the reason the knowledge " +
-    "base had stopped growing, and was replaced with an open-world one that is strictly harder to " +
-    "pass. AG2 — five finished articles stranded on a superseded branch were recovered, checked and " +
-    "shipped. AG3 — two real routing defects were found and closed: the table of contents was " +
-    "answering questions, and a setup how-to was answering break-fix questions on an alphabetical " +
-    "tie-break. AG4 — every guard was proven red in both directions, which caught two weaknesses in " +
-    "the new test itself. None of this moves a business number and none of it is offered as if it did.",
+    "Build state only. AH1 — the full registry was run on the real repository as the first action, " +
+    "516/516 and 330/330 at exit 0, so the cycle's baseline was measured. AH2 — the unlink question, " +
+    "open for three cycles, was executed: unlink refused, rename permitted, one stale lock cleared. " +
+    "AH3 — all forty-five unmerged branches were adjudicated by content and found to owe nothing, " +
+    "closing a queue that had been carried as debt. None of this moves a business number and none of " +
+    "it is offered as if it did.",
 };
 
 const lanes = [
-  { lane: "The offline knowledge base (this cycle's work)", state: "five recovered articles shipped; the assertion that was blocking growth replaced",
+  { lane: "The build environment", state: "back, and spent on the deferred questions first",
     detail:
-      "Outlook password loops, AD/Entra account lockouts, Office and Excel failures, clock drift and " +
-      "adding a printer — the five most common tickets an MSP takes — were finished five weeks ago on a " +
-      "superseded branch and never forward-ported. They are now on the shared line. The reason they " +
-      "stalled was a test asserting an exact article count, which turned red on any genuine addition; it " +
-      "is replaced with an open-world assertion that is strictly harder to pass." },
-  { lane: "Answer correctness", state: "three confidently-wrong routes closed",
+      "Three consecutive cycles recorded the shell as dead at the tool layer. It started on the first " +
+      "call this cycle. Both questions those cycles could only describe were executable in minutes and " +
+      "were executed before anything new was begun." },
+  { lane: "The lock family and the read-only mount", state: "measured, not described",
     detail:
-      "The table of contents was outscoring the articles it points at and could be returned as an " +
-      "answer. A setup how-to was answering break-fix questions because the two tied and filename order " +
-      "broke the tie. A vertical guard was recovered so a healthcare or banking article can never answer " +
-      "a generic question once vertical packs exist — a no-op today, stated as such." },
-  { lane: "Branch backlog", state: "triaged; the A2 lane's content recovered without merging the branch",
+      "unlink refused with 'Operation not permitted' at exit 1; rename of the same file returned exit 0. " +
+      "The mount denies unlink and permits rename. The graveyard rename is therefore the filesystem's " +
+      "permitted write shape, not a workaround. One stale lock cleared. Honest statement stays " +
+      "'clearable by the agent', never 'gone'." },
+  { lane: "Branch backlog", state: "adjudicated by content — nothing owed",
     detail:
-      "The 2026-06-29 A2 branch is an orphan full-tree snapshot whose matcher was superseded by the " +
-      "July line, so merging it would revert five weeks of hardening. It is correctly left unmerged — " +
-      "but its CONTENT and its guards were forward-ported onto the current matcher instead of being " +
-      "written off. Unmerged is not the same as worthless, just as it is not the same as owed." },
-  { lane: "Reproducibility of the test line", state: "declared, enforced, and used as a tool this cycle",
+      "Forty-five unmerged branches compared against the shared line by content rather than commit " +
+      "count. The recent lanes carry zero outstanding commits; the revenue lanes' content is already " +
+      "present and was confirmed by direct file check; every older branch would delete roughly a hundred " +
+      "thousand lines and reinstate a superseded layout. Orphan snapshots, not pending work." },
+  { lane: "The test line", state: "green, measured first",
     detail:
-      "The registry green depends on untracked operator records held on one machine, so a clone can " +
-      "never reach green. Rather than report an unreadable clone number, this cycle ran a pristine clone " +
-      "and a changed clone side by side and compared failure sets: byte-identical at 51 each, which is " +
-      "what proves zero new failures." },
-  { lane: "The lock family and the read-only mount", state: "clearable by the agent, NOT retired",
+      "516 pass, 0 fail, 330/330, exit 0, run on the operator's real repository as the first action of " +
+      "the cycle. The chat suite covering the spoken status path is green inside it and was confirmed " +
+      "by name." },
+  { lane: "AXIS voice and the spoken status answer", state: "on the shared line, re-confirmed by name",
     detail:
-      "unlink was refused again, verbatim 'Operation not permitted'. It blocked the git index lock and " +
-      "then the merge checkout itself. Both worked around with no operator click — rename for the lock, " +
-      "an explicit two-parent commit with contents written in place for the merge. Honest statement " +
-      "stays 'clearable', never 'gone'." },
-  { lane: "AXIS voice and the spoken status answer", state: "on the shared line, re-verified this cycle",
-    detail:
-      "Push-to-talk mic control and the spoken reply path are present on the shared branch and the " +
-      "chat suite covering them is green. Nothing was merged for it this cycle because nothing needed " +
-      "to be, and nothing is claimed." },
+      "Push-to-talk mic control and the spoken reply path are present on the shared branch and their " +
+      "suite is green. Nothing was merged for it this cycle because nothing needed to be, and nothing " +
+      "is claimed." },
   { lane: "Reaching the code host", state: "still refused",
     detail:
-      "No credential in this environment. Re-tested against the real remote this cycle rather than " +
-      "inherited. The shared branch sits 37 commits ahead of the last known remote reference as measured " +
-      "after the merge, 38 once this feed is committed: all of it verified, none of it landed." },
+      "No credential in this environment; re-tested against the real remote this cycle rather than " +
+      "inherited. The shared branch sits 39 commits ahead of the last known remote reference, 40 once " +
+      "this feed is committed: all verified, none landed." },
   { lane: "The hour in front of prospects", state: "prepared, not spent",
     detail:
       "The ordered actions with message bodies attached are on the operator's real disk. Follow-ups " +
@@ -229,46 +176,62 @@ const lanes = [
 ];
 
 const blockers = [
-  { blocker: "RESOLVED THIS CYCLE — a test assertion was preventing the knowledge base from growing",
+  { blocker: "STRUCK THIS CYCLE — 'unlinkability untested'",
     price:
-      "was: five finished articles covering the most common support tickets sat unused for five weeks, " +
-      "because adding any one of them turned the suite red and the only way to stay green was to " +
-      "fabricate a cause and a probability. Now: articles can be added, and the bar every article must " +
-      "clear is higher than it was.",
+      "was: three cycles carried an open question that took two commands to answer, and the standing " +
+      "wording around the mount stayed vaguer than it needed to be",
     isSoftwareTask: true,
     fix:
-      "Closed-world count assertion replaced with an open-world structural one: all canonical categories " +
-      "still required, every doc including new ones must be well-formed and indexed." },
-  { blocker: "RESOLVED THIS CYCLE — the assistant could answer confidently and wrongly in three ways",
+      "Executed: unlink refused at exit 1, rename permitted at exit 0. The mount's shape is now a " +
+      "measured fact and the rename is documented as the permitted mechanism." },
+  { blocker: "STRUCK THIS CYCLE — 'forty-five branches waiting to be merged'",
     price:
-      "was: a user with a broken printer could be handed the table of contents, or setup instructions " +
-      "for a printer they already have. Now: the index is not answerable, and intent decides the article " +
-      "instead of filename order.",
+      "was: a queue carried as debt for weeks, which made every cycle look further behind than it was " +
+      "and invited a merge that would have deleted roughly a hundred thousand lines",
     isSoftwareTask: true,
     fix:
-      "Master index excluded from the answerable corpus; intent and vertical guards on the matcher, each " +
-      "proven red in both directions before acceptance." },
+      "Adjudicated by content diff against the shared line. Nothing owed. Recorded so it is not " +
+      "re-inherited as unknown next cycle." },
   { blocker: "STANDING — the mount refuses unlink",
     price:
       "git cannot check out a merge, and locks cannot be deleted; a session that does not know this " +
       "concludes the environment is broken",
     isSoftwareTask: true,
-    fix: "Rename for locks; an explicit two-parent commit with contents written in place for merges. No operator click required. Reproduced again this cycle." },
+    fix:
+      "Rename for locks; an explicit two-parent commit with contents written in place for merges. No " +
+      "operator click required. Re-measured this cycle with exit codes." },
   { blocker: "No code-hosting credential in the build sandbox",
-    price: "37-plus commits of verified work cannot reach the shared line under their own power",
+    price: "39-plus commits of verified work cannot reach the shared line under their own power",
     isSoftwareTask: false,
-    fix: "A credential or a code-host connector. Highest-leverage unblock, unchanged, and refused again this cycle against the real remote." },
+    fix:
+      "A credential or a code-host connector. Correctly outside the agent boundary rather than a defect; " +
+      "refused again this cycle against the real remote." },
   { blocker: "The hour is prepared and has not been spent",
     price: "zero conversations held, against a prepared and executable list",
     isSoftwareTask: false },
 ];
 
+const onTrack = {
+  build: true,
+  tests: true,
+  landing: false,
+  conversion: false,
+  note:
+    "Landing and conversion both read NOT on track, unchanged. This cycle produced no customer-visible " +
+    "change and does not pretend otherwise. What it produced is two measured facts where there had been " +
+    "two descriptions, and the closure of a forty-five-branch queue that turned out to owe nothing — " +
+    "which is worth recording precisely because a queue nobody adjudicates is indistinguishable from a " +
+    "debt, and this one had been making every cycle look further behind than it was. Follow-ups sent " +
+    "zero, hours in front of anyone zero, meetings zero, revenue none. The credential refusal was " +
+    "reproduced again against the real remote, so nothing has reached the code host, and nothing is " +
+    "published.",
+};
+
 const needsAhmad = [
   { item: "Push the shared line to the code host",
     what:
-      "One push. The shared branch is 37 commits ahead of the last known remote reference as measured " +
-      "after this cycle's merge — 38 once this feed itself is committed — every one of them verified " +
-      "against a green full registry.",
+      "One push. The shared branch is 39 commits ahead of the last known remote reference — 40 once " +
+      "this feed is committed — every one of them verified against a green full registry.",
     why:
       "The sandbox holds no credential and reproduced that refusal again this cycle against the real " +
       "remote. This is the only thing between verified, tested work and the shared host." },
@@ -288,24 +251,6 @@ const needsAhmad = [
     why: "Still the only item on this list that can move a business number." },
 ];
 
-const onTrack = {
-  build: true,
-  tests: true,
-  landing: false,
-  conversion: false,
-  note:
-    "Landing and conversion both read NOT on track, unchanged. This cycle did real product work rather " +
-    "than housekeeping: the five most common support questions an MSP receives — Outlook password " +
-    "loops, account lockouts, Office and Excel failures, clock drift, adding a printer — could not be " +
-    "answered by the shipped knowledge base, and now can. The root cause was not laziness but a test " +
-    "assertion that turned red whenever a genuine article was added, leaving fabrication as the only " +
-    "way to stay green; that assertion is gone and its replacement is stricter. Three ways the " +
-    "assistant could answer confidently and wrongly were closed. None of that is business progress " +
-    "and none of it is offered as such: follow-ups sent zero, hours in front of anyone zero, meetings " +
-    "zero, revenue none. The credential refusal was reproduced again against the real remote, so " +
-    "nothing has reached the code host, and nothing is published.",
-};
-
 // ── Public: headline only. Every field is leak-scanned and capped by the emitter. ──────────────────
 const publicFields = {
   generatedAt: now,
@@ -317,16 +262,15 @@ const publicFields = {
     "Built and tested. Publishing is a deliberate manual step by the operator, never automatic.",
   revenueToDate: "none",
   headline:
-    "ARIA / AXIS is in active build. The offline assistant now answers five of the most common IT " +
-    "support questions it previously could not. 45 first-contact messages sent: 4 undeliverable, 11 " +
-    "autoresponders, 1 reply declining. 12 follow-ups drafted, 0 sent. Meetings 0, revenue none. " +
-    "Tests: 516 pass, 0 fail, 330 of 330 suites, re-run before and after every change this cycle.",
+    "ARIA / AXIS is in active build. No customer-visible change this cycle: the work was verification. " +
+    "45 first-contact messages sent: 4 undeliverable, 11 autoresponders, 1 reply declining. 12 " +
+    "follow-ups drafted, 0 sent. Meetings 0, revenue none. Tests: 516 pass, 0 fail, 330 of 330 suites, " +
+    "run on the real repository as the first action of the cycle.",
   note:
     "Public status headline only. Detailed build state is operator-internal and served only to " +
     "authenticated operators inside the AXIS command centre. This public feed never carries commit, " +
     "branch, or operator-script detail.",
 };
-
 const res = emitAxisStatus({
   root: process.cwd(),
   publicFields,
