@@ -2,6 +2,7 @@
 // confirmation (never silent). Opt-outs persist to userData/delete-prefs.json.
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import {
   extOf, normalizeExt, isOptedOut, requiredSteps, stepFor,
@@ -49,10 +50,18 @@ assert.deepEqual(normalizePrefs(null), { skipTripleFor: [] });
 assert.deepEqual(normalizePrefs({ skipTripleFor: ["pdf", ".PDF", "", "docx"], junk: 1 }), { skipTripleFor: [".pdf", ".docx"] });
 
 // Round-trip the persisted file shape.
-const tmp = path.join(import.meta.dirname, `del-prefs-${process.pid}.json`);
-fs.writeFileSync(tmp, JSON.stringify(addOptOut(emptyPrefs(), ".log")));
-assert.deepEqual(normalizePrefs(JSON.parse(fs.readFileSync(tmp, "utf8"))), { skipTripleFor: [".log"] });
-fs.rmSync(tmp, { force: true });
+// The scratch file lives in the OS temp dir, NEVER inside the tracked tree: a crash between the
+// write and the cleanup used to leak `tests/del-prefs-<pid>.json` into git, and a suite that both
+// writes and unlinks inside the repo is a data-loss path even when it is green.
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "sentinel-del-prefs-"));
+const tmp = path.join(tmpDir, "delete-prefs.json");
+assert.ok(!path.resolve(tmp).startsWith(path.resolve(import.meta.dirname)), "scratch file must not be written inside the tracked tests/ directory");
+try {
+  fs.writeFileSync(tmp, JSON.stringify(addOptOut(emptyPrefs(), ".log")));
+  assert.deepEqual(normalizePrefs(JSON.parse(fs.readFileSync(tmp, "utf8"))), { skipTripleFor: [".log"] });
+} finally {
+  fs.rmSync(tmpDir, { recursive: true, force: true });
+}
 
 // main.mjs wiring: prefs file in userData, IPC get/set/clear/reset, state carries deletePrefs.
 const root = path.resolve(import.meta.dirname, "..");
