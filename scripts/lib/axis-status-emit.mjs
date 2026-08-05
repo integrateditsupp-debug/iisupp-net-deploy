@@ -23,6 +23,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { auditAndAnnotate } from './claim-evidence.mjs';
+import { requireFreshGeneratedAt, checkFeedFreshness, MAX_FEED_AGE_HOURS } from './feed-freshness.mjs';
 
 export const PUBLIC_STATUS_FILES = [
   '.well-known/axis/status.json',
@@ -77,6 +78,10 @@ export function buildPublicStatus(fields = {}) {
   }
   out.schema = out.schema || 'axis-status/1';
   if (!out.generatedAt) out.generatedAt = new Date().toISOString();
+  // RUN-AL / AL1 — the one field that says how old this answer is must be capable of being honest.
+  // A malformed or future generatedAt is refused at write time; staleness is judged at READ time
+  // (checkPublicFiles), because that is where the cycle-that-never-ran actually shows up.
+  requireFreshGeneratedAt(out.generatedAt);
   out.public = true;
   if (out.honest === undefined) out.honest = true;
   for (const k of ['status', 'milestone', 'readiness', 'revenueToDate', 'headline']) {
@@ -120,7 +125,13 @@ export function emitAxisStatus({ root, publicFields, fullDetail = null }) {
 }
 
 // Scan the public mirrors on disk. Used by `check` and the deploy-safety suite.
-export function checkPublicFiles(root) {
+//
+// Two independent failure classes are reported here, both as { file, reason, match }:
+//   • LEAK      — internal build state smuggled into a headline field (the original purpose).
+//   • FRESHNESS — RUN-AL / AL2: a served feed older than one cycle, mirrors that disagree with each
+//     other, or a stamp that could never be honest. A leak-clean feed that is four days old is
+//     still lying to every reader, including the spoken AXIS answer.
+export function checkPublicFiles(root, { now = new Date(), maxAgeHours = MAX_FEED_AGE_HOURS } = {}) {
   const repoRoot = root || process.cwd();
   const problems = [];
   for (const rel of PUBLIC_STATUS_FILES) {
@@ -128,6 +139,8 @@ export function checkPublicFiles(root) {
     try { text = fs.readFileSync(path.join(repoRoot, rel), 'utf8'); } catch { continue; }
     for (const leak of findLeaks(text)) problems.push({ file: rel, ...leak });
   }
+  const freshness = checkFeedFreshness({ root: repoRoot, files: PUBLIC_STATUS_FILES, fs, path, now, maxAgeHours });
+  for (const p of freshness.problems) problems.push({ file: p.file, reason: p.class, match: p.detail });
   return problems;
 }
 
@@ -140,11 +153,11 @@ if (isMain) {
   if (cmd === 'check') {
     const problems = checkPublicFiles(root);
     if (problems.length) {
-      console.error(`axis-status-emit check: ${problems.length} internal-detail leak(s) in PUBLIC status files:`);
+      console.error(`axis-status-emit check: ${problems.length} problem(s) in PUBLIC status files (leak and/or freshness):`);
       for (const p of problems) console.error(`  ${p.file}: ${p.reason} ("${p.match}")`);
       process.exit(1);
     }
-    console.log('axis-status-emit check: OK — public AXIS status mirrors are headline-only (no leak-class content).');
+    console.log('axis-status-emit check: OK — public AXIS status mirrors are headline-only (no leak-class content) and fresh within one cycle.');
   } else if (cmd === 'emit') {
     const fieldsPath = arg('--fields');
     if (!fieldsPath) { console.error('usage: axis-status-emit.mjs emit --fields <headline-fields.json> [--full <full-detail.json>] [--root <repo>]'); process.exit(2); }

@@ -2,12 +2,12 @@
  "_internal": true,
  "_emitRule": "INTERNAL ONLY — force-404 live, served via authenticated /api/axis-status. NEVER copy this content into .well-known: regenerate the public mirrors with scripts/lib/axis-status-emit.mjs (headline-only, leak-scanned).",
  "schema": "axis-status-full/1",
- "generatedAt": "2026-08-05T17:43:42.320Z",
+ "generatedAt": "2026-08-05T18:44:14.334Z",
  "honest": true,
  "claims": {
   "suitesGreenAfterWrites": {
-   "value": 333,
-   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "value": 334,
+   "measuredAt": "2026-08-05T18:44:14.334Z",
    "source": "exit code of the full registry run taken after every write this cycle",
    "kind": "test",
    "ageHours": 0,
@@ -15,8 +15,8 @@
    "stale": false
   },
   "testsPassedAfterWrites": {
-   "value": 544,
-   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "value": 563,
+   "measuredAt": "2026-08-05T18:44:14.334Z",
    "source": "exit code of the full registry run taken after every write this cycle",
    "kind": "test",
    "ageHours": 0,
@@ -24,8 +24,8 @@
    "stale": false
   },
   "suitesGreenBeforeAnyWrite": {
-   "value": 332,
-   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "value": 333,
+   "measuredAt": "2026-08-05T18:44:14.334Z",
    "source": "exit code of the full registry run taken as the first action of the cycle",
    "kind": "test",
    "ageHours": 0,
@@ -33,8 +33,8 @@
    "stale": false
   },
   "testsPassedBeforeAnyWrite": {
-   "value": 532,
-   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "value": 544,
+   "measuredAt": "2026-08-05T18:44:14.334Z",
    "source": "exit code of the full registry run taken as the first action of the cycle",
    "kind": "test",
    "ageHours": 0,
@@ -43,16 +43,25 @@
   },
   "newSuitesThisCycle": {
    "value": 1,
-   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "measuredAt": "2026-08-05T18:44:14.334Z",
    "source": "the difference between the two registry reads above, and the one file added to the runner",
    "kind": "count",
    "ageHours": 0,
    "maxAgeHours": 24,
    "stale": false
   },
+  "newCasesThisCycle": {
+   "value": 19,
+   "measuredAt": "2026-08-05T18:44:14.334Z",
+   "source": "the standalone run of this cycle's new suite by name, 19 pass 0 fail",
+   "kind": "count",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
   "commitsAheadOfSharedLine": {
-   "value": 43,
-   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "value": 44,
+   "measuredAt": "2026-08-05T18:44:14.334Z",
    "source": "a revision count against the last known shared reference, taken this cycle",
    "kind": "count",
    "ageHours": 0,
@@ -61,7 +70,7 @@
   },
   "pushCredentialRefused": {
    "value": true,
-   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "measuredAt": "2026-08-05T18:44:14.334Z",
    "source": "a remote probe run with prompts disabled this cycle; refusal reproduced verbatim",
    "kind": "blocker",
    "ageHours": 0,
@@ -70,7 +79,7 @@
   },
   "secondMessagesDrafted": {
    "value": 12,
-   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "measuredAt": "2026-08-05T18:44:14.334Z",
    "source": "a directory read of the send sheet on disk, non-empty, this cycle",
    "kind": "count",
    "ageHours": 0,
@@ -79,7 +88,7 @@
   },
   "secondMessagesSent": {
    "value": 0,
-   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "measuredAt": "2026-08-05T18:44:14.334Z",
    "source": "the outbound record; no send path exists in this environment and none was attempted",
    "kind": "count",
    "ageHours": 0,
@@ -88,7 +97,7 @@
   },
   "daysDraftedUnsent": {
    "value": 15,
-   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "measuredAt": "2026-08-05T18:44:14.334Z",
    "source": "the date the twelve were first drafted, differenced against today",
    "kind": "count",
    "ageHours": 0,
@@ -97,7 +106,7 @@
   },
   "meetingsHeld": {
    "value": 0,
-   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "measuredAt": "2026-08-05T18:44:14.334Z",
    "source": "the reply record",
    "kind": "count",
    "ageHours": 0,
@@ -106,7 +115,7 @@
   },
   "revenueToDate": {
    "value": "none",
-   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "measuredAt": "2026-08-05T18:44:14.334Z",
    "source": "no invoice has been issued",
    "kind": "fact",
    "ageHours": 0,
@@ -115,41 +124,50 @@
   },
   "stagedItemsAudited": {
    "value": 4,
-   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "measuredAt": "2026-08-05T18:44:14.334Z",
    "source": "the staged-action guard run over the tracked staged-actions module during this emit",
    "kind": "measurement",
    "ageHours": 0,
    "maxAgeHours": 24,
    "stale": false
+  },
+  "feedMaxAgeHours": {
+   "value": 24,
+   "measuredAt": "2026-08-05T18:44:14.334Z",
+   "source": "the freshness policy this cycle wired into the served-feed read path",
+   "kind": "fact",
+   "ageHours": 0,
+   "maxAgeHours": 8760,
+   "stale": false
   }
  },
- "claimsPolicy": "Every figure above is { value, measuredAt, source, kind }. The emitter refuses to publish a figure that is missing any of them, and labels — never deletes — a figure older than its kind allows. A deleted claim cannot be challenged; a labelled one can.",
+ "claimsPolicy": "Every figure above is { value, measuredAt, source, kind }. The emitter refuses to publish a figure that is missing any of them, and labels — never deletes — a figure older than its kind allows. As of this cycle the same standard applies to the feed as a whole: its own generatedAt is refused at write time if it could never be honest, and the served feed fails its check once it is older than one cycle, so silence and freshness are no longer indistinguishable.",
  "program": {
   "series": "flywheel",
-  "sequence": "RUN-AK — the claim that cannot outlive its evidence",
-  "previousSequence": "RUN-AJ — the first sent second message",
+  "sequence": "RUN-AL — the feed that cannot go stale silently",
+  "previousSequence": "RUN-AK — the claim that cannot outlive its evidence",
   "tasksBuiltAndGreen": 3,
   "tasksTotal": 3,
   "tasksMerged": 3,
   "pct": 100,
   "testsGreen": true,
-  "verificationCycleNote": "No customer-visible change this cycle and none is claimed. What changed is that the class of failure RUN-AI found by hand — an assertion riding for weeks with nothing behind it — is now structurally refused for every published figure, not just for staged one-click actions.",
-  "note": "AK1 — every figure in the operator-internal payload carries { value, measuredAt, source } or the emitter refuses the entire write; proven by taking a payload that emits cleanly, removing exactly one stamp field, and watching the write refuse before anything reaches disk. AK2 — a figure older than its class allows renders a stale label carrying its measured age; proven by ageing a payload artificially and asserting both that the label appears and that the claim is still present with its value untouched. AK3 — this feed regenerated from this cycle's own numbers, in place, no new emitter file. Second messages sent: still zero."
+  "verificationCycleNote": "No customer-visible change this cycle and none is claimed. What changed is that the answer AXIS speaks when an operator asks for status can no longer be several days old without saying so — the failure mode where a cycle simply does not run is now a red check rather than a silent continuation of the last good answer.",
+  "note": "AL1 — the served feed's generatedAt is refused at write time when it is absent, malformed, or in the future, and the refusal writes nothing: proven by emitting a clean payload, changing exactly that one field to an impossible value, and asserting both that the write throws by class name and that a previously good feed on disk survives untouched. AL2 — staleness is enforced on the READ path, because that is where the cycle that never ran shows up: a feed past 24h fails its check, the identical bytes go stale as the clock advances with nobody touching them, and the gate reports rather than repairs. AL2b — two served mirrors carrying different generatedAt values fail as their own class even when both are fresh. AL3 — this feed regenerated from this cycle's own numbers under that gate. Second messages sent: still zero."
  },
  "tests": {
   "beforeAnyWrite": {
-   "pass": 532,
-   "fail": 0,
-   "suites": "332/332",
-   "exit": 0
-  },
-  "afterEveryWrite": {
    "pass": 544,
    "fail": 0,
    "suites": "333/333",
    "exit": 0
   },
-  "riseExplained": "this cycle's one new suite (12 cases) and nothing else",
+  "afterEveryWrite": {
+   "pass": 563,
+   "fail": 0,
+   "suites": "334/334",
+   "exit": 0
+  },
+  "riseExplained": "this cycle's one new suite (19 cases) and nothing else",
   "namedStandalone": {
    "suite": "b4-axis-chat",
    "pass": 20,
@@ -157,8 +175,8 @@
    "exit": 0
   },
   "newThisCycle": {
-   "suite": "claim-evidence",
-   "cases": 12,
+   "suite": "feed-freshness",
+   "cases": 19,
    "redThenGreen": true
   }
  },

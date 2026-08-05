@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-08-05T16:46:13.911Z",
+  "generatedAt": "2026-08-05T18:32:07.226Z",
   "public": true,
   "note": "Counts only. Approval detail + live activity require an Aperture login (served via /api/axis-state).",
   "health": {
     "worker": "up",
-    "heartbeatAt": "2026-08-05T16:46:11.628Z",
-    "leadsQueued": 304,
+    "heartbeatAt": "2026-08-05T18:32:05.928Z",
+    "leadsQueued": 305,
     "agentsTotal": 27,
     "approvalsPending": 32,
     "classifierSelfTestPassPct": 92.65
@@ -29,7 +29,7 @@
   },
   "activitySummary": {
     "recentCount": 8,
-    "lastActivityAt": "2026-08-05T16:44:51.506Z"
+    "lastActivityAt": "2026-08-05T18:31:51.142Z"
   },
   "agentsSummary": {
     "total": 27,

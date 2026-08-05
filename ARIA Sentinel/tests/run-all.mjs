@@ -19,6 +19,13 @@ const TESTS = [
   // reading as freshly measured. Nothing is ever dropped by staleness — a vanished claim cannot be
   // challenged, an accused one can.
   "../../tests/claim-evidence.test.mjs",
+  // FEED FRESHNESS 2026-08-05 (RUN-AL / AL1+AL2) — AK closed the CLAIM, this closes the CARRIER. The
+  // served feed's generatedAt had no gate: a cycle that never ran left the previous feed sitting
+  // there being read (and spoken by AXIS) as current state, and a half-completed write could leave
+  // the two served mirrors telling different stories. Impossible stamps refuse at write time and
+  // write nothing; staleness and mirror disagreement fail at READ time — where the cycle that never
+  // ran actually shows up, because the gate has to fire when nobody is present to run anything.
+  "../../tests/feed-freshness.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   "./tab-gating-post-trial.test.mjs",
