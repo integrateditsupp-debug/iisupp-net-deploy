@@ -1,0 +1,31 @@
+{
+  "schema": "record-dependencies/1",
+  "why": [
+    "The full registry reports 504 pass / 0 fail on the operator's own machine and 453 pass / 51 fail from",
+    "a clean clone of the same commit. All 51 failures are ENOENT, not assertion failures.",
+    "This is not a code defect: .gitignore excludes /senior-director-state/ in full, and the suites listed",
+    "below read real business records from inside it on purpose - those records carry outbound and reply",
+    "history and are deliberately not tracked.",
+    "The hazard is that 'the shared line is green' silently depended on untracked local files, so a green",
+    "run could not be reproduced by anyone else and nobody could see why. This manifest makes the",
+    "dependency declared instead of hidden, and record-dependency-declared.test.mjs fails the moment a",
+    "suite starts reading untracked state without being listed here."
+  ],
+  "untrackedRoot": "senior-director-state/",
+  "suites": [
+    "e3-revenue-board.test.mjs",
+    "funnel-link-guard.test.mjs",
+    "q1-candidate-record.test.mjs",
+    "u1-outbound-truth.test.mjs",
+    "v1-warm-redirect.test.mjs",
+    "w1-first-answered-reply.test.mjs",
+    "x1-cost-of-delay.test.mjs",
+    "y1-spent-hour.test.mjs"
+  ],
+  "note": [
+    "Adding a suite here is a deliberate act with a cost: that suite cannot be verified by anyone who does",
+    "not hold the operator's records. Prefer a tracked fixture whenever the assertion does not genuinely",
+    "need the real record. Rule 14 cuts both ways - a real record is honest, and so is saying out loud",
+    "that a green result is not independently reproducible."
+  ]
+}
