@@ -22,6 +22,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { auditAndAnnotate } from './claim-evidence.mjs';
 
 export const PUBLIC_STATUS_FILES = [
   '.well-known/axis/status.json',
@@ -92,6 +93,14 @@ export function emitAxisStatus({ root, publicFields, fullDetail = null }) {
   const pub = buildPublicStatus(publicFields);
   const written = { internal: null, public: [] };
   if (fullDetail) {
+    // RUN-AK / AK1 + AK2 — a figure published in the operator-internal detail must carry its
+    // evidence ({ value, measuredAt, source }) or the emitter REFUSES the whole write, and a figure
+    // older than its class allows is LABELLED stale rather than reading as freshly measured.
+    // Nothing is dropped by staleness. The public headline never carries any of this machinery.
+    if (fullDetail.claims !== undefined) {
+      const { claims, stale } = auditAndAnnotate(fullDetail.claims);
+      fullDetail = { ...fullDetail, claims, staleClaims: stale };
+    }
     const full = Object.assign({
       _internal: true,
       _emitRule: 'INTERNAL ONLY — force-404 live, served via authenticated /api/axis-status. NEVER copy this content into .well-known: regenerate the public mirrors with scripts/lib/axis-status-emit.mjs (headline-only, leak-scanned).',

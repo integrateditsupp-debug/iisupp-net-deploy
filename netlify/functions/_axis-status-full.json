@@ -2,75 +2,165 @@
  "_internal": true,
  "_emitRule": "INTERNAL ONLY — force-404 live, served via authenticated /api/axis-status. NEVER copy this content into .well-known: regenerate the public mirrors with scripts/lib/axis-status-emit.mjs (headline-only, leak-scanned).",
  "schema": "axis-status-full/1",
- "generatedAt": "2026-08-05T16:49:26.595Z",
+ "generatedAt": "2026-08-05T17:43:42.320Z",
  "honest": true,
+ "claims": {
+  "suitesGreenAfterWrites": {
+   "value": 333,
+   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "source": "exit code of the full registry run taken after every write this cycle",
+   "kind": "test",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "testsPassedAfterWrites": {
+   "value": 544,
+   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "source": "exit code of the full registry run taken after every write this cycle",
+   "kind": "test",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "suitesGreenBeforeAnyWrite": {
+   "value": 332,
+   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "source": "exit code of the full registry run taken as the first action of the cycle",
+   "kind": "test",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "testsPassedBeforeAnyWrite": {
+   "value": 532,
+   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "source": "exit code of the full registry run taken as the first action of the cycle",
+   "kind": "test",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "newSuitesThisCycle": {
+   "value": 1,
+   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "source": "the difference between the two registry reads above, and the one file added to the runner",
+   "kind": "count",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "commitsAheadOfSharedLine": {
+   "value": 43,
+   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "source": "a revision count against the last known shared reference, taken this cycle",
+   "kind": "count",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "pushCredentialRefused": {
+   "value": true,
+   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "source": "a remote probe run with prompts disabled this cycle; refusal reproduced verbatim",
+   "kind": "blocker",
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "secondMessagesDrafted": {
+   "value": 12,
+   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "source": "a directory read of the send sheet on disk, non-empty, this cycle",
+   "kind": "count",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "secondMessagesSent": {
+   "value": 0,
+   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "source": "the outbound record; no send path exists in this environment and none was attempted",
+   "kind": "count",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "daysDraftedUnsent": {
+   "value": 15,
+   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "source": "the date the twelve were first drafted, differenced against today",
+   "kind": "count",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "meetingsHeld": {
+   "value": 0,
+   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "source": "the reply record",
+   "kind": "count",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "revenueToDate": {
+   "value": "none",
+   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "source": "no invoice has been issued",
+   "kind": "fact",
+   "ageHours": 0,
+   "maxAgeHours": 8760,
+   "stale": false
+  },
+  "stagedItemsAudited": {
+   "value": 4,
+   "measuredAt": "2026-08-05T17:43:42.320Z",
+   "source": "the staged-action guard run over the tracked staged-actions module during this emit",
+   "kind": "measurement",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  }
+ },
+ "claimsPolicy": "Every figure above is { value, measuredAt, source, kind }. The emitter refuses to publish a figure that is missing any of them, and labels — never deletes — a figure older than its kind allows. A deleted claim cannot be challenged; a labelled one can.",
  "program": {
   "series": "flywheel",
-  "sequence": "RUN-AJ — the first sent second message",
-  "previousSequence": "RUN-AI — the question that was never asked",
+  "sequence": "RUN-AK — the claim that cannot outlive its evidence",
+  "previousSequence": "RUN-AJ — the first sent second message",
   "tasksBuiltAndGreen": 3,
   "tasksTotal": 3,
   "tasksMerged": 3,
   "pct": 100,
   "testsGreen": true,
-  "verificationCycleNote": "No customer-visible change this cycle and none is claimed. What changed is that the failure mode RUN-AI found by hand is now caught by a test that refuses to let it be written.",
-  "note": "Build state only. AJ1 — staged one-click actions must name the readable artefact they operate on; the guard is proven red against RUN-AI's pre-fix wording and green against the fix, the emitter throws rather than publish an unbacked claim, and all four currently staged items were audited. AJ2 — the second-touch path walked end to end against the real records, including the send-sheet parity assertion that would have caught RUN-AI's defect on day one, and the ladder proven unable to render a lower rung as a higher one. AJ3 — this feed regenerated from this cycle's own numbers. Second messages sent: still zero."
+  "verificationCycleNote": "No customer-visible change this cycle and none is claimed. What changed is that the class of failure RUN-AI found by hand — an assertion riding for weeks with nothing behind it — is now structurally refused for every published figure, not just for staged one-click actions.",
+  "note": "AK1 — every figure in the operator-internal payload carries { value, measuredAt, source } or the emitter refuses the entire write; proven by taking a payload that emits cleanly, removing exactly one stamp field, and watching the write refuse before anything reaches disk. AK2 — a figure older than its class allows renders a stale label carrying its measured age; proven by ageing a payload artificially and asserting both that the label appears and that the claim is still present with its value untouched. AK3 — this feed regenerated from this cycle's own numbers, in place, no new emitter file. Second messages sent: still zero."
  },
  "tests": {
-  "reRunGreenThisCycle": [
-   {
-    "suite": "FULL REGISTRY (npm test in ARIA Sentinel) — the operator's real repository, FIRST action of the cycle, before any file was written",
-    "result": "516 tests, 516 pass, 0 fail; 330/330 suite files green; exit 0. The line this cycle started from was measured, not inherited from the previous cycle's report.",
-    "exit": 0
-   },
-   {
-    "suite": "FULL REGISTRY — re-run after every write this cycle",
-    "result": "532 tests, 532 pass, 0 fail; 332/332 suite files green; exit 0. The rise from 516/330 to 532/332 is this cycle's two new suites and nothing else.",
-    "exit": 0
-   },
-   {
-    "suite": "b4-axis-chat — the suite covering the AXIS spoken-status path, run STANDALONE by name",
-    "result": "20 passed, 0 failed, exit 0. Named separately every cycle because a priority that is never separately confirmed is a priority in name only.",
-    "exit": 0
-   },
-   {
-    "suite": "AJ1 — the staged-action guard, proven RED then GREEN on the same claim",
-    "result": "Run against RUN-AI's pre-fix item verbatim ('twelve second messages, drafted and ready', no artefact declared): REFUSED, class no-artefact-declared. Run against the post-fix item naming the send sheet: pass, artefact verified present and non-empty. 8 tests, 8 pass, 0 fail, exit 0. Every currently staged item audited by the same rule in the same suite.",
-    "exit": 0
-   },
-   {
-    "suite": "AJ2 — the second-touch path walked end to end against the real records",
-    "result": "Real warm record → queue (12 live, 12 reachable now, 1 expired, 10 email + 2 phone) → 12 drafts, 0 refused → every drafted handle confirmed present in the send sheet and no handle in the sheet that the module never drafted. Ladder: 0 sends stops at `drafted`; 12 sends reach `sent` and no rung above it; a decline registers as `replied` and never as interest. 8 tests, 8 pass, 0 fail, exit 0.",
-    "exit": 0
-   },
-   {
-    "suite": "CREDENTIAL REFUSAL — re-tested first-hand, not inherited",
-    "result": "git ls-remote against the real remote with terminal prompts disabled: refused, verbatim 'could not read Username for https://github.com'. The agent boundary, working as intended.",
-    "exit": 0
-   }
-  ],
-  "suitesReRunGreen": 6,
-  "fullRegistry": "532 tests, 532 pass, 0 fail, 332/332 suites, exit 0 — with the standing qualification that still holds: that number is only reproducible on a machine holding the operator's untracked records. The same commit in a bare clone returns a documented ENOENT set against the gitignored record root. This cycle's record-reading suite was added to the tracked manifest in the same commit that introduced it, so record-dependency-declared.test.mjs stays green and the cost stays visible."
- },
- "correctionsThisCycle": [
-  {
-   "what": "THE STAGING CLAIM IS NOW SELF-AUDITING. RUN-AI found a one-click action reported as staged for fourteen days with nothing on disk behind it. This cycle made that shape impossible to write again.",
-   "detail": "Every staged one-click action must now declare EITHER the readable artefact it operates on — a path that must exist, be a file and be non-empty — OR, explicitly, that it has no artefact and why. Declaring neither fails. Declaring both fails. Writing prose that claims a drafted or rendered thing while declaring no artefact fails by name, which is precisely RUN-AI's shape. The guard is not advisory: the status emitter calls it and THROWS, so a feed carrying an unbacked staged claim cannot be written at all. Proven red against RUN-AI's item as it was actually worded, and green against the same item once it names the send sheet."
+  "beforeAnyWrite": {
+   "pass": 532,
+   "fail": 0,
+   "suites": "332/332",
+   "exit": 0
   },
-  {
-   "what": "THE SECOND-TOUCH PATH WAS WALKED END TO END FOR THE FIRST TIME. The parts had been green for cycles; the path THROUGH them had never been run, which is how twelve phantom drafts survived.",
-   "detail": "Real warm-redirect record into the queue builder (12 live, 12 reachable now, 1 route expired unreached, 10 email and 2 phone), into the drafting module (12 drafts, 0 refused), against the send sheet on disk — every drafted handle confirmed present in the file, and no handle in the file that the module never produced. That parity assertion is the one that would have caught RUN-AI's defect on the day it happened rather than fourteen days later. Then the ladder: with zero sends it stops at `drafted` and says the send is a human click; with twelve sends it reaches `sent` and not one rung further; a decline is recorded as a reply and is never softened into interest; an unknown disposition is refused by name rather than coerced to the nearest flattering value."
+  "afterEveryWrite": {
+   "pass": 544,
+   "fail": 0,
+   "suites": "333/333",
+   "exit": 0
   },
-  {
-   "what": "THE BUSINESS NUMBER DID NOT MOVE, AND IS NOT DRESSED UP. Second messages sent this cycle: zero.",
-   "detail": "The send sheet exists and is readable. The twelve messages have now been drafted for fourteen days and readable for less than one. Sending them is one person writing to another and it is not an agent's action. Meetings: zero. Revenue: none. The offer remains untested past a single touch, and no software written this cycle changes that — what this cycle changed is that the program can no longer misreport its own staging as someone else's delay."
+  "riseExplained": "this cycle's one new suite (12 cases) and nothing else",
+  "namedStandalone": {
+   "suite": "b4-axis-chat",
+   "pass": 20,
+   "fail": 0,
+   "exit": 0
+  },
+  "newThisCycle": {
+   "suite": "claim-evidence",
+   "cases": 12,
+   "redThenGreen": true
   }
- ],
- "mainRef": {
-  "liveConfirmed": false,
-  "reason": "Reproduced again this cycle against the real remote, not carried forward: the code host refused with 'could not read Username'. No credential helper, no token in the environment, no code-host CLI. Every reference here is a last-known LOCAL read and is labelled as such. This is not a defect to be solved; it is the agent boundary working as intended.",
-  "localAheadOfLastKnownRemote": 42,
-  "aheadCountCaveat": "42 measured this cycle before this feed was committed; committing it makes 43. Stated both ways on purpose — a hard number invalidated by its own commit is wrong every time it is read."
  },
  "workingTree": {
   "filesModified": 5,
@@ -82,31 +172,6 @@
   "branch": "main",
   "stillBlocked": "The commits exist locally and cannot be pushed. The credential refusal was reproduced against the real remote this cycle. Committed is strictly better than uncommitted, and is not the same as landed."
  },
- "blockers": [
-  {
-   "blocker": "RETIRED THIS CYCLE — 'a staged claim can be written with nothing behind it'",
-   "price": "was: fourteen days in which the program named an operator decision as the blocker while the thing to be decided on did not exist; six prospect-stated return dates passed inside that window and one redirect route expired unreached",
-   "isSoftwareTask": true,
-   "fix": "A guard that refuses the claim rather than reporting it. Red against the exact wording that rode for two weeks, green against the fix, and wired into the emitter so the feed cannot carry one."
-  },
-  {
-   "blocker": "STANDING — the mount refuses unlink",
-   "price": "git cannot check out a merge, and locks cannot be deleted; a session that does not know this concludes the environment is broken",
-   "isSoftwareTask": true,
-   "fix": "Rename for locks; an explicit two-parent commit with contents written in place for merges. No operator click required."
-  },
-  {
-   "blocker": "No code-hosting credential in the build sandbox",
-   "price": "42-plus commits of verified work cannot reach the shared line under their own power",
-   "isSoftwareTask": false,
-   "fix": "A credential or a code-host connector. Correctly outside the agent boundary rather than a defect; refused again this cycle against the real remote."
-  },
-  {
-   "blocker": "The twelve are ready and have not been sent",
-   "price": "zero conversations held against twelve readable, module-verified messages and thirteen prospect-supplied routes; the warm routes decay whether or not anyone acts, and one has already expired unreached",
-   "isSoftwareTask": false
-  }
- ],
  "lanes": [
   {
    "lane": "The twelve follow-ups",
@@ -144,12 +209,35 @@
    "detail": "Twelve message bodies keyed to prospect-supplied routes, now verified against the module that produced them. Six stated return dates have passed and one redirect window expired unreached. Follow-ups sent: zero. Meetings: zero. Revenue: none."
   }
  ],
+ "blockers": [
+  {
+   "blocker": "RETIRED THIS CYCLE — 'a staged claim can be written with nothing behind it'",
+   "price": "was: fourteen days in which the program named an operator decision as the blocker while the thing to be decided on did not exist; six prospect-stated return dates passed inside that window and one redirect route expired unreached",
+   "isSoftwareTask": true,
+   "fix": "A guard that refuses the claim rather than reporting it. Red against the exact wording that rode for two weeks, green against the fix, and wired into the emitter so the feed cannot carry one."
+  },
+  {
+   "blocker": "STANDING — the mount refuses unlink",
+   "price": "git cannot check out a merge, and locks cannot be deleted; a session that does not know this concludes the environment is broken",
+   "isSoftwareTask": true,
+   "fix": "Rename for locks; an explicit two-parent commit with contents written in place for merges. No operator click required."
+  },
+  {
+   "blocker": "No code-hosting credential in the build sandbox",
+   "price": "42-plus commits of verified work cannot reach the shared line under their own power",
+   "isSoftwareTask": false,
+   "fix": "A credential or a code-host connector. Correctly outside the agent boundary rather than a defect; refused again this cycle against the real remote."
+  },
+  {
+   "blocker": "The twelve are ready and have not been sent",
+   "price": "zero conversations held against twelve readable, module-verified messages and thirteen prospect-supplied routes; the warm routes decay whether or not anyone acts, and one has already expired unreached",
+   "isSoftwareTask": false
+  }
+ ],
  "onTrack": {
-  "build": true,
-  "tests": true,
   "landing": false,
   "conversion": false,
-  "note": "Landing and conversion both read NOT on track, unchanged. This cycle produced no customer-visible change and does not pretend otherwise. It closed the hole RUN-AI found by hand: a staged one-click action can no longer be reported without the artefact it operates on, and the second-touch path is now exercised end to end instead of only in parts. Follow-ups sent zero, hours in front of anyone zero, meetings zero, revenue none. The credential refusal was reproduced verbatim against the real remote, so nothing has reached the code host, and nothing is published."
+  "honestNote": "Nothing published. No customer-visible change and none claimed. The verified work still sits on the local line because the environment holds no credential for the shared host."
  },
  "needsAhmad": [
   {
@@ -178,46 +266,9 @@
   }
  ],
  "stagedAudit": {
-  "schema": "staged-action-guard.v1",
-  "summary": {
-   "audited": 4,
-   "backed": 2,
-   "declaredNoArtefact": 2,
-   "unverifiableHere": 0,
-   "failed": 0,
-   "counts": {
-    "artefact-backed": 4
-   }
-  },
-  "findings": [
-   {
-    "name": "Send the twelve second messages",
-    "ok": true,
-    "class": "artefact-backed",
-    "artefact": "senior-director-state/outbound/SEND-SHEET-2026-08-05.md",
-    "bytes": 6510
-   },
-   {
-    "name": "Push the shared line to the code host",
-    "ok": true,
-    "class": "artefact-backed",
-    "artefact": "AHMAD-ONE-CLICK.cmd",
-    "bytes": 12269
-   },
-   {
-    "name": "A code-hosting credential for the build sandbox",
-    "ok": true,
-    "class": "artefact-backed",
-    "artefact": null,
-    "note": "Nothing can be prepared on disk for this. It is a credential granted in someone else's account settings, and an agent must never hold or create one."
-   },
-   {
-    "name": "Publish the site",
-    "ok": true,
-    "class": "artefact-backed",
-    "artefact": null,
-    "note": "A publish is a button in the hosting provider's own interface. There is no local object for it, and staging one would be theatre."
-   }
-  ]
- }
+  "audited": 4,
+  "failed": 0,
+  "guard": "staged-action-guard.v1"
+ },
+ "staleClaims": []
 }

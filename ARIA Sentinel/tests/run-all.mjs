@@ -13,6 +13,12 @@ const TESTS = [
   // the readable artefact it operates on. Written after fourteen days of "12 follow-ups drafted,
   // awaiting one click" when the bodies existed nowhere a person could open. Red against that state.
   "../../tests/staged-action-guard.test.mjs",
+  // CLAIM EVIDENCE 2026-08-05 (RUN-AK / AK1+AK2) — generalises AJ1 past staged actions: every figure
+  // published in the operator-internal payload carries { value, measuredAt, source } or the emitter
+  // refuses the write, and a figure older than its class allows is LABELLED stale rather than
+  // reading as freshly measured. Nothing is ever dropped by staleness — a vanished claim cannot be
+  // challenged, an accused one can.
+  "../../tests/claim-evidence.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   "./tab-gating-post-trial.test.mjs",
