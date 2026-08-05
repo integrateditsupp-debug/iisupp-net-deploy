@@ -1,9 +1,9 @@
 {
-  "ran_at": "2026-08-05T03:14:16.733Z",
-  "total": 186,
+  "ran_at": "2026-08-05T15:15:56.642Z",
+  "total": 187,
   "pass": 26,
   "fail": 4,
-  "skip": 156,
+  "skip": 157,
   "results": [
     {
       "fn": "aperture-audit",
@@ -776,6 +776,11 @@
     },
     {
       "fn": "axis-visit-log",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "bid-radar-cron",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
     },

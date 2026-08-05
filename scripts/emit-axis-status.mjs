@@ -24,10 +24,12 @@ const tests = {
       result: "516 tests, 516 pass, 0 fail; 330/330 suite files loaded and green; exit 0. Run before anything was written, so the line this cycle started from was measured rather than inherited from the previous cycle's report.", exit: 0 },
     { suite: "b4-axis-chat — the suite covering the AXIS spoken-status path",
       result: "Green inside the full registry run. Named separately because the standing priority names it, and a priority that is never separately confirmed is a priority in name only.", exit: 0 },
-    { suite: "UNLINK PERMISSION PROBE — the open question three cycles old, finally executed instead of described",
-      result: "rm on a stale ref lock: refused, verbatim 'Operation not permitted', exit 1. mv of the SAME file into the lock graveyard: exit 0. The mount denies unlink and permits rename. That is a permission shape, not a broken environment, and the rename path is therefore the correct permanent mechanism rather than a workaround kept around out of habit.", exit: 0 },
-    { suite: "BRANCH BACKLOG ADJUDICATION — every unmerged branch content-diffed against the shared line",
-      result: "45 unmerged branches examined by two-dot content diff, not by commit count. Nine of the recent lanes carry zero outstanding commits. The three named revenue lanes' content — five test suites and two run records — was confirmed already present on the shared line by direct file check. Every remaining branch would DELETE between 98,000 and 119,000 lines and reinstate a superseded directory layout.", exit: 0 },
+    { suite: "THE FOLLOW-UP STAGING CLAIM — audited first-hand instead of repeated",
+      result: "The claim '12 follow-ups drafted, awaiting one click' has been carried for fourteen days. Searched the whole repository for the message bodies: not on disk in any readable artefact. The twelve messages existed only as the return value of draftQueue(), a function no cycle had ever run. The click reported as staged was un-stageable, because there was nothing to act on.", exit: 0 },
+    { suite: "SECOND-MESSAGE RENDER — the module executed against the real warm-redirect record",
+      result: "draftQueue() run against warm-redirect-record-2026-07-29.json: 12 drafts returned, 0 refused, queue counts 12 live / 12 reachable now / 1 expired, split 10 email + 2 phone. Bodies rendered verbatim to senior-director-state/outbound/SEND-SHEET-2026-08-05.md. The messages now exist as a file a person can open.", exit: 0 },
+    { suite: "CREDENTIAL REFUSAL — re-tested first-hand this cycle, not inherited",
+      result: "git push --dry-run and git ls-remote against the real remote, terminal prompts disabled: both refused with verbatim 'could not read Username for https://github.com'. Confirmed as the agent boundary, restated rather than carried.", exit: 0 },
   ],
   suitesReRunGreen: 4,
   fullRegistry:
@@ -42,13 +44,32 @@ const tests = {
 const correctionsThisCycle = [
   {
     what:
-      "THE SHELL CAME BACK. Three consecutive cycles reported the build environment as dead at the tool " +
-      "layer and did paper work instead. This cycle it started on the first call.",
+      "THE ONE-CLICK THAT WAS NEVER STAGED. For fourteen days every cycle reported '12 follow-ups " +
+      "drafted, 0 sent' and named the send as the operator's click. That was not true, and this cycle " +
+      "checked it.",
     detail:
-      "The consequence matters more than the fact: the two questions those cycles could only describe " +
-      "were both executable in minutes once a shell existed. Both were answered below. The lesson is " +
-      "recorded rather than the relief — when the environment returns, the FIRST move is to spend it on " +
-      "the questions that were deferred for lack of it, before anything new is started.",
+      "The twelve messages had never been written to anything a person could open. They existed only as " +
+      "the return value of draftQueue() — a function no cycle had run. So the program was reporting a " +
+      "click as staged and waiting on a human, when in fact there was no artefact for that human to act " +
+      "on. This is the same failure shape the previous cycle found in the branch queue and the lock " +
+      "question: a claim that rode for weeks because nobody executed the one command that would test " +
+      "it. Corrected by rendering the module's real output verbatim to a send sheet on disk. The honest " +
+      "reading of the last fortnight is that the funnel did not stop because a human declined to act; " +
+      "it stopped because the work was never actually handed to them.",
+  },
+  {
+    what:
+      "THE CENTRAL ASSUMPTION, ADJUDICATED. 123 cycles of building, with follow-ups sent zero and " +
+      "revenue none, and no cycle had asked whether the software was what was missing. Asked this cycle.",
+    detail:
+      "From the records, not from opinion. 45 first contacts produced 4 undeliverable (8.9%), 11 " +
+      "autoresponders (24.4%) and 1 personal reply (2.2%, a decline that asked to be kept on file) — a " +
+      "first-touch result inside the ordinary range, on a list that was 91% deliverable. So the list is " +
+      "not the failure. Whether the OFFER lands cannot be judged from this record at all: most replies " +
+      "to a cold sequence arrive on the second through fourth touch, and touch two has never been sent " +
+      "once. The verdict is (c) — the sequence stops because the second message never goes out — and " +
+      "the further finding is that the offer is not failing, it is UNTESTED, and will stay untested " +
+      "until twelve messages are sent. No amount of further software changes that number.",
   },
   {
     what:
@@ -85,9 +106,9 @@ const mainRef = {
     "CLI. Every reference here is a last-known LOCAL read and is labelled as such. The earlier " +
     "refinement stands and is repeated because it is easy to lose: this is not a defect to be solved, " +
     "it is the agent boundary working as intended.",
-  localAheadOfLastKnownRemote: 39,
+  localAheadOfLastKnownRemote: 41,
   aheadCountCaveat:
-    "39 measured this cycle before this feed was committed; committing it makes 40. Stated both ways on " +
+    "41 measured this cycle before this feed was committed; committing it makes 42. Stated both ways on " +
     "purpose — a hard number invalidated by its own commit is wrong every time it is read.",
 };
 
@@ -117,31 +138,42 @@ const workingTree = {
 
 const program = {
   series: "flywheel",
-  sequence: "RUN-AH — the cycle that spent the shell on the questions three cycles could only describe",
-  previousSequence: "RUN-AG — the assertion that was holding the knowledge base shut",
+  sequence: "RUN-AI — the question that was never asked",
+  previousSequence: "RUN-AH — the cycle that spent the shell on the questions three cycles could only describe",
   tasksBuiltAndGreen: 3,
   tasksTotal: 3,
   tasksMerged: 3,
   pct: 100,
   testsGreen: true,
   verificationCycleNote:
-    "No customer-visible change this cycle, and none is claimed. What changed is that two long-standing " +
-    "unknowns became measured facts and a forty-five-branch queue was shown to owe nothing.",
+    "No customer-visible change this cycle, and none is claimed. What changed is that the single item " +
+    "blocking every business number for a fortnight turned out to be a staging failure inside this " +
+    "program, not an un-taken decision outside it — and it was fixed.",
   note:
-    "Build state only. AH1 — the full registry was run on the real repository as the first action, " +
-    "516/516 and 330/330 at exit 0, so the cycle's baseline was measured. AH2 — the unlink question, " +
-    "open for three cycles, was executed: unlink refused, rename permitted, one stale lock cleared. " +
-    "AH3 — all forty-five unmerged branches were adjudicated by content and found to owe nothing, " +
-    "closing a queue that had been carried as debt. None of this moves a business number and none of " +
-    "it is offered as if it did.",
+    "Build state only. AI1 — the central assumption was adjudicated from the records: the list is not " +
+    "the failure (91% deliverable), the offer is not failing but UNTESTED (touch two has never been " +
+    "sent), and the funnel stops because the second message never goes out. AI2 — the inherited " +
+    "blocker list was re-tested first-hand: the credential refusal was reproduced verbatim against the " +
+    "real remote and restated, and the 'follow-ups awaiting one click' item was STRUCK as false — the " +
+    "drafts were never rendered anywhere a person could read them. AI3 — twelve message bodies " +
+    "rendered verbatim from the module to a send sheet on disk, and this feed regenerated from this " +
+    "cycle's own numbers. The business numbers are unchanged and are not dressed up.",
 };
 
 const lanes = [
-  { lane: "The build environment", state: "back, and spent on the deferred questions first",
+  { lane: "The twelve follow-ups", state: "rendered to disk — the click is now real for the first time",
     detail:
-      "Three consecutive cycles recorded the shell as dead at the tool layer. It started on the first " +
-      "call this cycle. Both questions those cycles could only describe were executable in minutes and " +
-      "were executed before anything new was begun." },
+      "Reported as staged and awaiting one click for fourteen days. Audited this cycle: the bodies were " +
+      "not on disk in any readable form, only inside a function no cycle had run. The module was " +
+      "executed against the real warm-redirect record — 12 drafts, 0 refused, 10 email and 2 phone — " +
+      "and the bodies written verbatim to a send sheet. Sent this cycle: still zero. But the reason is " +
+      "now an un-taken human action rather than a missing artefact." },
+  { lane: "Is the software what is missing?", state: "asked and answered — no",
+    detail:
+      "45 first contacts, 91% deliverable, one personal reply at 2.2% — an ordinary first-touch result. " +
+      "The second touch, where a cold sequence normally produces most of its replies, has never been " +
+      "sent. So the offer is not failing; it is untested, and stays untested until twelve messages go " +
+      "out. Further software cannot move that number." },
   { lane: "The lock family and the read-only mount", state: "measured, not described",
     detail:
       "unlink refused with 'Operation not permitted' at exit 1; rename of the same file returned exit 0. " +
@@ -167,15 +199,28 @@ const lanes = [
   { lane: "Reaching the code host", state: "still refused",
     detail:
       "No credential in this environment; re-tested against the real remote this cycle rather than " +
-      "inherited. The shared branch sits 39 commits ahead of the last known remote reference, 40 once " +
-      "this feed is committed: all verified, none landed." },
-  { lane: "The hour in front of prospects", state: "prepared, not spent",
+      "inherited — 'could not read Username', verbatim, from both push --dry-run and ls-remote. The " +
+      "shared branch sits 41 commits ahead of the last known remote reference, 42 once this feed is " +
+      "committed: all verified, none landed." },
+  { lane: "The hour in front of prospects", state: "prepared for real now, still not spent",
     detail:
-      "The ordered actions with message bodies attached are on the operator's real disk. Follow-ups " +
-      "sent this cycle: zero. Meetings: zero. Revenue: none." },
+      "Twelve message bodies, keyed to prospect-supplied routes, on the operator's real disk in a file " +
+      "that can be opened and pasted. Six vacation return dates have all now passed and one redirect " +
+      "window already expired unreached. Follow-ups sent this cycle: zero. Meetings: zero. Revenue: " +
+      "none." },
 ];
 
 const blockers = [
+  { blocker: "STRUCK THIS CYCLE — 'twelve follow-ups drafted, awaiting one click'",
+    price:
+      "was: fourteen days in which the program reported a click as staged and waiting on a human, while " +
+      "the thing to be clicked did not exist in any form that human could open. Six prospect-stated " +
+      "return dates passed inside that window and one redirect route expired unreached",
+    isSoftwareTask: true,
+    fix:
+      "Struck as false. The module was executed against the real record and the twelve bodies written " +
+      "verbatim to a send sheet on disk. What remains is a genuine human action, which is a different " +
+      "and far smaller thing than what was being reported." },
   { blocker: "STRUCK THIS CYCLE — 'unlinkability untested'",
     price:
       "was: three cycles carried an open question that took two commands to answer, and the standing " +
@@ -206,8 +251,10 @@ const blockers = [
     fix:
       "A credential or a code-host connector. Correctly outside the agent boundary rather than a defect; " +
       "refused again this cycle against the real remote." },
-  { blocker: "The hour is prepared and has not been spent",
-    price: "zero conversations held, against a prepared and executable list",
+  { blocker: "The hour is prepared — genuinely, now — and has not been spent",
+    price:
+      "zero conversations held against twelve readable messages and thirteen prospect-supplied routes; " +
+      "the warm routes decay whether or not anyone acts, and one has already expired unreached",
     isSoftwareTask: false },
 ];
 
@@ -218,13 +265,13 @@ const onTrack = {
   conversion: false,
   note:
     "Landing and conversion both read NOT on track, unchanged. This cycle produced no customer-visible " +
-    "change and does not pretend otherwise. What it produced is two measured facts where there had been " +
-    "two descriptions, and the closure of a forty-five-branch queue that turned out to owe nothing — " +
-    "which is worth recording precisely because a queue nobody adjudicates is indistinguishable from a " +
-    "debt, and this one had been making every cycle look further behind than it was. Follow-ups sent " +
-    "zero, hours in front of anyone zero, meetings zero, revenue none. The credential refusal was " +
-    "reproduced again against the real remote, so nothing has reached the code host, and nothing is " +
-    "published.",
+    "change and does not pretend otherwise. What it produced is the answer to the question the program " +
+    "had never asked in 123 cycles — whether the software was what was missing — and the answer is no: " +
+    "the offer has never been tested past a single touch, and the second touch was blocked by this " +
+    "program failing to render its own drafts to disk, not by anyone declining to send them. That is " +
+    "an uncomfortable finding and it is recorded as-is. Follow-ups sent zero, hours in front of anyone " +
+    "zero, meetings zero, revenue none. The credential refusal was reproduced verbatim against the real " +
+    "remote, so nothing has reached the code host, and nothing is published.",
 };
 
 const needsAhmad = [
@@ -246,9 +293,14 @@ const needsAhmad = [
       "Landing a branch never deploys. This stays a separate human decision — and it is the click that " +
       "starts the visit log recording. Until it happens, the passive signal reads not-yet-collecting " +
       "rather than zero." },
-  { item: "Spend the hour",
-    what: "The prepared ordered actions with message bodies attached, executable cold.",
-    why: "Still the only item on this list that can move a business number." },
+  { item: "Send the twelve second messages",
+    what:
+      "senior-director-state/outbound/SEND-SHEET-2026-08-05.md — ten emails and two call scripts, full " +
+      "bodies, keyed by handle to the routes in your own mail. Roughly twenty minutes of copy and paste.",
+    why:
+      "The only item on this list that can move a business number, and now the only one that is " +
+      "genuinely ready. Until these go out the offer stays untested — 123 cycles of build have never " +
+      "produced a second touch." },
 ];
 
 // ── Public: headline only. Every field is leak-scanned and capped by the emitter. ──────────────────
@@ -262,10 +314,10 @@ const publicFields = {
     "Built and tested. Publishing is a deliberate manual step by the operator, never automatic.",
   revenueToDate: "none",
   headline:
-    "ARIA / AXIS is in active build. No customer-visible change this cycle: the work was verification. " +
-    "45 first-contact messages sent: 4 undeliverable, 11 autoresponders, 1 reply declining. 12 " +
-    "follow-ups drafted, 0 sent. Meetings 0, revenue none. Tests: 516 pass, 0 fail, 330 of 330 suites, " +
-    "run on the real repository as the first action of the cycle.",
+    "ARIA / AXIS is in active build. 45 first-contact messages sent: 4 undeliverable, 11 " +
+    "autoresponders, 1 reply declining. 12 follow-ups were reported for two weeks as drafted and " +
+    "awaiting one click; this cycle found they had never been written down, and wrote them. Still 0 " +
+    "sent, meetings 0, revenue none. Tests: 516 pass, 0 fail, 330 of 330 suites.",
   note:
     "Public status headline only. Detailed build state is operator-internal and served only to " +
     "authenticated operators inside the AXIS command centre. This public feed never carries commit, " +
