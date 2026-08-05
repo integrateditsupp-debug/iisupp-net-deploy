@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-08-05T02:36:27.835Z",
+  "generatedAt": "2026-08-05T06:20:39.008Z",
   "health": {
     "worker": "up",
-    "heartbeatAt": "2026-08-05T02:36:26.569Z",
+    "heartbeatAt": "2026-08-05T06:20:27.949Z",
     "leadsQueued": 302,
     "agentsTotal": 27,
     "approvalsPending": 32,
@@ -21,6 +21,30 @@
   },
   "recentActivity": [
     {
+      "at": "2026-08-05T03:21:55.074Z",
+      "agent": "Opportunity Prep Packets Agent",
+      "text": "Bid, portal, and job preparation packets are refreshed to the CEO final-action point.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-08-05T03:21:52.313Z",
+      "agent": "Senior Director Worker",
+      "text": "Director heartbeat, lead scans, mission brief cadence, and operating board orchestration completed for this tick.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-08-05T02:47:24.159Z",
+      "agent": "Interaction Avoidance Agent",
+      "text": "Prep-agent routing and one-minute CEO final-action lanes are refreshed.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-08-05T02:44:51.172Z",
+      "agent": "Opportunity Quality Gate Agent",
+      "text": "Opportunity quality gate refreshed the revenue queue and parked weak-fit noise.",
+      "status": "ready"
+    },
+    {
       "at": "2026-08-05T02:31:51.095Z",
       "agent": "CEO Action Digest Agent",
       "text": "CEO-only approval, send, publish, and register decisions are compressed into a short digest.",
@@ -36,30 +60,6 @@
       "at": "2026-08-05T02:28:59.226Z",
       "agent": "Opportunity Research Agent",
       "text": "Public opportunity sources were rescanned and merged into the opportunity engine.",
-      "status": "ready"
-    },
-    {
-      "at": "2026-08-05T02:21:55.275Z",
-      "agent": "Opportunity Prep Packets Agent",
-      "text": "Bid, portal, and job preparation packets are refreshed to the CEO final-action point.",
-      "status": "ready"
-    },
-    {
-      "at": "2026-08-05T02:21:21.395Z",
-      "agent": "Senior Director Worker",
-      "text": "Director heartbeat, lead scans, mission brief cadence, and operating board orchestration completed for this tick.",
-      "status": "ready"
-    },
-    {
-      "at": "2026-08-05T01:47:24.127Z",
-      "agent": "Interaction Avoidance Agent",
-      "text": "Prep-agent routing and one-minute CEO final-action lanes are refreshed.",
-      "status": "ready"
-    },
-    {
-      "at": "2026-08-05T01:44:51.207Z",
-      "agent": "Opportunity Quality Gate Agent",
-      "text": "Opportunity quality gate refreshed the revenue queue and parked weak-fit noise.",
       "status": "ready"
     },
     {
