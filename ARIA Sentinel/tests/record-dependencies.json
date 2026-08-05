@@ -13,6 +13,7 @@
   ],
   "untrackedRoot": "senior-director-state/",
   "suites": [
+    "aj2-second-touch-path.test.mjs",
     "e3-revenue-board.test.mjs",
     "funnel-link-guard.test.mjs",
     "q1-candidate-record.test.mjs",

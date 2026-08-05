@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-08-05T15:45:41.729Z",
+  "generatedAt": "2026-08-05T16:46:13.911Z",
   "health": {
     "worker": "up",
-    "heartbeatAt": "2026-08-05T15:45:39.232Z",
+    "heartbeatAt": "2026-08-05T16:46:11.628Z",
     "leadsQueued": 304,
     "agentsTotal": 27,
     "approvalsPending": 32,
@@ -21,43 +21,43 @@
   },
   "recentActivity": [
     {
-      "at": "2026-08-05T15:44:51.409Z",
+      "at": "2026-08-05T16:44:51.506Z",
       "agent": "Opportunity Quality Gate Agent",
       "text": "Opportunity quality gate refreshed the revenue queue and parked weak-fit noise.",
       "status": "ready"
     },
     {
-      "at": "2026-08-05T15:31:51.112Z",
+      "at": "2026-08-05T16:31:51.198Z",
       "agent": "CEO Action Digest Agent",
       "text": "CEO-only approval, send, publish, and register decisions are compressed into a short digest.",
       "status": "ready"
     },
     {
-      "at": "2026-08-05T15:30:34.267Z",
+      "at": "2026-08-05T16:31:06.491Z",
       "agent": "Senior Director Worker",
       "text": "Director heartbeat, lead scans, mission brief cadence, and operating board orchestration completed for this tick.",
       "status": "ready"
     },
     {
-      "at": "2026-08-05T15:28:58.269Z",
+      "at": "2026-08-05T16:28:58.118Z",
       "agent": "Opportunity Review Agent",
       "text": "Opportunity records were enriched with summaries, drafts, reminders, and required-document scaffolding.",
       "status": "ready"
     },
     {
-      "at": "2026-08-05T15:28:58.187Z",
+      "at": "2026-08-05T16:28:58.023Z",
       "agent": "Opportunity Research Agent",
       "text": "Public opportunity sources were rescanned and merged into the opportunity engine.",
       "status": "ready"
     },
     {
-      "at": "2026-08-05T15:21:55.152Z",
+      "at": "2026-08-05T16:21:55.340Z",
       "agent": "Opportunity Prep Packets Agent",
       "text": "Bid, portal, and job preparation packets are refreshed to the CEO final-action point.",
       "status": "ready"
     },
     {
-      "at": "2026-08-05T14:47:24.349Z",
+      "at": "2026-08-05T15:47:24.279Z",
       "agent": "Interaction Avoidance Agent",
       "text": "Prep-agent routing and one-minute CEO final-action lanes are refreshed.",
       "status": "ready"

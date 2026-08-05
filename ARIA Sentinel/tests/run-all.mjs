@@ -9,6 +9,10 @@ const TESTS = [
   // SERVED-FEED HYGIENE 2026-08-05 — the AXIS feed directories are live URL space; nothing untracked
   // (emitter scratch, dotfile drafts) may sit beside the feed. Written after finding two such files.
   "../../tests/served-feed-dir-clean.test.mjs",
+  // STAGED-ACTION GUARD 2026-08-05 (RUN-AJ / AJ1) — a one-click action reported as staged must name
+  // the readable artefact it operates on. Written after fourteen days of "12 follow-ups drafted,
+  // awaiting one click" when the bodies existed nowhere a person could open. Red against that state.
+  "../../tests/staged-action-guard.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   "./tab-gating-post-trial.test.mjs",
@@ -428,7 +432,11 @@ const TESTS = [
   // through a 41-send week: the counters read an internal log that outbound was never written into.
   "./u1-outbound-truth.test.mjs",           // RUN-U U1/U2 — mail-sourced counters; 0 vs never vs unverified; understatement named as a Rule 14 failure
   "./v1-warm-redirect.test.mjs",            // RUN-V V1/V2/V3 — ranked warm-redirect queue (expiry first-class), refusable second message (no transport), reply-rate as the sixth number
-  "./w1-first-answered-reply.test.mjs",     // RUN-W W1/W2/W3 — reply capture (`no reply yet` != 0 != unverified), one-way outcome ladder, surfaces that cannot claim an unevidenced rung
+  // RUN-AJ / AJ2 2026-08-05 — the second-touch path walked END TO END against the real records:
+  // record → queue → drafts → send sheet parity → ladder drafted→sent and no further → decline is a
+  // reply and is never softened. The parts were green for cycles; the path through them never ran.
+  "./aj2-second-touch-path.test.mjs",
+  "./w1-first-answered-reply.test.mjs",   // RUN-W W1/W2/W3 — reply capture (`no reply yet` != 0 != unverified), one-way outcome ladder, surfaces that cannot claim an unevidenced rung
   "./x1-cost-of-delay.test.mjs",            // RUN-X X1/X2/X3 — rising cost of delay (software progress cannot lower it), the hour executable cold, two named blockers byte-identical on every surface
   "./a2-routing-battery.test.mjs",           // A2 (recovered) — 6-question routing battery against the REAL KB pack: 0 confidently-wrong, >=4/6 clean hits, out-of-scope abstains, master index never answers, vertical + intent guards each proven in both directions
   "./z1-second-hour.test.mjs",              // RUN-Z Z1/Z2/Z3 — waiting interval computed from real dates (can say "nothing today"), silence held without characterising intent or moving any ladder, and a repeat that is one-way across all hours and bounded at REPEAT_MAX with retirement stated
