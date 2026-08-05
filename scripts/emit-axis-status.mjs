@@ -330,7 +330,7 @@ const workingTree = {
     "permits `mv`, so all 40 stale locks — including `.git/index.lock` and `.git/refs/heads/main.lock` — " +
     "were renamed into a dated graveyard directory. Ordinary git index and ref writes work here now. No " +
     "workaround is required going forward and none is claimed to still be necessary.",
-  branch: "cc/run-ac-passive-signal-2026-07-29",
+  branch: "cc/unify-2026-08-05",
   stillBlocked:
     "The commit exists locally and cannot be pushed. `git ls-remote origin main` refused again on the " +
     "read path this cycle. Committed is strictly better than uncommitted, and is not the same as landed.",
@@ -374,13 +374,21 @@ const lanes = [
       "an index-only `git restore --staged`, taking the tree from 183 deleted / 181 untracked / 24 " +
       "modified to 25 modified / 7 untracked. The full registry was re-run afterwards and returned the " +
       "identical 504 pass / 0 fail, proving no content moved. The operator repair script is withdrawn." },
-  { lane: "Shared-line reconciliation (found this cycle)", state: "local main and origin/main have DIVERGED — needs a decision",
+  { lane: "Shared-line reconciliation (RESOLVED this cycle)", state: "the two histories are one line again — a push is now a fast-forward",
     detail:
-      "Visible only once refs/heads/main.lock was cleared. Neither reference is an ancestor of the " +
-      "other: local main carries merged RUN-F/G/H/I work that never reached the code host, origin/main " +
-      "carries health-check-v3 and the bid documents. A plain push of main would be rejected. Named as " +
-      "an operator decision rather than resolved silently, because it is a choice about which work is " +
-      "canonical." },
+      "The previous cycle found local main and origin/main diverged — neither an ancestor of the other — " +
+      "and handed the choice out as an operator decision. It was never a choice between them. Both were " +
+      "merged into one line, additively: origin/main's IT Health Check v3, bid packs, legal fine-print " +
+      "strip and downloads gating, plus local main's merged RUN-F/G/H/I work. Four content conflicts, " +
+      "all resolved by keeping BOTH sides (Rule 15) except one factual correction — the homepage now " +
+      "says 11 questions, matching the newer health check. `git merge-base --is-ancestor` confirms both " +
+      "old tips are ancestors of the unified tip: nothing was dropped, and the push that would have " +
+      "been rejected as non-fast-forward now fast-forwards." },
+  { lane: "Concurrent agent work (folded in this cycle)", state: "no branch stranded",
+    detail:
+      "A second agent committed a classifier loop run onto the working branch mid-cycle. Rather than " +
+      "contest the checkout, its commit was fetched and merged into the unified line before " +
+      "certification, so the 504-test result covers its work too." },
   { lane: "The shared line's own test state", state: "measured RED this cycle; the one-commit fix verified against it",
     detail:
       "origin/main and origin/main+7b2b90b9 were each extracted to a scratch directory and the full " +
@@ -508,15 +516,23 @@ const needsAhmad = [
       "Recorded as withdrawn rather than quietly dropped, so the change is visible to anyone who read " +
       "the previous list. An operator list that shrinks because the agent did the work is the point; an " +
       "operator list that shrinks silently is not trustworthy." },
-  { item: "DECIDE which history is the shared line (new, and it replaces the plain 'push main' step)",
+  { item: "RESOLVED — the history decision is gone. Nothing to decide.",
     what:
-      "Local main and origin/main have diverged — neither contains the other. Local main carries merged " +
-      "RUN-F/G/H/I work; origin/main carries the IT Health Check v3 commit and the bid-response " +
-      "documents. Say which one wins, or say 'merge both', and the agent executes it.",
+      "The previous list asked which of the two diverged histories should win. Neither had to lose: both " +
+      "were merged into one line this cycle, conflicts resolved by keeping both sides, and the full " +
+      "504-test registry re-run green on the result. A push of that line is now a fast-forward.",
     why:
-      "This is a judgement about which body of work is canonical, not a mechanical step, so it is not " +
-      "taken silently. It is also a correction: the previous list implied a push of the shared line was " +
-      "ready, and it would have been rejected as non-fast-forward." },
+      "Recorded as resolved rather than quietly dropped. An item leaves this list because the agent did " +
+      "the work, and the reader gets to see that it did." },
+  { item: "WITHDRAWN — AHMAD-PUSH-RUN111-RUN-I.cmd. Deleted from git; do not run it.",
+    what:
+      "It existed to force the diverged main across. The merge above makes it unnecessary, and the " +
+      "deploy-safety denylist turned red the moment the two histories met, because a tracked .cmd at " +
+      "the repository root ships to the live publish directory.",
+    why:
+      "Untracking it turned that suite green again. This is the security half of the merge and it is " +
+      "named, not buried: the merge itself introduced the exposure, and a standing test caught it in " +
+      "the same cycle." },
   { item: "Run AHMAD-ONE-CLICK.cmd",
     what:
       "ONE script at the repo root, replacing the four separate ones this list used to carry. It pushes " +
@@ -550,15 +566,16 @@ const onTrack = {
   landing: false,
   conversion: false,
   note:
-    "Landing and conversion both read NOT on track, unchanged. This cycle removed two blockers that had " +
-    "been carried as environmental facts and were not: 40 stale git locks that six cycles had only ever " +
-    "tested with `rm`, and the 183-file stale index the last list asked the operator to repair by hand. " +
-    "Both are gone, done by the agent, verified by re-running the full registry afterwards. It also " +
-    "surfaced a real new blocker — local main and origin/main have diverged — which corrects a click " +
-    "this feed previously presented as ready. That is honest engineering progress and it is worth " +
-    "having. It is not progress on the business, and is not offered as such: follow-ups sent: zero. " +
-    "Hours in front of anyone: zero. Revenue: none. Nothing reached the shared line, because the " +
-    "credential refusal is real and reproduced again this cycle.",
+    "Landing and conversion both read NOT on track, unchanged. What this cycle removed was the blocker " +
+    "the previous cycle had just created: local main and origin/main were diverged, and that was handed " +
+    "out as a decision for the operator. It was not a decision — it was a merge, and the agent did it. " +
+    "Both histories are one line now, both old tips are ancestors of it, four conflicts were resolved " +
+    "by keeping both sides, and the full registry runs 504 pass / 0 fail on the result. The merge also " +
+    "tripped the deploy-safety denylist by bringing a tracked .cmd into the publish directory; that was " +
+    "fixed in the same cycle. A push of the shared line is now a fast-forward rather than a rejection. " +
+    "None of that is business progress and none of it is offered as such: follow-ups sent zero, hours " +
+    "in front of anyone zero, meetings zero, revenue none. The credential refusal is real and was " +
+    "reproduced again this cycle, so nothing has reached the code host.",
 };
 
 // ── Public: headline only. Every field is leak-scanned and capped by the emitter. ──────────────────
@@ -574,8 +591,8 @@ const publicFields = {
   headline:
     "ARIA / AXIS is in active build. 45 first-contact messages sent: 4 undeliverable, 11 autoresponders, " +
     "1 reply declining. 12 follow-ups drafted, 0 sent. Meetings 0, revenue none. Visit log built, not " +
-    "collecting until the site is published. Tests: 504 pass, 0 fail, 326/326 suites. The shared line is " +
-    "one suite short of green; the fix is verified and waits on a decision, not on more software.",
+    "collecting until the site is published. Tests: 504 pass, 0 fail, 326 of 326 suites, on a single " +
+    "reconciled build line. Delivery waits on operator actions, not on further software.",
   note:
     "Public status headline only. Detailed build state is operator-internal and served only to " +
     "authenticated operators inside the AXIS command centre. This public feed never carries commit, " +
