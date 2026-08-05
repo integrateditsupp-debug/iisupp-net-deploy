@@ -127,3 +127,9 @@ outputs/
 **/.fuse_hidden*
 /tests/.residual-tmp.js
 .bid-sweep-seen.json
+
+# Quarantine for residue moved OUT of served URL space (cycle 121, 2026-08-05).
+# The mount refuses unlink, so leaked scratch files can only be renamed away, not deleted.
+# `/tmp/*` is force-404'd in netlify.toml, so this is the safe destination — but nothing in it
+# should ever become tracked content. No tracked file has ever lived here.
+/tmp/

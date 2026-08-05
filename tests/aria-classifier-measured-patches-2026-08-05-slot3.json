@@ -1,0 +1,61 @@
+{
+ "id": "V3-2026-08-05-slot3",
+ "base": "CANDIDATE-2026-08-05",
+ "edits": [
+  {
+   "id": "hw-lastresort",
+   "find": "  if (/\\b(quote|saying|wisdom|inspiration|motivat)/.test(q)) return 'quote';",
+   "replace": "  if (/\\b(quote|saying|wisdom|inspiration|motivat)/.test(q)) return 'quote';\n  if (/\\b((keyboard|mouse|monitor|screen|display|scanner|smart ?card reader|card reader|trackpad|stylus|battery|power supply|hard drive|ssd|motherboard|display cable|hdmi cable|vga cable|power cable|barcode gun|label printer head) (is )?(broken|busted|cracked|dead|smashed|damaged|faulty|failing|failed|snapped|fried|not working|wont work|won.?t work|stopped working|no longer works)|(broken|cracked|dead|faulty|damaged|smashed) (keyboard|mouse|monitor|screen|display|scanner|card reader|battery|laptop|desktop|workstation|terminal|tablet)|hardware (issue|problem|fault|failure|replacement|swap|rma))\\b/.test(q)) return 'kb:hardware';"
+  },
+  {
+   "id": "onb-general",
+   "find": "|set ?up (a |the )?new (user|account|staff))/.test(q)) return 'kb:onboarding';",
+   "replace": "|set ?up (a |the )?new (user|account|staff))/.test(q)) return 'kb:onboarding';\n  if (/\\bnew [a-z ]{2,30}?(needs?|requires?|require|wants?) [a-z ]{0,25}(access|login|log ?in|account|credentials|setup|set up|profile|mailbox|workstation)\\b/.test(q)) return 'kb:onboarding';\n  if (/\\b(onboard(ing)? (a |the )?new|deactivat(e|ing) (the )?(user|account|staff|employee)|need to deactivate|disable (the )?(user|account) for)\\b/.test(q)) return 'kb:onboarding';"
+  },
+  {
+   "id": "net-infra",
+   "find": "  if (/(wifi|wi-fi|wireless|network|internet|limited connectivity",
+   "replace": "  if (/\\b(network switch|core switch|switch offline|switch is (down|offline|dead)|patch panel|network port (dead|down|not working)|ethernet port (dead|down)|(clinical|corporate|internal|store|plant|site|guest) network (down|dropping|drops|unstable|flapping|degraded|slow)|network (dropping|flapping|degraded|unstable)|uplink down|fiber (cut|down)|vlan|subnet|dns|dhcp|gateway)\\b/.test(q)) return 'kb:networking';\n  if (/(wifi|wfi|wi-fi|wireless|network|internet|limited connectivity"
+  },
+  {
+   "id": "wifi-typo",
+   "find": "|wifi adapter|wifi card|wireless adapter)/.test(q)) return 'wifi';",
+   "replace": "|wifi adapter|wifi card|wireless adapter|wfi)/.test(q)) return 'wifi';"
+  },
+  {
+   "id": "prn-typo",
+   "find": "  if (/print/.test(q)) return 'printer';",
+   "replace": "  if (/print|prnter|priner|pinter|printr/.test(q)) return 'printer';"
+  },
+  {
+   "id": "mfa-tokens",
+   "find": "|six[- ]digit code|6[- ]digit code|verification not)/.test(q)) return 'kb:mfa';",
+   "replace": "|six[- ]digit code|6[- ]digit code|verification not|duo (mobile|push|prompt|app)|rsa (token|securid)|securid|yubikey|hard token|soft token|(security )?token (broken|not working|expired|dead|lost))/.test(q)) return 'kb:mfa';"
+  },
+  {
+   "id": "teams-typo",
+   "find": "  if (/(teams|team'?s not loading|teamz|",
+   "replace": "  if (/(teams|team'?s not loading|teamz|(microsoft |ms )?(team'?s|teem|teems|teamz|tems) (not|wont|won.?t|keeps|crashed|crashing|crash|is)|"
+  },
+  {
+   "id": "net-apos",
+   "find": "|cant resolve hostname|can'?t resolve hostname|",
+   "replace": "|can.?t resolve hostname|can t resolve hostname|can;t resolve hostname|can.?t reach internal|can t reach internal|can;t reach internal|"
+  },
+  {
+   "id": "antimalware",
+   "find": "  if (/(scam|phishing|",
+   "replace": "  if (/(antimalware service executable|(windows )?defender (high|using) (cpu|memory)|msmpeng)/.test(q)) return 'kb:performance';\n  if (/(scam|phishing|"
+  },
+  {
+   "id": "od-pwprompt",
+   "find": "  if (/(onedrive|sync(ing)? files?|",
+   "replace": "  if (/onedrive.*(prompting|asking) for (a )?password|onedrive.*password prompt/.test(q)) return 'kb:onedrive';\n  if (/(onedrive|sync(ing)? files?|"
+  },
+  {
+   "id": "res-emoji",
+   "find": "  const t = String(q || '').toLowerCase().trim();\n  if (!t) return false;",
+   "replace": "  let t = String(q || '').toLowerCase().trim();\n  if (!t) return false;\n  {\n    const stripped = t.replace(/(\\s*(:\\)|:-\\)|:d|:-d|;\\)|;-\\)|=\\)|\\^_\\^|<3|[\\u{1F300}-\\u{1FAFF}\\u{2190}-\\u{21FF}\\u{2600}-\\u{27BF}\\u{FE0F}\\u{2B00}-\\u{2BFF}])+[\\s!.]*)+$/gu, '').trim();\n    if (stripped) t = stripped;\n  }"
+  }
+ ]
+}
