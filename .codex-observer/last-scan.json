@@ -1,42 +1,72 @@
 {
-  "scan_ts": "2026-08-04T14:05:00Z",
+  "scan_ts": "2026-08-05T13:05:00Z",
   "window": "2d",
-  "head": "abbc4c15",
-  "branch": "cc/run-ac-passive-signal-2026-07-29",
-  "commits_in_window": 2,
+  "head": "ec9141b9",
+  "branch": "main",
+  "commits_in_window": 19,
   "codex_commits_in_window": 0,
-  "commits_since_prior_scan": 2,
+  "prior_scan": "2026-08-04T14:05:00Z",
   "prior_head": "abbc4c15",
-  "prior_scan": "2026-08-04T05:55:00Z",
-  "last_commit_ts": "2026-08-04T02:40:24-04:00",
-  "window_commits": [
-    "c4cb9f80 | Cowork | chore(axis): regenerate the public status feed from real sources this cycle | 3 files, +35/-208",
-    "79bfe34f | Claude Cowork (CC) | [cc] STAGE 2 - free to try, paid tier for heavy use, hard ceiling on our own spend (branch-only) | 6 files, +551/-0"
-  ],
-  "new_dirs": [],
-  "new_authors": ["Cowork", "Claude Cowork (CC)", "Fable 5 (Stage-3 ARE lane)", "Claude Cowork"],
-  "new_verbs": [],
-  "authors_last_14d": {
-    "CC Stage2": 31,
+  "commits_since_prior_scan": 19,
+  "authors_in_window": {
+    "Cowork": 17,
+    "CC Stage2": 1,
+    "Claude Cowork": 1,
+    "cowork-loop": 1
+  },
+  "authors_last_30d": {
+    "CC Stage2": 30,
+    "Cowork": 26,
     "Ahmad Wasee": 16,
-    "Forge": 8,
-    "Cowork Flywheel": 5,
-    "Claude Cowork (CC)": 4,
-    "Cowork": 2,
-    "Fable 5 (Stage-3 ARE lane)": 1,
+    "integrateditsupp-debug": 15,
+    "Cowork Flywheel": 14,
+    "Forge": 11,
+    "cowork-loop": 1,
     "Cowork (Claude)": 1,
     "Claude Cowork": 1,
     "AXIS Worker": 1
   },
-  "top_verbs_14d": {"axis": 18, "stage": 8, "fix": 8, "feat": 6, "merge": 3},
+  "top_dirs_in_window": {
+    "tests": 14,
+    "netlify": 13,
+    "ARIA Sentinel": 9,
+    "scripts": 8,
+    "public": 8,
+    ".well-known": 8,
+    "docs": 6,
+    "assets": 4,
+    "loops": 2,
+    ".codex-observer": 2
+  },
+  "top_verbs_in_window": {
+    "feed": 4,
+    "unify": 3,
+    "merge": 3,
+    "flywheel": 3,
+    "security": 2,
+    "[ops]": 2,
+    "tests": 1,
+    "[autonomous]": 1
+  },
+  "new_dirs": [
+    ".well-known",
+    "_incoming-patches"
+  ],
+  "new_verbs": [
+    "unify",
+    "flywheel",
+    "security",
+    "feed"
+  ],
+  "unpushed_on_main": 35,
+  "main_behind_origin": 0,
   "index_lock_present": true,
-  "index_lock_note": "0-byte, mtime 2026-07-28T15:38:00 -0400 = 6d22h old. IDENTICAL mtime across FIVE consecutive scans. Definitively stale. Sandbox cannot unlink (mount perms). Did not block read-only git log. Other agents are now routing around it and committing successfully.",
-  "working_tree_dirty_paths": 383,
-  "unpushed_on_main": 14,
-  "main_behind_origin": 49,
-  "commits_by_day_last_12d": {"2026-07-28": 25, "2026-07-29": 19, "2026-08-04": 2},
-  "codex_dormant_days": 33,
-  "delta": "THAW. Repo broke a 6-day silence with 2 commits on 2026-08-04, both routing around the still-stale lock. NEITHER is Codex. (1) 79bfe34f 'Claude Cowork (CC)' STAGE 2 vision metering - NEW SUBSYSTEM: netlify/functions/lib/vision-allowance.mjs (200 lines) + aria-vision-diagnose.mjs handler + two test files (220 lines of tests for 305 lines of source, best test ratio in the observed window) + renderer vendor shim in ARIA Sentinel. This is the first commit in the observed history that ships a hard SPEND CEILING on our own inference cost, directly serving the $20-70/mo cap. Explicitly marked branch-only. (2) c4cb9f80 'Cowork' AXIS status feed regen - net -173 lines, collapsing _axis-status-full.json from generated bloat to real-source output. No new directories (first clean-dir scan since _incoming-patches appeared). Verb profile unchanged. STRUCTURAL FACTS UNCHANGED AND WORSENING BY AGE: HEAD still on unpushed upstream-less cc/run-ac-passive-signal-2026-07-29; main still 14 ahead AND 49 behind origin/main; dirty tree 382 -> 383. Codex proper 0 commits, 33 days dormant since 2026-07-02.",
+  "index_lock_note": "0-byte, mtime 2026-08-05T09:01:23-0400 = ~2 MINUTES old at scan time. NOT the 07-28 stale lock. A live agent is committing right now. Lock state changed: previously identical mtime across 5 scans (definitively stale); now fresh. Treat as ACTIVE, not stale. No git index ops attempted.",
+  "codex_dormant_days": 34,
+  "codex_last_commit": "2026-07-02",
+  "observer_script_present": false,
+  "observer_script_note": "observe-codex.mjs path (local_442f5d4e outputs dir) is not mounted in this session and the script remains absent. Scan reconstructed from read-only `git log` per the standing fallback.",
+  "delta": "STRUCTURAL RESOLUTION. The main/origin-main divergence that this observer has flagged for a week is GONE: main was 14 ahead AND 49 behind at the prior scan, is now 35 ahead / 0 BEHIND. HEAD also moved off the upstream-less cc/run-ac-passive-signal-2026-07-29 branch back onto main. Three 'unify:' merges (adaf49cb, 7a35ddc3, 973baaf0) did the reconciliation and explicitly folded in the concurrent classifier loop run (15774c0a) so no agent's work was stranded. 19 commits in the 2d window vs 2 in the prior window - a 10x burst, all Cowork-family, ZERO Codex. Dominant new theme is served-URL-space hygiene: four commits untracking artefacts that were sitting in the publish directory (dead-sandbox symlinks 388bbbdd, stale emitter temp files bd90b018, two untracked artefacts 51d09021, AHMAD-PUSH cmd 3581162f) plus an allowlist class-guard proven red both ways. Second theme is reproducibility honesty - 6acd8549 stops reporting a green that depends on untracked operator records, and ec9141b9 stops publishing a count its own commit invalidates. New verb family 'unify'/'flywheel'/'security'/'feed' displaced the prior 'axis'/'stage'/'fix' profile. New dirs touched: .well-known (8 touches - allowlist/served-space work) and _incoming-patches. Codex proper: still 0 commits, now 34 days dormant since 2026-07-02. The loop is effectively observing a Cowork-only stream, as flagged 2026-07-15.",
   "read_only": true,
-  "notes": "observe-codex.mjs still absent (path resolves to an unmounted prior-session outputs dir); scan reconstructed from git log. No index writes, no commits, no pushes, no fetch. HARD-RULE files untouched."
+  "spend_usd": 0
 }
