@@ -640,3 +640,800 @@
     X-Frame-Options = "SAMEORIGIN"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
     Content-Security-Policy = "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https: wss:; frame-src 'self' https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; upgrade-insecure-requests"
+
+# >>> BEGIN generated root-serving denies (scripts/gen-root-serving-denies.mjs)
+# Generated. Do not hand-edit — run scripts/gen-root-serving-denies.mjs.
+# publish = "." makes every root path a URL. These rules refuse the operator-internal ones.
+# Nothing here is deleted or moved (Rule 15); the files simply stop being public.
+# 138 file rules, 17 directory rules.
+[[redirects]]
+  from = "/.codex-observer/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AI OS and Command center Design Request/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AI%20OS%20and%20Command%20center%20Design%20Request/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/Project AEGIS - Governance/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/Project%20AEGIS%20-%20Governance/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/USA Outreach/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/USA%20Outreach/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_branch-src/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_incoming-patches/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_shipped-src/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_staged-cc-runs/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_vault-backups/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_vault-backups-L2/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_vault-backups-mirror/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/loops/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/odysseus/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/sdk/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/src/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/tmp/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/tools/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/.vault-bak-staging.tar.gz"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AGENT_EXECUTION_NOTES.md"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-DEPLOY-MOTION-TO-MAIN.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-DEPLOY-UPGRADES.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-FIX-AND-PUSH.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-MERGE-BATCH.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-MERGE-COMPANION.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-MERGE-RUN-E.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-MERGE-SERVING-LOCKDOWN.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-MERGE-WALKTHROUGH.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-ONE-CLICK.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PAUSE-SENIOR-DIRECTOR.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-ARIA-BRAIN-V2.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-AXIS-VOICE.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-BACKLOG-ONTO-AXIS.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-DROPLET-DOCS.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-E1-E2-E3.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-E1-E2.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-E1-TTFV-R2.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-E1-TTFV.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-FAB-REORDER.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-MAIN-GREEN-CONCIERGE.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-MOTION-LAYER.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN-AC-BRANCH.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN107-RUN-F.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN108-RUN-F-F3.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN109-RUN-G.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN110-RUN-H.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN111-RUN-I.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN112-RUN-J.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN114-RUN-K.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN119-RUN-L.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN120-RUN-L.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN121-RUN-M.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN123-RUN-N-VERIFIED.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN124-RUN-O-RECONCILED.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN125-RUN-P.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN65.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN66.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN67.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN68.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN69.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN71.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN95-sentinel-features.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-SENTINEL-FEATURES-RUN97.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-STAGE2-ALLOWANCE-2026-08-04.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-STAGE3-ARE-BUNDLE-2026-07-28.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-STAGE3-ESCALATION-PACKET.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-STAGE3-F4-CORRELATION.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-STAGE3-REBASE-2026-07-28.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-STAGE3-S2-F5-F2.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-STAGE3-S2-SLICE3.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-STAGE3-S2.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-STAGE3-S3-AUTONOMY.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-STAGE3-S4-STATE-STORE.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-WHATSAPP-BOTTOM.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-WHATSAPP.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-REBASE-AND-PUSH.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-REPAIR-AND-PUSH-AXIS-FEED.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-REPAIR-GIT-INDEX.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-REPAIR-INDEX.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-RESUME-SENIOR-DIRECTOR.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-SHIP-AXIS-DIRECTOR-2.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-SHIP-AXIS-DIRECTOR.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-START-HERE.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-STASH-REBASE-PUSH.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/BUILD-INSTALL-BRANCH.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/BUILD-INSTALL-SENTINEL-LOCAL.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/CC-BRIEF.md"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/CLAUDE.md"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/COMMIT-AND-PUSH-ALL.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/COPY-SHIPPED-SRC.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/COWORK-FORUMS-LOOK-REVERT.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/COWORK-LOCAL-BUILD-AND-RUN.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/COWORK-PUBLISH-FF.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/COWORK-PUBLISH-TO-MAIN.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/COWORK-PUBLISH-WT.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/COWORK-SHIP-NOW.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/FETCH-CC-BRANCHES.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/FINISH-PUSH.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/FORGE-AXIS-DIRECTOR-REDESIGN.md"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/KILL-AND-OPEN-INSTALLER.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/KILL-INSTALL-LAUNCH.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/KILL-RELAUNCH-SENTINEL.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/LOOP-RUN-CC.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/MERGE-TO-MAIN-20260710.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/MERGE-TO-MAIN-V2.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/MORNING-BRIEFING-2026-05-26.md"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/NEEDS-AHMAD.md"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/OTA-RELEASE-FROM-MAIN.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/PUSH-AFTERNOON-KBs.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/PUSH-BIT-NATIVE-BATCH.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/PUSH-EVENING-BATCH.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/PUSH-MORE-KBs.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/PUSH-MORNING-FIX.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/PUSH-MORNING-KBs.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/PUSH-NOW.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/REPAIR-INDEX-AND-COMMIT.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/REPUSH-CLEAN.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/REPUSH-CLEAN2.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/RUN-BRANCH-UNPACKED.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/RUN-FIND-FABLE.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/RUN-FIX-MARKERS.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/RUN-GMAIL-AUTH.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/RUN-SET-MODELS-OPUS.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/RUN-SET-SCHEDULES-OPUS.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/SAFE-PUSH-RUN-E.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/SET-SCHEDULES-OPUS.ps1"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_PUSH-EVERYTHING.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_branch-build-log.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_build-log.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_cowork-commit-push-log.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_cowork-fable-probe-log.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_cowork-fix-markers-log.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_cowork-local-build-log.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_cowork-merge-log.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_cowork-models-log.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_flywheel_probe.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_forums-look-log.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_loop-run-log.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_lv_prior.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_probe_wt_142"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_publish-ff-log.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_publish-to-main-log.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_publish-wt-log.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_ship-now-log.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_wtest_2"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/aegis-push-wrapper.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/aegis-push.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/aegis-push.ps1"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/clean-git.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/cowork-write-test.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/deno.lock"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/dev-sliced-r2-verify.cjs"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/dev-web-chat-capture.cjs"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/install-openclaw.sh"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/netlify.toml"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/openapi.yaml"
+  to = "/404.html"
+  status = 404
+  force = true
+# <<< END generated root-serving denies

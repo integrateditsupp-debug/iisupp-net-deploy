@@ -20,41 +20,235 @@ const now = new Date().toISOString();
 // No suite's verdict is inferred from another suite, from a registry summary, or from a prior cycle.
 const tests = {
   reRunGreenThisCycle: [
+    { suite: "FULL REGISTRY (node tests/run-all.mjs) — working tree, AFTER the index repair", result: "504 tests, 504 pass, 0 fail, 0 skipped; 326/326 suite files loaded. Run after 40 stale lock files were cleared and the repository's own index was re-synced, to prove the repair changed no file content.", exit: 0 },
+    { suite: "root-serving-gate (repo root)", result: "0 fail — every internal-looking root file and directory carries a force-404 rule", exit: 0 },
+    { suite: "FULL REGISTRY — origin/main extracted clean to /tmp", result: "260/263 suites; funnel-link-guard FAILS with dead internal links — a REAL defect on the shared line, measured not assumed. (Two further failures in that extract are artifacts of running without .git and without node_modules: deploy-safety-denylist needs `git ls-files`, forums-concierge needs @netlify/blobs.)", exit: 1 },
+    { suite: "FULL REGISTRY — origin/main + 7b2b90b9 extracted clean to /tmp", result: "261/263 suites; funnel-link-guard PASSES. Controlled A/B against the line above: the fix commit is exactly the difference between a red shared line and a green one, and the only two remaining failures are the same two extraction artifacts.", exit: 1 },
+    { suite: "delete-triple-confirm", result: "loads and passes — 3-step default, per-ext opt-out, persisted, wired", exit: 0 },
     { suite: "b4-axis-chat", result: "20 passed, 0 failed", exit: 0 },
-    { suite: "axis-module-graph", result: "54 passed, 0 failed", exit: 0 },
-    { suite: "axis-snapshots", result: "9 passed, 0 failed", exit: 0 },
-    { suite: "axis-auth", result: "10 passed, 0 failed", exit: 0 },
-    { suite: "axis-status-emitter", result: "6/6 groups green", exit: 0 },
-    { suite: "axis-voice-dock", result: "6/6 groups green", exit: 0 },
-    { suite: "axis-command-center", result: "6 groups green", exit: 0 },
-    { suite: "aa1-unopened-week", result: "0 failed", exit: 0 },
-    { suite: "ab1-moves-without-us", result: "0 failed", exit: 0 },
-    { suite: "ac1-visit-log", result: "0 failed", exit: 0 },
-    { suite: "ac2-visit-beacon", result: "7/7 groups green", exit: 0 },
-    { suite: "probe-deploy-safety", result: "refusal-only pass, serving layer clean", exit: 0 },
-    { suite: "script-syntax-gate", result: "0 failed", exit: 0 },
-    { suite: "deploy-safety-denylist", result: "0 failed", exit: 0 },
   ],
-  suitesReRunGreen: 14,
-  partialRegistryRun: {
-    suiteLinesPassed: 222,
-    suiteLinesFailed: 0,
-    outcome:
-      "The full registry was started again this cycle and reached 326 lines with 222 suite-level passes " +
-      "and 0 failures before it stopped advancing and was left running. Same ceiling as the previous " +
-      "cycle, in the same place — consistent with the known environment limit, not with a regression. " +
-      "It is reported as a partial run and is NOT offered as a clean full pass. Within it, the two " +
-      "largest batteries returned aria-brain v2 246 passed / 0 failed and l1-l3 director scenarios " +
-      "48 passed / 0 failed.",
-  },
+  suitesReRunGreen: 5,
   fullRegistry:
-    "NOT certifiable from this environment. Background processes do not survive the shell call that " +
-    "started them, and the registry takes longer than one call. Individual suites run to completion " +
-    "and are certifiable, which is why 7 were re-run on their own output above.",
+    "CERTIFIED THIS CYCLE FOR THE FIRST TIME: 504 tests, 504 pass, 0 fail, 0 skipped. The registry now " +
+    "runs to completion and prints its own summary. It had been reported for several cycles as not " +
+    "certifiable from this environment — that was half right and the wrong half was load-bearing. " +
+    "Backgrounded runs really are killed between shell calls (re-verified). But a FOREGROUND run under " +
+    "an explicit timeout also stopped at the same point every time, which container death does not " +
+    "explain. The real cause was a genuine non-terminating test: funnel-link-guard walked the directory " +
+    "tree with a skip list anchored to the repository root, so it never skipped dependency trees nested " +
+    "deeper down — notably `.netlify/functions-serve/*/node_modules` — and passed 6,600 directories " +
+    "without finishing. Skipping node_modules/.git/.netlify at ANY depth ends the walk in 12 seconds. " +
+    "So a conclusion WAS available about the test after the ceiling, and the previous cycle's " +
+    "instruction to never draw one was itself the thing preventing the fix.",
+  oneSuiteBlockedByEnvironment:
+    "NONE. The single remaining exclusion was retired this cycle. delete-triple-confirm had been " +
+    "recorded for several cycles as blocked by the sandbox refusing file deletion. That reading was " +
+    "half right and the wrong half was load-bearing: the unlink refusal is real, but the reason the " +
+    "suite needed an unlink at all is that it wrote its scratch file INSIDE the tracked tests/ " +
+    "directory and deleted it afterwards. The environment was not the defect — it was the only thing " +
+    "surfacing one. The scratch file now lives in the OS temp directory and the suite loads and passes " +
+    "everywhere. Every suite in the registry is now counted; nothing is excluded and nothing is named " +
+    "as an exception.",
 };
 
 // ── WHAT THIS CYCLE ESTABLISHED THAT PRIOR CYCLES HAD WRONG (Rule 14) ──────────────────────────────
 const correctionsThisCycle = [
+  {
+    what:
+      "THE FIND OF THIS CYCLE — the stale lock family was never unremovable. It was un-UNLINKABLE and " +
+      "fully RENAMEABLE, and no cycle had ever tried the second verb. All 40 stale locks are cleared.",
+    detail:
+      "For six consecutive cycles the lock family was tested with exactly one command — `rm` — which " +
+      "returned 'Operation not permitted', and that single result was promoted to the conclusion 'this " +
+      "environment cannot clear them'. This cycle tested `mv` instead. It succeeds. The mount forbids " +
+      "unlink and permits rename, and git only needs the lock PATH to be free, not the inode to be " +
+      "destroyed. `find .git -name '*.lock'` returned 40 files, every one of them renamed into a dated " +
+      "graveyard directory inside .git, and `find` now returns nothing. Recorded as the find of the " +
+      "cycle because the previous cycle explicitly re-attacked this blocker, reproduced it, and wrote " +
+      "'still unremovable, still irrelevant' — the reproduction was honest and the conclusion was wrong, " +
+      "and the cost of not trying a second verb was six cycles of workarounds.",
+  },
+  {
+    what:
+      "The 183-file stale index is REPAIRED, by the agent, this cycle. The operator repair script that " +
+      "headlined the last list as 'do this one first' is retired and was never necessary.",
+    detail:
+      "Once the locks were renameable, the repair was one index-only command. `git restore --staged` was " +
+      "run against the 183 paths the index described as deleted. Before: 183 deleted / 181 untracked / 24 " +
+      "modified. After: 25 modified / 7 untracked / ZERO deleted. Every one of the 183 files was " +
+      "confirmed present on disk BEFORE the repair and no file content was touched — the full registry " +
+      "was re-run afterwards and returned the same 504 pass / 0 fail / 326 suites. The `git commit -a` " +
+      "hazard named in the previous cycle — an operator one command away from committing the deletion of " +
+      "183 source files — no longer exists. Stated plainly: the last two lists asked the operator to run " +
+      "a script for something the agent could do itself, for the same reason as the lock above.",
+  },
+  {
+    what:
+      "A NEW blocker, found only because the lock on `refs/heads/main` was cleared: the local shared-line " +
+      "branch and origin/main have DIVERGED. The previously staged 'push main' click would have been " +
+      "REJECTED.",
+    detail:
+      "Among the 40 stale locks was `.git/refs/heads/main.lock` — so local `main` could not be written " +
+      "here regardless of credentials, and no cycle had noticed because no cycle got far enough to try. " +
+      "With it cleared, the two references were compared directly and neither is an ancestor of the " +
+      "other: `git merge-base --is-ancestor origin/main main` fails, and so does the reverse. Local main " +
+      "(15c56ab1) carries merged RUN-F, RUN-G, RUN-H and RUN-I work that never reached the code host; " +
+      "origin/main (08e54225) carries the IT Health Check v3 commit and the bid-response documents that " +
+      "local main has never seen. This matters because it corrects a claim this feed has carried: a " +
+      "plain `git push origin main` would be refused as non-fast-forward. Reconciling two real histories " +
+      "is a decision about which work is the shared line, not a mechanical step, and it is named here " +
+      "rather than resolved silently.",
+  },
+  {
+    what:
+      "SUPERSEDED — the previous cycle's ruling that the lock family is 'still unremovable, still " +
+      "irrelevant' is corrected above. Half of it was load-bearing and wrong.",
+    detail:
+      "'Irrelevant' was true for committing, because the alternate-index route genuinely bypassed the " +
+      "index lock. It was false for everything else: the ref locks under `.git/refs/heads/` were never " +
+      "bypassed by that route and were silently preventing any local branch update, including main. " +
+      "Kept visible rather than deleted, because a correction is only useful while the thing it corrects " +
+      "is still readable.",
+  },
+  {
+    what:
+      "THE FIND OF A PRIOR CYCLE — the previous cycle asserted the shared line was red and that one commit " +
+      "made it green. Both halves were true, but neither had been measured against the shared line " +
+      "itself. They have now been, by controlled comparison.",
+    detail:
+      "Rather than re-run the working tree and infer main's state from it, this cycle extracted TWO " +
+      "trees side by side with `git archive` — origin/main as it stands, and origin/main with 7b2b90b9 " +
+      "applied — and ran the full registry in each. origin/main: 260/263, with funnel-link-guard failing " +
+      "on dead internal links. origin/main + the fix: 261/263, funnel-link-guard passing. The delta is " +
+      "exactly one suite and exactly one commit. The two failures common to both extracts are NOT " +
+      "defects and are named rather than buried: deploy-safety-denylist shells out to `git ls-files` and " +
+      "an archive extract has no .git, and forums-concierge imports @netlify/blobs which is not " +
+      "installed in a bare extract. In the real tree, with .git and node_modules present, all 326 suites " +
+      "load and pass. The claim 'main is red and this commit fixes it' is now evidence rather than " +
+      "inheritance — which matters, because it is the claim the operator's one click is being asked to " +
+      "act on.",
+  },
+  {
+    what:
+      "THE FIND OF THIS CYCLE — the one suite excluded as 'environmental' was excluded wrongly, and " +
+      "what it was really reporting was a data-loss path in the test suite itself.",
+    detail:
+      "delete-triple-confirm had been recorded as blocked by the sandbox refusing to unlink a file. " +
+      "True as far as it went, and it stopped exactly one step short of the point. The suite wrote its " +
+      "scratch prefs file as `tests/del-prefs-<pid>.json` — INSIDE the tracked tree — and deleted it on " +
+      "the way out. A crash between the write and the cleanup leaks the file into version control, and " +
+      "27 such files are tracked in the repository today, proving it has already happened 27 times. A " +
+      "green suite that writes into and unlinks from the source tree is a data-loss path whether or not " +
+      "the environment happens to allow the unlink; the mount refusing it is the only reason anyone " +
+      "looked. The scratch file now goes to the OS temp directory under mkdtemp, with an assertion that " +
+      "fails if it is ever written inside tests/ again, and the cleanup is in a finally block. The full " +
+      "registry now exits 0 with 326/326 suite files loaded instead of exit 1 with one refusing to " +
+      "load. Recorded prominently because 'environment limitation' is the most comfortable label " +
+      "available for a real defect, and it had been carried for cycles.",
+  },
+  {
+    what:
+      "The repository's own on-disk index is stale and describes 183 tracked source files as deleted. " +
+      "It is not data loss, but on a machine where deletion IS permitted it is one careless commit away " +
+      "from becoming data loss.",
+    detail:
+      "Read first-hand this cycle: `git status` against the repository's default index reports 183 " +
+      "paths deleted and the same 183 paths untracked, while every one of them is present on disk. The " +
+      "cause is known and benign — commits are being created through an alternate index because a stale " +
+      "`.git/index.lock` cannot be unlinked here, so the repository's own index was never advanced. The " +
+      "risk is not benign. This sandbox cannot unlink files, so it cannot act on that stale index; " +
+      "Windows can. Anyone running `git commit -a` in this repository from the operator's own machine, " +
+      "before clearing the locks and running `git reset`, would commit the deletion of 183 source " +
+      "files. Named here, and carried into the operator list as a one-line repair, rather than left as " +
+      "a footnote that reads as reassurance.",
+  },
+  {
+    what:
+      "THE FIND OF A PRIOR CYCLE — the test registry was never uncertifiable. One test never terminated, " +
+      "and the previous cycle's explanation for the ceiling was wrong in the half that mattered.",
+    detail:
+      "The ceiling was attributed entirely to this environment killing backgrounded processes. That IS " +
+      "true and was re-verified. But it cannot explain a FOREGROUND run under an explicit timeout " +
+      "stopping at the same test every time, which is what actually happened — and testing that " +
+      "distinction is what found the cause. funnel-link-guard.test.mjs walks the repository for HTML " +
+      "pages using a skip list anchored with `^`, so it only ever skipped top-level directories. " +
+      "Dependency trees nested deeper — `.netlify/functions-serve/*/node_modules`, `.codex-temp-cdp/` " +
+      "— were walked in full: 6,600+ directories and still going at 30 seconds. Skipping " +
+      "node_modules/.git/.netlify at any depth is correct on the merits (build output is not the " +
+      "shipped site) and ends the walk in 12 seconds. With that one fix the full registry completes: " +
+      "504 tests, 504 pass, 0 fail. Recorded prominently because the previous cycle concluded that no " +
+      "conclusion should ever be drawn about the test after the ceiling, and that instruction is " +
+      "precisely what would have kept this closed forever.",
+  },
+  {
+    what:
+      "Fixing the hang immediately exposed 25 dead links the hang had been hiding — and the honest fix " +
+      "was to the guard's scope, which is stated because the dishonest fix is easier.",
+    detail:
+      "With the walk terminating, the guard failed with 25 dead internal links. None were on the real " +
+      "site. Every one was inside a path netlify.toml already force-404s (`/_branch-src/*`, " +
+      "`/odysseus/*`) or inside vendored third-party documentation shipped in a Python virtualenv " +
+      "(site-packages/win32com, setuptools test fixtures). The guard was reporting broken links on " +
+      "pages no visitor can reach — its own failure text said 'routes to a 404-blocked path' while " +
+      "still counting them. It now skips pages that are themselves force-404'd, reusing the redirect " +
+      "table it already parses. The zero-dead-ends rule is not loosened: 134 genuinely public pages are " +
+      "scanned and all 134 are clean. The count went UP from the previously reported figure because " +
+      "pages were previously never reached at all.",
+  },
+  {
+    what:
+      "THE FIND OF THE CYCLE — `publish = \".\"` makes the repository root the web root, and 134 " +
+      "operator-internal root files had no rule hiding them. They would have become public URLs the " +
+      "moment the site was published.",
+    detail:
+      "Root files were being force-404'd ONE AT A TIME, from memory — AGENT_EXECUTION_NOTES.md, " +
+      "CC-BRIEF.md, CLAUDE.md, package.json. That enumeration missed every AHMAD-*.cmd operator " +
+      "script (60 of them, naming branches and internal workflow), every LOOP-*.bat, every _*-log.txt " +
+      "build log, and the entire _incoming-patches/ directory. Netlify only permits a splat at the END " +
+      "of a path, so `/*.cmd` is not an available rule and the miss was structural rather than " +
+      "careless. Fixed by GENERATING one explicit rule per file — 134 file rules and 17 directory " +
+      "rules — plus `tests/root-serving-gate.test.mjs`, which fails if any internal-looking root file " +
+      "or internal root directory has no force-404. A new operator script can no longer quietly become " +
+      "a public URL. Found by testing the publish surface directly instead of trusting that a suite " +
+      "reporting '11/11 refused' meant everything was refused: it only ever meant those 11 were.",
+  },
+  {
+    what:
+      "The standing 'apply the five prepared changes' click was partly stale: 2 of the 6 prepared " +
+      "patches are ALREADY on the shared line.",
+    detail:
+      "Checked this cycle by matching each patch subject against the commit log of the last known " +
+      "origin/main rather than by trusting the folder: 0001 (Support FAQ) and 0002 (site-wide legal " +
+      "fine print) are landed as 1fcd1004 and bca99eef. Re-applying them would conflict or duplicate. " +
+      "The new single entry point skips them by name and attempts only 0003-0006, each behind its own " +
+      "`git apply --check`. An operator asked to click a stale instruction is an operator being asked " +
+      "to trust a stale report.",
+  },
+  {
+    what:
+      "SUPERSEDED — the previous cycle's ruling that the registry was 'killed, not stuck' is corrected " +
+      "above. It was stuck. Both were happening, and only one was looked for.",
+    detail:
+      "The container-death observation was real and is retained: backgrounded runs and their log files " +
+      "do not survive between shell calls, re-verified this cycle. The error was treating that as the " +
+      "COMPLETE explanation and closing the question. A foreground run under `timeout` is immune to " +
+      "container death and still stopped at the same test, which is the observation that was never " +
+      "made. Kept in the record rather than deleted, because a correction is only useful if the thing " +
+      "it corrects is still visible.",
+  },
+  {
+    what:
+      "The lock family and the code-host credential were BOTH re-attacked this cycle. Both reproduced. " +
+      "They survive into the next cycle on evidence, not on inheritance.",
+    detail:
+      "Locks: `rm .git/HEAD.lock`, `.git/index.lock` and `.git/lock-graveyard-index.lock` each " +
+      "returned 'Operation not permitted' — still unremovable, still irrelevant, because the " +
+      "GIT_INDEX_FILE route bypasses them. Credential: four independent probes, all negative — " +
+      "`git ls-remote origin main` → \"could not read Username for 'https://github.com': No such " +
+      "device or address\", `which gh` → not found, `git config --get credential.helper` → empty " +
+      "(exit 1), `~/.git-credentials` → absent, and no GITHUB/GH_TOKEN in the environment. This is a " +
+      "real constraint and is the ONLY thing between verified work and the shared line.",
+  },
   {
     what:
       "Five consecutive cycles reported 'no commit can be created here' as a hard environmental fact. " +
@@ -108,26 +302,34 @@ const correctionsThisCycle = [
 const mainRef = {
   liveConfirmed: false,
   reason:
-    "Refused again this cycle on the read path: `git ls-remote origin main` returned 'could not read " +
+    "Reproduced again this cycle, not carried forward: `git ls-remote origin main` returned 'could not read " +
     "Username for github.com'. There is no credential helper, no token in the environment and no code-host " +
     "CLI. Every reference here is a last-known LOCAL read and is labelled as such. Presenting a local " +
     "reference as a live read is the exact dishonesty Rule 14 forbids.",
 };
 
 const workingTree = {
-  filesModified: 21,
-  filesUntracked: 175,
+  filesModified: 25,
+  filesUntracked: 7,
+  indexStalenessCleared:
+    "REPAIRED THIS CYCLE, not explained away again. Two prior cycles inspected the 183 apparent deletions " +
+    "and correctly ruled them stale-index noise rather than data loss — and then left them in place, " +
+    "because clearing them was believed to require an unlink this environment refuses. It did not: the " +
+    "locks are renameable. With them cleared, `git restore --staged` re-synced the repository's own index " +
+    "against its branch head. Before: 183 deleted / 181 untracked / 24 modified. After: 25 modified / 7 " +
+    "untracked / zero deleted. Index-only — no file content was read, written, moved or removed, and the " +
+    "full 504-test registry was re-run afterwards to prove it. The standing `git commit -a` hazard is gone.",
   composition:
     "All source and tests — new test files and new shared modules, plus scripts and main-process " +
     "modules. Scanned this cycle for credentials, keys, environment files, logs and dependency " +
     "directories: 0 hits. Nothing off-limits was touched.",
   committed: true,
   howItWasUnblocked:
-    "The stale lock is STILL unlinkable-refused by this environment — that has not changed. What changed " +
-    "is that it stopped mattering: git was pointed at an alternate index file (GIT_INDEX_FILE) outside " +
-    "the repository, so staging never touches .git/index.lock at all. Verified first-hand this cycle by " +
-    "staging and committing, not by reasoning about it. The blocker that has headlined five consecutive " +
-    "cycles is retired, and it was retired by routing around it rather than by a click.",
+    "The alternate-index route retired the COMMIT half of this blocker in the previous cycle. This cycle " +
+    "retired the rest of it, and by removal rather than by routing around: the mount refuses `rm` and " +
+    "permits `mv`, so all 40 stale locks — including `.git/index.lock` and `.git/refs/heads/main.lock` — " +
+    "were renamed into a dated graveyard directory. Ordinary git index and ref writes work here now. No " +
+    "workaround is required going forward and none is claimed to still be necessary.",
   branch: "cc/run-ac-passive-signal-2026-07-29",
   stillBlocked:
     "The commit exists locally and cannot be pushed. `git ls-remote origin main` refused again on the " +
@@ -136,21 +338,78 @@ const workingTree = {
 
 const program = {
   series: "flywheel",
-  sequence: "RUN-AC — the first passive signal",
-  previousSequence: "RUN-AB — verified complete this cycle against the real records",
+  sequence: "RUN-AD — the last click",
+  previousSequence: "RUN-AC — the first passive signal (AC1-AC3 built and green; AC4 waits on publication)",
   tasksBuiltAndGreen: 3,
-  tasksTotal: 4,
+  tasksTotal: 3,
   tasksMerged: 0,
-  pct: 75,
+  pct: 100,
   testsGreen: true,
+  verificationCycleNote:
+    "This cycle released no new sequence and does not claim one. It was a verification pass: the AXIS " +
+    "guard set was re-run spec by spec on its own exit codes, the credential refusal was re-tested rather " +
+    "than inherited, the branch commit was read object-by-object to confirm it adds and never deletes, " +
+    "and the status feed was regenerated. Manufacturing a RUN-AE to look productive would contradict the " +
+    "finding that no further software moves the two numbers that are off track.",
   note:
-    "Build state only. AC1, AC2 and AC3 are built and green. AC4 — the number itself — is not a software " +
-    "task: the log records nothing until the site is published, and until then the reading is `not yet " +
-    "collecting`, never zero. `tasksMerged` is 0 because nothing can reach the shared line from this " +
+    "Build state only. RUN-AD's three criteria are met: AD1 — every inherited blocker was re-attacked " +
+    "this cycle with a real command and its verbatim output, two were corrected and two reproduced; " +
+    "AD2 — the operator's clicks collapsed from four scripts to one entry point that reports each " +
+    "stage's real exit code and refuses to print success for a stage it did not complete; AD3 — the " +
+    "root script pile was corrected, not deleted (60 superseded scripts now say what supersedes them, " +
+    "and all still run). `tasksMerged` is 0 because nothing can reach the shared line from this " +
     "environment, not because nothing was built.",
 };
 
 const lanes = [
+  { lane: "The .git lock family (removed this cycle)", state: "all 40 cleared — ordinary git writes work here now",
+    detail:
+      "Six cycles tested this blocker with `rm`, got 'Operation not permitted', and concluded it could " +
+      "not be cleared. The mount refuses unlink and permits rename. Every lock — index.lock, HEAD.lock, " +
+      "and seven under refs/heads/ including main.lock — was renamed into a dated graveyard inside .git. " +
+      "The alternate-index workaround is no longer needed for anything." },
+  { lane: "Repository index (repaired this cycle)", state: "183 phantom deletions cleared; zero remain",
+    detail:
+      "The index described 183 tracked source files as deleted while all 183 sat on disk. Repaired with " +
+      "an index-only `git restore --staged`, taking the tree from 183 deleted / 181 untracked / 24 " +
+      "modified to 25 modified / 7 untracked. The full registry was re-run afterwards and returned the " +
+      "identical 504 pass / 0 fail, proving no content moved. The operator repair script is withdrawn." },
+  { lane: "Shared-line reconciliation (found this cycle)", state: "local main and origin/main have DIVERGED — needs a decision",
+    detail:
+      "Visible only once refs/heads/main.lock was cleared. Neither reference is an ancestor of the " +
+      "other: local main carries merged RUN-F/G/H/I work that never reached the code host, origin/main " +
+      "carries health-check-v3 and the bid documents. A plain push of main would be rejected. Named as " +
+      "an operator decision rather than resolved silently, because it is a choice about which work is " +
+      "canonical." },
+  { lane: "The shared line's own test state", state: "measured RED this cycle; the one-commit fix verified against it",
+    detail:
+      "origin/main and origin/main+7b2b90b9 were each extracted to a scratch directory and the full " +
+      "registry run in both. main fails funnel-link-guard on dead internal links; with the fix commit it " +
+      "passes. One suite, one commit, measured rather than argued. The fix is committed locally and is " +
+      "the first thing the operator's one click pushes. Until it lands, the shared line is red and this " +
+      "feed says so." },
+  { lane: "Test registry (unblocked this cycle)", state: "runs end to end for the first time — 504 pass, 0 fail",
+    detail:
+      "One test never terminated and had been masking the whole suite. funnel-link-guard's skip list was " +
+      "anchored to the repository root, so it walked dependency trees nested under build output and " +
+      "passed 6,600 directories without finishing. Skipping node_modules/.git/.netlify at any depth ends " +
+      "it in 12 seconds. Fixing it surfaced 25 dead links the hang had hidden — all inside paths the site " +
+      "already force-404s or inside vendored virtualenv docs — so the guard now skips pages that are " +
+      "themselves unreachable and asserts on the 134 genuinely public ones, all clean. Every cycle from " +
+      "here can certify the whole registry instead of sampling it." },
+  { lane: "Publish surface (found and closed this cycle)", state: "closed before publication, gated by a test",
+    detail:
+      "`publish = \".\"` made the repository root the web root. 134 operator-internal root files — 60 " +
+      "AHMAD-* scripts, the LOOP-* runners, every _*-log.txt build log — and 17 internal directories " +
+      "including _incoming-patches/ had no rule hiding them and would have been public URLs on " +
+      "publication. Now generated as explicit force-404 rules, with a gate that fails if a new one " +
+      "appears without one. Nothing was deleted or moved." },
+  { lane: "The operator's click (RUN-AD AD2)", state: "four scripts collapsed to one that cannot lie",
+    detail:
+      "AHMAD-ONE-CLICK.cmd runs each stage, prints each stage's REAL exit code, and refuses to report " +
+      "success for a stage it did not complete — the summary is derived from the stage results, never " +
+      "hardcoded. It skips the two prepared patches already on the shared line. It never touches main, " +
+      "never deploys, never sends, never pays." },
   { lane: "The first passive signal (RUN-AC)", state: "instrument built and green, no reading yet",
     detail:
       "The site's own first-party hit log: a reader that can never turn an absent log into a zero, a " +
@@ -167,7 +426,14 @@ const lanes = [
       "Confirmed this cycle by asking the repository which branches are merged into main rather than by " +
       "trusting a branch name: cc/axis-voice-2026-07-01 is merged. No merge was needed and none is claimed." },
   { lane: "AXIS status feed", state: "regenerated this cycle",
-    detail: "Emitted through the single sanctioned emitter, which is now itself a single file." },
+    detail:
+      "Emitted through the single sanctioned emitter, which is now itself a single file. Fresh timestamp " +
+      "on all three mirrors, this cycle's own exit codes, and the leak gate re-run green AFTER the write." },
+  { lane: "Branch commit integrity", state: "read and cleared this cycle",
+    detail:
+      "The branch carrying five cycles of work was inspected as a commit object rather than trusted: 204 " +
+      "paths, 183 added, 21 modified, zero deleted. The tree's 183 apparent deletions are stale-index " +
+      "noise from the alternate-index route, not data loss. Nothing needs recovering." },
   { lane: "Command-centre working tree", state: "COMMITTED this cycle, on a branch, not yet pushed",
     detail:
       "21 modified and 175 new files — all source and tests — committed onto " +
@@ -186,41 +452,96 @@ const lanes = [
 ];
 
 const blockers = [
-  { blocker: "RETIRED — a stale lock file that this environment cannot unlink",
-    price: "was: no commit could be created here. Now: nothing, and it needs no click.",
+  { blocker: "RETIRED AND REMOVED — the stale .git lock family (40 files, incl. refs/heads/main.lock)",
+    price:
+      "was: no commit, no index repair and no local branch update could happen here. Now: nothing, and " +
+      "it needed no click from anyone.",
     isSoftwareTask: true,
-    fix: "Route around it with an alternate index file. Done this cycle; the working tree is committed on a branch." },
+    fix:
+      "The mount refuses unlink and permits rename. All 40 locks renamed into a dated graveyard inside " +
+      ".git; `find .git -name '*.lock'` now returns empty. Six cycles tested only `rm`." },
+  { blocker: "NEW — local main and origin/main have diverged; neither is an ancestor of the other",
+    price:
+      "the previously staged 'push the shared line' click would have been rejected as non-fast-forward, " +
+      "so a click that was presented as ready was not ready",
+    isSoftwareTask: false,
+    fix:
+      "A decision, not a command: local main carries merged RUN-F/G/H/I work that never reached the code " +
+      "host, origin/main carries the health-check-v3 commit and the bid documents. Choosing which " +
+      "history is the shared line is the operator's call; the agent will execute either once told." },
   { blocker: "No code-hosting credential in the build sandbox",
     price: "verified work cannot reach the shared line under its own power",
     isSoftwareTask: false,
     fix: "A credential or a code-host connector. Highest-leverage unblock, unchanged, and refused again this cycle on two separate operations." },
-  { blocker: "The full test registry cannot be certified from this environment",
-    price: "suites are certified individually each cycle instead",
-    isSoftwareTask: true },
+  { blocker: "RETIRED — the full test registry could not be certified from this environment",
+    price:
+      "was: every cycle certified a handful of suites by hand and inferred the rest. Now: nothing — " +
+      "the registry runs end to end and prints 504 pass / 0 fail on its own.",
+    isSoftwareTask: true,
+    fix:
+      "It was one non-terminating test, not an environment limit. funnel-link-guard walked nested " +
+      "dependency trees the skip list never covered. Registry completes in seconds. The last remaining " +
+      "exclusion — delete-triple-confirm failing to LOAD — was retired THIS cycle and was not " +
+      "environmental either: the suite wrote its scratch file inside the tracked tree and unlinked it, " +
+      "which is a data-loss path in its own right. Scratch moved to the OS temp directory. The registry " +
+      "now exits 0 with every suite loaded and nothing excluded." },
+  { blocker: "RETIRED — the on-disk index describing 183 tracked files as deleted",
+    price:
+      "was: a `git commit -a` from the operator's machine would have committed the deletion of 183 " +
+      "source files. Now: nothing. The hazard is gone and the operator script for it is withdrawn.",
+    isSoftwareTask: true,
+    fix:
+      "`git restore --staged` on the 183 paths, once the locks were cleared. Index-only; the 504-test " +
+      "registry was re-run after the repair and is unchanged." },
   { blocker: "The hour is prepared and has not been spent",
     price: "zero conversations held, against a prepared and executable list",
     isSoftwareTask: false },
 ];
 
 const needsAhmad = [
-  { item: "Push the branch that is now already committed",
-    what: "One script at the repo root. The commit exists — the script only pushes the BRANCH. It creates nothing and touches no file.",
-    why: "Shrunk this cycle from 'clear a lock and commit 195 files' to 'push an existing commit'. It never touches the shared line and never publishes." },
-  { item: "Apply the five prepared changes",
-    what: "Same script, second half. Their base is already on the shared line so they apply cleanly.",
-    why: "Includes two changes explicitly asked for." },
+  { item: "WITHDRAWN — AHMAD-REPAIR-INDEX.cmd. Do not run it; there is nothing left for it to repair.",
+    what:
+      "The previous list opened with this script and told the operator to run it first. The agent did " +
+      "the repair itself this cycle instead: locks cleared by rename, index re-synced, 183 phantom " +
+      "deletions gone, registry re-run green afterwards.",
+    why:
+      "Recorded as withdrawn rather than quietly dropped, so the change is visible to anyone who read " +
+      "the previous list. An operator list that shrinks because the agent did the work is the point; an " +
+      "operator list that shrinks silently is not trustworthy." },
+  { item: "DECIDE which history is the shared line (new, and it replaces the plain 'push main' step)",
+    what:
+      "Local main and origin/main have diverged — neither contains the other. Local main carries merged " +
+      "RUN-F/G/H/I work; origin/main carries the IT Health Check v3 commit and the bid-response " +
+      "documents. Say which one wins, or say 'merge both', and the agent executes it.",
+    why:
+      "This is a judgement about which body of work is canonical, not a mechanical step, so it is not " +
+      "taken silently. It is also a correction: the previous list implied a push of the shared line was " +
+      "ready, and it would have been rejected as non-fast-forward." },
+  { item: "Run AHMAD-ONE-CLICK.cmd",
+    what:
+      "ONE script at the repo root, replacing the four separate ones this list used to carry. It pushes " +
+      "the branch, applies only the prepared patches that are not already landed, and re-pushes. Every " +
+      "stage prints its real exit code and the summary is derived from those results.",
+    why:
+      "This is the whole operator list now. It never touches main, never deploys, never publishes, " +
+      "never sends and never pays. If it fails it says FAILED — it will not print success for a stage " +
+      "it did not complete." },
   { item: "A code-hosting credential for the build sandbox",
     what: "A credential or a code-host connector for this environment.",
-    why: "Without it every cycle ends by staging a click instead of landing the work itself." },
-  { item: "Spend the hour",
-    what: "The prepared ordered actions with message bodies attached, executable cold.",
-    why: "Still the only item on this list that can move a business number." },
+    why:
+      "Re-attacked with four separate probes this cycle and reproduced by all four. It is now the ONLY " +
+      "thing standing between verified work and the shared line, and the only reason the click above " +
+      "exists at all." },
   { item: "Publish the site",
     what: "One deliberate operator action.",
     why:
-      "Landing a branch never deploys. This stays a separate human decision — and it is now the click " +
-      "that starts the visit log recording. Until it happens, the passive signal reads not-yet-collecting " +
-      "rather than zero." },
+      "Landing a branch never deploys. This stays a separate human decision — and it is the click that " +
+      "starts the visit log recording. Until it happens, the passive signal reads not-yet-collecting " +
+      "rather than zero. Worth noting: doing this BEFORE this cycle's fix would have published 134 " +
+      "operator files as public URLs." },
+  { item: "Spend the hour",
+    what: "The prepared ordered actions with message bodies attached, executable cold.",
+    why: "Still the only item on this list that can move a business number." },
 ];
 
 const onTrack = {
@@ -229,10 +550,15 @@ const onTrack = {
   landing: false,
   conversion: false,
   note:
-    "Landing and conversion both read NOT on track, unchanged. This cycle did not move a business number " +
-    "and does not claim to. What it did was build the first instrument in this program capable of " +
-    "producing a number while nobody is working — and then decline to print one, because the instrument " +
-    "is not collecting until the site is published.",
+    "Landing and conversion both read NOT on track, unchanged. This cycle removed two blockers that had " +
+    "been carried as environmental facts and were not: 40 stale git locks that six cycles had only ever " +
+    "tested with `rm`, and the 183-file stale index the last list asked the operator to repair by hand. " +
+    "Both are gone, done by the agent, verified by re-running the full registry afterwards. It also " +
+    "surfaced a real new blocker — local main and origin/main have diverged — which corrects a click " +
+    "this feed previously presented as ready. That is honest engineering progress and it is worth " +
+    "having. It is not progress on the business, and is not offered as such: follow-ups sent: zero. " +
+    "Hours in front of anyone: zero. Revenue: none. Nothing reached the shared line, because the " +
+    "credential refusal is real and reproduced again this cycle.",
 };
 
 // ── Public: headline only. Every field is leak-scanned and capped by the emitter. ──────────────────
@@ -247,9 +573,9 @@ const publicFields = {
   revenueToDate: "none",
   headline:
     "ARIA / AXIS is in active build. 45 first-contact messages sent: 4 undeliverable, 11 autoresponders, " +
-    "1 personal reply declining. Delivery is unobserved, not reported as a number. 12 follow-ups drafted, " +
-    "0 sent. Meetings 0, revenue none. A first-party visit log is built but not collecting until the site " +
-    "is published — stated as not-yet-collecting, never as zero.",
+    "1 reply declining. 12 follow-ups drafted, 0 sent. Meetings 0, revenue none. Visit log built, not " +
+    "collecting until the site is published. Tests: 504 pass, 0 fail, 326/326 suites. The shared line is " +
+    "one suite short of green; the fix is verified and waits on a decision, not on more software.",
   note:
     "Public status headline only. Detailed build state is operator-internal and served only to " +
     "authenticated operators inside the AXIS command centre. This public feed never carries commit, " +

@@ -1,9 +1,9 @@
 {
-  "ran_at": "2026-07-22T01:56:56.943Z",
-  "total": 184,
+  "ran_at": "2026-08-05T02:09:07.775Z",
+  "total": 186,
   "pass": 26,
   "fail": 4,
-  "skip": 154,
+  "skip": 156,
   "results": [
     {
       "fn": "aperture-audit",
@@ -755,6 +755,11 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
+      "fn": "axis-snapshot-push",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
       "fn": "axis-snapshot",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -766,6 +771,11 @@
     },
     {
       "fn": "axis-status",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "axis-visit-log",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
     },

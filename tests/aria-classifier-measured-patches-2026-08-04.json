@@ -1,0 +1,92 @@
+[
+ {
+  "id": "P1-kb-hardware",
+  "edits": [
+   {
+    "find": "  // most-specific first\n",
+    "replace": "  // most-specific first\n  if (/(workstation on wheels|wow cart|mobile workstation|clinical cart|bedside (computer|terminal)|(nurs(ing|es) station) (monitor|keyboard|computer|pc)|(monitor|keyboard|scanner|computer) (broken|not working|not turning on) at nurs|barcode scanner|handheld (scanner|rf (device|terminal)|order tablet)|medication scanner|wristband scanner|high speed scanner|kofax|fujitsu scanner|scanner (jammed|not (detected|feeding|reading|scanning))|cash drawer|pos (terminal|device)|point of sale|payment terminal|kitchen display|digital price tag|electronic shelf label|kiosk (touchscreen|screen|check ?in)|(registration|hotel|event) kiosk|multi-?monitor|panel pc|industrial touchscreen|(touchscreen|touch monitor) (not|un)|cnc machine (control )?monitor|forklift mounted computer|\\bhmi\\b|bloomberg (b-unit|keyboard)|market data terminal|(headset|microphone|multi-monitor setup) (not working|broken) (at|on) (trading|dealing)|chip dispenser terminal|plotter not printing|smart card reader|proximity reader|badge reader|rfid reader|piv card reader|fingerprint reader|document camera|av equipment|video conferencing unit|ecg workstation|ekg machine|\\bbp machine\\b)/.test(q) && !/(wifi|wi-fi|wireless|network|internet|password|log ?in|sign ?in|overheat|slow|lagg|high cpu|freez)/.test(q)) return 'kb:hardware';\n"
+   }
+  ]
+ },
+ {
+  "id": "P2-password-i18n",
+  "edits": [
+   {
+    "find": "  // most-specific first\n",
+    "replace": "  // most-specific first\n  if (/(no puedo iniciar sesion|no puedo iniciar sesi|olvide mi contrase|contrase(n|ñ)a|restablecer contrase|cuenta bloqueada|mot de passe|je ne peux pas me connecter|connexion impossible|compte verrouill)/.test(q)) return 'password';\n"
+   }
+  ]
+ },
+ {
+  "id": "P3-browser-before-perf",
+  "edits": [
+   {
+    "find": "  if (/(slow|laggy|sluggish|performance|",
+    "replace": "  if (/\\b(edge|chrome|firefox|safari|brave|opera|browser)\\b/.test(q) && /(slow|laggy|lagging|sluggish|freez|crash|hang|not responding)/.test(q) && !/(antimalware|svchost|disk 100|disk at 100|fans?|overheat|task manager|memory leak|high (cpu|ram|memory))/.test(q)) return 'kb:browser';\n  if (/(slow|laggy|sluggish|performance|"
+   }
+  ]
+ },
+ {
+  "id": "P4-escalation-stuck",
+  "edits": [
+   {
+    "find": "  if (/^(help me find|i need help finding|i'?m stuck|find (the |my )?recovery key)/.test(q)) return 'escalation';",
+    "replace": "  if (/(help me find|i need help finding|i'?m stuck|im stuck|find (the |my )?recovery key)/.test(q)) return 'escalation';"
+   }
+  ]
+ },
+ {
+  "id": "P5-perf-lagging",
+  "edits": [
+   {
+    "find": "  if (/(slow|laggy|sluggish|performance|",
+    "replace": "  if (/(slow|laggy|lagging|sluggish|performance|"
+   }
+  ]
+ },
+ {
+  "id": "P6-onedrive-apostrophe",
+  "edits": [
+   {
+    "find": "|shared file wont sync|",
+    "replace": "|files? won ?t sync|file won ?t sync|files? won'?r sync|shared file won ?t sync|shared file wont sync|"
+   }
+  ]
+ },
+ {
+  "id": "P7-teams-typos",
+  "edits": [
+   {
+    "find": "  if (/(teams|microsoft teams|ms teams|",
+    "replace": "  if (/(team'?s not loading|teamz|teem not loading|teams|microsoft teams|ms teams|"
+   }
+  ]
+ },
+ {
+  "id": "P8-onboarding-clinical",
+  "edits": [
+   {
+    "find": "  if (/(onboarding|offboarding|byod|new hire|",
+    "replace": "  if (/(new (nurse|clinician|physician|doctor|staff member|employee|starter|user|hire|resident|intern) (needs?|requires?|account|access|login|setup|set up)|onboard(ing)? new|need (ehr|epic|cerner) (login|access)|onboarding|offboarding|byod|new hire|"
+   }
+  ]
+ },
+ {
+  "id": "P9-networking-clinical",
+  "edits": [
+   {
+    "find": "  if (/(wifi|wi-fi|wireless|network|internet|",
+    "replace": "  if (/(hospital network|ward network|clinic network|network (down|outage) on|network outage|internal site|resolve hostname)/.test(q) && !/(wifi|wi-fi|wireless)/.test(q)) return 'kb:networking';\n  if (/(wifi|wi-fi|wireless|network|internet|"
+   }
+  ]
+ },
+ {
+  "id": "P10-vpn-typo",
+  "edits": [
+   {
+    "find": "  if (/vpn|tunnel|",
+    "replace": "  if (/\\bvpm\\b|vpn|tunnel|"
+   }
+  ]
+ }
+]
