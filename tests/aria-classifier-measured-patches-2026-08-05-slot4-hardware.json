@@ -1,0 +1,215 @@
+{
+ "id": "2026-08-05-slot4",
+ "base": "aria-classifier-mirror.js @ 92.65%",
+ "result": "95.50% (36584/38307), 0 regressions",
+ "applied": [
+  {
+   "id": "HW-D-both-lastresort",
+   "edits": [
+    {
+     "find": "  if (/\\b(quote|saying|wisdom|inspiration|motivat)/.test(q)) return 'quote';",
+     "replace": "  if (/\\b(quote|saying|wisdom|inspiration|motivat)/.test(q)) return 'quote';\n  if (/(workstations? on wheels|wow cart|mobile workstation|clinical cart|cart computer|bedside (terminal|computer)|nursing station monitor|barcode (scanner|gun)|handheld (scanner|rf (terminal|device)|order tablet)|scanner gun|medication scanner|wristband scanner|smart ?card reader|card reader|proximity reader|badge reader|rfid reader|piv card reader|cac card|fingerprint reader|docking station|dock station|pos terminal|point of sale|payment terminal|cash drawer|kiosk|self checkout|electronic shelf label|digital price tag|receipt printer|thermal label printer|room key encoder|chip dispenser|time clock|panel pc|rugged(ized)? (laptop|tablet)|forklift mounted computer|weigh scale|hmi|document camera|projector|kitchen display|shop floor terminal|production screen|workorder terminal|cnc machine control monitor|quality inspection station)/.test(q) && /((won'?t|wont|not|never|no longer|stopped|isn'?t|is not)\\s*(turn(ing)? on|power(ing)? (on|up)|charg(e|ing)|boot(ing)?|start(ing)?|work(ing)?|respond(ing)?|read(ing)?|scan(ning)?|connect(ing)?|detect(ed|ing)?|display(ing)?|sync(ing)?|load(ing)?|open(ing)?|program(ming)?|pair(ing)?|hold(ing)? charge)|frozen|freezing|locked up|unresponsive|battery dead|dead battery|cracked (screen|and)|screen cracked|offline|crashed|broken|overheating|flickering|no display|not detected|not recognized|not pairing|blank)/.test(q)) return 'kb:hardware';\n  if (/(laptop|desktop|workstation|terminal|tablet|monitor|screen|display|computer|machine|device|phone|ipad)/.test(q) && /(won'?t turn on|wont turn on|not turning on|not powering on|won'?t power on|not charging|battery dead|dead battery|not holding charge|cracked( screen)?|screen cracked|won'?t boot|wont boot|not booting|won'?t start|wont start|not starting|no display|not detected|not recognized)/.test(q)) return 'kb:hardware';\n"
+    }
+   ]
+  },
+  {
+   "id": "HW-H-typotolerant",
+   "edits": [
+    {
+     "find": "(won'?t turn on|wont turn on|not turning on",
+     "replace": "(won.?t turn on|wont turn on|not turning on"
+    },
+    {
+     "find": "|won'?t boot|wont boot|not booting|won'?t start|wont start",
+     "replace": "|won.?t boot|wont boot|not booting|won.?t start|wont start"
+    }
+   ]
+  },
+  {
+   "id": "OB-A-before-password",
+   "edits": [
+    {
+     "find": "  if (/(password|pasword|passwd",
+     "replace": "  // New-joiner provisioning (measured 2026-08-05 slot4)\n  if (/\\b(new|newly|incoming|joining|junior|graduate|intern|contractor|locum|agency|lateral hire|temporary|starting|new start|new hire|new starter|onboard(ing)?|offboard(ing)?)\\b/.test(q) && /(needs?|require[sd]?|set ?up|setup|provision(ed|ing)?|configur(e|ed)|create[d]?|access|account|login|log[- ]?in|credentials|onboard|orientation)/.test(q) && !/(reset|forgot|locked out|expired|change my)/.test(q)) return 'kb:onboarding';\n  if (/(password|pasword|passwd"
+    }
+   ]
+  },
+  {
+   "id": "PW-B-spanish",
+   "edits": [
+    {
+     "find": "  if (/(mail|email|inbox|outlook|outlok|outloook|outlk",
+     "replace": "  // Spanish/French credential phrasings (measured 2026-08-05 slot4)\n  if (/(no puedo iniciar sesion|iniciar sesion|contrasena|contrase\\u00f1a|olvide mi contrasena|restablecer contrasena|mot de passe|je ne peux pas me connecter|connexion impossible)/.test(q)) return 'password';\n  if (/(mail|email|inbox|outlook|outlok|outloook|outlk"
+    }
+   ]
+  },
+  {
+   "id": "PW-A2-guarded",
+   "edits": [
+    {
+     "find": "  if (/(out of office|ooo|automatic repl",
+     "replace": "  // Password intent wins over mail when an explicit credential action is present (measured 2026-08-05 slot4)\n  if (/(password|pasword|passwd|passw0rd|pasworld|locked out|lock out)/.test(q) && /(reset|forgot|expired|change|locked out|unlock)/.test(q) && !/(active directory|domain controller|kerberos|krb5|\\bad\\b|\\bdomain\\b|vpn|globalprotect|anyconnect|forticlient|pulse secure)/.test(q)) return 'password';\n  if (/(out of office|ooo|automatic repl"
+    }
+   ]
+  },
+  {
+   "id": "BR-A3-opera-guard",
+   "edits": [
+    {
+     "find": "  if (/(slow|laggy|sluggish|performance|high cpu",
+     "replace": "  // Browser-named slowness stays with kb:browser; 'opera pms' is a hotel PMS, not the browser (measured 2026-08-05 slot4)\n  if (/\\b(edge|chrome|firefox|safari|brave|opera)\\b/.test(q) && /(slow|laggy|sluggish|freez|crash|hang|not loading|won.?t load)/.test(q) && !/opera pms/.test(q)) return 'kb:browser';\n  if (/(slow|laggy|sluggish|performance|high cpu"
+    }
+   ]
+  },
+  {
+   "id": "OD-typos",
+   "edits": [
+    {
+     "find": "(onedrive|sync(ing)? files?|files? wont sync|files? won'?t sync|file wont? sync",
+     "replace": "(onedrive|sync(ing)? files?|files? wont sync|files? won.?t sync|file won.?t sync|files? not sync(ing)?|shared file won.?t sync"
+    }
+   ]
+  },
+  {
+   "id": "ESC-prefix",
+   "edits": [
+    {
+     "find": "  if (/^(help me find|i need help finding|i'?m stuck|find (the |my )?recovery key)/.test(q)) return 'escalation';",
+     "replace": "  if (/^(please |can you help with |i need help with |help me with |sorry but |quick question . |urgent:? |asap |help now: |critical: |p1: )?(help me find|i need help finding|i'?m stuck|im stuck|find (the |my )?recovery key)/.test(q)) return 'escalation';"
+    }
+   ]
+  },
+  {
+   "id": "HW-typos2",
+   "edits": [
+    {
+     "find": "(won.?t turn on|wont turn on|not turning on",
+     "replace": "(won.?t turn on|wont turn on|won.r turn on|not turning on|not working at|not detected at"
+    }
+   ]
+  },
+  {
+   "id": "PW-multiling",
+   "edits": [
+    {
+     "find": "(no puedo iniciar sesion|iniciar sesion",
+     "replace": "(mein passwort|passwort ist abgelaufen|passwort vergessen|kennwort|no puedo iniciar sesion|iniciar sesion"
+    }
+   ]
+  },
+  {
+   "id": "TEAMS-typos",
+   "edits": [
+    {
+     "find": "(teams|microsoft teams|ms teams",
+     "replace": "(teams|team'?s|teamz|teem|tems|microsoft teams|ms teams"
+    }
+   ]
+  },
+  {
+   "id": "VPN-typo",
+   "edits": [
+    {
+     "find": "if (/vpn|tunnel|globalprotect",
+     "replace": "if (/vpn|vpm|vnp|tunnel|globalprotect"
+    }
+   ]
+  },
+  {
+   "id": "MAIL-typos",
+   "edits": [
+    {
+     "find": "(mail|email|inbox|outlook|outlok|outloook|outlk",
+     "replace": "(mail|email|emial|emails?|emials?|eamils?|emai|inbox|outlook|outlok|outloook|outlk"
+    }
+   ]
+  },
+  {
+   "id": "OD-typo2",
+   "edits": [
+    {
+     "find": "files? won.?t sync|file won.?t sync",
+     "replace": "files? won.?[tr] sync|file won.?[tr] sync"
+    }
+   ]
+  },
+  {
+   "id": "NET-typos",
+   "edits": [
+    {
+     "find": "cant resolve hostname|can'?t resolve hostname",
+     "replace": "cant resolve hostname|can.?t resolve hostname|can t resolve hostname|can.?t reach internal|can t reach internal"
+    }
+   ]
+  },
+  {
+   "id": "ESC-anywhere",
+   "edits": [
+    {
+     "find": "  if (/\\b(voice mode|switch to voice|use voice|voice chat)\\b/.test(q)) return 'voice';",
+     "replace": "  if (/\\b(i'?m stuck|im stuck)\\b/.test(q)) return 'escalation';\n  if (/\\b(voice mode|switch to voice|use voice|voice chat)\\b/.test(q)) return 'voice';"
+    }
+   ]
+  },
+  {
+   "id": "MFA-duo",
+   "edits": [
+    {
+     "find": "(mfa|multi[- ]factor|two.?factor|2fa|authenticator",
+     "replace": "(mfa|multi[- ]factor|two.?factor|2fa|duo mobile|duo push|duo prompt|\\bduo\\b|authenticator"
+    }
+   ]
+  },
+  {
+   "id": "PERF-heat",
+   "edits": [
+    {
+     "find": "(slow|laggy|sluggish|performance|high cpu",
+     "replace": "(slow|laggy|lagging|sluggish|performance|running hot|fan is spinning|fans? (is |are )?(spinning|loud)|hot and loud|high cpu"
+    }
+   ]
+  }
+ ],
+ "rejected": [
+  {
+   "id": "HW-A-named-top",
+   "reason": "measured net<=0 or regressions"
+  },
+  {
+   "id": "HW-B-generic-top",
+   "reason": "measured net<=0 or regressions"
+  },
+  {
+   "id": "HW-C-both-top",
+   "reason": "measured net<=0 or regressions"
+  },
+  {
+   "id": "OB-B-lastresort",
+   "reason": "measured net<=0 or regressions"
+  },
+  {
+   "id": "PW-A-before-ooo",
+   "reason": "measured net<=0 or regressions"
+  },
+  {
+   "id": "BR-A-before-perf",
+   "reason": "measured net<=0 or regressions"
+  },
+  {
+   "id": "BR-A2-named-only",
+   "reason": "measured net<=0 or regressions"
+  },
+  {
+   "id": "HW-periph",
+   "reason": "measured net<=0 or regressions"
+  },
+  {
+   "id": "NET-outage",
+   "reason": "measured net<=0 or regressions"
+  },
+  {
+   "id": "ESC-stuck",
+   "reason": "measured net<=0 or regressions"
+  }
+ ]
+}

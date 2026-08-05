@@ -38,6 +38,11 @@ const PRE_FIX = {
 const POST_FIX = {
   ...PRE_FIX,
   artefact: "senior-director-state/outbound/SEND-SHEET-2026-08-05.md",
+  // RUN-AN / AN2 added rank + unblocks to the contract. Carried here so this fixture stays a shape
+  // the live list can actually hold; the AJ1 assertion it proves (artefact present) is unchanged.
+  rank: 1,
+  unblocks: "the only item on the list that can produce a reply",
+  blockedWithout: "the offer stays untested indefinitely",
 };
 
 test("RED against RUN-AI's pre-fix state — a staged claim with no artefact is refused BY NAME", () => {
@@ -107,7 +112,12 @@ test("declaring BOTH an artefact and noArtefact is refused — one of the two is
 
 test("an action genuinely taken in someone else's interface passes when it says so plainly", () => {
   const f = auditStagedAction(
-    { item: "Publish the site", what: "One deliberate action in the hosting dashboard.", noArtefact: "a button in the provider's own interface" },
+    {
+      item: "Publish the site",
+      what: "One deliberate action in the hosting dashboard.",
+      noArtefact: "a button in the provider's own interface",
+      rank: 4, unblocks: "starts the visit log recording", blockedWithout: "no prospect can reach the site",
+    },
     { root: ROOT },
   );
   assert.equal(f.ok, true);
@@ -118,7 +128,7 @@ test("an action genuinely taken in someone else's interface passes when it says 
 // ── The live audit: EVERY currently staged item, not just the historical fixture ───────────────────
 
 test("every currently staged one-click item satisfies the guard", () => {
-  assert.equal(NEEDS_AHMAD_SCHEMA, "needs-ahmad-staged.v1");
+  assert.equal(NEEDS_AHMAD_SCHEMA, "needs-ahmad-staged.v2"); // AN2 tightened the contract; AJ1's proof below is untouched
   assert.ok(needsAhmadStaged.length > 0, "the staged list is not empty");
 
   const res = auditStagedActions(needsAhmadStaged, { root: ROOT });

@@ -2,14 +2,14 @@
   "schema_version": "1.4",
   "label": "ARIA classifier + product autonomous loop",
   "last_run_iso": "2026-08-05",
-  "total_runs": 45,
-  "cumulative_scenarios": 2289566,
+  "total_runs": 46,
+  "cumulative_scenarios": 2327873,
   "last_session_scenarios": 38307,
-  "last_pass_rate_pct": 92.65,
-  "last_pass_count": 35490,
-  "last_fail_count": 2817,
-  "cumulative_regex_swaps_applied": 46,
-  "cumulative_fixes_shipped": 47,
+  "last_pass_rate_pct": 95.5,
+  "last_pass_count": 36584,
+  "last_fail_count": 1723,
+  "cumulative_regex_swaps_applied": 61,
+  "cumulative_fixes_shipped": 62,
   "current_corpus_size": 38307,
   "active_harness_corpus_size": 38307,
   "target_corpus_size": 500000,
@@ -515,8 +515,8 @@
     "push_blocker": "No PAT at .cowork-github-pat this session; no env token; no embedded PAT in remote URL; HEAD on cc/master-fix-2026-07-02 (feature branch) not main. run-stats.json updated on disk via Cowork file API. AHMAD: from a /tmp clone with a valid PAT off origin/main -- git add tests/scenario-corpus.js tests/run-stats.json && git commit -m \"[autonomous] classifier loop 2026-07-17: 92.3% pass, 38307 corpus, 1 safe flip\" && git push origin main. Do NOT git-add through the corrupt mount.",
     "ran_at": "2026-07-17T15:53:36Z"
   },
-  "last_run_at": "2026-08-05T17:52:00Z",
-  "next_run_at": "2026-08-06T01:52:00Z",
+  "last_run_at": "2026-08-05T20:17:00.712Z",
+  "next_run_at": "2026-08-06T04:17:00.713Z",
   "this_session_2026_07_17_slot3": {
     "harness": "run-10k-scenarios.js",
     "scenarios": 38307,
@@ -796,5 +796,6 @@
       "kb:onboarding": 126
     },
     "note": "Mirror NOT swapped. Harness still measures shipped classifier (92.65%). Zero-regression verified against full 38,307 corpus."
-  }
+  },
+  "last_session_note": "slot4 2026-08-05: kb:hardware intent created (0%->57%+), new-joiner onboarding rule, browser-slowness split from performance, credential-action beats mail, multilingual password, typo tolerance (teams/mail/vpn/onedrive/networking), duo MFA, thermal/heat performance, escalation stuck-anywhere. 92.65% -> 95.50% (+2.85pts), 15 measured zero-regression patches, 2 corpus expectation flips."
 }

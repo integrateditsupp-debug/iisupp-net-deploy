@@ -11,7 +11,19 @@
 //
 // Declaring neither is a failure. Declaring both is a failure. Writing prose that claims a drafted
 // or rendered thing while declaring noArtefact is a failure, by name.
-export const NEEDS_AHMAD_SCHEMA = "needs-ahmad-staged.v1";
+//
+// RUN-AN / AN2 adds two more required fields, because for three cycles this list was presented as
+// four equals and it never was four equals:
+//
+//   rank:            where the item sits. A positive integer, unique across the list. The renderer
+//                    and the emitter both read RANK order, never the order these happen to be typed.
+//   unblocks:        what the click actually buys, in plain words.
+//   blockedWithout:  the honest other half — what stays stuck if it is skipped. A priority stated
+//                    without its cost of omission is a preference, not a priority.
+//
+// No invented probabilities, no invented dollar figures. Rank is an argued ordering, and the
+// argument is written down beside it so it can be disagreed with.
+export const NEEDS_AHMAD_SCHEMA = "needs-ahmad-staged.v2";
 
 export const needsAhmadStaged = [
   {
@@ -24,6 +36,13 @@ export const needsAhmadStaged = [
       "untested: 124 cycles of build have never produced a second touch, and a cold sequence produces " +
       "most of its replies on touches two through four.",
     artefact: "senior-director-state/outbound/SEND-SHEET-2026-08-05.md",
+    rank: 1,
+    unblocks:
+      "The only thing on this list that can produce a reply, a meeting, or a first dollar. Every other " +
+      "item moves code or infrastructure; this one moves the business.",
+    blockedWithout:
+      "The offer stays untested indefinitely. Revenue, meetings and replies all stay at zero no matter " +
+      "how many cycles run, because nothing else here can move them.",
   },
   {
     item: "Push the shared line to the code host",
@@ -32,6 +51,13 @@ export const needsAhmadStaged = [
       "The build sandbox holds no code-host credential and that refusal was reproduced against the real " +
       "remote again this cycle. This is the only thing between verified work and the shared host.",
     artefact: "AHMAD-ONE-CLICK.cmd",
+    rank: 3,
+    unblocks:
+      "Moves every verified commit onto the shared host, where it can be deployed and where a second " +
+      "machine can see it. Prerequisite for publishing.",
+    blockedWithout:
+      "The verified line keeps growing on one machine only — a single-disk failure loses it, and the " +
+      "publish below cannot happen at all.",
   },
   {
     item: "A code-hosting credential for the build sandbox",
@@ -42,6 +68,13 @@ export const needsAhmadStaged = [
     noArtefact:
       "Nothing can be prepared on disk for this. It is a credential granted in someone else's account " +
       "settings, and an agent must never hold or create one.",
+    rank: 2,
+    unblocks:
+      "Retires the push above permanently instead of re-staging it every cycle. It is the only item " +
+      "here that removes another item from this list rather than adding a click to it.",
+    blockedWithout:
+      "The push stays a manual step, re-staged and re-explained every single cycle, forever. Nineteen " +
+      "cycles of that have already happened.",
   },
   {
     item: "Publish the site",
@@ -53,6 +86,13 @@ export const needsAhmadStaged = [
     noArtefact:
       "A publish is a button in the hosting provider's own interface. There is no local object for it, " +
       "and staging one would be theatre.",
+    rank: 4,
+    unblocks:
+      "Starts the visit log recording, which is the only path to a passive signal that does not depend " +
+      "on anyone answering a message.",
+    blockedWithout:
+      "The passive signal reads not-yet-collecting rather than zero — honest, and worth nothing. No " +
+      "prospect can reach the site at all.",
   },
 ];
 

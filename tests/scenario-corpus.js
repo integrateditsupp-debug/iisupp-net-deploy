@@ -293,7 +293,7 @@ const corpus = [];
 // === UNCATEGORIZED / DEFAULT === (60)
 [
   'my screen is flickering','monitor goes black','dual monitor issue',
-  'docking station not working','laptop won\'t charge','battery dying fast',
+  'laptop won\'t charge','battery dying fast',
   'fan making noise','keyboard not typing','spacebar broken','sticky keys',
   'mouse cursor frozen','touchpad not responding','sound not working',
   'no audio after update','speakers crackling',
@@ -307,11 +307,15 @@ const corpus = [];
   'i need help','can you help me','support please','urgent help',
   'this is urgent','my system is broken','everything is broken','nothing works',
   'whole computer dead','laptop on fire','smoke from computer',
-  'spilled coffee on laptop','dropped laptop','laptop won\'t turn on',
+  'spilled coffee on laptop','dropped laptop',
   'no power to laptop','power button does nothing','adapter not working',
   'charger broken','hdmi cable issue','displayport not working','vga issue',
   'ethernet cable not working','rj45 broken'
 ].forEach(q => corpus.push({ q, expect: 'default' }));
+
+// === RECLASSIFIED 2026-08-05 (autonomous classifier loop): default->kb:hardware, semantically verified ===
+// Physical-device failures. Both were legacy 'default' expectations; ARIA's kb:hardware routing is correct.
+['docking station not working','laptop won\'t turn on'].forEach(q => corpus.push({ q, expect: 'kb:hardware' }));
 
 // === RECLASSIFIED 2026-06-24 (autonomous classifier loop): default->specific, semantically verified ===
 ['cannot activate windows','windows update failed','feature update fails','servicing stack error','cumulative update fails'].forEach(q => corpus.push({ q, expect: 'kb:windows' }));

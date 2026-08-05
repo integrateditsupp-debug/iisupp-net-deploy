@@ -36,6 +36,17 @@ const TESTS = [
   // AXIS console now renders the age of every reading and marks the stale ones, on the Director tab
   // where the operator actually looks. Nothing is hidden by staleness; the public headline stays clean.
   "../../tests/claim-figures-render.test.mjs",
+  // CUSTOMER LINK GRAPH 2026-08-05 (RUN-AN / AN1) — nineteen cycles proved the OPERATOR's numbers
+  // honest and never once proved the thing a PROSPECT would meet. Walks the real link graph from the
+  // customer entry points, on disk, with no network call: a route that resolves to nothing, to an
+  // empty file, to a force-404 rule, or to a body that is only a login gate fails red and names its
+  // file and line. Routes that genuinely cannot be decided here are UNCHECKED, never counted as pass.
+  "../../tests/customer-link-graph.test.mjs",
+  // STAGED ACTION RANK 2026-08-05 (RUN-AN / AN2) — AJ1 made a staged click name its artefact; this
+  // makes the LIST stop pretending its items are equals. Rank + unblocks + what stays blocked are
+  // required, ties and gaps fail at the list level, and the order the operator reads is asserted by
+  // a test rather than by the order somebody typed the array.
+  "../../tests/staged-action-rank.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   "./tab-gating-post-trial.test.mjs",

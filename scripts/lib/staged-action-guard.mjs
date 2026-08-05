@@ -33,6 +33,12 @@ export const CLASSES = Object.freeze({
   PROSE_CLAIMS: "prose-claims-an-artefact-that-is-not-declared",
   NOT_A_FILE: "artefact-path-is-not-a-file",
   UNVERIFIABLE: "artefact-under-an-untracked-root-that-is-absent-here",
+  // RUN-AN / AN2 — a staged list presented as a flat set of equals is its own quiet dishonesty.
+  NO_PRIORITY: "declares-neither-a-rank-nor-what-it-unblocks",
+  NO_RANK: "declares-what-it-unblocks-but-not-where-it-sits",
+  NO_UNBLOCKS: "declares-a-rank-but-not-what-the-rank-is-for",
+  BAD_RANK: "rank-is-not-a-positive-integer",
+  DUPLICATE_RANK: "two-items-claim-the-same-rank",
 });
 
 // Words that assert a thing exists to be acted on. If prose uses them, an artefact must be declared.
@@ -68,6 +74,30 @@ export function auditStagedAction(item = {}, { root = process.cwd(), untrackedRo
 
   const fail = (cls, detail) => ({ name, ok: false, class: cls, detail, artefact: item.artefact ?? null });
 
+  // ── AN2: priority, checked AFTER the artefact rule so AJ1 keeps failing first and by its own name.
+  // Four items sat on this list as equals for three cycles while exactly one of them could move a
+  // business number and exactly one would retire another permanently. "Here are four things you
+  // could click" is not a handover; it is a shrug. An item must declare where it sits (rank) and
+  // what its click buys (unblocks) — and, since the honest half of a priority is the cost of
+  // skipping it, what stays blocked without it. Applied to every otherwise-passing result.
+  const priority = (pass) => {
+    const hasRank = item.rank !== undefined && item.rank !== null;
+    const hasUnblocks = typeof item.unblocks === "string" && item.unblocks.trim() !== "";
+    if (!hasRank && !hasUnblocks) {
+      return fail(
+        CLASSES.NO_PRIORITY,
+        "a staged one-click list is not a set of equals. This item declares neither a rank nor what it " +
+          "unblocks, so nobody reading it can tell which click to make first",
+      );
+    }
+    if (!hasRank) return fail(CLASSES.NO_RANK, "declares what it unblocks but not where it sits in the order");
+    if (!hasUnblocks) return fail(CLASSES.NO_UNBLOCKS, "declares a rank with nothing stating what that rank is for");
+    if (!Number.isInteger(item.rank) || item.rank < 1) {
+      return fail(CLASSES.BAD_RANK, `rank must be a positive integer; got ${JSON.stringify(item.rank)}`);
+    }
+    return { ...pass, rank: item.rank, unblocks: item.unblocks, blockedWithout: item.blockedWithout ?? null };
+  };
+
   if (hasArtefact && hasNoArtefact) {
     return fail(CLASSES.AMBIGUOUS, "declares an artefact AND declares it has none; one of the two is untrue");
   }
@@ -89,7 +119,7 @@ export function auditStagedAction(item = {}, { root = process.cwd(), untrackedRo
           "failure shape: a click reported as staged with nothing to act on",
       );
     }
-    return { name, ok: true, class: CLASSES.OK, artefact: null, note: item.noArtefact };
+    return priority({ name, ok: true, class: CLASSES.OK, artefact: null, note: item.noArtefact });
   }
 
   // An artefact is declared — it must actually be there and hold something.
@@ -106,7 +136,7 @@ export function auditStagedAction(item = {}, { root = process.cwd(), untrackedRo
     const untracked = untrackedRoots.find((r) => isUnder(rel, r));
     if (untracked && !fs.existsSync(path.resolve(root, untracked))) {
       // The whole record root is absent (bare clone). Honest third state: not a pass, not a failure.
-      return {
+      return priority({
         name,
         ok: true,
         class: CLASSES.UNVERIFIABLE,
@@ -114,7 +144,7 @@ export function auditStagedAction(item = {}, { root = process.cwd(), untrackedRo
         note:
           `the untracked root ${untracked} is not present in this checkout, so this artefact cannot be ` +
           "verified here. It is neither claimed green nor failed — it is unverifiable, said out loud",
-      };
+      });
     }
     return fail(CLASSES.MISSING, `names ${rel}, which does not exist. The click has nothing to operate on`);
   }
@@ -122,7 +152,7 @@ export function auditStagedAction(item = {}, { root = process.cwd(), untrackedRo
   if (!st.isFile()) return fail(CLASSES.NOT_A_FILE, `${rel} exists but is not a file`);
   if (st.size === 0) return fail(CLASSES.EMPTY, `${rel} exists but is empty — an empty artefact is not a handover`);
 
-  return { name, ok: true, class: CLASSES.OK, artefact: rel, bytes: st.size };
+  return priority({ name, ok: true, class: CLASSES.OK, artefact: rel, bytes: st.size });
 }
 
 /**
@@ -131,6 +161,24 @@ export function auditStagedAction(item = {}, { root = process.cwd(), untrackedRo
  */
 export function auditStagedActions(items = [], opts = {}) {
   const findings = items.map((i) => auditStagedAction(i, opts));
+
+  // Duplicate ranks are only visible from the list. Two items claiming rank 1 is the flat-set
+  // failure wearing a number, so it fails at the list level rather than passing item by item.
+  const byRank = new Map();
+  for (const i of items) {
+    if (!Number.isInteger(i?.rank)) continue;
+    byRank.set(i.rank, (byRank.get(i.rank) ?? 0) + 1);
+  }
+  for (const f of findings) {
+    if (!f.ok) continue;
+    const item = items.find((i) => String(i?.item ?? "(unnamed staged action)") === f.name);
+    if (item && Number.isInteger(item.rank) && byRank.get(item.rank) > 1) {
+      f.ok = false;
+      f.class = CLASSES.DUPLICATE_RANK;
+      f.detail = `rank ${item.rank} is claimed by ${byRank.get(item.rank)} items; an order with ties is not an order`;
+    }
+  }
+
   const failures = findings.filter((f) => !f.ok);
   const counts = findings.reduce((acc, f) => ({ ...acc, [f.class]: (acc[f.class] ?? 0) + 1 }), {});
   return {
@@ -161,4 +209,15 @@ export function assertStagedActionsHonest(items = [], opts = {}) {
   return res;
 }
 
-export default { auditStagedAction, auditStagedActions, assertStagedActionsHonest, CLASSES, STAGED_ACTION_GUARD_SCHEMA };
+/**
+ * The staged list in RANK order — never in the order someone happened to type it (AN2).
+ * Pure; returns a new array and never mutates the input.
+ */
+export function rankedStagedActions(items = []) {
+  return [...items].sort((a, b) => (a?.rank ?? Infinity) - (b?.rank ?? Infinity));
+}
+
+export default {
+  auditStagedAction, auditStagedActions, assertStagedActionsHonest, rankedStagedActions,
+  CLASSES, STAGED_ACTION_GUARD_SCHEMA,
+};

@@ -2,12 +2,12 @@
  "_internal": true,
  "_emitRule": "INTERNAL ONLY — force-404 live, served via authenticated /api/axis-status. NEVER copy this content into .well-known: regenerate the public mirrors with scripts/lib/axis-status-emit.mjs (headline-only, leak-scanned).",
  "schema": "axis-status-full/1",
- "generatedAt": "2026-08-05T19:49:47.039Z",
+ "generatedAt": "2026-08-05T20:50:52.174Z",
  "honest": true,
  "claims": {
   "testsPassedAfterWrites": {
-   "value": 592,
-   "measuredAt": "2026-08-05T19:50:08.057Z",
+   "value": 618,
+   "measuredAt": "2026-08-05T20:51:17.967Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (# pass)",
    "kind": "test",
    "provenance": "measured",
@@ -21,7 +21,7 @@
   },
   "testsFailedAfterWrites": {
    "value": 0,
-   "measuredAt": "2026-08-05T19:50:08.057Z",
+   "measuredAt": "2026-08-05T20:51:17.967Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (# fail)",
    "kind": "test",
    "provenance": "measured",
@@ -34,8 +34,8 @@
    "stale": false
   },
   "suitesGreenAfterWrites": {
-   "value": 336,
-   "measuredAt": "2026-08-05T19:50:08.057Z",
+   "value": 338,
+   "measuredAt": "2026-08-05T20:51:17.967Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (N/N suites green)",
    "kind": "test",
    "provenance": "measured",
@@ -48,8 +48,8 @@
    "stale": false
   },
   "suitesTotalAfterWrites": {
-   "value": 336,
-   "measuredAt": "2026-08-05T19:50:08.057Z",
+   "value": 338,
+   "measuredAt": "2026-08-05T20:51:17.967Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (N/N suites green)",
    "kind": "test",
    "provenance": "measured",
@@ -63,7 +63,7 @@
   },
   "registryExitCode": {
    "value": 0,
-   "measuredAt": "2026-08-05T19:50:08.057Z",
+   "measuredAt": "2026-08-05T20:51:17.968Z",
    "source": "the exit code of the registry run this script performed",
    "kind": "test",
    "provenance": "measured",
@@ -77,7 +77,7 @@
   },
   "testsPassedBeforeAnyWrite": {
    "value": 563,
-   "measuredAt": "2026-08-05T19:50:08.057Z",
+   "measuredAt": "2026-08-05T20:51:17.968Z",
    "source": "not measurable in this environment: the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
    "kind": "test",
    "provenance": "declared-unmeasurable",
@@ -89,7 +89,7 @@
   },
   "suitesGreenBeforeAnyWrite": {
    "value": 334,
-   "measuredAt": "2026-08-05T19:50:08.057Z",
+   "measuredAt": "2026-08-05T20:51:17.968Z",
    "source": "not measurable in this environment: the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
    "kind": "test",
    "provenance": "declared-unmeasurable",
@@ -100,8 +100,8 @@
    "stale": false
   },
   "commitsAheadOfSharedLine": {
-   "value": 45,
-   "measuredAt": "2026-08-05T19:50:08.284Z",
+   "value": 46,
+   "measuredAt": "2026-08-05T20:51:18.190Z",
    "source": "a revision count taken against the last known shared reference during this cycle",
    "kind": "count",
    "provenance": "measured",
@@ -115,7 +115,7 @@
   },
   "pushCredentialRefused": {
    "value": true,
-   "measuredAt": "2026-08-05T19:50:08.486Z",
+   "measuredAt": "2026-08-05T20:51:18.453Z",
    "source": "a remote probe run with prompts disabled during this emit; the refusal is the measurement",
    "kind": "blocker",
    "provenance": "measured",
@@ -129,7 +129,7 @@
   },
   "secondMessagesDrafted": {
    "value": 12,
-   "measuredAt": "2026-08-05T19:50:08.487Z",
+   "measuredAt": "2026-08-05T20:51:18.454Z",
    "source": "a read of senior-director-state/outbound/SEND-SHEET-2026-08-05.md on disk during this cycle, counting its entries",
    "kind": "count",
    "provenance": "measured",
@@ -142,9 +142,65 @@
    "maxAgeHours": 24,
    "stale": false
   },
+  "customerRoutesResolved": {
+   "value": 761,
+   "measuredAt": "2026-08-05T20:51:18.454Z",
+   "source": "the customer link-graph walk performed during this emit, over the declared customer entry points",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "walkCustomerGraph() — every literal href resolved against the files on disk",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "customerRoutesBroken": {
+   "value": 0,
+   "measuredAt": "2026-08-05T20:51:18.454Z",
+   "source": "the same walk; a broken route is one resolving to no file, an empty file, a force-404 rule, or a login-only body",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "walkCustomerGraph().broken",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "customerRoutesUnchecked": {
+   "value": 133,
+   "measuredAt": "2026-08-05T20:51:18.454Z",
+   "source": "the same walk; external hosts, mail/tel schemes, fragments, runtime-built hrefs and function routes — undecidable from disk and never counted as passing",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "walkCustomerGraph().unchecked",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "outboundLinksResolved": {
+   "value": 0,
+   "measuredAt": "2026-08-05T20:51:18.454Z",
+   "source": "the audit of every site link in the send sheet, run during this emit",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditOutboundLinks(SEND-SHEET-2026-08-05.md)",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
   "stagedItemsAudited": {
    "value": 4,
-   "measuredAt": "2026-08-05T19:50:08.487Z",
+   "measuredAt": "2026-08-05T20:51:18.454Z",
    "source": "the staged-action guard run over the tracked staged-actions module during this emit",
    "kind": "measurement",
    "provenance": "measured",
@@ -158,7 +214,7 @@
   },
   "secondMessagesSent": {
    "value": 0,
-   "measuredAt": "2026-08-05T19:50:08.487Z",
+   "measuredAt": "2026-08-05T20:51:18.454Z",
    "source": "not measurable in this environment: no send path exists in this environment and none was attempted; the outbound record shows none",
    "kind": "count",
    "provenance": "declared-unmeasurable",
@@ -170,7 +226,7 @@
   },
   "meetingsHeld": {
    "value": 0,
-   "measuredAt": "2026-08-05T19:50:08.487Z",
+   "measuredAt": "2026-08-05T20:51:18.454Z",
    "source": "not measurable in this environment: replies and meetings live in a mailbox and a calendar this environment cannot read",
    "kind": "count",
    "provenance": "declared-unmeasurable",
@@ -180,9 +236,23 @@
    "maxAgeHours": 24,
    "stale": false
   },
+  "stagedItemsRanked": {
+   "value": 4,
+   "measuredAt": "2026-08-05T20:51:18.454Z",
+   "source": "the staged list read during this emit; AN2 requires a rank and an unblocks statement per item",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "needsAhmadStaged.filter(i => Number.isInteger(i.rank))",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
   "daysDraftedUnsent": {
-   "value": 15,
-   "measuredAt": "2026-08-05T19:49:47.039Z",
+   "value": 16,
+   "measuredAt": "2026-08-05T20:50:52.174Z",
    "source": "the date the twelve were first drafted (2026-07-21), differenced against today",
    "kind": "count",
    "ageHours": 0,
@@ -191,7 +261,7 @@
   },
   "revenueToDate": {
    "value": "none",
-   "measuredAt": "2026-08-05T19:49:47.039Z",
+   "measuredAt": "2026-08-05T20:50:52.174Z",
    "source": "no invoice has been issued",
    "kind": "fact",
    "ageHours": 0,
@@ -200,7 +270,7 @@
   },
   "feedMaxAgeHours": {
    "value": 24,
-   "measuredAt": "2026-08-05T19:49:47.039Z",
+   "measuredAt": "2026-08-05T20:50:52.174Z",
    "source": "the freshness policy wired into the served-feed read path",
    "kind": "fact",
    "ageHours": 0,
@@ -211,41 +281,46 @@
  "claimsPolicy": "Every figure above is { value, measuredAt, source, kind } AND declares who authored the stamp. A figure this environment can read must carry `provenance: measured` plus the command and exit code that produced it — the emit script no longer types those numbers anywhere, and the emitter refuses the whole write if one arrives hand-typed. A figure that cannot be read here is `declared-unmeasurable` with a reason and, where useful, a value explicitly labelled last known. Only figures with nothing to read may be attested by hand.",
  "program": {
   "series": "flywheel",
-  "sequence": "RUN-AM — the stamp the writer cannot type (AM1, AM2, AM3)",
-  "previousSequence": "RUN-AL — the figure nobody re-measured (1/3 as released, plus one unplanned task)",
+  "sequence": "RUN-AN — the door nobody tried (AN1, AN2, AN3)",
+  "previousSequence": "RUN-AM — the stamp the writer cannot type (3/3)",
   "tasksBuiltAndGreen": 3,
   "tasksTotal": 3,
   "tasksMerged": 3,
   "pct": 100,
-  "unplannedTasksBuiltAndGreen": 0,
+  "unplannedTasksBuiltAndGreen": 1,
   "tasksStillOpen": [],
-  "carriedFrom": "AM1 and AM2 are AL1 and AL2 unchanged — carried, not re-scoped, and now done",
+  "carriedFrom": "nothing carried; AM closed 3/3",
   "testsGreen": true,
-  "verificationCycleNote": "No customer-visible change this cycle and none is claimed. What changed is that the operator surface can no longer show a six-cycle-old number as if it were read this morning, and the emit script can no longer vouch for its own typing.",
-  "note": "AM1 — authorship, not presence. AK proved a figure carries evidence; the evidence was still typed by the writer. Measurement functions now perform the read and return the value and the stamp together, carrying the command and exit code that produced them; a hand-typed stamp for a readable figure is refused by class BEFORE anything is written, proven by emitting into a scratch root and asserting both that the write throws and that no file appeared. AM2 — staleness moved from a JSON file nobody opens to the AXIS Director tab: every figure renders the age of its own read, stale ones are marked, and nothing is hidden by staleness. Age is recomputed against now rather than trusted from the payload, so identical bytes go stale on their own as the clock advances. AM3 — this feed, emitted by measurement. Second messages sent: still zero."
+  "verificationCycleNote": "The registry arrived RED this cycle — an in-flight classifier patch in the working tree had dropped the `default` intent to 85.8%, under its 86% regression floor. It was diagnosed to a single unbounded typo alternate matching inside unrelated product names, bounded, and the floor restored to 86.13% with the patch's own gains kept. That fix is the unplanned task.",
+  "note": "AN1 — the customer-facing path, proven from the repository. Nineteen cycles made the OPERATOR's numbers unable to lie and never once proved the thing a PROSPECT would meet. The link graph is now walked from the declared customer entry points, on disk, with no network call and no deploy: a route resolving to no file, to an empty file, to a force-404 redirect rule, or to a body that is nothing but a sign-in gate fails red and names its file and line. Routes that genuinely cannot be decided here — external hosts, mail/tel schemes, fragments, hrefs assembled at runtime, function routes — are UNCHECKED with a reason and are never folded into the pass count, which is asserted by its own test. AN2 — the staged one-click list stopped pretending its items are equals. Rank, what the click unblocks, and what stays blocked without it are now required; ties and gaps fail at the list level; and the order the operator reads is asserted by a test rather than by the order the array happens to be typed in. The send leads; the credential that would retire the push permanently outranks the push it retires. AN3 — this feed, emitted by measurement. Second messages sent: still zero."
  },
  "tests": {
   "afterEveryWrite": {
-   "pass": 592,
+   "pass": 618,
    "fail": 0,
-   "suites": "336/336",
+   "suites": "338/338",
    "exit": 0
   },
   "beforeAnyWriteLastKnown": {
-   "pass": 563,
+   "pass": 592,
    "fail": 0,
-   "suites": "334/334",
+   "suites": "336/336",
    "exit": 0,
-   "note": "opening read of this cycle, reported as last known — not re-stamped"
+   "note": "opening read of this cycle AFTER the inherited classifier regression was fixed; reported as last known, not re-stamped"
+  },
+  "arrivalState": {
+   "red": true,
+   "suite": "classifier-accuracy",
+   "detail": "intent \"default\" 85.82% under its 86% floor, from an in-flight working-tree patch; fixed to 86.13% before any RUN-AN write"
   },
   "riseExplained": "this cycle's two new suites and nothing else",
   "newThisCycle": [
    {
-    "suite": "claim-measure",
+    "suite": "customer-link-graph",
     "redThenGreen": true
    },
    {
-    "suite": "claim-figures-render",
+    "suite": "staged-action-rank",
     "redThenGreen": true
    }
   ]
@@ -325,38 +400,60 @@
  "onTrack": {
   "landing": false,
   "conversion": false,
-  "honestNote": "Nothing published. No customer-visible change and none claimed. The verified work still sits on the local line (45 commits ahead of the last known shared reference) because the environment holds no credential for the shared host."
+  "honestNote": "Nothing published. No customer-visible change and none claimed. The verified work still sits on the local line (46 commits ahead of the last known shared reference) because the environment holds no credential for the shared host."
  },
  "needsAhmad": [
   {
    "item": "Send the twelve second messages",
    "what": "Ten emails and two call scripts, keyed by opaque handle to routes the prospects supplied themselves. Roughly twenty minutes of copy and paste.",
    "why": "The only item on this list that can move a business number. Until these go out the offer stays untested: 124 cycles of build have never produced a second touch, and a cold sequence produces most of its replies on touches two through four.",
-   "artefact": "senior-director-state/outbound/SEND-SHEET-2026-08-05.md"
-  },
-  {
-   "item": "Push the shared line to the code host",
-   "what": "One push of the shared branch, every commit on it verified against a green full registry.",
-   "why": "The build sandbox holds no code-host credential and that refusal was reproduced against the real remote again this cycle. This is the only thing between verified work and the shared host.",
-   "artefact": "AHMAD-ONE-CLICK.cmd"
+   "artefact": "senior-director-state/outbound/SEND-SHEET-2026-08-05.md",
+   "rank": 1,
+   "unblocks": "The only thing on this list that can produce a reply, a meeting, or a first dollar. Every other item moves code or infrastructure; this one moves the business.",
+   "blockedWithout": "The offer stays untested indefinitely. Revenue, meetings and replies all stay at zero no matter how many cycles run, because nothing else here can move them."
   },
   {
    "item": "A code-hosting credential for the build sandbox",
    "what": "A credential or a code-host connector attached to this environment.",
    "why": "It would retire the push above permanently instead of re-staging it every cycle. Highest leverage item here that is not a conversation.",
-   "noArtefact": "Nothing can be prepared on disk for this. It is a credential granted in someone else's account settings, and an agent must never hold or create one."
+   "noArtefact": "Nothing can be prepared on disk for this. It is a credential granted in someone else's account settings, and an agent must never hold or create one.",
+   "rank": 2,
+   "unblocks": "Retires the push above permanently instead of re-staging it every cycle. It is the only item here that removes another item from this list rather than adding a click to it.",
+   "blockedWithout": "The push stays a manual step, re-staged and re-explained every single cycle, forever. Nineteen cycles of that have already happened."
+  },
+  {
+   "item": "Push the shared line to the code host",
+   "what": "One push of the shared branch, every commit on it verified against a green full registry.",
+   "why": "The build sandbox holds no code-host credential and that refusal was reproduced against the real remote again this cycle. This is the only thing between verified work and the shared host.",
+   "artefact": "AHMAD-ONE-CLICK.cmd",
+   "rank": 3,
+   "unblocks": "Moves every verified commit onto the shared host, where it can be deployed and where a second machine can see it. Prerequisite for publishing.",
+   "blockedWithout": "The verified line keeps growing on one machine only — a single-disk failure loses it, and the publish below cannot happen at all."
   },
   {
    "item": "Publish the site",
    "what": "One deliberate operator action in the hosting dashboard.",
    "why": "Landing a branch never deploys. This stays a separate human decision, and it is the action that starts the visit log recording — until it happens the passive signal reads not-yet-collecting rather than zero.",
-   "noArtefact": "A publish is a button in the hosting provider's own interface. There is no local object for it, and staging one would be theatre."
+   "noArtefact": "A publish is a button in the hosting provider's own interface. There is no local object for it, and staging one would be theatre.",
+   "rank": 4,
+   "unblocks": "Starts the visit log recording, which is the only path to a passive signal that does not depend on anyone answering a message.",
+   "blockedWithout": "The passive signal reads not-yet-collecting rather than zero — honest, and worth nothing. No prospect can reach the site at all."
   }
  ],
+ "needsAhmadPolicy": "Served in RANK order, not in the order the list is typed. Each item declares what its click unblocks and what stays blocked without it; the guard refuses an item that declares neither.",
+ "customerPath": {
+  "entryPoints": 15,
+  "links": 894,
+  "resolved": 761,
+  "broken": 0,
+  "uncheckedWithReason": 133,
+  "outboundSiteLinks": 0,
+  "note": "Walked from disk, no network call, no deploy. Unchecked is a third verdict with a stated reason and is never counted as passing."
+ },
  "stagedAudit": {
   "audited": 4,
   "failed": 0,
-  "guard": "staged-action-guard.v1"
+  "guard": "staged-action-guard.v1 + rank"
  },
  "staleClaims": [],
  "unmeasuredFigures": [
