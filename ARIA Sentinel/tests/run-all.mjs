@@ -6,6 +6,9 @@ const TESTS = [
   "../../tests/deploy-safety-denylist.test.mjs",
   // SERVING-LAYER LOCKDOWN 2026-07-02 — live-probe logic (git-state tests can't see the serving layer).
   "../../tests/probe-deploy-safety.test.mjs",
+  // SERVED-FEED HYGIENE 2026-08-05 — the AXIS feed directories are live URL space; nothing untracked
+  // (emitter scratch, dotfile drafts) may sit beside the feed. Written after finding two such files.
+  "../../tests/served-feed-dir-clean.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   "./tab-gating-post-trial.test.mjs",

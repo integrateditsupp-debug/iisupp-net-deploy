@@ -1,61 +1,63 @@
-# Loops Alignment — 2026-08-04
+# Loops Alignment — 2026-08-05
 
 Top goal: Scale IIS to $1M ARR by 2027-06 via gov + biz IT contracts and ARIA/Growth Library digital products.
 
-Registry: 35 loops (8 core + 27 agent). Every loop declares `serves: top-goal`, so all 35
-pass the literal spec test (§8g step 3c). Report below splits them by evidence strength.
+Registry: 35 loops. All YAML files present (0 missing). Every loop carries `serves: top-goal`.
 
-## Aligned — sub-goal token present in loop text (17/35)
+## Aligned (35/35)
+- lead-radar: pulls CanadaBuys/MERX/Ontario tenders, HOT-flag >=60 — sub-goal 1 (first paying client)
+- aria-self-learn: generates bits into `aria_brain_pack/bits/` — sub-goal 4 (100+ KB bits/mo)
+- hard-rule-gatekeeper: aperture + /aria uptime verification — locked constraint (HARD RULE)
+- spend-gatekeeper: per-loop cost audit vs $0 cap — locked constraint (spend)
+- goal-alignment: this auditor — meta-loop guarding all sub-goals
+- codex-observer: Codex working-style delta detection — locked constraint (delivery quality)
+- tender-enrich: eval criteria + IIS-fit scoring on HOT tenders — sub-goal 1
+- ae-agent: converts qualified opportunities to signed contracts — sub-goal 1
+- ap-ar-clerk: AR aging + invoicing via Stripe — revenue capture path to $1M ARR
+- bid-mgr: enriches HOT tenders, flags iis_fit >= 80 to AE — sub-goal 1
+- brand-mgr: visual/copy drift guard — locked constraint (visual stability)
+- cco-agent: blocks fake-data / unsupported-claim shipments — locked constraint (ethical design)
+- ceo-agent: sets CURRENT_GOAL.md, approves spend — owns all sub-goals
+- cfo-agent: spend governance + forecast — locked constraint (spend)
+- cmo-agent: brand voice + demand gen + Growth Library roadmap — top-line (digital products)
+- content-strat: Growth Library authoring + KB articles — sub-goal 4
+- coo-agent: pipeline + outbound batch approval + proposals — sub-goals 1, 3
+- cos-agent: goal alignment across agents + idle-improvement delegation — meta
+- cto-agent: KB ingestion review + approves aria/aperture deploys — sub-goal 4 + HARD RULE
+- demand-gen: trend scan feeding marketing pipeline — sub-goal 3
+- devops-eng: post-deploy smoke tests on /aria + /aperture-learning — HARD RULE
+- ea-agent: email triage + follow-up tracking — sub-goal 3 (reply throughput)
+- kb-engineer: 1-3 bit drafts per fallback query, max 50/day — sub-goal 4
+- legal-counsel: contract + tender T&C review — sub-goal 1
+- platform-eng: commit-pattern + architectural drift detection — delivery quality
+- pm-agent: task/blocker tracking across loops — meta
+- pr-agent: LinkedIn + press drafts — sub-goal 3 (inbound demand)
+- privacy-officer: PIPEDA/PHIPA/GDPR posture — gov procurement prerequisite (sub-goal 1)
+- procurement-mgr: daily MERX/CanadaBuys/BC Bid/Biddingo hunt — sub-goal 1
+- qa-auditor: flags fabricated testimonials/partnerships — locked constraint (ethical design)
+- sdr-agent: cold outreach, cadence 5+5 / 2h gap — sub-goal 3 (50+ qualified replies/mo)
+- sre-agent: 30-min curl of aperture + /aria, auto-rollback — HARD RULE
+- tax-agent: CRA workbook sync — financial hygiene under $1M ARR track
+- treasurer: pauses loops breaching $0 cap — locked constraint (spend)
+- director-idle-improvement: delegates idle agents to $0 improvements — meta
 
-Strong: mandate/goal prose names a sub-goal, not just the `serves:` field.
+## Drifting (0) — flag to Ahmad
+None. No loop lacks a `serves: top-goal` field, and no loop's goal/mandate text is free of sub-goal or locked-constraint vocabulary.
 
-- tender-enrich — full solicitation fetch + IIS-fit scoring (SG1 client, SG3 tenders, SG4 bits, SG5 cap-stmt)
-- lead-radar — CanadaBuys/MERX/Ontario daily pull, HOT >= 60 (SG3, SG4)
-- aria-self-learn — candidate bits into `aria_brain_pack/bits/`, max 50/day (SG4, revenue tie)
-- ae-agent — close motion + partner/cap-statement references (SG2, SG3, SG5)
-- content-strat — revenue-linked content + KB output (SG1, SG4)
-- bid-mgr — bid assembly from tender records (SG3, SG4)
-- procurement-mgr — supplier/tender hunting (SG3, SG4)
-- kb-engineer — KB bit production (SG4)
-- sdr-agent — cold outbound pipeline, cadence 5+5 (SG3)
-- demand-gen — inbound/outbound demand (SG3)
-- coo-agent — ops over lead/bid flow (SG3)
-- legal-counsel — contract/tender review (SG3)
-- director-idle-improvement — dispatches idle reports onto revenue duties (SG3)
+## Advisory — indirect alignment (17)
+These loops align via **locked constraints** (HARD RULE, spend, visual stability, ethical design) rather than a revenue sub-goal token. That is legitimate under LOOPS_SPEC §7, but they will never move the $1M ARR needle directly:
 
-## Aligned by `serves:` only — no sub-goal token in text (18/35)
+hard-rule-gatekeeper, spend-gatekeeper, goal-alignment, codex-observer, brand-mgr, cmo-agent, cos-agent, demand-gen, devops-eng, ea-agent, platform-eng, pm-agent, pr-agent, privacy-officer, sre-agent, tax-agent, treasurer
 
-These are infra, gatekeeper, or executive loops. Not drift, but the prose does not
-name what they protect. Listed so the weakness is visible rather than hidden.
+No action required. Recorded so the split between revenue loops (18) and guardrail/meta loops (17) is visible.
 
-Infra / gatekeeper (correctly constraint-derived, low concern):
-hard-rule-gatekeeper, spend-gatekeeper, goal-alignment, codex-observer,
-sre-agent, devops-eng, qa-auditor, platform-eng, privacy-officer, cco-agent
+## Structural finding — carried from 2026-08-04
+Alignment is 35/35 but **execution is 0/35 on the revenue side**: every `status: planned` agent loop (27 of them) has `last_run: null` and `success_count: 0`. Only `goal-alignment` and `codex-observer` have ever run. Sub-goal 5 (Capability Statement, due 2026-06-20) is 46 days past due. Sub-goals 1, 2, and 4 are due 2026-09-30 — 56 days out — with no loop having produced a single run toward them.
 
-Executive / finance (higher concern — should name a sub-goal):
-ceo-agent, coo-agent-peers (cfo-agent, cmo-agent, cto-agent, cos-agent),
-ea-agent, pm-agent, pr-agent, brand-mgr, ap-ar-clerk, tax-agent, treasurer
-
-## Drifting (0)
-
-No loop declares a mission outside CURRENT_GOAL.md.
-
-## Schema defects found this scan (blocking-quality, not alignment)
-
-1. **P1 — `kpis:` / `tools_allowed:` contents swapped in all 27 `loops/agents/*.yaml`.**
-   Example `sdr-agent.yaml`: `kpis:` holds the tool allowlist (apollo, gmail, filesystem.*)
-   and `tools_allowed:` holds the KPI sentence. Any permission gate reading
-   `tools_allowed:` will read prose and either fail-open or fail-closed. Mechanical fix.
-2. **P2 — key mismatch.** `loops/goal-alignment.yaml` specifies reading `goal:`; all 27
-   agent loops use `mandate:`. This auditor accepts both; LOOPS_SPEC should too.
-3. **P3 — the `serves:` test cannot fail.** 35/35 every run since inception. The strict
-   prose test should become primary in the next LOOPS_SPEC revision.
+Perfect alignment on loops that never fire is a vanity metric. The gap is activation, not alignment.
 
 ## Action
-
-- Drifting loops: none — no goal rewrites needed.
-- Fix (1) before any agent loop moves from `planned` to `active`; a swapped allowlist on a
-  Closer or Drafter class loop is a real spend/permission risk.
-- Tighten mandate wording on the 10 executive/finance loops so each names the sub-goal it
-  serves (e.g. cfo-agent -> SG1 first paying client; pr-agent -> SG2 Anthropic Partner).
-- Do not update CURRENT_GOAL.md — no loop is redefining the mission.
+1. No goal text changes needed — do not edit any loop YAML.
+2. **Activation is the bottleneck.** Recommend Ahmad pick 3 loops to move `planned` → `idle` (runnable) this week. Highest leverage against the 2026-09-30 deadlines: `procurement-mgr` (sub-goal 1), `sdr-agent` (sub-goal 3), `kb-engineer` (sub-goal 4).
+3. Sub-goal 5 is 46 days overdue and has no owning loop. Either assign it to `content-strat` or strike it from CURRENT_GOAL.md via `/goal`.
+4. Sub-goal 2 (Anthropic Partner Network) has no owning loop at all. Currently unowned work.

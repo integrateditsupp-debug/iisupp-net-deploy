@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-08-05T06:20:39.008Z",
+  "generatedAt": "2026-08-05T12:44:13.069Z",
   "health": {
     "worker": "up",
-    "heartbeatAt": "2026-08-05T06:20:27.949Z",
-    "leadsQueued": 302,
+    "heartbeatAt": "2026-08-05T12:44:11.018Z",
+    "leadsQueued": 304,
     "agentsTotal": 27,
     "approvalsPending": 32,
     "classifierSelfTestPassPct": 92.65
@@ -21,51 +21,51 @@
   },
   "recentActivity": [
     {
-      "at": "2026-08-05T03:21:55.074Z",
-      "agent": "Opportunity Prep Packets Agent",
-      "text": "Bid, portal, and job preparation packets are refreshed to the CEO final-action point.",
-      "status": "ready"
-    },
-    {
-      "at": "2026-08-05T03:21:52.313Z",
-      "agent": "Senior Director Worker",
-      "text": "Director heartbeat, lead scans, mission brief cadence, and operating board orchestration completed for this tick.",
-      "status": "ready"
-    },
-    {
-      "at": "2026-08-05T02:47:24.159Z",
-      "agent": "Interaction Avoidance Agent",
-      "text": "Prep-agent routing and one-minute CEO final-action lanes are refreshed.",
-      "status": "ready"
-    },
-    {
-      "at": "2026-08-05T02:44:51.172Z",
-      "agent": "Opportunity Quality Gate Agent",
-      "text": "Opportunity quality gate refreshed the revenue queue and parked weak-fit noise.",
-      "status": "ready"
-    },
-    {
-      "at": "2026-08-05T02:31:51.095Z",
+      "at": "2026-08-05T12:31:51.147Z",
       "agent": "CEO Action Digest Agent",
       "text": "CEO-only approval, send, publish, and register decisions are compressed into a short digest.",
       "status": "ready"
     },
     {
-      "at": "2026-08-05T02:28:59.325Z",
+      "at": "2026-08-05T12:29:24.649Z",
       "agent": "Opportunity Review Agent",
       "text": "Opportunity records were enriched with summaries, drafts, reminders, and required-document scaffolding.",
       "status": "ready"
     },
     {
-      "at": "2026-08-05T02:28:59.226Z",
+      "at": "2026-08-05T12:29:24.581Z",
       "agent": "Opportunity Research Agent",
       "text": "Public opportunity sources were rescanned and merged into the opportunity engine.",
       "status": "ready"
     },
     {
-      "at": "2026-08-04T13:20:58.685Z",
+      "at": "2026-08-05T12:29:05.854Z",
+      "agent": "Senior Director Worker",
+      "text": "Director heartbeat, lead scans, mission brief cadence, and operating board orchestration completed for this tick.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-08-05T12:21:55.497Z",
+      "agent": "Opportunity Prep Packets Agent",
+      "text": "Bid, portal, and job preparation packets are refreshed to the CEO final-action point.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-08-05T12:19:22.983Z",
       "agent": "Business Development Agent",
       "text": "Daily no-send business-development queue refreshed and routed into the autonomous board.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-08-05T06:47:24.141Z",
+      "agent": "Interaction Avoidance Agent",
+      "text": "Prep-agent routing and one-minute CEO final-action lanes are refreshed.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-08-05T06:44:51.581Z",
+      "agent": "Opportunity Quality Gate Agent",
+      "text": "Opportunity quality gate refreshed the revenue queue and parked weak-fit noise.",
       "status": "ready"
     }
   ],
