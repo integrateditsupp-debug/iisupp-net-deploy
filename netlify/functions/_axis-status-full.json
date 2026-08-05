@@ -2,7 +2,7 @@
  "_internal": true,
  "_emitRule": "INTERNAL ONLY — force-404 live, served via authenticated /api/axis-status. NEVER copy this content into .well-known: regenerate the public mirrors with scripts/lib/axis-status-emit.mjs (headline-only, leak-scanned).",
  "schema": "axis-status-full/1",
- "generatedAt": "2026-08-05T12:53:11.407Z",
+ "generatedAt": "2026-08-05T12:58:05.761Z",
  "honest": true,
  "program": {
   "series": "flywheel",
@@ -58,7 +58,7 @@
  "mainRef": {
   "liveConfirmed": false,
   "reason": "Reproduced again this cycle against the real remote, not carried forward: the code host refused with 'could not read Username'. There is no credential helper, no token in the environment and no code-host CLI. Every reference here is a last-known LOCAL read and is labelled as such. Presenting a local reference as a live read is the exact dishonesty Rule 14 forbids.",
-  "localAheadOfLastKnownRemote": 31
+  "localAheadOfLastKnownRemote": 33
  },
  "workingTree": {
   "filesModified": 0,
@@ -85,7 +85,7 @@
   },
   {
    "blocker": "No code-hosting credential in the build sandbox",
-   "price": "31 commits of verified work cannot reach the shared line under their own power",
+   "price": "33 commits of verified work cannot reach the shared line under their own power",
    "isSoftwareTask": false,
    "fix": "A credential or a code-host connector. Highest-leverage unblock, unchanged, and refused again this cycle against the real remote."
   },
@@ -124,7 +124,7 @@
   {
    "lane": "Reaching the code host",
    "state": "still refused",
-   "detail": "No credential in this environment. Re-tested against the real remote this cycle rather than inherited. The shared branch sits 31 commits ahead of the last known remote reference: all of it verified, none of it landed."
+   "detail": "No credential in this environment. Re-tested against the real remote this cycle rather than inherited. The shared branch sits 33 commits ahead of the last known remote reference: all of it verified, none of it landed."
   },
   {
    "lane": "The hour in front of prospects",
@@ -142,7 +142,7 @@
  "needsAhmad": [
   {
    "item": "Push the shared line to the code host",
-   "what": "One push. The shared branch is 31 commits ahead of the last known remote reference, every one of them verified against a green full registry.",
+   "what": "One push. The shared branch is 33 commits ahead of the last known remote reference, every one of them verified against a green full registry.",
    "why": "The sandbox holds no credential and reproduced that refusal again this cycle against the real remote. This is the only thing between verified, tested work and the shared host."
   },
   {

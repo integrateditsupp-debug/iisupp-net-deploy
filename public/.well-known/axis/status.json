@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-05T12:53:11.407Z",
+ "generatedAt": "2026-08-05T12:58:05.761Z",
  "status": "active build",
  "milestone": "The customer-facing product and the operator command centre are built and tested. Delivery is staged and waits on deliberate operator actions, not on further software.",
  "readiness": "Built and tested. Publishing is a deliberate manual step by the operator, never automatic.",

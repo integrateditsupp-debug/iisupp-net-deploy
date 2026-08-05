@@ -92,7 +92,7 @@ const mainRef = {
     "with 'could not read Username'. There is no credential helper, no token in the environment and no " +
     "code-host CLI. Every reference here is a last-known LOCAL read and is labelled as such. " +
     "Presenting a local reference as a live read is the exact dishonesty Rule 14 forbids.",
-  localAheadOfLastKnownRemote: 31,
+  localAheadOfLastKnownRemote: 33,
 };
 
 const workingTree = {
@@ -170,7 +170,7 @@ const lanes = [
   { lane: "Reaching the code host", state: "still refused",
     detail:
       "No credential in this environment. Re-tested against the real remote this cycle rather than " +
-      "inherited. The shared branch sits 31 commits ahead of the last known remote reference: all of " +
+      "inherited. The shared branch sits 33 commits ahead of the last known remote reference: all of " +
       "it verified, none of it landed." },
   { lane: "The hour in front of prospects", state: "prepared, not spent",
     detail:
@@ -195,7 +195,7 @@ const blockers = [
     isSoftwareTask: true,
     fix: "Rename into force-404'd space. No operator click required. Reproduced again this cycle." },
   { blocker: "No code-hosting credential in the build sandbox",
-    price: "31 commits of verified work cannot reach the shared line under their own power",
+    price: "33 commits of verified work cannot reach the shared line under their own power",
     isSoftwareTask: false,
     fix: "A credential or a code-host connector. Highest-leverage unblock, unchanged, and refused again this cycle against the real remote." },
   { blocker: "The hour is prepared and has not been spent",
@@ -206,7 +206,7 @@ const blockers = [
 const needsAhmad = [
   { item: "Push the shared line to the code host",
     what:
-      "One push. The shared branch is 31 commits ahead of the last known remote reference, every one " +
+      "One push. The shared branch is 33 commits ahead of the last known remote reference, every one " +
       "of them verified against a green full registry.",
     why:
       "The sandbox holds no credential and reproduced that refusal again this cycle against the real " +
