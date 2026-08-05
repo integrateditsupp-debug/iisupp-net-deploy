@@ -439,6 +439,11 @@ const TESTS = [
   // This suite forces the dependency to stay DECLARED: a new hidden reader of untracked operator
   // records turns it red. It is green in both environments, because a bare clone is not a failure.
   "./record-dependency-declared.test.mjs",
+  // ABSOLUTE-SYMLINK GUARD 2026-08-05 (flywheel 120) — a real defect found on the shared line, not a
+  // hypothetical: two tracked symlinks pointed at a dead build sandbox's absolute path, were broken
+  // everywhere else, and sat in the publish directory. Untracked in the same cycle; this keeps the
+  // class from returning through git the way the emitter keeps it out of the status feed.
+  "../../tests/no-absolute-symlinks.test.mjs",
   // STAGE-3 ARE — packets landed by Cowork run 113 (2026-07-21). Registered here because each packet's
   // run-all patch was cut against an older anchor; the suites themselves are unmodified from the packets.
   "./escalation-decision.test.mjs",
