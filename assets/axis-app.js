@@ -16,7 +16,7 @@ import { renderDirector } from './axis-director-screen.js';
 const TOKEN_KEY = 'aperture_jwt';
 
 const ACTIONABLE = ['reply_to_outreach', 'new_inbound_request'];
-const state = { token: localStorage.getItem(TOKEN_KEY) || '', snap: {}, version: null, module: 'overview',
+const state = { token: localStorage.getItem(TOKEN_KEY) || '', snap: {}, version: null, module: 'overview', programStatus: null,
   ui: { inboxFilter: 'all', thread: null, apTab: 'pending', apOpen: null, apSel: new Set(), apCursor: 0, crmTab: 'contact', crmFilter: '', crmDrawer: null,
     prospect: null, prospectFilter: '', realOnly: false, pipeView: 'kanban', fuView: 'due_today', doc: null, anTab: 'research' } };
 const authHeaders = (extra = {}) => ({ Authorization: 'Bearer ' + state.token, ...extra });
@@ -122,6 +122,10 @@ SCREENS['axis-agent-director'] = (c) => {
   renderDirector(c, {
     data: { overview: data('overview'), approvals: data('approvals'), fleet: data('fleet'),
             settings: data('settings'), inbox: data('inbox'), analytics: data('analytics'),
+            // RUN-AM / AM2 — the published program figures WITH the age of each read. Authed-only
+            // (/api/axis-status, same Aperture gate); null until it lands, which the section renders
+            // as "not loaded" rather than as an empty set of figures.
+            program_status: state.programStatus,
             version: state.version },
     voice: {
       send: () => axisSend('axisDirectorInput'),
@@ -773,7 +777,19 @@ const overlayOpen = () => !!document.querySelector('.axis-overlay-bg');
 document.addEventListener('axis:overlay-closed', () => {
   if (state.ui.repaintPending) { state.ui.repaintPending = false; renderModule(); }
 });
+// AM2 — the published program figures and their evidence stamps. Authed-only; a failure leaves
+// state.programStatus null, and the Director section says "not loaded" rather than showing an empty
+// figure set. Never fetched unauthenticated: this payload is operator-internal by design.
+async function fetchProgramStatus() {
+  try {
+    const r = await fetch('/api/axis-status', { headers: authHeaders(), cache: 'no-store' });
+    if (!r.ok) return;
+    const j = await r.json();
+    if (j && j.ok) { state.programStatus = j; if (state.module === 'axis-agent-director' && !overlayOpen()) renderModule(); }
+  } catch {}
+}
 async function fetchSnapshots() {
+  fetchProgramStatus();
   const r = await fetch('/api/axis/snapshot?module=all', { headers: authHeaders(), cache: 'no-store' });
   if (r.status === 401) return logout();
   const j = await r.json();

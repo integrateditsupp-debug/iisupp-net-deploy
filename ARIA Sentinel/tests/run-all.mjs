@@ -26,6 +26,16 @@ const TESTS = [
   // write nothing; staleness and mirror disagreement fail at READ time — where the cycle that never
   // ran actually shows up, because the gate has to fire when nobody is present to run anything.
   "../../tests/feed-freshness.test.mjs",
+  // CLAIM MEASURE 2026-08-05 (RUN-AM / AM1) — AK proved a figure carries evidence; this proves the
+  // evidence was not typed by the writer. The emit script stamped `measuredAt: NOW` on numbers it had
+  // copied off a terminal by hand — an assertion whose evidence is the assertion. A figure this
+  // environment CAN read must now be produced by the code that read it, or declared unmeasurable
+  // with a reason; a hand-typed stamp for such a figure is refused by class before anything is written.
+  "../../tests/claim-measure.test.mjs",
+  // CLAIM FIGURES RENDER 2026-08-05 (RUN-AM / AM2) — staleness lived in a JSON file nobody opens. The
+  // AXIS console now renders the age of every reading and marks the stale ones, on the Director tab
+  // where the operator actually looks. Nothing is hidden by staleness; the public headline stays clean.
+  "../../tests/claim-figures-render.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   "./tab-gating-post-trial.test.mjs",

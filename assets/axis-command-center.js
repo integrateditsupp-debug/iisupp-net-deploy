@@ -12,9 +12,11 @@
 
   var ENDPOINT = '/.netlify/functions/axis-director';
   var AUTHED_URL = '/api/axis-state';            // gated: named detail (approval titles, activity) — login only
+  var STATUS_URL = '/api/axis-status';           // gated: program figures + their evidence stamps — login only
   var STATE_URL = '/assets/axis-state.json';     // public: counts only — NO names / titles / strategy
   var ROSTER_URL = '/assets/axis-roster.json';
   var state = null, roster = null, chat = [], activeFn = 'approvals', listening = false, rec = null, authed = false;
+  var programStatus = null;                      // RUN-AM / AM2 — figures + age, rendered not hidden
   function apertureToken() { try { return localStorage.getItem('aperture_jwt') || ''; } catch (e) { return ''; } }
 
   // Left sidebar functions (packet order). `fns` = roster.fn values this tab shows in its live view.
@@ -46,6 +48,11 @@
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (d) { if (d && d.ok) { state = d; authed = true; render(); } else { loadPublic(); } })
         .catch(function () { loadPublic(); });
+      // AM2 — the program figures and how old each read is. Authed-only; a 401 simply leaves the card empty.
+      fetch(STATUS_URL, { cache: 'no-store', headers: { Authorization: 'Bearer ' + tok } })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) { if (d && d.ok) { programStatus = d; renderFigures(); } })
+        .catch(function () {});
     } else { loadPublic(); }
     if (!roster) fetch(ROSTER_URL, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) { if (d) { roster = d; render(); } }).catch(function () {});
@@ -82,7 +89,22 @@
         (a.lastRunAt ? ' · ' + rel(a.lastRunAt) : '') + '</div></div>';
     }).join('') : '<div class="axis-empty">Loading roster…</div>');
 
+    renderFigures();
     renderFn();
+  }
+
+  // AM2 — render every published figure with the age of the read behind it, and mark the stale ones.
+  // Nothing is dropped for being stale: a figure that disappears is one nobody can challenge.
+  function renderFigures() {
+    var host = document.getElementById('axis-figures');
+    if (!host) return;
+    var cf = window.AxisClaimFigures;
+    if (!cf) { host.innerHTML = '<div class="axis-empty">Figure renderer not loaded.</div>'; return; }
+    if (!programStatus) {
+      host.innerHTML = '<div class="axis-empty">' + (authed ? 'No program figures published yet.' : '<b>Log in</b> to see program figures and how old each reading is') + '</div>';
+      return;
+    }
+    host.innerHTML = cf.renderFiguresHTML(programStatus.claims || {}, { now: new Date() });
   }
 
   function renderFn() {
@@ -251,6 +273,7 @@
             '<div class="axis-voice-note" id="axis-voice-note">Tap to arm always-listening wake word</div>' +
           '</div>' +
           '<div class="axis-right">' +
+            '<div class="axis-card"><div class="axis-ch">Program figures · age of each reading</div><div class="axis-figures" id="axis-figures"></div></div>' +
             '<div class="axis-card"><div class="axis-ch">Live agent activity</div><div class="axis-feed" id="axis-feed"></div></div>' +
             '<div class="axis-card"><div class="axis-ch">Named roster</div><div class="axis-roster" id="axis-roster"></div></div>' +
           '</div>' +
@@ -328,6 +351,7 @@
     '.ap-ok,.ap-no{font-size:11px;font-weight:700;border:0;border-radius:7px;padding:6px 11px;cursor:pointer}.ap-ok{background:#27c06a;color:#fff}.ap-no{background:#f0f3f6;color:#62748 5;color:#627485}' +
     '.ap-row.ap-done{opacity:.55}.ap-row.ap-rej{opacity:.45}.ap-row.ap-pending{opacity:.6}.ap-msg{font-size:11px;font-weight:700;color:#137a45}' +
     '.axis-empty{font-size:11.5px;color:#8a9bab;padding:14px 4px;text-align:center}' +
+    (window.AxisClaimFigures ? window.AxisClaimFigures.STYLES : '') +
     '@media(max-width:1000px){.axis-grid{grid-template-columns:1fr}.axis-left,.axis-right{flex-direction:column}.axis-fns{grid-template-columns:repeat(3,1fr)}}' +
     '@media(max-width:560px){.axis-fns{grid-template-columns:1fr 1fr}.axis-wrap{padding:14px}.axis-orb{width:78px;height:78px}}';
     document.head.appendChild(s);

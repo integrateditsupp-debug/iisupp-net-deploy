@@ -4,6 +4,7 @@
 // it in as ctx.voice (send/micToggle/voiceToggle/mountOrbs/setState/renderLog/voiceOn), including the
 // one orb SVG. Every number on this screen comes from the snapshot; nothing is computed or padded.
 import { el, ago, fmtMoney, toast, head } from './axis-dom.js';
+import { renderFiguresHTML, claimRows, staleCount, ensureFigureStyles } from './axis-claim-figures.js';
 
 // Element ids axis-app.js already knows about: renderDock() fills #axisDirectorLog, axisSyncVoiceBtn()
 // styles #axisDirectorVoice, and axisSend()/axisMicToggle() read #axisDirectorInput. Keep them exact.
@@ -484,6 +485,41 @@ function healthSection(data, onIntent) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// RUN-AM / AM2 — the program figures, each one showing the age of the read behind it.
+//
+// This is the section that ends the split where staleness was enforced in a JSON file nobody opens
+// while the operator read bare numbers on screen. `data.program_status` is the authed
+// /api/axis-status payload; absent, the section says so instead of rendering an empty card that
+// looks like "no figures" rather than "not loaded".
+//
+// Exported so a test can assert the row set directly without a DOM.
+export function programFigures(data, now) {
+  const status = (data && data.program_status) || null;
+  const claims = status && status.claims ? status.claims : null;
+  return claimRows(claims, { now: now || new Date() });
+}
+
+function figuresSection(data, now) {
+  const status = (data && data.program_status) || null;
+  const claims = status && status.claims ? status.claims : null;
+  const rows = claimRows(claims, { now: now || new Date() });
+  const n = staleCount(rows);
+  ensureFigureStyles();
+  const card = el('div', { class: 'card' });
+  card.innerHTML = claims
+    ? renderFiguresHTML(claims, { now: now || new Date() })
+    : '<div class="empty">Program figures not loaded. Nothing is being shown as current that has not been read.</div>';
+  return el('section', { 'aria-label': 'Program figures' }, [
+    sectionHead(
+      'Program figures',
+      rows.length
+        ? (n ? `${plural(n, 'figure', 'figures')} past their freshness window` : `${plural(rows.length, 'figure', 'figures')} · all read within window`)
+        : 'age of every reading',
+    ),
+    card,
+  ]);
+}
+
 export function renderDirector(container, ctx) {
   const c = ctx || {};
   const data = c.data || {};
@@ -508,6 +544,7 @@ export function renderDirector(container, ctx) {
     root.append(approvalsSection(data, paint, onIntent, openComposer));
     root.append(fleetSection(data, onIntent));
     root.append(activitySection(data));
+    root.append(figuresSection(data));
     root.append(healthSection(data, onIntent));
     // The orb SVG and the transcript both live in axis-app.js — re-attach them after every repaint.
     if (voice.mountOrbs) voice.mountOrbs(root);

@@ -24,6 +24,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { auditAndAnnotate } from './claim-evidence.mjs';
 import { requireFreshGeneratedAt, checkFeedFreshness, MAX_FEED_AGE_HOURS } from './feed-freshness.mjs';
+import { requireMeasuredProvenance, unmeasuredFigures } from './claim-measure.mjs';
 
 export const PUBLIC_STATUS_FILES = [
   '.well-known/axis/status.json',
@@ -103,8 +104,12 @@ export function emitAxisStatus({ root, publicFields, fullDetail = null }) {
     // older than its class allows is LABELLED stale rather than reading as freshly measured.
     // Nothing is dropped by staleness. The public headline never carries any of this machinery.
     if (fullDetail.claims !== undefined) {
+      // RUN-AM / AM1 — evidence is not enough on its own. A figure this environment CAN read must
+      // be produced by the code that read it; a stamp typed by the emit script for such a figure is
+      // refused here, before anything is written, by class name.
+      requireMeasuredProvenance(fullDetail.claims);
       const { claims, stale } = auditAndAnnotate(fullDetail.claims);
-      fullDetail = { ...fullDetail, claims, staleClaims: stale };
+      fullDetail = { ...fullDetail, claims, staleClaims: stale, unmeasuredFigures: unmeasuredFigures(claims) };
     }
     const full = Object.assign({
       _internal: true,

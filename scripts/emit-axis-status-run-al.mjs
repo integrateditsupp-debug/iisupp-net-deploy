@@ -121,12 +121,23 @@ const fullDetail = {
     "it is older than one cycle, so silence and freshness are no longer indistinguishable.",
   program: {
     series: "flywheel",
-    sequence: "RUN-AL — the feed that cannot go stale silently",
+    sequence: "RUN-AL — the figure nobody re-measured (as released: AL1, AL2, AL3)",
     previousSequence: "RUN-AK — the claim that cannot outlive its evidence",
-    tasksBuiltAndGreen: 3,
+    // HONEST COUNT. RUN-AL was auto-released on the close of AK with three named tasks. This cycle
+    // completed AL3 to its stated exit criteria and built one UNPLANNED task on top of it (the
+    // carrier-freshness gate below). AL1 (let the measurement write its own stamp) and AL2 (surface
+    // stale figures on the operator surface) are NOT done and are not counted as done. A cycle that
+    // renamed the sequence after the fact to match what it happened to build would be the same
+    // dishonesty this whole series exists to refuse.
+    tasksBuiltAndGreen: 1,
     tasksTotal: 3,
-    tasksMerged: 3,
-    pct: 100,
+    tasksMerged: 1,
+    pct: 33,
+    unplannedTasksBuiltAndGreen: 1,
+    tasksStillOpen: [
+      "AL1 — the stamp is still typed by the emit script, not produced by the measurement that read the number",
+      "AL2 — staleness exists in the internal payload and nowhere a person reads",
+    ],
     testsGreen: true,
     verificationCycleNote:
       "No customer-visible change this cycle and none is claimed. What changed is that the answer " +
@@ -134,15 +145,18 @@ const fullDetail = {
       "saying so — the failure mode where a cycle simply does not run is now a red check rather " +
       "than a silent continuation of the last good answer.",
     note:
-      "AL1 — the served feed's generatedAt is refused at write time when it is absent, malformed, " +
+      "AL3 (as released) — feed regenerated from this cycle's own numbers, generatedAt = now, every " +
+      "figure first-hand, no stale stamp. UNPLANNED, built and green on top of it — the carrier " +
+      "gate: AK closed the CLAIM, this closes the thing that carries it. " +
+      "The served feed's generatedAt is refused at write time when it is absent, malformed, " +
       "or in the future, and the refusal writes nothing: proven by emitting a clean payload, " +
       "changing exactly that one field to an impossible value, and asserting both that the write " +
       "throws by class name and that a previously good feed on disk survives untouched. AL2 — " +
       "staleness is enforced on the READ path, because that is where the cycle that never ran shows " +
       "up: a feed past 24h fails its check, the identical bytes go stale as the clock advances with " +
-      "nobody touching them, and the gate reports rather than repairs. AL2b — two served mirrors " +
+      "nobody touching them, and the gate reports rather than repairs. Two served mirrors " +
       "carrying different generatedAt values fail as their own class even when both are fresh. " +
-      "AL3 — this feed regenerated from this cycle's own numbers under that gate. Second messages " +
+      "Second messages " +
       "sent: still zero.",
   },
   tests: {

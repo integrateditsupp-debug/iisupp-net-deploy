@@ -2,112 +2,188 @@
  "_internal": true,
  "_emitRule": "INTERNAL ONLY — force-404 live, served via authenticated /api/axis-status. NEVER copy this content into .well-known: regenerate the public mirrors with scripts/lib/axis-status-emit.mjs (headline-only, leak-scanned).",
  "schema": "axis-status-full/1",
- "generatedAt": "2026-08-05T18:44:14.334Z",
+ "generatedAt": "2026-08-05T19:49:47.039Z",
  "honest": true,
  "claims": {
-  "suitesGreenAfterWrites": {
-   "value": 334,
-   "measuredAt": "2026-08-05T18:44:14.334Z",
-   "source": "exit code of the full registry run taken after every write this cycle",
-   "kind": "test",
-   "ageHours": 0,
-   "maxAgeHours": 24,
-   "stale": false
-  },
   "testsPassedAfterWrites": {
-   "value": 563,
-   "measuredAt": "2026-08-05T18:44:14.334Z",
-   "source": "exit code of the full registry run taken after every write this cycle",
+   "value": 592,
+   "measuredAt": "2026-08-05T19:50:08.057Z",
+   "source": "the full registry run performed by this emit script, parsed from the runner's own output (# pass)",
    "kind": "test",
+   "provenance": "measured",
+   "read": {
+    "command": "npm test --silent",
+    "exitCode": 0
+   },
    "ageHours": 0,
    "maxAgeHours": 24,
    "stale": false
   },
-  "suitesGreenBeforeAnyWrite": {
-   "value": 333,
-   "measuredAt": "2026-08-05T18:44:14.334Z",
-   "source": "exit code of the full registry run taken as the first action of the cycle",
+  "testsFailedAfterWrites": {
+   "value": 0,
+   "measuredAt": "2026-08-05T19:50:08.057Z",
+   "source": "the full registry run performed by this emit script, parsed from the runner's own output (# fail)",
    "kind": "test",
+   "provenance": "measured",
+   "read": {
+    "command": "npm test --silent",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "suitesGreenAfterWrites": {
+   "value": 336,
+   "measuredAt": "2026-08-05T19:50:08.057Z",
+   "source": "the full registry run performed by this emit script, parsed from the runner's own output (N/N suites green)",
+   "kind": "test",
+   "provenance": "measured",
+   "read": {
+    "command": "npm test --silent",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "suitesTotalAfterWrites": {
+   "value": 336,
+   "measuredAt": "2026-08-05T19:50:08.057Z",
+   "source": "the full registry run performed by this emit script, parsed from the runner's own output (N/N suites green)",
+   "kind": "test",
+   "provenance": "measured",
+   "read": {
+    "command": "npm test --silent",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "registryExitCode": {
+   "value": 0,
+   "measuredAt": "2026-08-05T19:50:08.057Z",
+   "source": "the exit code of the registry run this script performed",
+   "kind": "test",
+   "provenance": "measured",
+   "read": {
+    "command": "npm test --silent",
+    "exitCode": 0
+   },
    "ageHours": 0,
    "maxAgeHours": 24,
    "stale": false
   },
   "testsPassedBeforeAnyWrite": {
-   "value": 544,
-   "measuredAt": "2026-08-05T18:44:14.334Z",
-   "source": "exit code of the full registry run taken as the first action of the cycle",
+   "value": 563,
+   "measuredAt": "2026-08-05T19:50:08.057Z",
+   "source": "not measurable in this environment: the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
    "kind": "test",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
+   "note": "last known value, carried forward and labelled — NOT measured this cycle",
    "ageHours": 0,
    "maxAgeHours": 24,
    "stale": false
   },
-  "newSuitesThisCycle": {
-   "value": 1,
-   "measuredAt": "2026-08-05T18:44:14.334Z",
-   "source": "the difference between the two registry reads above, and the one file added to the runner",
-   "kind": "count",
-   "ageHours": 0,
-   "maxAgeHours": 24,
-   "stale": false
-  },
-  "newCasesThisCycle": {
-   "value": 19,
-   "measuredAt": "2026-08-05T18:44:14.334Z",
-   "source": "the standalone run of this cycle's new suite by name, 19 pass 0 fail",
-   "kind": "count",
+  "suitesGreenBeforeAnyWrite": {
+   "value": 334,
+   "measuredAt": "2026-08-05T19:50:08.057Z",
+   "source": "not measurable in this environment: the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
+   "kind": "test",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
+   "note": "last known value, carried forward and labelled — NOT measured this cycle",
    "ageHours": 0,
    "maxAgeHours": 24,
    "stale": false
   },
   "commitsAheadOfSharedLine": {
-   "value": 44,
-   "measuredAt": "2026-08-05T18:44:14.334Z",
-   "source": "a revision count against the last known shared reference, taken this cycle",
+   "value": 45,
+   "measuredAt": "2026-08-05T19:50:08.284Z",
+   "source": "a revision count taken against the last known shared reference during this cycle",
    "kind": "count",
+   "provenance": "measured",
+   "read": {
+    "command": "git rev-list --count origin/main..HEAD",
+    "exitCode": 0
+   },
    "ageHours": 0,
    "maxAgeHours": 24,
    "stale": false
   },
   "pushCredentialRefused": {
    "value": true,
-   "measuredAt": "2026-08-05T18:44:14.334Z",
-   "source": "a remote probe run with prompts disabled this cycle; refusal reproduced verbatim",
+   "measuredAt": "2026-08-05T19:50:08.486Z",
+   "source": "a remote probe run with prompts disabled during this emit; the refusal is the measurement",
    "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "git ls-remote origin main",
+    "exitCode": 128
+   },
    "ageHours": 0,
    "maxAgeHours": 72,
    "stale": false
   },
   "secondMessagesDrafted": {
    "value": 12,
-   "measuredAt": "2026-08-05T18:44:14.334Z",
-   "source": "a directory read of the send sheet on disk, non-empty, this cycle",
+   "measuredAt": "2026-08-05T19:50:08.487Z",
+   "source": "a read of senior-director-state/outbound/SEND-SHEET-2026-08-05.md on disk during this cycle, counting its entries",
    "kind": "count",
+   "provenance": "measured",
+   "read": {
+    "command": "read senior-director-state/outbound/SEND-SHEET-2026-08-05.md",
+    "exitCode": 0,
+    "bytes": 6510
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "stagedItemsAudited": {
+   "value": 4,
+   "measuredAt": "2026-08-05T19:50:08.487Z",
+   "source": "the staged-action guard run over the tracked staged-actions module during this emit",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditStagedActions(needsAhmadStaged) — each artefact opened on disk",
+    "exitCode": 0
+   },
    "ageHours": 0,
    "maxAgeHours": 24,
    "stale": false
   },
   "secondMessagesSent": {
    "value": 0,
-   "measuredAt": "2026-08-05T18:44:14.334Z",
-   "source": "the outbound record; no send path exists in this environment and none was attempted",
+   "measuredAt": "2026-08-05T19:50:08.487Z",
+   "source": "not measurable in this environment: no send path exists in this environment and none was attempted; the outbound record shows none",
    "kind": "count",
-   "ageHours": 0,
-   "maxAgeHours": 24,
-   "stale": false
-  },
-  "daysDraftedUnsent": {
-   "value": 15,
-   "measuredAt": "2026-08-05T18:44:14.334Z",
-   "source": "the date the twelve were first drafted, differenced against today",
-   "kind": "count",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "no send path exists in this environment and none was attempted; the outbound record shows none",
+   "note": "last known value, carried forward and labelled — NOT measured this cycle",
    "ageHours": 0,
    "maxAgeHours": 24,
    "stale": false
   },
   "meetingsHeld": {
    "value": 0,
-   "measuredAt": "2026-08-05T18:44:14.334Z",
-   "source": "the reply record",
+   "measuredAt": "2026-08-05T19:50:08.487Z",
+   "source": "not measurable in this environment: replies and meetings live in a mailbox and a calendar this environment cannot read",
+   "kind": "count",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "replies and meetings live in a mailbox and a calendar this environment cannot read",
+   "note": "last known value, carried forward and labelled — NOT measured this cycle",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "daysDraftedUnsent": {
+   "value": 15,
+   "measuredAt": "2026-08-05T19:49:47.039Z",
+   "source": "the date the twelve were first drafted (2026-07-21), differenced against today",
    "kind": "count",
    "ageHours": 0,
    "maxAgeHours": 24,
@@ -115,70 +191,64 @@
   },
   "revenueToDate": {
    "value": "none",
-   "measuredAt": "2026-08-05T18:44:14.334Z",
+   "measuredAt": "2026-08-05T19:49:47.039Z",
    "source": "no invoice has been issued",
    "kind": "fact",
    "ageHours": 0,
    "maxAgeHours": 8760,
    "stale": false
   },
-  "stagedItemsAudited": {
-   "value": 4,
-   "measuredAt": "2026-08-05T18:44:14.334Z",
-   "source": "the staged-action guard run over the tracked staged-actions module during this emit",
-   "kind": "measurement",
-   "ageHours": 0,
-   "maxAgeHours": 24,
-   "stale": false
-  },
   "feedMaxAgeHours": {
    "value": 24,
-   "measuredAt": "2026-08-05T18:44:14.334Z",
-   "source": "the freshness policy this cycle wired into the served-feed read path",
+   "measuredAt": "2026-08-05T19:49:47.039Z",
+   "source": "the freshness policy wired into the served-feed read path",
    "kind": "fact",
    "ageHours": 0,
    "maxAgeHours": 8760,
    "stale": false
   }
  },
- "claimsPolicy": "Every figure above is { value, measuredAt, source, kind }. The emitter refuses to publish a figure that is missing any of them, and labels — never deletes — a figure older than its kind allows. As of this cycle the same standard applies to the feed as a whole: its own generatedAt is refused at write time if it could never be honest, and the served feed fails its check once it is older than one cycle, so silence and freshness are no longer indistinguishable.",
+ "claimsPolicy": "Every figure above is { value, measuredAt, source, kind } AND declares who authored the stamp. A figure this environment can read must carry `provenance: measured` plus the command and exit code that produced it — the emit script no longer types those numbers anywhere, and the emitter refuses the whole write if one arrives hand-typed. A figure that cannot be read here is `declared-unmeasurable` with a reason and, where useful, a value explicitly labelled last known. Only figures with nothing to read may be attested by hand.",
  "program": {
   "series": "flywheel",
-  "sequence": "RUN-AL — the feed that cannot go stale silently",
-  "previousSequence": "RUN-AK — the claim that cannot outlive its evidence",
+  "sequence": "RUN-AM — the stamp the writer cannot type (AM1, AM2, AM3)",
+  "previousSequence": "RUN-AL — the figure nobody re-measured (1/3 as released, plus one unplanned task)",
   "tasksBuiltAndGreen": 3,
   "tasksTotal": 3,
   "tasksMerged": 3,
   "pct": 100,
+  "unplannedTasksBuiltAndGreen": 0,
+  "tasksStillOpen": [],
+  "carriedFrom": "AM1 and AM2 are AL1 and AL2 unchanged — carried, not re-scoped, and now done",
   "testsGreen": true,
-  "verificationCycleNote": "No customer-visible change this cycle and none is claimed. What changed is that the answer AXIS speaks when an operator asks for status can no longer be several days old without saying so — the failure mode where a cycle simply does not run is now a red check rather than a silent continuation of the last good answer.",
-  "note": "AL1 — the served feed's generatedAt is refused at write time when it is absent, malformed, or in the future, and the refusal writes nothing: proven by emitting a clean payload, changing exactly that one field to an impossible value, and asserting both that the write throws by class name and that a previously good feed on disk survives untouched. AL2 — staleness is enforced on the READ path, because that is where the cycle that never ran shows up: a feed past 24h fails its check, the identical bytes go stale as the clock advances with nobody touching them, and the gate reports rather than repairs. AL2b — two served mirrors carrying different generatedAt values fail as their own class even when both are fresh. AL3 — this feed regenerated from this cycle's own numbers under that gate. Second messages sent: still zero."
+  "verificationCycleNote": "No customer-visible change this cycle and none is claimed. What changed is that the operator surface can no longer show a six-cycle-old number as if it were read this morning, and the emit script can no longer vouch for its own typing.",
+  "note": "AM1 — authorship, not presence. AK proved a figure carries evidence; the evidence was still typed by the writer. Measurement functions now perform the read and return the value and the stamp together, carrying the command and exit code that produced them; a hand-typed stamp for a readable figure is refused by class BEFORE anything is written, proven by emitting into a scratch root and asserting both that the write throws and that no file appeared. AM2 — staleness moved from a JSON file nobody opens to the AXIS Director tab: every figure renders the age of its own read, stale ones are marked, and nothing is hidden by staleness. Age is recomputed against now rather than trusted from the payload, so identical bytes go stale on their own as the clock advances. AM3 — this feed, emitted by measurement. Second messages sent: still zero."
  },
  "tests": {
-  "beforeAnyWrite": {
-   "pass": 544,
+  "afterEveryWrite": {
+   "pass": 592,
    "fail": 0,
-   "suites": "333/333",
+   "suites": "336/336",
    "exit": 0
   },
-  "afterEveryWrite": {
+  "beforeAnyWriteLastKnown": {
    "pass": 563,
    "fail": 0,
    "suites": "334/334",
-   "exit": 0
+   "exit": 0,
+   "note": "opening read of this cycle, reported as last known — not re-stamped"
   },
-  "riseExplained": "this cycle's one new suite (19 cases) and nothing else",
-  "namedStandalone": {
-   "suite": "b4-axis-chat",
-   "pass": 20,
-   "fail": 0,
-   "exit": 0
-  },
-  "newThisCycle": {
-   "suite": "feed-freshness",
-   "cases": 19,
-   "redThenGreen": true
-  }
+  "riseExplained": "this cycle's two new suites and nothing else",
+  "newThisCycle": [
+   {
+    "suite": "claim-measure",
+    "redThenGreen": true
+   },
+   {
+    "suite": "claim-figures-render",
+    "redThenGreen": true
+   }
+  ]
  },
  "workingTree": {
   "filesModified": 5,
@@ -255,7 +325,7 @@
  "onTrack": {
   "landing": false,
   "conversion": false,
-  "honestNote": "Nothing published. No customer-visible change and none claimed. The verified work still sits on the local line because the environment holds no credential for the shared host."
+  "honestNote": "Nothing published. No customer-visible change and none claimed. The verified work still sits on the local line (45 commits ahead of the last known shared reference) because the environment holds no credential for the shared host."
  },
  "needsAhmad": [
   {
@@ -288,5 +358,15 @@
   "failed": 0,
   "guard": "staged-action-guard.v1"
  },
- "staleClaims": []
+ "staleClaims": [],
+ "unmeasuredFigures": [
+  {
+   "name": "testsPassedBeforeAnyWrite",
+   "reason": "the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped"
+  },
+  {
+   "name": "suitesGreenBeforeAnyWrite",
+   "reason": "the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped"
+  }
+ ]
 }
