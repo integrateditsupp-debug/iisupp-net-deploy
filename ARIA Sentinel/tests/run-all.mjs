@@ -432,6 +432,13 @@ const TESTS = [
   "./aa1-unopened-week.test.mjs",           // RUN-AA AA1/AA2/AA3 — a gap of any length (7/30/200/400 days) renders no judgement, no streak, no exclamation and moves no rung or cost; one cold-executable re-entry page whose change set is a real difference and renders "Nothing changed while you were away." verbatim; a weekly roll-up that states the unmoved counts FIRST, keeps `nothing recorded` distinct from `recorded, nothing done`, and admits no software progress
   "./ac1-visit-log.test.mjs",              // RUN-AC AC1/AC2 — the first passive signal: the site's own first-party hit log, read by a module that can never turn an absent or not-yet-running log into a zero, refuses any count over a window reaching back before `startedAt`, rejects the whole record if a single identity-shaped key appears, excludes our own tooling from the headline, and flips `site-visits` to measurable ONLY on a genuinely observed record — leaving every other signal refused
   "./ab1-moves-without-us.test.mjs",      // RUN-AB AB1/AB2/AB3 — the whole mail record measured (45 sent, 4 undeliverable, 11 auto-replied, 1 personal reply, the rest silent-by-absence) with `delivered` refused as unobserved at every volume and no rate computed against it; the passive surface refused as the PRIMARY dated output with every unobservable signal named and no proxy promotable; and a two-column split where software progress — however rephrased — can never place an item in "moves on its own", which today is empty
+  // REPRODUCIBILITY GUARD 2026-08-05 (flywheel 120) — the registry returns 504/0 on the operator's
+  // machine and 453/51 from a clean clone of the SAME commit, every difference an ENOENT against the
+  // gitignored /senior-director-state/ record root. That is a legitimate design choice, but it was
+  // reported for several cycles as a plain green without saying the green was not reproducible.
+  // This suite forces the dependency to stay DECLARED: a new hidden reader of untracked operator
+  // records turns it red. It is green in both environments, because a bare clone is not a failure.
+  "./record-dependency-declared.test.mjs",
   // STAGE-3 ARE — packets landed by Cowork run 113 (2026-07-21). Registered here because each packet's
   // run-all patch was cut against an older anchor; the suites themselves are unmodified from the packets.
   "./escalation-decision.test.mjs",
