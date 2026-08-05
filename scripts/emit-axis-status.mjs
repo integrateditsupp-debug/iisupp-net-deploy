@@ -21,18 +21,19 @@ const now = new Date().toISOString();
 const tests = {
   reRunGreenThisCycle: [
     { suite: "FULL REGISTRY (node tests/run-all.mjs) — clean clone of the shared line, operator records present",
-      result: "509 tests, 509 pass, 0 fail, 0 skipped; 327/327 suite files loaded and green. Five of those tests are new this cycle.", exit: 0 },
+      result: "511 tests, 511 pass, 0 fail, 0 skipped; 328/328 suite files loaded and green. Seven of those tests are new this cycle.", exit: 0 },
     { suite: "FULL REGISTRY — the SAME commit, clean clone, operator records ABSENT",
       result: "504 tests, 453 pass, 51 fail. Every one of the 51 is an ENOENT against the gitignored record root — not a single assertion failure. Measured deliberately, as a controlled A/B against the run above, and it is the finding of this cycle.", exit: 1 },
+    { suite: "no-absolute-symlinks (new this cycle)", result: "2 pass, 0 fail — and proven red both ways first: an absolute-target symlink fails check 1, a tracked node_modules fails both. Written because it caught a REAL defect on the shared line, not a hypothetical one", exit: 0 },
     { suite: "record-dependency-declared (new this cycle)", result: "5 pass, 0 fail — and proven red in BOTH directions before being accepted: removing a declared suite turns check 3 red, adding a suite that reads nothing turns check 4 red", exit: 0 },
     { suite: "b4-axis-chat", result: "pass, 0 fail — the AXIS chat/voice answer path", exit: 0 },
     { suite: "root-serving-gate", result: "7 pass, 0 fail — every internal-looking root file and directory carries a force-404 rule", exit: 0 },
     { suite: "deploy-safety-denylist", result: "pass, 0 fail — no tracked operator script in the publish directory", exit: 0 },
     { suite: "funnel-link-guard", result: "pass, 0 fail — no dead internal links across the public pages", exit: 0 },
   ],
-  suitesReRunGreen: 6,
+  suitesReRunGreen: 7,
   fullRegistry:
-    "509 tests, 509 pass, 0 fail, 327/327 suites, exit 0 — with one qualification this cycle added and " +
+    "511 tests, 511 pass, 0 fail, 328/328 suites, exit 0 — with one qualification this cycle added and " +
     "prior cycles should have carried: that number is only reproducible on a machine holding the " +
     "operator's untracked records. The same commit in a bare clone returns 453 pass / 51 fail. The 51 " +
     "are all ENOENT, so the code is not defective, but 'the shared line is green' was being reported " +
@@ -67,6 +68,21 @@ const correctionsThisCycle = [
       "it depended on files only one machine holds. The dependency is now written down in a tracked " +
       "manifest, and `record-dependency-declared.test.mjs` turns red if a new suite starts reading " +
       "untracked state, or if the manifest names a suite that does not.",
+  },
+  {
+    what:
+      "Two TRACKED SYMLINKS were sitting on the shared line pointing at an absolute path inside a build " +
+      "sandbox that no longer exists. Found this cycle, fixed this cycle, and it is a real defect rather " +
+      "than a tidy-up.",
+    detail:
+      "Both were named `node_modules` — one at the repository root, one beside the desktop app. Their " +
+      "recorded target is an absolute path under a dead container, so a fresh checkout on any machine " +
+      "gets two dangling entries where dependency trees are expected. The publish directory is the " +
+      "repository root, so they also shipped. They arrived by accident in a prior cycle, while an agent " +
+      "had symlinked dependency trees into a throwaway clone. Untracked here, files left untouched on " +
+      "disk, and a new suite refuses the whole class: no tracked symlink may resolve outside the " +
+      "repository, and nothing named node_modules may be tracked in any form. `.gitignore` had said so " +
+      "four times over; the index simply disagreed with it and nothing was checking.",
   },
   {
     what:
@@ -152,6 +168,12 @@ const lanes = [
       "every difference an ENOENT against the gitignored record root. Eight suites read real outbound " +
       "and reply records on purpose; that is kept. What changed is that the cost is now written down in " +
       "a tracked manifest and enforced: a ninth hidden reader turns the registry red." },
+  { lane: "Tracked symlinks into a dead build sandbox (found and removed this cycle)", state: "untracked, and the class is now refused by a suite",
+    detail:
+      "Two tracked entries named node_modules pointed at an absolute path under a container that no " +
+      "longer exists — broken on every machine, and shipping, because the publish directory is the " +
+      "repository root. Untracked without touching the files on disk, and locked by a new suite proven " +
+      "red in both directions before acceptance." },
   { lane: "The .git lock family", state: "clearable by the agent, but NOT retired — they come back",
     detail:
       "A fresh session found index.lock present again and unlink refused again. Rename still works, so " +
@@ -260,7 +282,7 @@ const publicFields = {
   headline:
     "ARIA / AXIS is in active build. 45 first-contact messages sent: 4 undeliverable, 11 autoresponders, " +
     "1 reply declining. 12 follow-ups drafted, 0 sent. Meetings 0, revenue none. Visit log built, not " +
-    "collecting until the site is published. Tests: 509 pass, 0 fail, 327 of 327 suites — 51 of them read " +
+    "collecting until the site is published. Tests: 511 pass, 0 fail, 328 of 328 suites — 51 of them read " +
     "records only the operator holds, now stated rather than assumed.",
   note:
     "Public status headline only. Detailed build state is operator-internal and served only to " +
