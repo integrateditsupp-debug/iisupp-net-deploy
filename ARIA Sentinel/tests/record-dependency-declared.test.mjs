@@ -26,13 +26,26 @@ const MANIFEST = path.join(HERE, "record-dependencies.json");
 const manifest = JSON.parse(readFileSync(MANIFEST, "utf8"));
 const ROOT_TOKEN = manifest.untrackedRoot.replace(/\/$/, "");
 
-const suiteFiles = readdirSync(HERE).filter((f) => f.endsWith(".test.mjs"));
+// RUN-AP / AP4 WIDENING (2026-08-05). This scanned ONLY `ARIA Sentinel/tests/`, while the registry
+// also runs roughly twenty suites from the repository-root `tests/` directory — so a root-level suite
+// could read the untracked records and never be seen by the check whose whole job is to see that.
+// Exactly the AP4 class of bug: an invariant enforced up to a boundary and abandoned at it. Root
+// suites are now scanned too, and are declared by their path as the registry names them.
+const ROOT_TESTS = path.resolve(HERE, "../../tests");
+const localSuites = readdirSync(HERE)
+  .filter((f) => f.endsWith(".test.mjs") && f !== "record-dependency-declared.test.mjs")
+  .map((f) => ({ name: f, abs: path.join(HERE, f) }));
+const rootSuites = existsSync(ROOT_TESTS)
+  ? readdirSync(ROOT_TESTS)
+      .filter((f) => f.endsWith(".test.mjs"))
+      .map((f) => ({ name: `../../tests/${f}`, abs: path.join(ROOT_TESTS, f) }))
+  : [];
 
 // A suite "depends on the untracked root" if its own source references it. Read the text rather than
 // executing anything: a dependency that only appears at runtime is exactly the kind this must catch.
-const observed = suiteFiles
-  .filter((f) => f !== "record-dependency-declared.test.mjs")
-  .filter((f) => readFileSync(path.join(HERE, f), "utf8").includes(ROOT_TOKEN))
+const observed = [...localSuites, ...rootSuites]
+  .filter((s) => readFileSync(s.abs, "utf8").includes(ROOT_TOKEN))
+  .map((s) => s.name)
   .sort();
 
 const declared = [...manifest.suites].sort();
@@ -48,7 +61,7 @@ test("the manifest is well formed and tracked", () => {
 
 test("every declared suite exists on disk", () => {
   for (const s of declared) {
-    assert.ok(existsSync(path.join(HERE, s)), `${s} is declared but does not exist - stale manifest entry`);
+    assert.ok(existsSync(path.resolve(HERE, s)), `${s} is declared but does not exist - stale manifest entry`);
   }
 });
 

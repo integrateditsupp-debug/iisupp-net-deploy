@@ -13,6 +13,13 @@
   ],
   "untrackedRoot": "senior-director-state/",
   "suites": [
+    "../../tests/axis-command-center.test.mjs",
+    "../../tests/axis-status-emitter.test.mjs",
+    "../../tests/customer-link-graph.test.mjs",
+    "../../tests/deploy-safety-denylist.test.mjs",
+    "../../tests/ledger-head-on-disk.test.mjs",
+    "../../tests/probe-deploy-safety.test.mjs",
+    "../../tests/staged-action-guard.test.mjs",
     "aj2-second-touch-path.test.mjs",
     "e3-revenue-board.test.mjs",
     "funnel-link-guard.test.mjs",
@@ -27,6 +34,15 @@
     "Adding a suite here is a deliberate act with a cost: that suite cannot be verified by anyone who does",
     "not hold the operator's records. Prefer a tracked fixture whenever the assertion does not genuinely",
     "need the real record. Rule 14 cuts both ways - a real record is honest, and so is saying out loud",
-    "that a green result is not independently reproducible."
+    "that a green result is not independently reproducible.",
+    "RUN-AP / AP4 (2026-08-05): this check scanned only ARIA Sentinel/tests/ while the registry also runs",
+    "~20 suites from the repository-root tests/ directory, so a root-level suite could read the untracked",
+    "records and never be seen by the check whose job is to see that. Root suites are now scanned and are",
+    "declared by the path the registry uses. Seven were found already reading or naming the untracked root",
+    "and are declared here rather than left invisible.",
+    "Being listed means the suite REFERENCES the untracked root. Some (deploy-safety-denylist,",
+    "probe-deploy-safety) name it in a denylist rather than reading business records from it; that is a",
+    "weaker dependency than reading a record, and it is declared anyway, because the cost of over-declaring",
+    "is a longer list and the cost of under-declaring is a green nobody else can reproduce."
   ]
 }

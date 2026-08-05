@@ -190,6 +190,32 @@ test("AO1 — the real entry points carry no forbidden name and no guarantee lan
   assert.deepEqual(hard, [], `hard Rule 14 violations above the fold:\n${hard.join("\n")}`);
 });
 
+// ── RUN-AP / AP2 widening: an empty content container is a runtime first screen. ──────────────
+test("AO1/AP2 — an empty <main> filled by script is UNCHECKED, not a silent page", async () => {
+  const { isRuntimeFirstScreen } =
+    await import(new URL("../scripts/lib/first-screen-audit.mjs", import.meta.url).href);
+
+  // The real shape this widening exists for: product.html — an empty container, plus site-wide
+  // boilerplate long enough to defeat a prose-length test, and no product copy on disk at all.
+  const boiler = "Content on this site is general information only. Any troubleshooting step, instruction, tool, estimate or data taken from this site is used at your own risk.";
+  const runtimePage = `<!doctype html><html><body><nav><a href="/">Home</a></nav>
+<main id="product"></main>
+<div class="disclaimer">${boiler}</div>
+<script>renderProduct();</script></body></html>`;
+
+  const r = auditFirstScreen(runtimePage, { file: "product-like.html" });
+  assert.equal(r.verdict, VERDICT.UNCHECKED,
+    "a page whose copy does not exist on disk must be UNCHECKED — reporting it as failing Rule 17 is a claim about a thing nobody looked at");
+  assert.equal(r.findings[0].class, CLASSES.RUNTIME_FIRST_SCREEN);
+  assert.match(r.findings[0].detail, /never counted as a pass/);
+
+  // …and the widening is narrow. Real copy plus a script is still judged on the copy.
+  const realCopy = page("<h1>We fix your IT before it stops your team working.</h1>") + "<script>x()</script>";
+  assert.equal(isRuntimeFirstScreen(realCopy, { prose: extractFirstScreen(realCopy) }), null,
+    "a page with real first-screen copy must not be excused as runtime-rendered");
+  assert.equal(auditFirstScreen(realCopy, { file: "real.html" }).verdict, VERDICT.OK);
+});
+
 test("AO1 — helpers behave: stripChrome removes chrome, lineOf names a real line", () => {
   const html = page("<main><h1>We save you hours</h1></main>");
   assert.ok(!/Terms/.test(stripChrome(html)), "footer survived");

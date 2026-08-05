@@ -59,6 +59,20 @@ const TESTS = [
   // starts a conversation, fails on no path, on a path past two clicks, and on a path ending in a
   // form that accepts typing and delivers it nowhere. Undecidable = UNCHECKED, never a pass.
   "../../tests/conversation-path.test.mjs",
+  // SURFACE CLASS 2026-08-05 (RUN-AP / AP1+AP2) — AO1 found six first screens that say only what
+  // they are. Rewriting all six to make the number green would have been dishonest on two of them:
+  // a terms page and a coordinated-disclosure page exist to discharge an obligation, not to sell.
+  // The split is declared in code with a written argument per exempt surface, an exemption shorter
+  // than an argument fails red, and the exempt count is asserted never to be folded into passed.
+  // The exemption covers Rule 17 and nothing else — a Rule 14 violation still fails on an exempt page.
+  "../../tests/surface-class.test.mjs",
+  // LEDGER HEAD ON DISK 2026-08-05 (RUN-AP / AP4) — `o3-ledger-head` proves ONE TRUTH, THREE
+  // SURFACES between three in-memory computations off one object, which cannot drift. The block a
+  // human opens in PROGRESS-LEDGER.md was never read by a test, and it sat at RUN-Z 0/3 · 321/323 ·
+  // 41 unpublished through roughly eight regenerations of the feed. This carries the invariant
+  // across the filesystem boundary: the real file, the truth artefact it was generated from, and
+  // the served feed must agree, and the history below the END marker is asserted byte-identical.
+  "../../tests/ledger-head-on-disk.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   "./tab-gating-post-trial.test.mjs",

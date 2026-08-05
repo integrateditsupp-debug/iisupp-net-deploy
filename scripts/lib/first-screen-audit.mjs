@@ -139,6 +139,32 @@ export function lineOf(html = "", snippet = "") {
   return null;
 }
 
+/**
+ * True when the page's first screen is assembled at runtime and therefore has no copy on disk to
+ * judge. Two shapes count: the conventional mount point (`#root` / `#app`), and a content container
+ * that is EMPTY in the source — `<main id="product"></main>` — beside a script that fills it.
+ * Undecidable, never a pass.
+ */
+export function isRuntimeFirstScreen(html = "", { prose = null } = {}) {
+  const s = String(html);
+  const hasScript = /<script[\s>]/i.test(s);
+
+  // An EMPTY <main> beside a script IS the first screen, and it is empty on disk. This decides on
+  // its own, without a prose threshold: `product.html` carries a site-wide disclaimer block that is
+  // hundreds of characters long and says nothing about the product, so a length test would read that
+  // boilerplate as the page's copy and report a page nobody can read as a page that failed to sell.
+  if (/<main\b[^>]*>\s*<\/main>/i.test(s) && hasScript) {
+    return "the page's only content container is empty on disk and is filled by script at runtime";
+  }
+  // The conventional mount point. Kept behind the prose threshold, as it has been since AO1, so a
+  // page that mounts a widget beneath real copy is still judged on the copy it does have.
+  if (/<div[^>]+\bid\s*=\s*"(root|app)"/i.test(s) &&
+      (prose === null || prose.length < MIN_FIRST_SCREEN_PROSE)) {
+    return "the first screen is mounted at runtime into #root/#app; no copy exists on disk";
+  }
+  return null;
+}
+
 /** True when the first screen makes at least one claim a reader can feel (Rule 17). */
 export function hasValueClaim(text = "") {
   return VALUE_SIGNALS.some((re) => re.test(text));
@@ -166,12 +192,23 @@ export function auditFirstScreen(html = "", { file = "(inline)", carriedFigures 
   const text = extractFirstScreen(html);
 
   // A first screen produced entirely by script has no copy on disk to judge. Undecidable, not a pass.
-  if (text.length < MIN_FIRST_SCREEN_PROSE && /<div[^>]+\bid\s*=\s*"(root|app)"/i.test(html)) {
+  //
+  // RUN-AP / AP2 WIDENING. This originally recognised only `<div id="root">` and `<div id="app">`,
+  // which meant `product.html` — a catalogue detail page whose entire body is `<main id="product">`
+  // filled by script from the product record — was reported BROKEN for saying nothing, when the
+  // truthful verdict is that its first screen does not exist on disk to be read. Reporting a page
+  // as failing Rule 17 when the copy is not there to judge is the same error as reporting it as
+  // passing: both are claims about a thing nobody looked at. An EMPTY content container is now
+  // recognised too, and the widening is deliberately narrow — the container must be empty on disk
+  // AND the page must carry no first-screen prose of its own, so a page with real copy plus an
+  // empty aside is untouched by this.
+  const runtimeReason = isRuntimeFirstScreen(html, { prose: text });
+  if (runtimeReason) {
     return {
       file, verdict: VERDICT.UNCHECKED, text,
       findings: [{
         class: CLASSES.RUNTIME_FIRST_SCREEN,
-        detail: "the first screen is mounted at runtime; no copy exists on disk to hold to Rule 14 or Rule 17",
+        detail: `${runtimeReason} — there is no copy here to hold to Rule 14 or Rule 17, so this is UNCHECKED and is never counted as a pass`,
         line: null,
       }],
     };
@@ -250,6 +287,6 @@ export function auditEntryPoints({ root = process.cwd(), entryPoints = [], carri
 export default {
   FIRST_SCREEN_SCHEMA, VERDICT, CLASSES, HONESTY_PATTERNS, VALUE_SIGNALS,
   FIRST_SCREEN_CHARS, MIN_FIRST_SCREEN_PROSE,
-  stripChrome, extractFirstScreen, lineOf, hasValueClaim, uncarriedMetrics,
+  stripChrome, extractFirstScreen, lineOf, hasValueClaim, uncarriedMetrics, isRuntimeFirstScreen,
   auditFirstScreen, auditEntryPoints,
 };
