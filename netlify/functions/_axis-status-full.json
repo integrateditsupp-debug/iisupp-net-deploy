@@ -2,91 +2,115 @@
  "_internal": true,
  "_emitRule": "INTERNAL ONLY — force-404 live, served via authenticated /api/axis-status. NEVER copy this content into .well-known: regenerate the public mirrors with scripts/lib/axis-status-emit.mjs (headline-only, leak-scanned).",
  "schema": "axis-status-full/1",
- "generatedAt": "2026-08-05T13:00:39.600Z",
+ "generatedAt": "2026-08-05T13:51:50.465Z",
  "honest": true,
  "program": {
   "series": "flywheel",
-  "sequence": "RUN-AF — untracked residue in served URL space",
-  "previousSequence": "RUN-AE — reproducibility of the shared line (measured, declared, locked)",
-  "tasksBuiltAndGreen": 1,
-  "tasksTotal": 1,
-  "tasksMerged": 1,
+  "sequence": "RUN-AG — the assertion that was holding the knowledge base shut",
+  "previousSequence": "RUN-AF — untracked residue in served URL space",
+  "tasksBuiltAndGreen": 4,
+  "tasksTotal": 4,
+  "tasksMerged": 4,
   "pct": 100,
   "testsGreen": true,
-  "verificationCycleNote": "The change is small on purpose. It adds no customer-facing feature; it removes a way for this repository to publish something it never decided to publish.",
-  "note": "Build state only. AF1 — two untracked artefacts were found inside served feed directories and moved out. AF2 — the class was locked by a new suite proven to fail in both directions before it was accepted. AF3 — two branches that looked owed were triaged and deliberately left unmerged, because their content is already present in a newer form. None of this moves a business number and none of it is offered as if it did."
+  "verificationCycleNote": "This is the first cycle in a while whose result a customer could notice. ARIA can now answer the five most common support questions it previously could not, and three ways it could answer confidently and wrongly have been closed.",
+  "note": "Build state only. AG1 — a closed-world test assertion was found to be the reason the knowledge base had stopped growing, and was replaced with an open-world one that is strictly harder to pass. AG2 — five finished articles stranded on a superseded branch were recovered, checked and shipped. AG3 — two real routing defects were found and closed: the table of contents was answering questions, and a setup how-to was answering break-fix questions on an alphabetical tie-break. AG4 — every guard was proven red in both directions, which caught two weaknesses in the new test itself. None of this moves a business number and none of it is offered as if it did."
  },
  "tests": {
   "reRunGreenThisCycle": [
    {
     "suite": "FULL REGISTRY (npm test in ARIA Sentinel) — run on the operator's real repository BEFORE this cycle wrote anything",
-    "result": "511 tests, 511 pass, 0 fail, 0 skipped; 328/328 suite files loaded and green. Run first, deliberately, so the cycle knew the line it was starting from rather than assuming it.",
+    "result": "516 tests, 516 pass, 0 fail; 329/329 suite files loaded and green. Run first, deliberately, so the cycle knew the line it was starting from rather than assuming it.",
     "exit": 0
    },
    {
-    "suite": "served-feed-dir-clean (new this cycle)",
-    "result": "5 pass, 0 fail — and proven RED in both directions before acceptance: a scratch file placed in a served feed directory turns the allowlist check red, and a divergence between the two served mirrors turns the parity check red. Written because it caught two REAL artefacts sitting in live URL space, not a hypothetical one.",
+    "suite": "a2-routing-battery (new this cycle) — the shipped KB pack answering real questions",
+    "result": "32 real KB docs, 6/6 clean hits, 0 confidently wrong, out-of-scope questions abstain, the master index never answers. Rule 14: it runs against the pack on disk — no fixtures, no stubbed index, no hand-fed scores. Proven RED four ways before acceptance (vertical guard neutralised, intent guard neutralised, master index re-admitted to the corpus, intent inference stubbed to always-neutral).",
+    "exit": 0
+   },
+   {
+    "suite": "symptom-kb-parse — rewritten from closed-world to open-world and made STRICTER",
+    "result": "21 symptom files including all 17 canonical categories, 1 how-to correctly excluded, 123 ranked causes (was 90), all well-formed, index complete. Proven RED three ways (a canonical category dropped, a new doc left out of the master index, how-tos loaded as symptom records).",
     "exit": 0
    },
    {
     "suite": "FULL REGISTRY — re-run AFTER every write this cycle",
-    "result": "516 tests, 516 pass, 0 fail; 329/329 suites. The five new tests are the served-feed gate.",
+    "result": "516 tests, 516 pass, 0 fail; 330/330 suites. The added suite is the A2 routing battery.",
+    "exit": 0
+   },
+   {
+    "suite": "Clone-vs-clone differential — the check that separates a real regression from a portability artefact",
+    "result": "A pristine clone of the shared line and a clone carrying this cycle's change produce a BYTE-IDENTICAL failure set (51 and 51, the documented non-portable record-dependent suites). Zero new failures introduced. Run because a clone can never reach green here by design, so a raw clone number would have been unreadable either way.",
     "exit": 0
    }
   ],
-  "suitesReRunGreen": 3,
-  "fullRegistry": "516 tests, 516 pass, 0 fail, 329/329 suites, exit 0 — carrying forward the qualification the previous cycle added and which still holds: that number is only reproducible on a machine holding the operator's untracked records. The same commit in a bare clone returns 51 ENOENT failures against the gitignored record root. The dependency is declared in a tracked manifest and record-dependency-declared.test.mjs turns red if a new hidden reader appears."
+  "suitesReRunGreen": 5,
+  "fullRegistry": "516 tests, 516 pass, 0 fail, 330/330 suites, exit 0 — carrying forward the qualification the earlier cycle added and which still holds: that number is only reproducible on a machine holding the operator's untracked records. The same commit in a bare clone returns 51 ENOENT failures against the gitignored record root. The dependency is declared in a tracked manifest and record-dependency-declared.test.mjs turns red if a new hidden reader appears."
  },
  "correctionsThisCycle": [
   {
-   "what": "TWO UNTRACKED ARTEFACTS WERE SITTING INSIDE SERVED URL SPACE. Found this cycle, moved out this cycle, and the class is now refused by a suite. This is a real defect, not a tidy-up.",
-   "detail": "A zero-byte emitter scratch file and a 5.6 KB dotfile DRAFT of the status feed, one in each of the two served feed directories. The publish directory is the repository root, so both sat at real public paths. They survived every existing gate for one reason: they were UNTRACKED. The deploy-safety and root-serving gates both reason about TRACKED files and about the repository ROOT; neither looks inside a served subdirectory for untracked residue. A directory publish would have served an internal draft of the status feed publicly. Both were renamed out of URL space into force-404'd space, and a new suite now enforces an ALLOWLIST — anything in a feed directory that is not the feed itself fails, including file types nobody has invented yet."
+   "what": "A TEST WAS HOLDING THE KNOWLEDGE BASE SHUT. Found, diagnosed and replaced this cycle. This is the root cause of why five finished articles sat unused for five weeks.",
+   "detail": "The symptom-KB parse test asserted an exact count — seventeen files — against a hard-coded list. Any genuinely new diagnostic article turned it red. That left exactly two ways to stay green: never add an article, or pad a real one with an invented cause and probability to clear an arbitrary floor. The second is the fabricated-metric class Rule 14 exists to refuse, so in practice the KB simply stopped growing. The test is now open-world and STRICTER, not looser: all seventeen canonical categories must still be present and still carry five or more ranked causes, every symptom doc including any added later must be well-formed with three or more user phrasings and three or more fully-populated causes, and every doc in the pack must appear in the master index. Ranked causes went from 90 to 123."
   },
   {
-   "what": "This is the SECOND time a temp file has been found in the publish tree, which is why a gate was written instead of a cleanup.",
-   "detail": "The previous cycle untracked two emitter temp files that had been committed. This cycle found two more that had never been committed, and so were invisible to any tracked-file check. The recurring class is 'the emitter leaves scratch beside its output'. Remembering has now failed twice; an allowlist cannot forget."
+   "what": "FIVE FINISHED KB ARTICLES WERE RECOVERED AND SHIPPED — the five most common tickets an MSP takes, and none of them were in the product.",
+   "detail": "Outlook password-prompt loop, Windows/AD/Entra account lockout, Office and Excel failures, clock and time sync, and adding a printer. All five were written on a 2026-06-29 branch whose matcher was later superseded, so the branch is correctly NOT merged — but nobody had ever forward-ported its CONTENT. They were checked for accuracy and for banned language before landing, and they are now on the shared line with the current matcher."
   },
   {
-   "what": "TWO UNMERGED BRANCHES WERE TRIAGED AND DELIBERATELY NOT MERGED, because merging them would have REVERTED newer work. Recorded because 'unmerged' is not the same as 'owed'.",
-   "detail": "Two 2026-08-04 flywheel branches are not ancestors of the shared branch, which reads at a glance as two owed merges. Checked first-hand instead: every file they introduce is already present on the shared line, and the shared line's copies are NEWER — its status emitter was last written 2026-08-05 02:54, against branch tips of 08-04 20:50 and 08-04 21:41. Their content arrived by another path. Merging either would overwrite the current emitter with an older one. They are superseded ancestors and are left unmerged on purpose."
+   "what": "THE MASTER INDEX WAS ANSWERING SUPPORT QUESTIONS. Real defect, closed this cycle.",
+   "detail": "The knowledge base's table of contents was being indexed as an answerable article. It contains every topical word in the pack, so it outscored the very articles it points at. A user with a broken printer could be handed a list of links instead of a fix. The symptom loader had always skipped it; the matcher never did. It is now excluded from the answerable corpus, and the battery fails if it is ever re-admitted."
   },
   {
-   "what": "The AXIS voice work again needed no commit and no merge, and none is claimed.",
-   "detail": "Re-checked first-hand rather than read from a brief: the push-to-talk mic control and the spoken reply path are present on the shared branch, and the chat suite covering them runs green. A cycle that reported merging them again would be claiming work it did not do."
+   "what": "A SETUP HOW-TO WAS ANSWERING BREAK-FIX QUESTIONS, and the tie-break was alphabetical order.",
+   "detail": "'How do I add a printer' and 'the printer will not print' share every meaningful word, so the two articles scored EQUAL and the matcher kept the first strict winner it happened to meet — which meant the answer was decided by filename order, 'add-' sorting before 'printer-'. A user with a broken printer was being shown setup instructions. Intent is now read from each article's frontmatter and from how the question is phrased, and the mismatch is multiplied down rather than excluded, so a related article still beats an unhelpful silence."
+  },
+  {
+   "what": "THE NEW TEST WAS ITSELF WEAK, AND THE RED-PROVING CAUGHT IT. Recorded because it is the reason red-proving is done at all.",
+   "detail": "Switching the vertical guard off left the new battery GREEN — the synthetic article used to probe it was too weak to win even unguarded, so the assertion proved nothing. Separately, the battery claimed the setup article strictly outranked the break-fix one when the truth is a tie broken by directory order. Both preconditions are now asserted rather than assumed, and the guard-off case correctly turns red. A test that passes when the thing it guards is removed is not a test."
+  },
+  {
+   "what": "The vertical guard was recovered as a STANDING guard, and is a no-op today. Stated plainly so it is not read as an improvement to current answers.",
+   "detail": "Every article shipping today is generic, so the guard changes no current routing. It exists so a healthcare or banking article can never answer a generic Windows question once vertical packs exist. It is proven in both directions against an injected article built strong enough to win without it."
   }
  ],
  "mainRef": {
   "liveConfirmed": false,
   "reason": "Reproduced again this cycle against the real remote, not carried forward: the code host refused with 'could not read Username'. There is no credential helper, no token in the environment and no code-host CLI. Every reference here is a last-known LOCAL read and is labelled as such. Presenting a local reference as a live read is the exact dishonesty Rule 14 forbids.",
-  "localAheadOfLastKnownRemote": 33,
-  "aheadCountCaveat": "33 is the count measured at the moment the cycle-121 merge landed. Committing this feed adds one more, so a reader checking afterwards will correctly see 34. Stated this way on purpose: a hard number that its own commit invalidates is a number that is wrong every time it is read."
+  "localAheadOfLastKnownRemote": 37,
+  "aheadCountCaveat": "37 is the count measured after this cycle's merge landed. Committing this feed adds one more, so a reader checking afterwards will correctly see 38. Stated this way on purpose: a hard number that its own commit invalidates is a number that is wrong every time it is read."
  },
  "workingTree": {
   "filesModified": 0,
   "filesUntracked": 0,
-  "indexStalenessCleared": "Re-checked this cycle rather than assumed. The mount still refuses unlink — verbatim 'Operation not permitted' on both artefacts found in the served directories — and still permits rename, which is how they were moved out of URL space with no operator click. The standing statement remains 'the agent can always clear these by rename', not 'these no longer occur'.",
-  "composition": "This cycle's changes are one new test suite, one runner registration, the regenerated status feed and this emitter's payload. Two untracked artefacts were moved out of served space and left intact on disk. Scanned for credentials, keys, environment files and dependency directories: 0 hits. The off-limits personal folder was never read, listed or referenced.",
+  "indexStalenessCleared": "Re-checked this cycle rather than assumed. The mount still refuses unlink — verbatim 'Operation not permitted' — which this cycle hit twice: on the git index lock, cleared by rename as always, and on the merge itself, because `git merge` cannot check out a file it is not allowed to unlink. The merge was completed instead as an explicit two-parent commit with the file contents written in place, which the mount does permit. No operator click was needed. The standing statement remains 'the agent can always work around these', never 'these no longer occur'.",
+  "composition": "This cycle's changes are five recovered knowledge-base articles, two routing guards on the existing matcher, one rewritten test, one new test suite, one runner registration, the live loop-observer state files, the regenerated status feed and this emitter's payload. Scanned for credentials, keys, environment files and dependency directories: 0 hits. The recovered articles were scanned for banned language before landing: 0 hits. The off-limits personal folder was never read, listed or referenced.",
   "committed": true,
-  "howItWasUnblocked": "Verification ran against the operator's real repository before and after every write, so the cycle never reported a green it had not just produced. The result was landed on the shared branch as a single writer.",
+  "howItWasUnblocked": "Verification ran against the operator's real repository before and after every write, so the cycle never reported a green it had not just produced. A clone-vs-clone differential separated a real regression from the known portability artefact. The result was landed on the shared branch as a single writer.",
   "branch": "main",
   "stillBlocked": "The commits exist locally and cannot be pushed. The credential refusal was reproduced against the real remote this cycle. Committed is strictly better than uncommitted, and is not the same as landed."
  },
  "blockers": [
   {
-   "blocker": "RESOLVED THIS CYCLE — untracked files could sit in served URL space and no gate would notice",
-   "price": "was: an internal draft of the status feed was reachable at a public path, and the only thing preventing it from being served was that nobody had run a directory publish. Now: an allowlist gate fails the moment anything that is not the feed appears beside the feed.",
+   "blocker": "RESOLVED THIS CYCLE — a test assertion was preventing the knowledge base from growing",
+   "price": "was: five finished articles covering the most common support tickets sat unused for five weeks, because adding any one of them turned the suite red and the only way to stay green was to fabricate a cause and a probability. Now: articles can be added, and the bar every article must clear is higher than it was.",
    "isSoftwareTask": true,
-   "fix": "A new served-feed hygiene suite — allowlist rather than denylist, proven red on residue AND on mirror divergence before it was accepted as green."
+   "fix": "Closed-world count assertion replaced with an open-world structural one: all canonical categories still required, every doc including new ones must be well-formed and indexed."
+  },
+  {
+   "blocker": "RESOLVED THIS CYCLE — the assistant could answer confidently and wrongly in three ways",
+   "price": "was: a user with a broken printer could be handed the table of contents, or setup instructions for a printer they already have. Now: the index is not answerable, and intent decides the article instead of filename order.",
+   "isSoftwareTask": true,
+   "fix": "Master index excluded from the answerable corpus; intent and vertical guards on the matcher, each proven red in both directions before acceptance."
   },
   {
    "blocker": "STANDING — the mount refuses unlink",
-   "price": "residue cannot be deleted, only renamed out of the way; a session that does not know this concludes the environment is broken",
+   "price": "git cannot check out a merge, and locks cannot be deleted; a session that does not know this concludes the environment is broken",
    "isSoftwareTask": true,
-   "fix": "Rename into force-404'd space. No operator click required. Reproduced again this cycle."
+   "fix": "Rename for locks; an explicit two-parent commit with contents written in place for merges. No operator click required. Reproduced again this cycle."
   },
   {
    "blocker": "No code-hosting credential in the build sandbox",
-   "price": "33-plus commits of verified work cannot reach the shared line under their own power",
+   "price": "37-plus commits of verified work cannot reach the shared line under their own power",
    "isSoftwareTask": false,
    "fix": "A credential or a code-host connector. Highest-leverage unblock, unchanged, and refused again this cycle against the real remote."
   },
@@ -98,34 +122,39 @@
  ],
  "lanes": [
   {
-   "lane": "Untracked residue in served URL space (this cycle's work)",
-   "state": "found, removed from URL space, and the class refused by a suite",
-   "detail": "A zero-byte emitter scratch file and a dotfile draft of the status feed were sitting at real public paths under the feed directories. Untracked, which is why every existing gate missed them — those gates reason about tracked files and about the repository root. Renamed into force-404'd space and locked by an allowlist gate proven red in both directions."
+   "lane": "The offline knowledge base (this cycle's work)",
+   "state": "five recovered articles shipped; the assertion that was blocking growth replaced",
+   "detail": "Outlook password loops, AD/Entra account lockouts, Office and Excel failures, clock drift and adding a printer — the five most common tickets an MSP takes — were finished five weeks ago on a superseded branch and never forward-ported. They are now on the shared line. The reason they stalled was a test asserting an exact article count, which turned red on any genuine addition; it is replaced with an open-world assertion that is strictly harder to pass."
+  },
+  {
+   "lane": "Answer correctness",
+   "state": "three confidently-wrong routes closed",
+   "detail": "The table of contents was outscoring the articles it points at and could be returned as an answer. A setup how-to was answering break-fix questions because the two tied and filename order broke the tie. A vertical guard was recovered so a healthcare or banking article can never answer a generic question once vertical packs exist — a no-op today, stated as such."
   },
   {
    "lane": "Branch backlog",
-   "state": "triaged; two superseded ancestors deliberately left unmerged",
-   "detail": "Two 2026-08-04 flywheel branches read as owed merges and are not. Every file they introduce is already on the shared line in a newer form; merging either would revert the current status emitter to an older one. Recorded so the next cycle does not re-open the question."
+   "state": "triaged; the A2 lane's content recovered without merging the branch",
+   "detail": "The 2026-06-29 A2 branch is an orphan full-tree snapshot whose matcher was superseded by the July line, so merging it would revert five weeks of hardening. It is correctly left unmerged — but its CONTENT and its guards were forward-ported onto the current matcher instead of being written off. Unmerged is not the same as worthless, just as it is not the same as owed."
   },
   {
    "lane": "Reproducibility of the test line",
-   "state": "declared and enforced, carried forward unchanged",
-   "detail": "The registry green depends on untracked operator records held on one machine. That dependency is written down in a tracked manifest and a suite turns red if a new hidden reader appears. Re-stated rather than re-claimed."
+   "state": "declared, enforced, and used as a tool this cycle",
+   "detail": "The registry green depends on untracked operator records held on one machine, so a clone can never reach green. Rather than report an unreadable clone number, this cycle ran a pristine clone and a changed clone side by side and compared failure sets: byte-identical at 51 each, which is what proves zero new failures."
   },
   {
    "lane": "The lock family and the read-only mount",
    "state": "clearable by the agent, NOT retired",
-   "detail": "unlink was refused again this cycle, verbatim 'Operation not permitted', on both artefacts. Rename still works, so no operator click is needed. The honest statement stays 'clearable', never 'gone'."
+   "detail": "unlink was refused again, verbatim 'Operation not permitted'. It blocked the git index lock and then the merge checkout itself. Both worked around with no operator click — rename for the lock, an explicit two-parent commit with contents written in place for the merge. Honest statement stays 'clearable', never 'gone'."
   },
   {
    "lane": "AXIS voice and the spoken status answer",
    "state": "on the shared line, re-verified this cycle",
-   "detail": "Push-to-talk mic control and the spoken reply path are present on the shared branch and the chat suite covering them is green. Nothing was merged for it this cycle because nothing needed to be."
+   "detail": "Push-to-talk mic control and the spoken reply path are present on the shared branch and the chat suite covering them is green. Nothing was merged for it this cycle because nothing needed to be, and nothing is claimed."
   },
   {
    "lane": "Reaching the code host",
    "state": "still refused",
-   "detail": "No credential in this environment. Re-tested against the real remote this cycle rather than inherited. The shared branch sits 33 commits ahead of the last known remote reference as measured at the merge, 34 once this feed is committed: all of it verified, none of it landed."
+   "detail": "No credential in this environment. Re-tested against the real remote this cycle rather than inherited. The shared branch sits 37 commits ahead of the last known remote reference as measured after the merge, 38 once this feed is committed: all of it verified, none of it landed."
   },
   {
    "lane": "The hour in front of prospects",
@@ -138,12 +167,12 @@
   "tests": true,
   "landing": false,
   "conversion": false,
-  "note": "Landing and conversion both read NOT on track, unchanged. This cycle's work was a real defect fix: two untracked artefacts — one of them a draft of this very feed — were sitting at public paths, invisible to every existing gate because those gates only reason about tracked files. They were moved out of URL space and the class is now refused by a suite proven red in both directions. Two branches that looked like owed merges were triaged and deliberately left unmerged, because their content is already present in a newer form and merging would have reverted the current emitter. None of that is business progress and none of it is offered as such: follow-ups sent zero, hours in front of anyone zero, meetings zero, revenue none. The credential refusal was reproduced again against the real remote, so nothing has reached the code host."
+  "note": "Landing and conversion both read NOT on track, unchanged. This cycle did real product work rather than housekeeping: the five most common support questions an MSP receives — Outlook password loops, account lockouts, Office and Excel failures, clock drift, adding a printer — could not be answered by the shipped knowledge base, and now can. The root cause was not laziness but a test assertion that turned red whenever a genuine article was added, leaving fabrication as the only way to stay green; that assertion is gone and its replacement is stricter. Three ways the assistant could answer confidently and wrongly were closed. None of that is business progress and none of it is offered as such: follow-ups sent zero, hours in front of anyone zero, meetings zero, revenue none. The credential refusal was reproduced again against the real remote, so nothing has reached the code host, and nothing is published."
  },
  "needsAhmad": [
   {
    "item": "Push the shared line to the code host",
-   "what": "One push. The shared branch is 33 commits ahead of the last known remote reference as measured at the merge — 34 once this feed itself is committed — every one of them verified against a green full registry.",
+   "what": "One push. The shared branch is 37 commits ahead of the last known remote reference as measured after this cycle's merge — 38 once this feed itself is committed — every one of them verified against a green full registry.",
    "why": "The sandbox holds no credential and reproduced that refusal again this cycle against the real remote. This is the only thing between verified, tested work and the shared host."
   },
   {
