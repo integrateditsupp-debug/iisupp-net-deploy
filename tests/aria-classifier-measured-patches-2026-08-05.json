@@ -1,0 +1,61 @@
+{
+ "id": "COMBINED-v2",
+ "edits": [
+  {
+   "find": "  if (/(out of office|ooo|automatic repl|",
+   "replace": "  if (/(out of office|\\booo\\b|automatic repl|"
+  },
+  {
+   "find": "return /out of office|ooo|auto.?reply/.test(q) ? 'outlook_ooo' : 'mail';",
+   "replace": "return /out of office|\\booo\\b|auto.?reply/.test(q) ? 'outlook_ooo' : 'mail';"
+  },
+  {
+   "find": "  if (/(mail|email|inbox|outlook|outlok|outloook|outlk|",
+   "replace": "  if (/(mail|email|emial|eamil|inbox|outlook|outlok|outloook|outlk|mi correo|correo no|secure messaging|"
+  },
+  {
+   "find": "  // core\n  if (/(mail|email|",
+   "replace": "  if (/(locked out of (my )?(e-?mail|emial|eamil|mailbox|outlook|account)|reset (my )?password for (outlook|email|mail)|password for (outlook|email))/.test(q)) return 'password';\n  // core\n  if (/(mail|email|"
+  },
+  {
+   "find": "|account locked( (out|after))?)/.test(q) && !/\\b(wifi|wi-fi|wireless|router|modem)\\b/.test(q)) return 'password';",
+   "replace": "|account locked( (out|after))?|no puedo iniciar sesion|iniciar sesi[oó]n|contrase[nñ]a|cuenta bloqueada|je ne peux pas me connecter|mein passwort|passwort ist abgelaufen|cant access (cerner|meditech|epic|emr|ehr)|can.?t access (cerner|meditech|epic|emr|ehr)|(cerner|meditech|epic|emr|ehr) keeps logging me out|(cerner|meditech|epic) wont let me in|smartcard reader|badge tap|proximity card reader|\\bsso\\b not working)/.test(q) && !/\\b(wifi|wi-fi|wireless|router|modem)\\b/.test(q)) return 'password';"
+  },
+  {
+   "find": "|task manager shows high)/.test(q)) return 'kb:performance';",
+   "replace": "|task manager shows high|is lagging|lagging|hanging on|hangs on|hanging|unresponsive|timing out|times out constantly|response time (terrible|bad|slow)|taking (ages|forever|minutes|too long)|takes minutes|keeps buffering|pixelated and lagging|freezing on (batch|upload|large)|searches timing out|taking long to display|running hot|fan is spinning)/.test(q)) return 'kb:performance';"
+  },
+  {
+   "find": "|onedrive (icon|prompt|password|stuck|paused|setup|over quota))/.test(q)) return 'kb:onedrive';",
+   "replace": "|onedrive (icon|prompt|password|stuck|paused|setup|over quota))/.test(q) || (/(shared (drive|server)|sharepoint|intranet files|folder (missing|gone|disappeared)|file (missing|disappeared) from shared|repository offline|files? not (syncing|accessible)|files? won ?.?t sync|files? won.r sync)/.test(q) && !/\\b(edge|chrome|firefox|safari|brave|opera|browser)\\b/.test(q) && !/(access denied|permission|acl|ntfs|denied)/.test(q) && !/(slow|slowly|lagging|taking (ages|forever|long))/.test(q))) return 'kb:onedrive';"
+  },
+  {
+   "find": "  if (/(slow|laggy|sluggish|performance|high cpu|",
+   "replace": "  if (/\\b(edge|chrome|firefox|safari|brave|opera|browser)\\b/.test(q) && !/\\bopera pms\\b/.test(q)) return 'kb:browser';\n  if (/(slow|laggy|sluggish|performance|high cpu|"
+  },
+  {
+   "find": "  if (/^(help me find|i need help finding|i'?m stuck|find (the |my )?recovery key)/.test(q)) return 'escalation';",
+   "replace": "  if (/(help me find|i need help finding|i'?m stuck|im stuck|find (the |my )?recovery key)/.test(q)) return 'escalation';"
+  },
+  {
+   "find": "|leaver process|joiner process|need to deactivate)/.test(q)) return 'kb:onboarding';",
+   "replace": "|leaver process|joiner process|need to deactivate|new (nurse|clinician|doctor|physician|resident|staff|employee|user|hire|starter|technician|analyst|associate)( needs?| requires?| account| access| setup| set up)|onboarding new|needs? (epic|ehr|emr|cerner|meditech) access|set ?up (a |the )?new (user|account|staff))/.test(q)) return 'kb:onboarding';"
+  },
+  {
+   "find": "  if (/(wifi|wi-fi|wireless|network|internet|limited connectivity|",
+   "replace": "  if (/\\b((hospital|ward|clinic|floor|building|site|campus|office|branch|plant|store|warehouse|department|unit|wing) network (down|outage|issue|problem)|network (outage|down) (on|in|at)|(ward|floor|site|building|campus|branch) (network )?outage)\\b/.test(q)) return 'kb:networking';\n  if (/(wifi|wi-fi|wireless|network|internet|limited connectivity|"
+  },
+  {
+   "find": "if (/(teams|microsoft teams|ms teams|",
+   "replace": "if (/(teams|team'?s not loading|teamz|teem(s)? (not|wont|won.t)|tems (not|wont)|microsoft teams|ms teams|"
+  },
+  {
+   "find": "|remote access|forticlient/.test(q)) return 'vpn';",
+   "replace": "|remote access|forticlient|\\bvpm\\b|citrix|\\brdp\\b|remote desktop|remote (review )?session|telework|working from home can.?t reach|offsite (provider|access|user)|remote monitoring connection|(pacs|records) remotely/.test(q) && !(/(\\bmfa\\b|two.?factor|2fa|authenticator|verification code|otp)/.test(q) && !/\\bvpn\\b/.test(q)) && !(/(performance (degraded|issue)|running slow|loading slow|slow)/.test(q) && !/\\bvpn\\b/.test(q))) return 'vpn';"
+  },
+  {
+   "find": "  // KB-only\n  if (/(blue screen|bsod|",
+   "replace": "  if (/\\b(workstation on wheels|wow cart|mobile workstation|clinical cart computer|bedside (terminal|computer)|nursing station monitor|nurses station|barcode scanner|handheld scanner|medication scanner|wristband scanner|proximity reader|badge reader|rfid reader|docking station not (detecting|working (for|at))|video wall|ticker screen|turret phone|squawk box|large format plotter|kofax scanner|fujitsu scanner|scanning station|trading desk (monitor|pc|microphone)|trader workstation|market data terminal|bloomberg (keyboard|b-unit)|ups beeping|vital signs monitor|ecg workstation|ekg machine|bp machine not syncing|clinical keyboard|touchscreen not responding|touch monitor not working|hardware (fault|failure)|attorney workstation|trial presentation laptop|evidence scanning station|courtroom av)\\b/.test(q)) return 'kb:hardware';\n  // KB-only\n  if (/(blue screen|bsod|"
+  }
+ ]
+}
