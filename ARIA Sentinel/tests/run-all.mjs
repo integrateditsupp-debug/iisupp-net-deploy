@@ -117,6 +117,24 @@ const TESTS = [
   // visit. It found a real one on its first run — the About page told a stranger who we are and
   // then asked them for nothing at all.
   "../../tests/primary-action.test.mjs",
+  // YES-PATH 2026-08-06 (RUN-AT / AT1) — twenty-five cycles built the front of the funnel and none
+  // of them asked what happens in the hour AFTER someone answers. The route from an inbound reply to
+  // a first dollar is resolved against artefacts on disk — reply, booking, scope, agreement, invoice,
+  // payment — and "handled manually" is refused as a resolution, because that phrase is exactly how a
+  // gap hides. An artefact the shared line does not carry is UNTRACKED, never rounded up to present:
+  // it found that the only agreement a client can sign lives outside git, so a clone cannot produce it.
+  "../../tests/yes-path.test.mjs",
+  // RETAINER PROPOSAL 2026-08-06 (RUN-AT / AT2) — the document that turns a call into a signature,
+  // generated from the repository's OWN published plan table rather than typed. Every figure is
+  // selected by key and carries its file and line; a number that reaches the output without a source
+  // is refused by token, and rule-7 language, an experience claim past 15+ years and the forbidden
+  // name are refusals rather than warnings. It generates; it sends nothing.
+  "../../tests/retainer-proposal.test.mjs",
+  // TIME TO FIRST DOLLAR 2026-08-06 (RUN-AT / AT3) — the distance between a yes and money, counted
+  // in acts a person must perform and blanks a person must fill, never in invented hours. Manual BY
+  // DESIGN (the signature, the payment authorisation) is kept apart from manual because nothing
+  // carries the step; anything unreadable is UNCOUNTED with its reason rather than estimated to zero.
+  "../../tests/time-to-first-dollar.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   // SITE FINEPRINT GATE 2026-08-06 (salvaged from cc/axis-feed-2026-08-04) — the site-wide legal
