@@ -78,10 +78,52 @@ if (count('const GLOBAL = {') === 1) {
 }
 
 // 4. The COMMAND CENTER title survives too — same class of regression, reported the same day.
-const html = fs.readFileSync(path.join(ROOT, 'aperture-learning.html'), 'utf8');
-t('COMMAND CENTER title markup is present', /id="ccTitle"/.test(html) && /COMMAND CENTER/.test(html));
+//    AND it must be present in the file NETLIFY ACTUALLY SERVES, which is not the file you think.
+//
+//    netlify.toml carries a forced 200 rewrite: /aperture-learning.html -> /axis.html. For weeks the
+//    title fix was applied to aperture-learning.html, committed, pushed, deployed -- and never
+//    appeared, because that file is never served. Asserting on the source path passes vacuously.
+//    So: parse the rewrite out of netlify.toml and assert against the RESOLVED target.
+const toml = fs.readFileSync(path.join(ROOT, 'netlify.toml'), 'utf8');
+
+function resolveRewrite(fromPath) {
+  // Walk [[redirects]] blocks; a status-200 force rewrite replaces the served file.
+  const blocks = toml.split('[[redirects]]').slice(1);
+  for (const b of blocks) {
+    const from = /^\s*from\s*=\s*"([^"]+)"/m.exec(b);
+    const to = /^\s*to\s*=\s*"([^"]+)"/m.exec(b);
+    const status = /^\s*status\s*=\s*(\d+)/m.exec(b);
+    if (from && to && status && from[1] === fromPath && status[1] === '200') return to[1];
+  }
+  return fromPath;
+}
+
+const served = resolveRewrite('/aperture-learning.html');
+const servedFile = path.join(ROOT, served.replace(/^\//, ''));
+t('the rewrite target for /aperture-learning.html exists on disk', fs.existsSync(servedFile), served);
+
+if (fs.existsSync(servedFile)) {
+  const html = fs.readFileSync(servedFile, 'utf8');
+  t(`COMMAND CENTER title is in the SERVED file (${served})`,
+    /id="ccTitle"/.test(html) && /COMMAND CENTER/.test(html));
+  t(`topbar-right wrapper is in the SERVED file (${served})`, /class="topbar-right"/.test(html));
+}
+
+// The source file keeps its own assertion, so a fix applied to only one of the pair is caught.
+const srcHtml = fs.readFileSync(path.join(ROOT, 'aperture-learning.html'), 'utf8');
+t('COMMAND CENTER title markup is present in aperture-learning.html',
+  /id="ccTitle"/.test(srcHtml) && /COMMAND CENTER/.test(srcHtml));
+
+// And the two must not drift apart again.
+if (fs.existsSync(servedFile) && path.resolve(servedFile) !== path.resolve(path.join(ROOT, 'aperture-learning.html'))) {
+  t('served shell and aperture-learning.html are identical',
+    fs.readFileSync(servedFile, 'utf8') === srcHtml,
+    'the rewrite makes them the same page -- they must be the same bytes');
+}
+
 const css = fs.readFileSync(path.join(ROOT, 'assets', 'axis-tokens.css'), 'utf8');
 t('.cc-title has a style rule', /\.cc-title\s*\{/.test(css));
+t('.topbar-right has a style rule', /\.topbar-right\s*\{/.test(css));
 
 console.log(`axis-overview-panels: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
