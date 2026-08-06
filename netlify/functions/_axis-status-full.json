@@ -2,12 +2,12 @@
  "_internal": true,
  "_emitRule": "INTERNAL ONLY — force-404 live, served via authenticated /api/axis-status. NEVER copy this content into .well-known: regenerate the public mirrors with scripts/lib/axis-status-emit.mjs (headline-only, leak-scanned).",
  "schema": "axis-status-full/1",
- "generatedAt": "2026-08-06T02:45:09.977Z",
+ "generatedAt": "2026-08-06T03:45:19.389Z",
  "honest": true,
  "claims": {
   "testsPassedAfterWrites": {
-   "value": 711,
-   "measuredAt": "2026-08-06T02:46:24.259Z",
+   "value": 737,
+   "measuredAt": "2026-08-06T03:46:26.486Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (# pass)",
    "kind": "test",
    "provenance": "measured",
@@ -21,7 +21,7 @@
   },
   "testsFailedAfterWrites": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:46:24.259Z",
+   "measuredAt": "2026-08-06T03:46:26.486Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (# fail)",
    "kind": "test",
    "provenance": "measured",
@@ -34,8 +34,8 @@
    "stale": false
   },
   "suitesGreenAfterWrites": {
-   "value": 347,
-   "measuredAt": "2026-08-06T02:46:24.259Z",
+   "value": 348,
+   "measuredAt": "2026-08-06T03:46:26.486Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (N/N suites green)",
    "kind": "test",
    "provenance": "measured",
@@ -48,8 +48,8 @@
    "stale": false
   },
   "suitesTotalAfterWrites": {
-   "value": 347,
-   "measuredAt": "2026-08-06T02:46:24.259Z",
+   "value": 348,
+   "measuredAt": "2026-08-06T03:46:26.486Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (N/N suites green)",
    "kind": "test",
    "provenance": "measured",
@@ -63,7 +63,7 @@
   },
   "registryExitCode": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:46:24.259Z",
+   "measuredAt": "2026-08-06T03:46:26.487Z",
    "source": "the exit code of the registry run this script performed",
    "kind": "test",
    "provenance": "measured",
@@ -77,7 +77,7 @@
   },
   "testsPassedBeforeAnyWrite": {
    "value": 646,
-   "measuredAt": "2026-08-06T02:46:24.259Z",
+   "measuredAt": "2026-08-06T03:46:26.487Z",
    "source": "not measurable in this environment: the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
    "kind": "test",
    "provenance": "declared-unmeasurable",
@@ -89,7 +89,7 @@
   },
   "suitesGreenBeforeAnyWrite": {
    "value": 340,
-   "measuredAt": "2026-08-06T02:46:24.259Z",
+   "measuredAt": "2026-08-06T03:46:26.487Z",
    "source": "not measurable in this environment: the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
    "kind": "test",
    "provenance": "declared-unmeasurable",
@@ -100,8 +100,8 @@
    "stale": false
   },
   "commitsAheadOfSharedLine": {
-   "value": 51,
-   "measuredAt": "2026-08-06T02:46:24.514Z",
+   "value": 1,
+   "measuredAt": "2026-08-06T03:46:26.568Z",
    "source": "a revision count taken against the last known shared reference during this cycle",
    "kind": "count",
    "provenance": "measured",
@@ -113,9 +113,34 @@
    "maxAgeHours": 24,
    "stale": false
   },
+  "sharedLineAdvancedByPush": {
+   "value": true,
+   "measuredAt": "2026-08-06T03:46:26.615Z",
+   "source": "the local reflog for the remote-tracking ref, read during this emit",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "git reflog show origin/main -n 1 --format=%gs",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "sharedLineConfirmedOnRemote": {
+   "value": null,
+   "measuredAt": "2026-08-06T03:46:26.615Z",
+   "source": "git ls-remote origin main, run during this emit and refused",
+   "kind": "blocker",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "the remote probe is refused in this environment (no credential), so the push is known from the local reflog and the ref equality only — never from reading github",
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
   "pushCredentialRefused": {
    "value": true,
-   "measuredAt": "2026-08-06T02:46:24.737Z",
+   "measuredAt": "2026-08-06T03:46:26.794Z",
    "source": "a remote probe run with prompts disabled during this emit; the refusal is the measurement",
    "kind": "blocker",
    "provenance": "measured",
@@ -129,7 +154,7 @@
   },
   "secondMessagesDrafted": {
    "value": 12,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "a read of senior-director-state/outbound/SEND-SHEET-2026-08-05.md on disk during this cycle, counting its entries",
    "kind": "count",
    "provenance": "measured",
@@ -144,7 +169,7 @@
   },
   "customerRoutesResolved": {
    "value": 761,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the customer link-graph walk performed during this emit, over the declared customer entry points",
    "kind": "measurement",
    "provenance": "measured",
@@ -158,7 +183,7 @@
   },
   "customerRoutesBroken": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the same walk; a broken route resolves to no file, an empty file, a force-404 rule, or a login-only body",
    "kind": "blocker",
    "provenance": "measured",
@@ -172,7 +197,7 @@
   },
   "customerRoutesUnchecked": {
    "value": 133,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the same walk; external hosts, mail/tel schemes, fragments, runtime hrefs and function routes — undecidable from disk, never counted as passing",
    "kind": "measurement",
    "provenance": "measured",
@@ -186,7 +211,7 @@
   },
   "firstScreensWithAValueClaim": {
    "value": 12,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the first-screen audit run during this emit over the declared customer entry points",
    "kind": "measurement",
    "provenance": "measured",
@@ -200,7 +225,7 @@
   },
   "firstScreensWithFindings": {
    "value": 2,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the same audit; a finding is a named violation carrying its file and, where the string exists in source, its line",
    "kind": "blocker",
    "provenance": "measured",
@@ -214,7 +239,7 @@
   },
   "firstScreensUnchecked": {
    "value": 1,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the same audit; an entry point mounted at runtime or absent from disk — never counted as passing",
    "kind": "measurement",
    "provenance": "measured",
@@ -228,7 +253,7 @@
   },
   "firstScreenRule14Violations": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the same audit, filtered to the honesty classes: guarantee language, experience overclaim, forbidden name, fabricated proof, uncarried metric",
    "kind": "blocker",
    "provenance": "measured",
@@ -242,7 +267,7 @@
   },
   "salesSurfacesMakingAClaim": {
    "value": 12,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the surface-class audit run during this emit; SALES surfaces only — exempt and unchecked are never folded in",
    "kind": "measurement",
    "provenance": "measured",
@@ -256,7 +281,7 @@
   },
   "salesSurfacesStillSilent": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the same audit; a sales surface that names things and promises nothing a reader can feel",
    "kind": "blocker",
    "provenance": "measured",
@@ -270,7 +295,7 @@
   },
   "obligationSurfacesExempt": {
    "value": 2,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the same audit; each exempt surface carries the written argument for its exemption in code",
    "kind": "measurement",
    "provenance": "measured",
@@ -284,7 +309,7 @@
   },
   "entryPointsReachingAConversation": {
    "value": 15,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the conversation-path walk run during this emit, from each entry point out to the action that starts a conversation",
    "kind": "measurement",
    "provenance": "measured",
@@ -298,7 +323,7 @@
   },
   "entryPointsWithNoConversation": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the same walk; no path, a path past the click budget, or a path ending in a form that declares no delivery target",
    "kind": "blocker",
    "provenance": "measured",
@@ -312,7 +337,7 @@
   },
   "entryPointsConversationUnchecked": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the same walk; an entry point not on disk in this checkout — never counted as reachable",
    "kind": "measurement",
    "provenance": "measured",
@@ -326,7 +351,7 @@
   },
   "outboundLinksResolved": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the audit of every site link in the send sheet, run during this emit",
    "kind": "measurement",
    "provenance": "measured",
@@ -339,8 +364,8 @@
    "stale": false
   },
   "unpublishedCommitsTouchingPublicPages": {
-   "value": 14,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "value": 1,
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the commit range origin/main..HEAD read during this emit and classified BY PATH, never by commit message",
    "kind": "measurement",
    "provenance": "measured",
@@ -353,8 +378,8 @@
    "stale": false
   },
   "unpublishedPublicFilesChanged": {
-   "value": 16,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "value": 1,
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the same range read; the distinct set of files in it the open internet can load",
    "kind": "measurement",
    "provenance": "measured",
@@ -367,8 +392,8 @@
    "stale": false
   },
   "unpublishedMergeCommitsExcluded": {
-   "value": 12,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "value": 0,
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "rev-list --count --merges over the same range, so the 49-vs-37 gap is reconciled rather than left to drift",
    "kind": "measurement",
    "provenance": "measured",
@@ -381,8 +406,8 @@
    "stale": false
   },
   "deliveryBundleBytes": {
-   "value": 1077894,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "value": 6600,
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the git bundle written and re-verified during this emit; the byte count is stat(), not an estimate",
    "kind": "measurement",
    "provenance": "measured",
@@ -396,7 +421,7 @@
   },
   "deliveryBundleVerified": {
    "value": true,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the verification this emit performed on the bundle it just wrote; a bundle that will not verify aborts the emit",
    "kind": "measurement",
    "provenance": "measured",
@@ -410,12 +435,12 @@
   },
   "gitPorcelainWritesBlocked": {
    "value": true,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "a real write/overwrite/unlink probe inside .git performed during this emit, confirmed against git's own refusal",
    "kind": "blocker",
    "provenance": "measured",
    "read": {
-    "command": "probeGitBoundary() -> the-git-directory-refuses-unlink-so-porcelain-writes-are-permanently-blocked; git said: fatal: Unable to create '/sessions/affectionate-epic-curie/mnt/iisupp-net-deploy/.git/index.lock': File exists. Another ",
+    "command": "probeGitBoundary() -> the-git-directory-refuses-unlink-so-porcelain-writes-are-permanently-blocked; git said: fatal: Unable to create '/sessions/ecstatic-hopeful-maxwell/mnt/iisupp-net-deploy/.git/index.lock': File exists. Another",
     "exitCode": 0
    },
    "ageHours": 0,
@@ -424,7 +449,7 @@
   },
   "gitStaleLocksPermanent": {
    "value": 2,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the same probe; these lock files exist and this environment cannot unlink them",
    "kind": "measurement",
    "provenance": "measured",
@@ -438,7 +463,7 @@
   },
   "stagedItemsAudited": {
    "value": 4,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the staged-action guard run over the tracked staged-actions module during this emit",
    "kind": "measurement",
    "provenance": "measured",
@@ -452,7 +477,7 @@
   },
   "stagedItemsRanked": {
    "value": 4,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the staged list read during this emit; AN2 requires a rank and an unblocks statement per item",
    "kind": "measurement",
    "provenance": "measured",
@@ -466,7 +491,7 @@
   },
   "secondMessagesSent": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "not measurable in this environment: no send path exists in this environment and none was attempted; the outbound record shows none",
    "kind": "count",
    "provenance": "declared-unmeasurable",
@@ -478,7 +503,7 @@
   },
   "meetingsHeld": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "not measurable in this environment: replies and meetings live in a mailbox and a calendar this environment cannot read",
    "kind": "count",
    "provenance": "declared-unmeasurable",
@@ -490,7 +515,7 @@
   },
   "daysDraftedUnsent": {
    "value": 16,
-   "measuredAt": "2026-08-06T02:46:24.738Z",
+   "measuredAt": "2026-08-06T03:46:26.796Z",
    "source": "the date the twelve were first drafted (2026-07-21), differenced against this emit's clock",
    "kind": "measurement",
    "provenance": "measured",
@@ -504,7 +529,7 @@
   },
   "revenueToDate": {
    "value": "none",
-   "measuredAt": "2026-08-06T02:45:09.977Z",
+   "measuredAt": "2026-08-06T03:45:19.389Z",
    "source": "no invoice has been issued",
    "kind": "fact",
    "ageHours": 0,
@@ -513,7 +538,7 @@
   },
   "feedMaxAgeHours": {
    "value": 24,
-   "measuredAt": "2026-08-06T02:45:09.977Z",
+   "measuredAt": "2026-08-06T03:45:19.389Z",
    "source": "the freshness policy wired into the served-feed read path",
    "kind": "fact",
    "ageHours": 0,
@@ -538,9 +563,9 @@
  },
  "tests": {
   "afterEveryWrite": {
-   "pass": 711,
+   "pass": 737,
    "fail": 0,
-   "suites": "347/347",
+   "suites": "348/348",
    "exit": 0
   },
   "beforeAnyWriteLastKnown": {
@@ -646,7 +671,7 @@
  "onTrack": {
   "landing": false,
   "conversion": false,
-  "honestNote": "Nothing published. No customer-visible change and none claimed. The verified work still sits on the local line (51 commits ahead of the last known shared reference) because the environment holds no credential for the shared host — probed again this cycle and refused again."
+  "honestNote": "Nothing published. No customer-visible change and none claimed. The verified work still sits on the local line (1 commits ahead of the last known shared reference) because the environment holds no credential for the shared host — probed again this cycle and refused again."
  },
  "needsAhmad": [
   {
@@ -744,6 +769,48 @@
     }
    ],
    "policy": "An obligation surface is exempt from Rule 17 and from nothing else — every Rule 14 class still fails red on it. Exempt and unchecked are separate verdicts and are never folded into passed."
+  },
+  "crossSurface": {
+   "verdict": "ok",
+   "statement": "The 8 prose surfaces of the published set agree with each other; 6 more are in the set but are not prose and were not checked.",
+   "surfacesChecked": 8,
+   "surfacesUnchecked": 6,
+   "contradictions": 0,
+   "byClass": {},
+   "findings": [],
+   "unchecked": [
+    {
+     "file": "sitemap.xml",
+     "class": "surface-is-not-prose-a-reader-consumes",
+     "reason": "part of the published set but not prose a reader consumes"
+    },
+    {
+     "file": "robots.txt",
+     "class": "surface-is-not-prose-a-reader-consumes",
+     "reason": "part of the published set but not prose a reader consumes"
+    },
+    {
+     "file": "assets/axis-app.js",
+     "class": "surface-is-not-prose-a-reader-consumes",
+     "reason": "part of the published set but not prose a reader consumes"
+    },
+    {
+     "file": "assets/axis-tokens.css",
+     "class": "surface-is-not-prose-a-reader-consumes",
+     "reason": "part of the published set but not prose a reader consumes"
+    },
+    {
+     "file": "assets/axis-state.json",
+     "class": "surface-is-not-prose-a-reader-consumes",
+     "reason": "part of the published set but not prose a reader consumes"
+    },
+    {
+     "file": "assets/aperture-learning.js",
+     "class": "surface-is-not-prose-a-reader-consumes",
+     "reason": "part of the published set but not prose a reader consumes"
+    }
+   ],
+   "policy": "Agreement BETWEEN published surfaces, measured rather than asserted. Silence is allowed — a page that never raises a topic is not a finding. Disagreement is not: a plan priced two ways, a framework certified on one screen and only in readiness on another, or an invitation pointing where a sibling says the door is shut, each names both files and both lines. A dollar figure with no recurring unit is ambiguous and is declined rather than guessed."
   }
  },
  "stagedAudit": {
@@ -753,11 +820,11 @@
  },
  "unpublishedLine": {
   "ref": "origin/main",
-  "statement": "39 commit(s) are built and tested but unpublished. 14 of them touch 16 file(s) a visitor can load — that share, and only that share, is what publishing would change on screen.",
+  "statement": "1 commit(s) are built and tested but unpublished. 1 of them touch 1 file(s) a visitor can load — that share, and only that share, is what publishing would change on screen.",
   "reconciliation": {
-   "countedHere": 39,
-   "mergeCommitsExcluded": 12,
-   "totalIncludingMerges": 51,
+   "countedHere": 1,
+   "mergeCommitsExcluded": 0,
+   "totalIncludingMerges": 1,
    "why": "a merge commit introduces no file changes of its own; counting it would attribute every file it carries twice. The ledger's headline figure has always been the total including merges.",
    "consistent": true
   },
@@ -765,63 +832,48 @@
    {
     "class": "public-page",
     "why": "a file the open internet loads directly — this is the only class a stranger can see",
-    "commits": 14,
+    "commits": 1,
     "exclusiveCommits": 0,
-    "files": 16
+    "files": 1
    },
    {
     "class": "sentinel-app",
     "why": "the Windows agent itself — changes here reach a customer only after they install a build",
-    "commits": 21,
-    "exclusiveCommits": 5,
-    "files": 176
+    "commits": 0,
+    "exclusiveCommits": 0,
+    "files": 0
    },
    {
     "class": "serving-layer",
     "why": "site behaviour rather than site content — a visitor feels it without seeing a diff",
-    "commits": 7,
-    "exclusiveCommits": 1,
-    "files": 4
+    "commits": 0,
+    "exclusiveCommits": 0,
+    "files": 0
    },
    {
     "class": "tooling-and-tests",
     "why": "how we prove things to ourselves; nothing outside this machine changes when it changes",
-    "commits": 24,
-    "exclusiveCommits": 2,
-    "files": 74
+    "commits": 1,
+    "exclusiveCommits": 0,
+    "files": 2
    },
    {
     "class": "record-only",
     "why": "the operator's own record of the work — a visitor cannot reach it and no product behaviour changes",
-    "commits": 28,
-    "exclusiveCommits": 3,
-    "files": 11
+    "commits": 0,
+    "exclusiveCommits": 0,
+    "files": 0
    },
    {
     "class": "unclassified",
     "why": "no path rule claims this file; it is reported as unclassified rather than absorbed into a neighbouring class",
-    "commits": 8,
+    "commits": 0,
     "exclusiveCommits": 0,
-    "files": 18
+    "files": 0
    }
   ],
   "whatAVisitorWouldSeeChange": [
-   "about.html",
-   "ai-edge.html",
-   "aria.html",
-   "assets/aria-core.js",
-   "assets/axis-app.js",
-   "assets/axis-claim-figures.js",
-   "assets/axis-command-center.js",
-   "assets/axis-director-screen.js",
-   "assets/axis-state.json",
-   "assets/axis-visit-beacon.js",
-   "growth-library.html",
-   "health-check.html",
-   "index.html",
-   "scorecard.html",
-   "sitemap.xml",
-   "trust.html"
+   "assets/axis-app.js"
   ],
   "policy": "Classified BY PATH, never by commit message: a message is a claim by its author, a file list is a fact. A commit touching more than one class is counted in every class it touches and the overlap is reported as overlap, so the class counts deliberately do not sum to the range size.",
   "artefact": "senior-director-state/unpublished-range.json"
@@ -829,16 +881,16 @@
  "delivery": {
   "bundle": "senior-director-state/delivery/unpublished-line.bundle",
   "manifest": "senior-director-state/delivery/unpublished-line.manifest.json",
-  "tip": "a2bb8282a5c5220f6979649140d2e15281c98bbe",
-  "tree": "15806909b75459691b8252753b4177d6fca48d59",
+  "tip": "00e3971b928ce2699039a774bb310e4fb30fc042",
+  "tree": "e2cbcdbcbd39f4ea771321364b740175e2518305",
   "basedOn": {
    "ref": "origin/main",
-   "sha": "08e542254515fc6b338732d70313dc888003d99d"
+   "sha": "25a6b0a419aba2c2d9c3365a3c00a96cbee90275"
   },
-  "commits": 51,
-  "bytes": 1077894,
-  "sha256": "10882d191da4254fb836bee790e5ff3d7a90f4d79d1aa03d1ea5a45c7c4b3ebc",
-  "fetchCommand": "git fetch \"senior-director-state/delivery/unpublished-line.bundle\" main:refs/heads/from-bundle-a2bb828",
+  "commits": 1,
+  "bytes": 6600,
+  "sha256": "5cb0b432aed8dc4229f90f5a19d60085b7da39a340c9dd2999e40df7c48fc663",
+  "fetchCommand": "git fetch \"senior-director-state/delivery/unpublished-line.bundle\" main:refs/heads/from-bundle-00e3971",
   "verifyCommand": "node scripts/verify-range-bundle.mjs",
   "verified": true,
   "tracked": false,
@@ -852,11 +904,11 @@
   "staleLocks": [
    {
     "name": "index.lock",
-    "ageSeconds": 7747
+    "ageSeconds": 206
    },
    {
     "name": "HEAD.lock",
-    "ageSeconds": 9934
+    "ageSeconds": 401
    }
   ],
   "canCreateInGitDir": true,
@@ -864,7 +916,7 @@
   "canUnlinkInGitDir": false,
   "porcelainWrites": false,
   "plumbingWrites": true,
-  "gitSaid": "fatal: Unable to create '/sessions/affectionate-epic-curie/mnt/iisupp-net-deploy/.git/index.lock': File exists. Another git process seems to be running in this repository, e.g.",
+  "gitSaid": "fatal: Unable to create '/sessions/ecstatic-hopeful-maxwell/mnt/iisupp-net-deploy/.git/index.lock': File exists. Another git process seems to be running in this repository, e.g.",
   "workaround": {
    "why": "porcelain (`git add` / `git commit`) takes `.git/index.lock` and `.git/<ref>.lock` and must REMOVE them afterwards. Where unlink is refused, the very first lock write becomes permanent and every subsequent porcelain command fails with `File exists` — including the commands that would clean it up.",
    "steps": [
@@ -880,6 +932,16 @@
   "oneLineCheck": "node -e \"import('./scripts/lib/sandbox-git-boundary.mjs').then(m=>console.log(m.probeGitBoundary().statement))\"",
   "artefact": "senior-director-state/sandbox-git-boundary.json",
   "policy": "Reported as a fact about the environment, never as a test failure. A suite that goes red because the environment is inconvenient trains its reader to skip the colour."
+ },
+ "publication": {
+  "sharedLineAdvancedByPush": true,
+  "commitsAhead": 1,
+  "confirmedOnRemote": false,
+  "statement": "the shared line has not moved; the range is still local.",
+  "stillOperatorOnly": [
+   "the Netlify publish — merging the line does not deploy it; the web publish stays a deliberate one-click",
+   "the twelve second messages — no software in this repository can send them"
+  ]
  },
  "staleClaims": [],
  "unmeasuredFigures": [

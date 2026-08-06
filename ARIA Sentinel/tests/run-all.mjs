@@ -95,6 +95,13 @@ const TESTS = [
   // future cycle re-derives it. The environment's inconvenience is a CLASSIFICATION, never a red —
   // a red that means nothing trains its reader to skip the colour.
   "../../tests/sandbox-git-boundary.test.mjs",
+  // CROSS-SURFACE CONSISTENCY 2026-08-06 (RUN-AS / AS1) — every public gate before this one judged
+  // ONE page at a time; none ever asked whether the pages AGREE. That stopped being theoretical the
+  // moment the priced range reached origin/main by a real push: the sixteen files were written weeks
+  // apart by different sequences and are now served TOGETHER. A plan priced two ways, a framework
+  // "certified" here and "readiness" there, or a call to action pointing where a sibling says the
+  // door is not open — each names BOTH files and BOTH lines. Silence is allowed; disagreement is not.
+  "../../tests/cross-surface-consistency.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   // SITE FINEPRINT GATE 2026-08-06 (salvaged from cc/axis-feed-2026-08-04) — the site-wide legal
