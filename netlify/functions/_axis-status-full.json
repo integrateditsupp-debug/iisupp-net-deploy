@@ -2,12 +2,12 @@
  "_internal": true,
  "_emitRule": "INTERNAL ONLY — force-404 live, served via authenticated /api/axis-status. NEVER copy this content into .well-known: regenerate the public mirrors with scripts/lib/axis-status-emit.mjs (headline-only, leak-scanned).",
  "schema": "axis-status-full/1",
- "generatedAt": "2026-08-06T02:40:17.006Z",
+ "generatedAt": "2026-08-06T02:45:09.977Z",
  "honest": true,
  "claims": {
   "testsPassedAfterWrites": {
    "value": 711,
-   "measuredAt": "2026-08-06T02:41:37.857Z",
+   "measuredAt": "2026-08-06T02:46:24.259Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (# pass)",
    "kind": "test",
    "provenance": "measured",
@@ -21,7 +21,7 @@
   },
   "testsFailedAfterWrites": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:41:37.857Z",
+   "measuredAt": "2026-08-06T02:46:24.259Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (# fail)",
    "kind": "test",
    "provenance": "measured",
@@ -35,7 +35,7 @@
   },
   "suitesGreenAfterWrites": {
    "value": 347,
-   "measuredAt": "2026-08-06T02:41:37.857Z",
+   "measuredAt": "2026-08-06T02:46:24.259Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (N/N suites green)",
    "kind": "test",
    "provenance": "measured",
@@ -49,7 +49,7 @@
   },
   "suitesTotalAfterWrites": {
    "value": 347,
-   "measuredAt": "2026-08-06T02:41:37.857Z",
+   "measuredAt": "2026-08-06T02:46:24.259Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (N/N suites green)",
    "kind": "test",
    "provenance": "measured",
@@ -63,7 +63,7 @@
   },
   "registryExitCode": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:41:37.858Z",
+   "measuredAt": "2026-08-06T02:46:24.259Z",
    "source": "the exit code of the registry run this script performed",
    "kind": "test",
    "provenance": "measured",
@@ -77,7 +77,7 @@
   },
   "testsPassedBeforeAnyWrite": {
    "value": 646,
-   "measuredAt": "2026-08-06T02:41:37.858Z",
+   "measuredAt": "2026-08-06T02:46:24.259Z",
    "source": "not measurable in this environment: the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
    "kind": "test",
    "provenance": "declared-unmeasurable",
@@ -89,7 +89,7 @@
   },
   "suitesGreenBeforeAnyWrite": {
    "value": 340,
-   "measuredAt": "2026-08-06T02:41:37.858Z",
+   "measuredAt": "2026-08-06T02:46:24.259Z",
    "source": "not measurable in this environment: the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
    "kind": "test",
    "provenance": "declared-unmeasurable",
@@ -100,8 +100,8 @@
    "stale": false
   },
   "commitsAheadOfSharedLine": {
-   "value": 50,
-   "measuredAt": "2026-08-06T02:41:38.091Z",
+   "value": 51,
+   "measuredAt": "2026-08-06T02:46:24.514Z",
    "source": "a revision count taken against the last known shared reference during this cycle",
    "kind": "count",
    "provenance": "measured",
@@ -115,7 +115,7 @@
   },
   "pushCredentialRefused": {
    "value": true,
-   "measuredAt": "2026-08-06T02:41:38.267Z",
+   "measuredAt": "2026-08-06T02:46:24.737Z",
    "source": "a remote probe run with prompts disabled during this emit; the refusal is the measurement",
    "kind": "blocker",
    "provenance": "measured",
@@ -129,7 +129,7 @@
   },
   "secondMessagesDrafted": {
    "value": 12,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "a read of senior-director-state/outbound/SEND-SHEET-2026-08-05.md on disk during this cycle, counting its entries",
    "kind": "count",
    "provenance": "measured",
@@ -144,7 +144,7 @@
   },
   "customerRoutesResolved": {
    "value": 761,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the customer link-graph walk performed during this emit, over the declared customer entry points",
    "kind": "measurement",
    "provenance": "measured",
@@ -158,7 +158,7 @@
   },
   "customerRoutesBroken": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the same walk; a broken route resolves to no file, an empty file, a force-404 rule, or a login-only body",
    "kind": "blocker",
    "provenance": "measured",
@@ -172,7 +172,7 @@
   },
   "customerRoutesUnchecked": {
    "value": 133,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the same walk; external hosts, mail/tel schemes, fragments, runtime hrefs and function routes — undecidable from disk, never counted as passing",
    "kind": "measurement",
    "provenance": "measured",
@@ -186,7 +186,7 @@
   },
   "firstScreensWithAValueClaim": {
    "value": 12,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the first-screen audit run during this emit over the declared customer entry points",
    "kind": "measurement",
    "provenance": "measured",
@@ -200,7 +200,7 @@
   },
   "firstScreensWithFindings": {
    "value": 2,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the same audit; a finding is a named violation carrying its file and, where the string exists in source, its line",
    "kind": "blocker",
    "provenance": "measured",
@@ -214,7 +214,7 @@
   },
   "firstScreensUnchecked": {
    "value": 1,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the same audit; an entry point mounted at runtime or absent from disk — never counted as passing",
    "kind": "measurement",
    "provenance": "measured",
@@ -228,7 +228,7 @@
   },
   "firstScreenRule14Violations": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the same audit, filtered to the honesty classes: guarantee language, experience overclaim, forbidden name, fabricated proof, uncarried metric",
    "kind": "blocker",
    "provenance": "measured",
@@ -242,7 +242,7 @@
   },
   "salesSurfacesMakingAClaim": {
    "value": 12,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the surface-class audit run during this emit; SALES surfaces only — exempt and unchecked are never folded in",
    "kind": "measurement",
    "provenance": "measured",
@@ -256,7 +256,7 @@
   },
   "salesSurfacesStillSilent": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the same audit; a sales surface that names things and promises nothing a reader can feel",
    "kind": "blocker",
    "provenance": "measured",
@@ -270,7 +270,7 @@
   },
   "obligationSurfacesExempt": {
    "value": 2,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the same audit; each exempt surface carries the written argument for its exemption in code",
    "kind": "measurement",
    "provenance": "measured",
@@ -284,7 +284,7 @@
   },
   "entryPointsReachingAConversation": {
    "value": 15,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the conversation-path walk run during this emit, from each entry point out to the action that starts a conversation",
    "kind": "measurement",
    "provenance": "measured",
@@ -298,7 +298,7 @@
   },
   "entryPointsWithNoConversation": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the same walk; no path, a path past the click budget, or a path ending in a form that declares no delivery target",
    "kind": "blocker",
    "provenance": "measured",
@@ -312,7 +312,7 @@
   },
   "entryPointsConversationUnchecked": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the same walk; an entry point not on disk in this checkout — never counted as reachable",
    "kind": "measurement",
    "provenance": "measured",
@@ -326,7 +326,7 @@
   },
   "outboundLinksResolved": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the audit of every site link in the send sheet, run during this emit",
    "kind": "measurement",
    "provenance": "measured",
@@ -339,8 +339,8 @@
    "stale": false
   },
   "unpublishedCommitsTouchingPublicPages": {
-   "value": 13,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "value": 14,
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the commit range origin/main..HEAD read during this emit and classified BY PATH, never by commit message",
    "kind": "measurement",
    "provenance": "measured",
@@ -354,7 +354,7 @@
   },
   "unpublishedPublicFilesChanged": {
    "value": 16,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the same range read; the distinct set of files in it the open internet can load",
    "kind": "measurement",
    "provenance": "measured",
@@ -368,7 +368,7 @@
   },
   "unpublishedMergeCommitsExcluded": {
    "value": 12,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "rev-list --count --merges over the same range, so the 49-vs-37 gap is reconciled rather than left to drift",
    "kind": "measurement",
    "provenance": "measured",
@@ -381,8 +381,8 @@
    "stale": false
   },
   "deliveryBundleBytes": {
-   "value": 1055298,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "value": 1077894,
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the git bundle written and re-verified during this emit; the byte count is stat(), not an estimate",
    "kind": "measurement",
    "provenance": "measured",
@@ -396,7 +396,7 @@
   },
   "deliveryBundleVerified": {
    "value": true,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the verification this emit performed on the bundle it just wrote; a bundle that will not verify aborts the emit",
    "kind": "measurement",
    "provenance": "measured",
@@ -410,7 +410,7 @@
   },
   "gitPorcelainWritesBlocked": {
    "value": true,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "a real write/overwrite/unlink probe inside .git performed during this emit, confirmed against git's own refusal",
    "kind": "blocker",
    "provenance": "measured",
@@ -424,7 +424,7 @@
   },
   "gitStaleLocksPermanent": {
    "value": 2,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the same probe; these lock files exist and this environment cannot unlink them",
    "kind": "measurement",
    "provenance": "measured",
@@ -438,7 +438,7 @@
   },
   "stagedItemsAudited": {
    "value": 4,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the staged-action guard run over the tracked staged-actions module during this emit",
    "kind": "measurement",
    "provenance": "measured",
@@ -452,7 +452,7 @@
   },
   "stagedItemsRanked": {
    "value": 4,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the staged list read during this emit; AN2 requires a rank and an unblocks statement per item",
    "kind": "measurement",
    "provenance": "measured",
@@ -466,7 +466,7 @@
   },
   "secondMessagesSent": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "not measurable in this environment: no send path exists in this environment and none was attempted; the outbound record shows none",
    "kind": "count",
    "provenance": "declared-unmeasurable",
@@ -478,7 +478,7 @@
   },
   "meetingsHeld": {
    "value": 0,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "not measurable in this environment: replies and meetings live in a mailbox and a calendar this environment cannot read",
    "kind": "count",
    "provenance": "declared-unmeasurable",
@@ -490,7 +490,7 @@
   },
   "daysDraftedUnsent": {
    "value": 16,
-   "measuredAt": "2026-08-06T02:41:38.269Z",
+   "measuredAt": "2026-08-06T02:46:24.738Z",
    "source": "the date the twelve were first drafted (2026-07-21), differenced against this emit's clock",
    "kind": "measurement",
    "provenance": "measured",
@@ -504,7 +504,7 @@
   },
   "revenueToDate": {
    "value": "none",
-   "measuredAt": "2026-08-06T02:40:17.006Z",
+   "measuredAt": "2026-08-06T02:45:09.977Z",
    "source": "no invoice has been issued",
    "kind": "fact",
    "ageHours": 0,
@@ -513,7 +513,7 @@
   },
   "feedMaxAgeHours": {
    "value": 24,
-   "measuredAt": "2026-08-06T02:40:17.006Z",
+   "measuredAt": "2026-08-06T02:45:09.977Z",
    "source": "the freshness policy wired into the served-feed read path",
    "kind": "fact",
    "ageHours": 0,
@@ -646,7 +646,7 @@
  "onTrack": {
   "landing": false,
   "conversion": false,
-  "honestNote": "Nothing published. No customer-visible change and none claimed. The verified work still sits on the local line (50 commits ahead of the last known shared reference) because the environment holds no credential for the shared host — probed again this cycle and refused again."
+  "honestNote": "Nothing published. No customer-visible change and none claimed. The verified work still sits on the local line (51 commits ahead of the last known shared reference) because the environment holds no credential for the shared host — probed again this cycle and refused again."
  },
  "needsAhmad": [
   {
@@ -753,11 +753,11 @@
  },
  "unpublishedLine": {
   "ref": "origin/main",
-  "statement": "38 commit(s) are built and tested but unpublished. 13 of them touch 16 file(s) a visitor can load — that share, and only that share, is what publishing would change on screen.",
+  "statement": "39 commit(s) are built and tested but unpublished. 14 of them touch 16 file(s) a visitor can load — that share, and only that share, is what publishing would change on screen.",
   "reconciliation": {
-   "countedHere": 38,
+   "countedHere": 39,
    "mergeCommitsExcluded": 12,
-   "totalIncludingMerges": 50,
+   "totalIncludingMerges": 51,
    "why": "a merge commit introduces no file changes of its own; counting it would attribute every file it carries twice. The ledger's headline figure has always been the total including merges.",
    "consistent": true
   },
@@ -765,35 +765,35 @@
    {
     "class": "public-page",
     "why": "a file the open internet loads directly — this is the only class a stranger can see",
-    "commits": 13,
+    "commits": 14,
     "exclusiveCommits": 0,
     "files": 16
    },
    {
     "class": "sentinel-app",
     "why": "the Windows agent itself — changes here reach a customer only after they install a build",
-    "commits": 20,
+    "commits": 21,
     "exclusiveCommits": 5,
-    "files": 175
+    "files": 176
    },
    {
     "class": "serving-layer",
     "why": "site behaviour rather than site content — a visitor feels it without seeing a diff",
-    "commits": 6,
+    "commits": 7,
     "exclusiveCommits": 1,
     "files": 4
    },
    {
     "class": "tooling-and-tests",
     "why": "how we prove things to ourselves; nothing outside this machine changes when it changes",
-    "commits": 23,
+    "commits": 24,
     "exclusiveCommits": 2,
-    "files": 71
+    "files": 74
    },
    {
     "class": "record-only",
     "why": "the operator's own record of the work — a visitor cannot reach it and no product behaviour changes",
-    "commits": 27,
+    "commits": 28,
     "exclusiveCommits": 3,
     "files": 11
    },
@@ -829,16 +829,16 @@
  "delivery": {
   "bundle": "senior-director-state/delivery/unpublished-line.bundle",
   "manifest": "senior-director-state/delivery/unpublished-line.manifest.json",
-  "tip": "20c4f67a3768c3e56ad39f93b37963805dde14b7",
-  "tree": "0e4df237e41072fecd89693778921ed5702453b6",
+  "tip": "a2bb8282a5c5220f6979649140d2e15281c98bbe",
+  "tree": "15806909b75459691b8252753b4177d6fca48d59",
   "basedOn": {
    "ref": "origin/main",
    "sha": "08e542254515fc6b338732d70313dc888003d99d"
   },
-  "commits": 50,
-  "bytes": 1055298,
-  "sha256": "44784471bd997411b4a0d19d34b1c3bf56ac796e1f024fe668395131d2e353d4",
-  "fetchCommand": "git fetch \"senior-director-state/delivery/unpublished-line.bundle\" main:refs/heads/from-bundle-20c4f67",
+  "commits": 51,
+  "bytes": 1077894,
+  "sha256": "10882d191da4254fb836bee790e5ff3d7a90f4d79d1aa03d1ea5a45c7c4b3ebc",
+  "fetchCommand": "git fetch \"senior-director-state/delivery/unpublished-line.bundle\" main:refs/heads/from-bundle-a2bb828",
   "verifyCommand": "node scripts/verify-range-bundle.mjs",
   "verified": true,
   "tracked": false,
@@ -852,11 +852,11 @@
   "staleLocks": [
    {
     "name": "index.lock",
-    "ageSeconds": 7453
+    "ageSeconds": 7747
    },
    {
     "name": "HEAD.lock",
-    "ageSeconds": 9641
+    "ageSeconds": 9934
    }
   ],
   "canCreateInGitDir": true,
