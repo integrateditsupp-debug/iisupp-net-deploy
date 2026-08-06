@@ -7,15 +7,20 @@
 > Sent 0. Meetings 0. Revenue none. No software here can send.
 >
 > **2. PUBLISH THE LINE — and as of this cycle the publish is REHEARSED, not hoped for.** Local
-> `main` is at `7c2dcf43`, two commits ahead of the shared line. The whole path was walked this
+> `main` is ahead of the shared line by a handful of commits ahead of the shared line. The whole path was walked this
 > cycle in a throwaway repository: the bundle was fetched from a file, the range landed, all 14
 > published files came back byte-identical to the tested tree, and the serving rules in that same
 > landed tree were checked and send none of them to a 404 or a gate. Two commands:
 >
 > ```
-> git fetch "senior-director-state/delivery/unpublished-line.bundle" main:refs/heads/from-bundle-c7c7043
-> git push origin from-bundle-c7c7043:main
+> git fetch "senior-director-state/delivery/unpublished-line.bundle" main:refs/heads/publish-line
+> git push origin publish-line:main
 > ```
+>
+> The branch name carries no commit SHA on purpose — a command that names a tip goes stale the
+> moment the next cycle commits, and a stale publish command is the same quiet wrongness the
+> rehearsal exists to catch. The exact tip and tree are recorded in
+> `senior-director-state/delivery/unpublished-line.manifest.json`, beside the bundle.
 >
 > No credential is needed for the first. The second is yours. Netlify deploy stays your one click
 > after that — merging main does not deploy.
