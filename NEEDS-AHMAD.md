@@ -7,7 +7,7 @@
 > Sent 0. Meetings 0. Revenue none. No software here can send.
 >
 > **2. PUBLISH THE LINE — and as of this cycle the publish is REHEARSED, not hoped for.** Local
-> `main` is ahead of the shared line by a handful of commits ahead of the shared line. The whole path was walked this
+> `main` is ahead of the shared line by a handful of commits. The whole path was walked this
 > cycle in a throwaway repository: the bundle was fetched from a file, the range landed, all 14
 > published files came back byte-identical to the tested tree, and the serving rules in that same
 > landed tree were checked and send none of them to a 404 or a gate. Two commands:
