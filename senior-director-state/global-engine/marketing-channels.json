@@ -1,0 +1,149 @@
+{
+  "version": 1,
+  "channels": [
+    {
+      "id": "gbp",
+      "name": "Google Business Profile",
+      "kind": "Local search",
+      "url": "https://business.google.com/",
+      "impact": "high",
+      "note": "Ranks IIS in Maps + local pack for \"IT support near me\" across every service city."
+    },
+    {
+      "id": "bing_places",
+      "name": "Bing Places for Business",
+      "kind": "Local search",
+      "url": "https://www.bingplaces.com/",
+      "impact": "med",
+      "note": "Feeds Copilot and Bing AI answers — cheap incremental reach."
+    },
+    {
+      "id": "msft_partner",
+      "name": "Microsoft Partner Center → Solutions Partner directory",
+      "kind": "Vendor marketplace",
+      "url": "https://partner.microsoft.com/",
+      "impact": "high",
+      "note": "Free listing in the Microsoft find-a-partner directory. Buyer intent is extremely high."
+    },
+    {
+      "id": "azure_mkt",
+      "name": "Azure Marketplace — consulting service listing",
+      "kind": "Vendor marketplace",
+      "url": "https://azuremarketplace.microsoft.com/",
+      "impact": "high",
+      "note": "List a fixed-scope M365/Azure assessment as a free consulting offer. Global distribution, no fee."
+    },
+    {
+      "id": "aws_mkt",
+      "name": "AWS Partner Network + Marketplace",
+      "kind": "Vendor marketplace",
+      "url": "https://aws.amazon.com/partners/",
+      "impact": "med",
+      "note": "Partner locator listing; adds credibility for cloud RFPs."
+    },
+    {
+      "id": "clutch",
+      "name": "Clutch",
+      "kind": "B2B directory",
+      "url": "https://clutch.co/",
+      "impact": "high",
+      "note": "Buyers shortlist MSPs here. Verified reviews compound; free profile."
+    },
+    {
+      "id": "g2",
+      "name": "G2 — service provider profile",
+      "kind": "B2B directory",
+      "url": "https://www.g2.com/",
+      "impact": "med",
+      "note": "Free vendor profile; reviews carry into AI search results."
+    },
+    {
+      "id": "goodfirms",
+      "name": "GoodFirms / The Manifest / DesignRush",
+      "kind": "B2B directory",
+      "url": "https://www.goodfirms.co/",
+      "impact": "med",
+      "note": "Three free listings, one capability blurb. Backlinks + referral traffic."
+    },
+    {
+      "id": "cloudtango",
+      "name": "Cloudtango — MSP directory",
+      "kind": "MSP directory",
+      "url": "https://www.cloudtango.net/",
+      "impact": "med",
+      "note": "MSP-specific, global, free. Buyers filter by country + service."
+    },
+    {
+      "id": "upcity",
+      "name": "UpCity + Expertise.com",
+      "kind": "B2B directory",
+      "url": "https://upcity.com/",
+      "impact": "low",
+      "note": "Free listings; local SEO value in each metro."
+    },
+    {
+      "id": "linkedin",
+      "name": "LinkedIn Company Page + Services tab",
+      "kind": "Social",
+      "url": "https://www.linkedin.com/company/",
+      "impact": "high",
+      "note": "Services tab makes IIS appear in LinkedIn service-provider search. Free and under-used."
+    },
+    {
+      "id": "crunchbase",
+      "name": "Crunchbase + Owler company profiles",
+      "kind": "Data graph",
+      "url": "https://www.crunchbase.com/",
+      "impact": "low",
+      "note": "Feeds enrichment tools and AI models; makes IIS resolvable as an entity."
+    },
+    {
+      "id": "ised_ccc",
+      "name": "Canadian Company Capabilities (ISED)",
+      "kind": "Government directory",
+      "url": "https://ised-isde.canada.ca/site/canadian-company-capabilities/en",
+      "impact": "med",
+      "note": "Free federal directory; Trade Commissioner Service pulls leads from it for export matchmaking."
+    },
+    {
+      "id": "tcs",
+      "name": "Trade Commissioner Service (Canada)",
+      "kind": "Government export",
+      "url": "https://www.tradecommissioner.gc.ca/",
+      "impact": "high",
+      "note": "Free introductions to foreign buyers + local partners in 160 cities. This is the onsite-resource pipeline."
+    },
+    {
+      "id": "wikidata",
+      "name": "Wikidata + schema.org Organization markup on iisupp.net",
+      "kind": "AI/entity SEO",
+      "url": "https://www.wikidata.org/",
+      "impact": "med",
+      "note": "Makes IIS a known entity to LLM answer engines — the new front page."
+    },
+    {
+      "id": "github",
+      "name": "GitHub org — publish free IT tooling/scripts",
+      "kind": "Developer reach",
+      "url": "https://github.com/",
+      "impact": "med",
+      "note": "Open-source a few genuinely useful admin scripts. Free authority, inbound developer traffic."
+    },
+    {
+      "id": "youtube",
+      "name": "YouTube + short-form: one fix, one video",
+      "kind": "Content",
+      "url": "https://www.youtube.com/",
+      "impact": "med",
+      "note": "Every support ticket resolved is a 90-second video. Evergreen inbound, zero cost."
+    },
+    {
+      "id": "trustpilot",
+      "name": "Trustpilot",
+      "kind": "Reviews",
+      "url": "https://www.trustpilot.com/",
+      "impact": "low",
+      "note": "Free profile; review velocity is the cheapest conversion lift available."
+    }
+  ]
+}

@@ -1,0 +1,1216 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "at": "2026-08-06T02:53:07.299Z",
+      "cycle": 1,
+      "scanned": 334,
+      "kept": 56,
+      "precision": 0.168,
+      "threshold": 0.45,
+      "verdict": "improved",
+      "learned": [
+        "Held threshold at 0.45: 56 kept from 334 scanned.",
+        "Vocabulary grew by 4 term(s): system, payroll, maintenance, support."
+      ]
+    },
+    {
+      "at": "2026-08-06T02:53:28.216Z",
+      "cycle": 2,
+      "scanned": 334,
+      "kept": 124,
+      "precision": 0.371,
+      "threshold": 0.48,
+      "verdict": "improved",
+      "learned": [
+        "Precision 37% at volume — raised fit threshold to 0.48.",
+        "Vocabulary grew by 6 term(s): managed, coast, solution, security, stock, associated."
+      ]
+    },
+    {
+      "at": "2026-08-06T03:02:36.404Z",
+      "cycle": 3,
+      "scanned": 334,
+      "kept": 133,
+      "precision": 0.398,
+      "threshold": 0.51,
+      "verdict": "improved",
+      "learned": [
+        "Precision 40% at volume — raised fit threshold to 0.51."
+      ]
+    }
+  ],
+  "bar": {
+    "threshold": 0.51,
+    "floor": 0.45,
+    "bestYield": 133,
+    "bestPrecision": 0.39820359281437123,
+    "cycle": 3
+  },
+  "vocab": {
+    "positive": [
+      "managed service",
+      "msp",
+      "it support",
+      "help desk",
+      "service desk",
+      "end user support",
+      "information technology",
+      "ict",
+      "network",
+      "infrastructure",
+      "cloud",
+      "azure",
+      "microsoft 365",
+      "m365",
+      "cyber",
+      "security operation",
+      "endpoint",
+      "backup",
+      "disaster recovery",
+      "migration",
+      "server",
+      "virtualisation",
+      "virtualization",
+      "sharepoint",
+      "identity",
+      "sso",
+      "mdm",
+      "intune",
+      "software",
+      "saas",
+      "application support",
+      "system integration",
+      "digital transformation",
+      "data centre",
+      "data center",
+      "monitoring",
+      "automation",
+      "ai",
+      "artificial intelligence",
+      "technical support",
+      "maintenance and support",
+      "licens",
+      "devops",
+      "web",
+      "database"
+    ],
+    "negative": [
+      "construction",
+      "roofing",
+      "paving",
+      "catering",
+      "janitorial",
+      "landscap",
+      "demolition",
+      "plumbing",
+      "concrete",
+      "asphalt",
+      "vehicle",
+      "fleet lease",
+      "uniform",
+      "furniture",
+      "food service",
+      "medical supply",
+      "pharmaceutical",
+      "ammunition",
+      "firearm",
+      "insurance broker",
+      "legal counsel",
+      "audit of financial",
+      "staffing of nurses",
+      "security guard",
+      "armed",
+      "cleaning"
+    ],
+    "learned": [
+      "system",
+      "payroll",
+      "maintenance",
+      "support",
+      "managed",
+      "coast",
+      "solution",
+      "security",
+      "stock",
+      "associated"
+    ],
+    "candidates": {
+      "ca18326": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "payroll": {
+        "n": 5,
+        "sources": [
+          "UK Contracts Finder (OCDS)",
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "managed": {
+        "n": 4,
+        "sources": [
+          "UK Contracts Finder (OCDS)",
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "coast": {
+        "n": 4,
+        "sources": [
+          "UK Contracts Finder (OCDS)",
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "worker": {
+        "n": 9,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "agencies": {
+        "n": 18,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "contractors": {
+        "n": 9,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "consultants": {
+        "n": 9,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "dorset": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "unitary": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "y24006": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "dynamic": {
+        "n": 15,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "purchasing": {
+        "n": 15,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "system": {
+        "n": 9,
+        "sources": [
+          "UK Contracts Finder (OCDS)",
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "dudley": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "metropolitan": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "y23017": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "invitation": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "agency": {
+        "n": 9,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "contractor": {
+        "n": 9,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "halton": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "y25002": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "luton": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "y21001": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "hackney": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "y25013": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "y22019": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "connect2surrey": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "operational": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "telephone": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "ca18298": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "ca18317": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "labour": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "market": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "partnership": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "ready": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "fertility": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "ca18311": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "unesco": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "together": {
+        "n": 9,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "integrated": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "facilitation": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "residential": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "coordination": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "accommodation": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "transport": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "strategic": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "reporting": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "leicester": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "turing": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "scheme": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "partners": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "airborne": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "operations": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "equipment": {
+        "n": 6,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "electronic": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "rostering": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "reablement": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "seats": {
+        "n": 6,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "passenger": {
+        "n": 6,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "assistant": {
+        "n": 6,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "ca18295": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "rfq2026": {
+        "n": 6,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "nmandd": {
+        "n": 9,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "peaceplus": {
+        "n": 12,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "thriving": {
+        "n": 6,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "minority": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "community": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "integration": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "colours": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "newry": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "mourne": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "ca18294": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "arabic": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "learning": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "ca18290": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "security": {
+        "n": 4,
+        "sources": [
+          "UK Contracts Finder (OCDS)",
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "associated": {
+        "n": 4,
+        "sources": [
+          "UK Contracts Finder (OCDS)",
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "ca18286": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "farmers": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "festival": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "master": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "vendor": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "solution": {
+        "n": 4,
+        "sources": [
+          "UK Contracts Finder (OCDS)",
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "clinical": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "workers": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "emersons": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "green": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "youth": {
+        "n": 3,
+        "sources": [
+          "UK Contracts Finder (OCDS)"
+        ]
+      },
+      "fscs580": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "management": {
+        "n": 6,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "stock": {
+        "n": 4,
+        "sources": [
+          "UK Find a Tender (OCDS)",
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "repairs": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "sustainability": {
+        "n": 6,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "climate": {
+        "n": 6,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "purcon": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "sainsbury": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "centre": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "refurbishment": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "advocacy": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "shops": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "victims": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "survivors": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "violence": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "against": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "women": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "girls": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "finance": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "solutions": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "enterprise": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "resource": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "platform": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "trend": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "comprehensive": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "maintenance": {
+        "n": 4,
+        "sources": [
+          "UK Find a Tender (OCDS)",
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "replacement": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "upgrade": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "leakage": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "further": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "competition": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "enforcement": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "camera": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "refresh": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "partick": {
+        "n": 6,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "housing": {
+        "n": 9,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "association": {
+        "n": 6,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "power": {
+        "n": 6,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "servicing": {
+        "n": 6,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "reactive": {
+        "n": 6,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "review": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "non-invasive": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "methods": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "highly": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "protected": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "marine": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "areas": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "business": {
+        "n": 6,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "support": {
+        "n": 4,
+        "sources": [
+          "UK Find a Tender (OCDS)",
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "professional": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "london": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "p2141": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "handsworth": {
+        "n": 3,
+        "sources": [
+          "UK Find a Tender (OCDS)"
+        ]
+      },
+      "netherlands-utrecht": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "information": {
+        "n": 21,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "systems": {
+        "n": 15,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "spain-barcelona": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "spain-seville": {
+        "n": 6,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "germany-frankfurt-on-main": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "france-la": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "plaine": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "saint-denis": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "railway": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "tramway": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "locomotives": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "rolling": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "parts": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "finland-helsinki": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "consulting": {
+        "n": 6,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "development": {
+        "n": 6,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "internet": {
+        "n": 6,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "united": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "kingdom-london": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "technology": {
+        "n": 6,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "italy-pieve": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "soligo": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "operating": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "norway-": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "lesund": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "italy-rome": {
+        "n": 6,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "programming": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      },
+      "consultancy": {
+        "n": 3,
+        "sources": [
+          "EU TED — CPV 72/48 (IT services & software)"
+        ]
+      }
+    }
+  },
+  "sources": [
+    {
+      "id": "uk_cf_ocds",
+      "name": "UK Contracts Finder (OCDS)",
+      "region": "United Kingdom",
+      "adapter": "ocds",
+      "weight": 1.15,
+      "url": "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?stages=tender&limit=100",
+      "dry": 0
+    },
+    {
+      "id": "uk_fts_ocds",
+      "name": "UK Find a Tender (OCDS)",
+      "region": "United Kingdom",
+      "adapter": "ocds",
+      "weight": 1.15,
+      "noticeBase": "https://www.find-tender.service.gov.uk/Notice/",
+      "url": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?limit=100",
+      "dry": 0
+    },
+    {
+      "id": "canadabuys_csv",
+      "name": "CanadaBuys new tender notices",
+      "region": "Canada",
+      "adapter": "canadabuys",
+      "weight": 1.1,
+      "url": "https://canadabuys.canada.ca/opendata/pub/newTenderNotice-nouvelAvisAppelOffres.csv",
+      "dry": 0
+    },
+    {
+      "id": "eu_ted_api",
+      "name": "EU TED — CPV 72/48 (IT services & software)",
+      "region": "European Union",
+      "adapter": "ted",
+      "weight": 1.05,
+      "url": "https://api.ted.europa.eu/v3/notices/search",
+      "dry": 0
+    }
+  ]
+}
