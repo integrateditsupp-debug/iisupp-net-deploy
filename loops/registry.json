@@ -1,6 +1,6 @@
 {
   "schema": "iis-loops/v1",
-  "updated": "2026-08-05T10:00:00Z",
+  "updated": "2026-08-05T21:09:45Z",
   "loops": [
     {
       "id": "lead-radar",
@@ -94,8 +94,8 @@
       "class": "Observer",
       "status": "idle",
       "approved_spend_usd": 0,
-      "last_run": "2026-08-05T13:05:00Z",
-      "success_count": 15,
+      "last_run": "2026-08-05T21:09:45Z",
+      "success_count": 16,
       "failure_count": 2,
       "spawns": [],
       "serves_top_goal": true,

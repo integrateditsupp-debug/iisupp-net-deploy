@@ -90,6 +90,89 @@ function syncDockVisibility() {
 // ── Screens ──
 const SCREENS = {};
 
+// ── Procurement & Whitelisting (Overview panel) ─────────────────────────────
+// Self-contained live status of bids/contracts + portal whitelisting so the Overview tab shows,
+// at a glance, what is filed and what needs Ahmad. Every row is a real link: attention items go to
+// where the action is completed; expressed-interest items go to the portal where the response is
+// filed; whitelisting rows go to the account. Data is embedded (last swept 2026-08-05) so it renders
+// even when the backend snapshot has no bids feed. Update the arrays below as status changes.
+const PROC_LINKS = {
+  bt: 'https://richmondhill.bidsandtenders.ca/Module/Tenders/en/Vendor/Dashboard/21a1fe27-61f3-4ebb-8993-b9f5ce962704',
+  ontario: 'https://ontariotenders.app.jaggaer.com/',
+  toronto: 'https://www.toronto.ca/business-economy/doing-business-with-the-city/searching-bidding-on-city-contracts/how-to-register-as-a-supplier-with-the-city/',
+  carleton: 'https://carleton.bonfirehub.ca/opportunities/108232',
+  richmondhill: 'https://richmondhill.bidsandtenders.ca/Module/Tenders/en/Tender/Register/ef2d40c6-4e55-4ea6-bb44-536f15e0c358',
+  insurance: 'https://www.zensurance.com/',
+};
+const PROC_C = { green: '#39c07a', blue: '#4d9fe8', red: '#e8615f', dim: '#8ea0b5' };
+const PROCUREMENT = {
+  updated: '2026-08-05',
+  attention: [
+    { tag: 'ACT', title: 'Get a broker insurance quote', meta: 'Zensurance / APOLLO / TruShield — unblocks submission on all 10 opportunities below', cta: 'Start quote →', href: PROC_LINKS.insurance },
+    { tag: 'SIGN', title: 'Carleton RFSQ 2026-P-04 (MSP)', meta: 'Package ready · needs your signature + 1 reference project + upload 7 PDFs · closes Sep 8', due: 'Sep 8', cta: 'Open Bonfire →', href: PROC_LINKS.carleton },
+    { tag: 'PAY', title: 'Richmond Hill RFRC-2610203 — IT Staffing', meta: 'bids&tenders paywall · plan or Pay-Per-Bid (~$130) needed to register/submit', cta: 'Open bid →', href: PROC_LINKS.richmondhill },
+  ],
+  whitelisted: [
+    { title: 'bids&tenders — ALL agencies', meta: 'IT + IT Consulting categories, every agency on. ~90% of Ontario municipalities auto-email IT bids.', cta: 'Account →', href: PROC_LINKS.bt },
+    { title: 'Ontario Tenders (Jaggaer)', meta: 'Profile fixed · 36 commodity codes · province + universities/colleges/school boards · alerts live.', cta: 'Portal →', href: PROC_LINKS.ontario },
+    { title: 'City of Toronto (SAP Ariba)', meta: 'Supplier registration submitted · Category 8116 IT Service Delivery.', cta: 'Details →', href: PROC_LINKS.toronto },
+  ],
+  interest: [
+    { code: 'rfx_20313', title: 'Emergency Notification Solution', meta: 'Ontario Health · SaaS / cloud / mass-comm', due: 'Sep 8' },
+    { code: 'rfx_20318', title: 'OPP Dictation & Transcription Software', meta: '$850K · business / system-management software', due: 'Aug 26' },
+    { code: 'rfx_19733', title: 'Primary Care Medical Records (PCMR) — Stream 1', meta: 'EMR digital-transformation multi-lot', due: 'Aug 27' },
+    { code: 'rfx_19657', title: 'OSAP Remediation of Legacy Applications', meta: 'Dev / software engineering / MIS', due: 'Aug 31' },
+    { code: 'rfx_20285', title: 'SAS Language Application (3 yr)', meta: 'COTS enterprise software license', due: 'Aug 7', soon: true },
+    { code: 'rfi_1991', title: 'Continuity & Emergency Management System (CEMS)', meta: 'RFI · full software/cloud category set', due: 'Aug 9' },
+    { code: 'rfi_1996', title: 'Contract Lifecycle & Vendor Management Solution', meta: 'RFI · ERP / enterprise software', due: 'Aug 14' },
+    { code: 'rfi_1992', title: 'Human Capital Management (HCM) Cloud Solution', meta: 'RFI · cloud / HR software', due: 'Aug 14' },
+    { code: 'rfi_1997', title: 'Automated Redaction Software', meta: 'RFI · dev / cloud software (PII/PHI)', due: 'Aug 25' },
+    { code: 'rfi_2000', title: 'Historical Medical Records Digitization / Repository', meta: 'RFI · MIS / data services / cloud · EMR integration', due: 'Aug 7', soon: true },
+  ],
+};
+function procRow(item, color) {
+  const kids = [
+    el('span', { class: 'stage-tag', style: `border:1px solid ${color};color:${color};background:transparent` }, item.tag || item.code || '•'),
+    el('div', { style: 'flex:1;min-width:0' }, [
+      el('div', { style: 'font-weight:600' }, item.title),
+      item.meta ? el('div', { class: 'eyebrow', style: 'margin-top:2px;white-space:normal' }, item.meta) : null,
+    ]),
+  ];
+  if (item.due) kids.push(el('span', { class: 'mono', style: `font-size:11px;margin-right:8px;color:${item.soon ? PROC_C.red : PROC_C.dim}` }, 'closes ' + item.due));
+  kids.push(el('span', { class: 'chip' }, item.cta || 'View in portal →'));
+  return el('a', { class: 'row', href: item.href || PROC_LINKS.ontario, target: '_blank', rel: 'noopener',
+    style: `text-decoration:none;color:inherit;cursor:pointer;border-left:3px solid ${color}` }, kids);
+}
+function procurementSection() {
+  const p = PROCUREMENT;
+  const wrap = el('div', {});
+  wrap.append(head('Procurement & Whitelisting', 'live bid + contract status · ' + p.updated, 'margin-top:26px'));
+  const kpis = [
+    ['Portals whitelisted', p.whitelisted.length, PROC_C.green],
+    ['Interest expressed', p.interest.length, PROC_C.blue],
+    ['Needs you now', p.attention.length, PROC_C.red],
+    ['ON commodity codes', 36, PROC_C.dim],
+  ];
+  wrap.append(el('div', { class: 'kpi-grid' }, kpis.map(([l, v, col]) =>
+    el('div', { class: 'kpi' }, [el('div', { class: 'value', style: 'color:' + col }, v), el('div', { class: 'label' }, l)]))));
+
+  wrap.append(head('Needs you now', 'click to go complete it', 'margin-top:20px'));
+  const a = el('div', { class: 'card', style: 'padding:0' });
+  p.attention.forEach(it => a.append(procRow(it, PROC_C.red)));
+  wrap.append(a);
+
+  wrap.append(head('Expressed interest', 'response & submit pending you · opens the portal', 'margin-top:20px'));
+  const i = el('div', { class: 'card', style: 'padding:0' });
+  p.interest.forEach(it => i.append(procRow({ ...it, href: PROC_LINKS.ontario }, PROC_C.blue)));
+  wrap.append(i);
+
+  wrap.append(head('Whitelisting — live', 'auto-alerts active', 'margin-top:20px'));
+  const w = el('div', { class: 'card', style: 'padding:0' });
+  p.whitelisted.forEach(it => w.append(procRow(it, PROC_C.green)));
+  wrap.append(w);
+  return wrap;
+}
+
 SCREENS.overview = (c) => {
   const d = data('overview'); const k = d.kpis || {};
   c.append(axisStrip(k)); // AXIS front-and-center: command strip above everything (R3)
@@ -98,6 +181,7 @@ SCREENS.overview = (c) => {
     ['Client messages waiting', k.messages_waiting ?? 0], ['Follow-ups due', k.followups_due ?? 0],
     ['Meetings this week', k.meetings_week ?? 0], ['MRR', fmtMoney(k.mrr)]];
   c.append(el('div', { class: 'kpi-grid' }, kpis.map(([l, v]) => el('div', { class: 'kpi' }, [el('div', { class: 'label' }, l), el('div', { class: 'value' }, v)]))));
+  c.append(procurementSection()); // live bid/contract + whitelisting status (2026-08-05)
   c.append(head('Needs You Now', 'top by revenue impact', 'margin-top:22px'));
   const needs = d.needs_you_now || [];
   const card = el('div', { class: 'card', style: 'padding:0' });

@@ -679,7 +679,7 @@
 # Generated. Do not hand-edit — run scripts/gen-root-serving-denies.mjs.
 # publish = "." makes every root path a URL. These rules refuse the operator-internal ones.
 # Nothing here is deleted or moved (Rule 15); the files simply stop being public.
-# 140 file rules, 17 directory rules.
+# 141 file rules, 17 directory rules.
 [[redirects]]
   from = "/.codex-observer/*"
   to = "/404.html"
@@ -957,6 +957,11 @@
   force = true
 [[redirects]]
   from = "/AHMAD-PUSH-RUN122-KB-RECOVERY.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-PUSH-RUN123-RUN-AH.cmd"
   to = "/404.html"
   status = 404
   force = true

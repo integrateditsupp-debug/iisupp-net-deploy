@@ -1,53 +1,36 @@
-# Codex Playbook — scan 2026-08-04T14:05Z (window: 2d)
+# Codex Playbook — scan 2026-08-05T21:09:45Z
 
-## Headline
-Repo **thawed**. 2 commits on 2026-08-04 after 6 days of silence. **Zero are Codex.**
-Codex proper: 0 commits, **33 days dormant** (last real Codex-authored work 2026-07-02).
+## Verdict
+Codex proper: **0 commits, 34 days dormant** (last 2026-07-02). This loop continues to observe a
+Cowork/CC-only commit stream. The "Codex" framing is now purely historical.
 
-## Commits in window
-| sha | author | subject | churn |
-|---|---|---|---|
-| `79bfe34f` | Claude Cowork (CC) | `[cc] STAGE 2 — free to try, paid tier for heavy use, hard ceiling on our own spend (branch-only)` | 6 files, +551/-0 |
-| `c4cb9f80` | Cowork | `chore(axis): regenerate the public status feed from real sources this cycle` | 3 files, +35/-208 |
+## Window (2d) — 31 commits, HEAD e413131c on main
+Authors: Cowork 23 | CC Stage2 6 | cowork-loop 1 | Claude Cowork 1
+Top dirs: scripts 28 | tests 27 | netlify 27 | ARIA Sentinel 27 | public 16 | .well-known 16 | assets 14 | root 14
+Top verbs: run 8 | feed 5 | merge 4 | unify 3 | flywheel 3 | security 2
 
-## What's new (worth reading)
-**New subsystem — vision spend metering.**
-- `netlify/functions/lib/vision-allowance.mjs` (200 lines) — allowance/tier logic
-- `netlify/functions/aria-vision-diagnose.mjs` (79) — handler
-- `tests/vision-allowance.test.mjs` (178) + `tests/vision-diagnose-handler.test.mjs` (42)
-- `assets/aria-vision-diagnose.js` + `ARIA Sentinel/src/renderer/vendor/` shim (26 each)
+## Delta vs prior scan (13:05Z, HEAD ec9141b9) — +12 commits in ~8h
+- **New dirs: none.** Second consecutive clean-dir scan; structure has settled.
+- **New verbs: `run`, `404`.** `run` now dominant (8) — the RUN-AH..AN lettered-cycle cadence
+  replaced the earlier `feed`/`unify`/`flywheel` hygiene phase as the primary commit shape.
+- Churn shift: `scripts` (8 -> 28) and `ARIA Sentinel` (9 -> 27) tripled; tests kept pace (14 -> 27),
+  so the test-to-source ratio did not degrade during the burst.
 
-Test-to-source ratio **220:305** — the highest in any observed window. This is the
-first commit in observed history that ships a **hard ceiling on our own inference
-spend**, which is the enforcement layer the $20–70/mo cap has been missing.
-Marked branch-only — not on main, not on origin.
+## Notable patterns this window
+1. **RUN-AH -> RUN-AN lettered cycle** (7 commits) — each ships a guard that refuses a class of claim:
+   AJ (a staged click must name what it clicks), AK (claims carry measurement stamps or the write refuses),
+   AL/AM (feed cannot go stale silently), AN (customer-path link graph, 894 links walked, 0 broken).
+2. **Self-refusing emitters** is now the house pattern: guards throw at write time rather than reporting.
+3. **Classifier regression caught in-flight** (RUN-AN): registry arrived RED exit 1, intent `default`
+   85.82% under its 86% floor, traced to one unbounded typo alternate, word-bounded, 92.64% -> 92.96%.
+4. **Discovery worth acting on**: `pricing.html` does not exist — `/plans/` is the real pricing surface.
+5. Business reality unchanged across all 7 RUN commits: **second messages sent 0, meetings 0, revenue none.**
 
-**AXIS status feed regen** — `_axis-status-full.json` collapsed by 208 lines,
-generated bloat replaced with real-source output. `.well-known/axis/status.json`
-and its `public/` mirror updated in lockstep.
-
-## Deltas vs prior scan (2026-08-04T05:55Z)
-- commits in window: **0 → 2**
-- new directories: **none** (first clean-dir scan since `_incoming-patches`)
-- new commit verbs: **none** (`axis` 18, `stage` 8, `fix` 8, `feat` 6 over 14d)
-- new author strings: `Cowork`, `Claude Cowork (CC)`, `Claude Cowork`, `Fable 5 (Stage-3 ARE lane)`
-  — identity sprawl is now **10 distinct author strings in 14 days** for what is
-  effectively 3 actors. Attribution is degrading.
-- dirty working-tree paths: **382 → 383**
-
-## Unchanged structural problems (worsening by age)
-1. `.git/index.lock` — 0-byte, mtime frozen at `2026-07-28T15:38:00 -0400`, now
-   **6d22h** old, **identical across five consecutive scans**. Definitively stale.
-   Sandbox cannot unlink it (mount perms). Agents are now *routing around* it
-   rather than it being fixed.
-2. HEAD sits on `cc/run-ac-passive-signal-2026-07-29` — **no upstream**. Today's
-   two commits are stranded there alongside RUN-AC.
-3. `main` is **14 ahead AND 49 behind** `origin/main`. Diverged both directions.
-   RUN-F..RUN-K revenue work unpushed; origin's 07-29 legal/downloads/pricing
-   burst unmerged locally. Origin refs last fetched 2026-07-29T14:13.
-4. Codex framing is obsolete — this loop has observed only Cowork/CC output for
-   33 days.
-
-## Loop note
-`observe-codex.mjs` remains absent (its path resolves to an unmounted prior-session
-outputs dir). Every scan since 2026-07-21 is manual git-log reconstruction.
+## Flags for Ahmad
+1. `.git/index.lock` present again — mtime 2026-08-05T17:48Z, ~3h old, stale residue from the 13:48
+   commit (NOT the frozen 07-28 lock, and NOT a live agent). Agents keep leaving it behind. Delete it.
+2. Codex 34 days dormant — rename this loop `repo-observer` or retire it. 6th consecutive scan saying so.
+3. `observe-codex.mjs` still absent and its outputs dir unmounted — every scan since 07-21 is manual
+   reconstruction. Make the fallback official in LOOPS_SPEC.md §6 or rebuild the script in-repo.
+4. Guard machinery is compounding fast; the revenue line has not moved in 7 cycles. The build is
+   getting more honest, not more sold.

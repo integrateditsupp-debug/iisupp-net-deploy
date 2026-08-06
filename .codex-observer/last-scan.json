@@ -1,22 +1,22 @@
 {
-  "scan_ts": "2026-08-05T13:05:00Z",
+  "scan_ts": "2026-08-05T21:09:45Z",
   "window": "2d",
-  "head": "ec9141b9",
+  "head": "e413131c",
   "branch": "main",
-  "commits_in_window": 19,
+  "commits_in_window": 31,
   "codex_commits_in_window": 0,
-  "prior_scan": "2026-08-04T14:05:00Z",
-  "prior_head": "abbc4c15",
-  "commits_since_prior_scan": 19,
+  "prior_scan": "2026-08-05T13:05:00Z",
+  "prior_head": "ec9141b9",
+  "commits_since_prior_scan": 12,
   "authors_in_window": {
-    "Cowork": 17,
-    "CC Stage2": 1,
-    "Claude Cowork": 1,
-    "cowork-loop": 1
+    "Cowork": 23,
+    "CC Stage2": 6,
+    "cowork-loop": 1,
+    "Claude Cowork": 1
   },
   "authors_last_30d": {
-    "CC Stage2": 30,
-    "Cowork": 26,
+    "CC Stage2": 35,
+    "Cowork": 33,
     "Ahmad Wasee": 16,
     "integrateditsupp-debug": 15,
     "Cowork Flywheel": 14,
@@ -27,46 +27,42 @@
     "AXIS Worker": 1
   },
   "top_dirs_in_window": {
-    "tests": 14,
-    "netlify": 13,
-    "ARIA Sentinel": 9,
-    "scripts": 8,
-    "public": 8,
-    ".well-known": 8,
+    "scripts": 28,
+    "tests": 27,
+    "netlify": 27,
+    "ARIA Sentinel": 27,
+    "public": 16,
+    ".well-known": 16,
+    "assets": 14,
+    "(root)": 14,
     "docs": 6,
-    "assets": 4,
     "loops": 2,
-    ".codex-observer": 2
+    ".codex-observer": 2,
+    "_incoming-patches": 1
   },
   "top_verbs_in_window": {
-    "feed": 4,
+    "run": 8,
+    "feed": 5,
+    "merge": 4,
     "unify": 3,
-    "merge": 3,
     "flywheel": 3,
     "security": 2,
     "[ops]": 2,
     "tests": 1,
+    "404": 1,
     "[autonomous]": 1
   },
-  "new_dirs": [
-    ".well-known",
-    "_incoming-patches"
-  ],
+  "new_dirs": [],
   "new_verbs": [
-    "unify",
-    "flywheel",
-    "security",
-    "feed"
+    "run",
+    "404"
   ],
-  "unpushed_on_main": 35,
-  "main_behind_origin": 0,
-  "index_lock_present": true,
-  "index_lock_note": "0-byte, mtime 2026-08-05T09:01:23-0400 = ~2 MINUTES old at scan time. NOT the 07-28 stale lock. A live agent is committing right now. Lock state changed: previously identical mtime across 5 scans (definitively stale); now fresh. Treat as ACTIVE, not stale. No git index ops attempted.",
-  "codex_dormant_days": 34,
-  "codex_last_commit": "2026-07-02",
-  "observer_script_present": false,
-  "observer_script_note": "observe-codex.mjs path (local_442f5d4e outputs dir) is not mounted in this session and the script remains absent. Scan reconstructed from read-only `git log` per the standing fallback.",
-  "delta": "STRUCTURAL RESOLUTION. The main/origin-main divergence that this observer has flagged for a week is GONE: main was 14 ahead AND 49 behind at the prior scan, is now 35 ahead / 0 BEHIND. HEAD also moved off the upstream-less cc/run-ac-passive-signal-2026-07-29 branch back onto main. Three 'unify:' merges (adaf49cb, 7a35ddc3, 973baaf0) did the reconciliation and explicitly folded in the concurrent classifier loop run (15774c0a) so no agent's work was stranded. 19 commits in the 2d window vs 2 in the prior window - a 10x burst, all Cowork-family, ZERO Codex. Dominant new theme is served-URL-space hygiene: four commits untracking artefacts that were sitting in the publish directory (dead-sandbox symlinks 388bbbdd, stale emitter temp files bd90b018, two untracked artefacts 51d09021, AHMAD-PUSH cmd 3581162f) plus an allowlist class-guard proven red both ways. Second theme is reproducibility honesty - 6acd8549 stops reporting a green that depends on untracked operator records, and ec9141b9 stops publishing a count its own commit invalidates. New verb family 'unify'/'flywheel'/'security'/'feed' displaced the prior 'axis'/'stage'/'fix' profile. New dirs touched: .well-known (8 touches - allowlist/served-space work) and _incoming-patches. Codex proper: still 0 commits, now 34 days dormant since 2026-07-02. The loop is effectively observing a Cowork-only stream, as flagged 2026-07-15.",
-  "read_only": true,
-  "spend_usd": 0
+  "index_lock": {
+    "present": true,
+    "mtime": "2026-08-05T17:48:47Z",
+    "age_hours": 3.35,
+    "verdict": "stale-residue (not active; ~3h old, left by the 13:48 local commit)"
+  },
+  "observer_script": "absent \u2014 scan reconstructed from git log (standing fallback since 2026-07-21)",
+  "codex_dormant_days": 34
 }
