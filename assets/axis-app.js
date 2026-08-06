@@ -736,25 +736,64 @@ const GLOBAL = {
     }
   ]
 }
+function globalSection() {
+  // data('global') is the agent's global-panel.json once the sync agent lands it in the snapshot.
+  // Merge rather than replace so a partial feed can never blank a section that has embedded content.
+  const live = data('global') || {};
+  const g = { ...GLOBAL, ...live, counts: { ...GLOBAL.counts, ...(live.counts || {}) } };
+  const wrap = el('div', {});
+  wrap.append(head('Global — bids, contracts & whitelisting', `worldwide reach · agent cycle ${g.cycle} · ${g.updated}`, 'margin-top:26px'));
+  const kpis = [
+    ['Countries / regions', g.counts.countries, GLOBAL_C.gold],
+    ['Portals mapped', g.counts.portals, PROC_C.dim],
+    ['Registered', g.counts.registered, PROC_C.green],
+    ['Registration queue', g.counts.queued, GLOBAL_C.amber],
+    ['Waiting on you', g.counts.gated, PROC_C.red],
+    ['Free channels', g.counts.channels, PROC_C.blue],
+  ];
+  wrap.append(el('div', { class: 'kpi-grid' }, kpis.map(([l, v, col]) =>
+    el('div', { class: 'kpi' }, [el('div', { class: 'value', style: 'color:' + col }, v), el('div', { class: 'label' }, l)]))));
 
-SCREENS['axis-agent-director'] = (c) => {
-  // The Director screen lives in axis-director-screen.js. Voice is NOT reimplemented there — the v1
-  // machinery restored in 642251ad is passed in, so the tab, the fab dock and the public panel all
-  // drive one orb state machine and one transcript.
-  renderDirector(c, {
-    data: { overview: data('overview'), approvals: data('approvals'), fleet: data('fleet'),
-            settings: data('settings'), inbox: data('inbox'), analytics: data('analytics'),
-            version: state.version },
-    voice: {
-      send: () => axisSend('axisDirectorInput'),
-      micToggle: () => axisMicToggle('axisDirectorMic', 'axisDirectorInput', () => axisSend('axisDirectorInput')),
-      voiceToggle: axisVoiceToggle,
-      mountOrbs, setState: setAxisState, renderLog: renderDock,
-      get voiceOn() { return axisVoiceOn; },
-    },
-    onIntent: (type, payload) => postIntent(type, payload),
-    openComposer,
-  });
+  const block = (title, eyebrow, rows, color) => {
+    if (!rows || !rows.length) return;
+    wrap.append(head(title, eyebrow, 'margin-top:20px'));
+    const card = el('div', { class: 'card', style: 'padding:0' });
+    rows.forEach(it => card.append(procRow(it, color)));
+    wrap.append(card);
+  };
+  block('Global — waiting on you', 'account, password or ID only you can create · click to finish it', g.attention, PROC_C.red);
+  block('Live global opportunities', 'found by the global research agent · click to open the notice', g.opportunities, PROC_C.blue);
+  block('Whitelisting queue — worldwide', 'free registrations, highest leverage first · click to register', g.queue, GLOBAL_C.amber);
+  block('Registered globally', 'alerts and invitations already flowing', g.registered, PROC_C.green);
+  block('Free global visibility', 'zero ad spend · every listing below is free', g.marketing, GLOBAL_C.gold);
+  return wrap;
+}
+
+SCREENS.overview = (c) => {
+  const d = data('overview'); const k = d.kpis || {};
+  c.append(axisStrip(k)); // AXIS front-and-center: command strip above everything (R3)
+  c.append(head('Overview', 'command deck'));
+  const kpis = [['Pipeline value', fmtMoney(k.pipeline_value)], ['Awaiting approval', k.awaiting_approval ?? 0],
+    ['Client messages waiting', k.messages_waiting ?? 0], ['Follow-ups due', k.followups_due ?? 0],
+    ['Meetings this week', k.meetings_week ?? 0], ['MRR', fmtMoney(k.mrr)]];
+  c.append(el('div', { class: 'kpi-grid' }, kpis.map(([l, v]) => el('div', { class: 'kpi' }, [el('div', { class: 'label' }, l), el('div', { class: 'value' }, v)]))));
+  c.append(procurementSection()); // live bid/contract + whitelisting status (2026-08-05)
+  c.append(globalSection());      // global bids, worldwide whitelisting + free-channel queue (2026-08-06)
+  c.append(head('Needs You Now', 'top by revenue impact', 'margin-top:22px'));
+  const needs = d.needs_you_now || [];
+  const card = el('div', { class: 'card', style: 'padding:0' });
+  if (!needs.length) card.append(el('div', { class: 'empty' }, 'Nothing waiting. AXIS is watching.'));
+  else needs.forEach(n => card.append(el('div', { class: 'row' }, [
+    el('span', { class: 'stage-tag' }, n.kind || 'item'), el('div', { style: 'flex:1' }, n.subject || '(no subject)'),
+    el('button', { class: 'chip', onclick: () => go('approvals') }, 'Review')])));
+  c.append(card);
+  // Fleet strip
+  const fleet = (data('fleet').agents) || [];
+  if (fleet.length) {
+    c.append(head('Fleet', 'agents reporting', 'margin-top:22px'));
+    c.append(el('div', { class: 'card', style: 'display:flex;gap:16px;flex-wrap:wrap' }, fleet.slice(0, 8).map(a =>
+      el('div', { style: 'display:flex;align-items:center;gap:7px' }, [el('span', { class: 'dot ' + (a.status === 'ok' ? 'dot-ok' : 'dot-warn') }), el('span', { class: 'mono', style: 'font-size:11px' }, a.agent)]))));
+  }
 };
 
 SCREENS['axis-agent-director'] = (c) => {
