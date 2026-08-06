@@ -102,6 +102,21 @@ const TESTS = [
   // "certified" here and "readiness" there, or a call to action pointing where a sibling says the
   // door is not open — each names BOTH files and BOTH lines. Silence is allowed; disagreement is not.
   "../../tests/cross-surface-consistency.test.mjs",
+  // PUBLISH REHEARSAL 2026-08-06 (RUN-AS / AS2) — "it will publish cleanly" was an assumption for
+  // twenty-four cycles. Here the whole path is WALKED every cycle in a throwaway directory: the
+  // bundle is fetched into a repository that does not have the range, the range lands, every
+  // published file is compared BLOB BY BLOB against the tested tree, and the serving rules are read
+  // out of THAT LANDED TREE — not the working copy — to prove none of them 404s, gates or hides a
+  // file that is present and correct. The irreversible publish stays Ahmad's; this only removes the
+  // excuse that nobody knows whether it would work.
+  "../../tests/publish-rehearsal.test.mjs",
+  // PRIMARY ACTION 2026-08-06 (RUN-AS / AS3) — the routes resolve, the pages agree, the first
+  // screens lead with the reader's gain, and none of those gates ever asked what the page WANTS.
+  // The invitation is extracted from the file: its words, its target, whether that target can
+  // receive anything in the tree being published, and whether the ask is proportionate to a first
+  // visit. It found a real one on its first run — the About page told a stranger who we are and
+  // then asked them for nothing at all.
+  "../../tests/primary-action.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   // SITE FINEPRINT GATE 2026-08-06 (salvaged from cc/axis-feed-2026-08-04) — the site-wide legal

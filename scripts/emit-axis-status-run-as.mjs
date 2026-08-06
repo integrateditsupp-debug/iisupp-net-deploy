@@ -41,6 +41,8 @@ import { auditSalesSurfaces, assertExemptNotFolded, OBLIGATION_SURFACES } from "
 import { regenerateLedgerHeadOnDisk, TRUTH_FILE } from "./lib/ledger-head-fs.mjs";
 import { readUnpublishedRange, CLASSES as RANGE_CLASSES } from "./lib/unpublished-range.mjs";
 import { auditCrossSurface, statementFor as crossSurfaceStatement } from "./lib/cross-surface-consistency.mjs";
+import { rehearsePublish, statementFor as rehearsalStatement } from "./lib/publish-rehearsal.mjs";
+import { auditPrimaryActions, statementFor as primaryActionStatement } from "./lib/primary-action.mjs";
 import { createRangeBundle, BUNDLE_FILE, MANIFEST_FILE } from "./lib/range-bundle.mjs";
 import { probeGitBoundary, confirmPorcelainBlocked, BOUNDARY_CLASSES } from "./lib/sandbox-git-boundary.mjs";
 import {
@@ -73,6 +75,10 @@ const surfaces = auditSalesSurfaces({ root, entryPoints: CUSTOMER_ENTRY_POINTS }
 // AS1 — the published set read TOGETHER. Every gate before this judged one page at a time; this is
 // the first that can catch two published screens telling a visitor different things.
 const crossSurface = auditCrossSurface({ root });
+
+// AS3 — what each published page ASKS FOR, extracted from the file. Read here so the feed reports a
+// measurement taken during this emit rather than a memory of one taken during a test run.
+const primaryActions = auditPrimaryActions({ root });
 const folded = assertExemptNotFolded(surfaces);
 if (!surfaces.exemptionsValid || !folded.ok) {
   console.error("surface-class guard REFUSED the emit:");
@@ -101,6 +107,17 @@ fs.writeFileSync(path.join(root, BOUNDARY_FILE),
 const bundle = createRangeBundle({ root, ref: "origin/main", head: "HEAD", branch: "main" });
 if (!bundle.ok) {
   console.error(`AR2 delivery bundle REFUSED: ${bundle.class} — ${bundle.detail}`);
+  process.exit(1);
+}
+
+// ── AS2. Walk the publish, now, against the bundle that was just built. A rehearsal that runs only
+// inside a test suite proves the code works; running it here proves THIS artefact publishes. A
+// BROKEN rehearsal refuses the emit for the same reason an unverified bundle does — publishing a
+// range nobody could land is not a caveat, it is the failure the whole delivery path exists to stop.
+const rehearsal = rehearsePublish({ root });
+if (rehearsal.verdict === "broken") {
+  console.error(`AS2 publish rehearsal BROKEN: ${rehearsal.class} — ${rehearsal.detail}`);
+  for (const f of rehearsal.findings) console.error(`  ${f.file || "(tree)"}: ${f.class} ${f.detail || ""}`);
   process.exit(1);
 }
 
@@ -374,10 +391,10 @@ const headlineFields = {
   headline:
     "ARIA / AXIS is in active build. " +
     (published
-      ? "The backlog the last twenty-four cycles called blocked is gone: the shared line was advanced " +
-        "by a real push, so the sixteen public files that were finished and invisible are now the ones " +
-        "a visitor loads. This cycle checked them as a SET rather than one at a time — a plan priced " +
-        "two ways or a promise one screen denies is now a red, not an opinion. "
+      ? "The public pages are on the shared line and are now checked as a SET rather than one at a " +
+        "time, the publish path is rehearsed end to end before it is ever asked for, and every " +
+        "reader-facing page is now measured on what it ASKS a first-time visitor for — which found a " +
+        "page that told a stranger who we are and then invited them to do nothing. "
       : "The work is built and tested; publishing is still a deliberate operator step. ") +
     `Sent: 0 — drafted ${claims.daysDraftedUnsent.value} days. Meetings 0, revenue none. ` +
     `Tests: ${reg.pass} pass, ${reg.fail} fail, ${reg.suites}/${reg.suitesTotal} suites.`,
@@ -592,6 +609,40 @@ fullDetail.customerPath.crossSurface = {
     "framework certified on one screen and only in readiness on another, or an invitation pointing " +
     "where a sibling says the door is shut, each names both files and both lines. A dollar figure " +
     "with no recurring unit is ambiguous and is declined rather than guessed.",
+};
+
+// ── AS2 detail. The publish, walked rather than assumed. ────────────────────────────────────────
+fullDetail.publishRehearsal = {
+  verdict: rehearsal.verdict,
+  statement: rehearsalStatement(rehearsal),
+  filesChecked: rehearsal.checked,
+  landedTip: rehearsal.landed?.tip || null,
+  landedTree: rehearsal.landed?.tree || null,
+  findings: rehearsal.findings.map((f) => ({ file: f.file || null, class: f.class, detail: f.detail || f.rule || "" })),
+  policy:
+    "The whole path is walked in a throwaway directory every cycle: a repository holding only the " +
+    "base commit fetches the bundle from a file, the range lands, every published file is compared " +
+    "blob by blob against the tested tree, and the serving rules are read out of THAT LANDED TREE — " +
+    "not the working copy — so a rule that only exists locally cannot certify a publish that behaves " +
+    "differently once live. It proves the range is safe to publish. It does not publish it.",
+};
+
+// ── AS3 detail. What each page asks a first-time visitor for. ───────────────────────────────────
+fullDetail.primaryAction = {
+  verdict: primaryActions.verdict,
+  statement: primaryActionStatement(primaryActions),
+  readerFacingChecked: primaryActions.checked,
+  notApplicable: primaryActions.notApplicable,
+  asks: primaryActions.rows
+    .filter((r) => r.verdict !== "unchecked")
+    .map((r) => ({ file: r.file, verdict: r.verdict, class: r.class, cost: r.primary?.cost || null, detail: r.detail })),
+  failures: primaryActions.failures.map((f) => ({ file: f.file, class: f.class, detail: f.detail })),
+  policy:
+    "The invitation is extracted from the file, never assumed: its words, its target, whether that " +
+    "target can receive anything in the tree being published, and whether the ask is proportionate to " +
+    "a first visit. A page whose only invitation is to pay fails and names itself. A page with no " +
+    "invitation at all is reported as having none — never scored as passing because it could not be " +
+    "graded. Site navigation is furniture and is not counted as what the page asks for.",
 };
 
 // ── AS. What the reader is now actually looking at. ─────────────────────────────────────────────
