@@ -13,8 +13,8 @@
 > landed tree were checked and send none of them to a 404 or a gate. Two commands:
 >
 > ```
-> git fetch "senior-director-state/delivery/unpublished-line.bundle" main:refs/heads/from-bundle-7c2dcf4
-> git push origin from-bundle-7c2dcf4:main
+> git fetch "senior-director-state/delivery/unpublished-line.bundle" main:refs/heads/from-bundle-c7c7043
+> git push origin from-bundle-c7c7043:main
 > ```
 >
 > No credential is needed for the first. The second is yours. Netlify deploy stays your one click
