@@ -133,3 +133,12 @@ outputs/
 # `/tmp/*` is force-404'd in netlify.toml, so this is the safe destination — but nothing in it
 # should ever become tracked content. No tracked file has ever lived here.
 /tmp/
+
+# RUN-AR / AR2 — the delivery bundle and its manifest both live under senior-director-state/, which
+# is already ignored above as the operator's untracked record root. Recorded here so the next cycle
+# does not read the absence as an oversight: the bundle is a 1 MB binary regenerated from the history
+# every cycle, and the manifest's job is to travel WITH the bundle to whoever receives it, not to sit
+# in a commit describing a file they do not have. Regenerate both:
+#   node scripts/emit-axis-status-run-ar.mjs      (or) node -e "import('./scripts/lib/range-bundle.mjs').then(m=>m.createRangeBundle({}))"
+# Verify a received pair with: node scripts/verify-range-bundle.mjs
+senior-director-state/delivery/*.bundle

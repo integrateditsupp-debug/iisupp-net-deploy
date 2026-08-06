@@ -6,6 +6,10 @@ const TESTS = [
   "../../tests/deploy-safety-denylist.test.mjs",
   // SERVING-LAYER LOCKDOWN 2026-07-02 — live-probe logic (git-state tests can't see the serving layer).
   "../../tests/probe-deploy-safety.test.mjs",
+  // CLONE PREP 2026-08-06 (salvaged from cc/axis-feed-2026-08-04, which is otherwise superseded by
+  // main) — proves the verification procedure itself: a clean extract of the shared line is prepared
+  // the same way every time, so a red/green result from a /tmp clone means what it claims to mean.
+  "../../tests/verify-clone-prep.test.mjs",
   // SERVED-FEED HYGIENE 2026-08-05 — the AXIS feed directories are live URL space; nothing untracked
   // (emitter scratch, dotfile drafts) may sit beside the feed. Written after finding two such files.
   "../../tests/served-feed-dir-clean.test.mjs",
@@ -73,8 +77,30 @@ const TESTS = [
   // across the filesystem boundary: the real file, the truth artefact it was generated from, and
   // the served feed must agree, and the history below the END marker is asserted byte-identical.
   "../../tests/ledger-head-on-disk.test.mjs",
+  // UNPUBLISHED RANGE 2026-08-06 (RUN-AR / AR1) — twenty-three cycles closed with "N commits ahead
+  // of the shared line" and never once priced it. A count is not a finding: the range is now read
+  // out of the repository and classified BY PATH (never by the commit message), overlapping classes
+  // are reported as overlapping rather than resolved to whichever one the author would have
+  // preferred, and a range that could not be read is UNREADABLE — never zero.
+  "../../tests/unpublished-range.test.mjs",
+  // RANGE BUNDLE 2026-08-06 (RUN-AR / AR2) — the second delivery path, for a line no credential in
+  // this environment can push. A verified thin bundle plus a manifest recording tip, tree and a
+  // SHA-256 of the bytes. The digest exists because the first red proved `git bundle verify` PASSES
+  // a 60%-truncated bundle: it reads the header, not the packfile. Certifying a half-copied backup
+  // as sound would have been the most expensive false comfort in the program.
+  "../../tests/range-bundle.test.mjs",
+  // SANDBOX GIT BOUNDARY 2026-08-06 (RUN-AR / AR3) — the mount's `.git` refuses unlink, so its stale
+  // locks are permanent and porcelain writes are blocked for the life of the environment. Recorded
+  // once, with the plumbing workaround proven end-to-end against a really-blocked repository, so no
+  // future cycle re-derives it. The environment's inconvenience is a CLASSIFICATION, never a red —
+  // a red that means nothing trains its reader to skip the colour.
+  "../../tests/sandbox-git-boundary.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
+  // SITE FINEPRINT GATE 2026-08-06 (salvaged from cc/axis-feed-2026-08-04) — the site-wide legal
+  // disclaimer strip may never silently disappear from a tracked public page; a new public page that
+  // ships without it fails here rather than slipping through. Walk narrowed to git-tracked files.
+  "./site-fineprint-gate.test.mjs",
   "./tab-gating-post-trial.test.mjs",
   "./walkthrough-webhook-grant.test.mjs",
   "./gating-free-floor.test.mjs", // FIX 2 — free floor ⊊ paid Personal (a paid entry plan is a real upgrade)
