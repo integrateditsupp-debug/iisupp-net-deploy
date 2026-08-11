@@ -179,7 +179,12 @@ export function confirmPorcelainBlocked({ root = process.cwd() } = {}) {
     });
     return { attempted: true, blocked: false, inconclusive: false, reason: "porcelain accepted a dry-run commit", message: "porcelain accepted a dry-run commit", get lockLeftBehind() { return LAST_CONFIRM_LEFT_LOCK; } };
   } catch (err) {
-    const msg = String(err.stderr || err.message || err).split("\n").filter(Boolean).slice(0, 2).join(" ");
+    // Both streams, deliberately. `git commit --dry-run` on a tree with nothing staged exits
+    // non-zero and says so on STDOUT with an EMPTY stderr, so a scanner reading stderr alone saw a
+    // bare "Command failed" and concluded "not blocked" from having read nothing at all. Same family
+    // as every other defect this cycle found: a check confidently wrong about where to look.
+    const streams = [err.stderr, err.stdout, err.message].map((x) => String(x || "")).join("\n");
+    const msg = streams.split("\n").filter(Boolean).slice(0, 2).join(" ") || String(err.message || err);
     const lockSignature = /index\.lock|Another git process|Unable to create/i.test(msg);
 
     // ── RUN-BA / BA0 — A THIRD OUTCOME, BECAUSE THERE ARE THREE.
@@ -193,14 +198,18 @@ export function confirmPorcelainBlocked({ root = process.cwd() } = {}) {
     //
     // Reported as its own state. The caller decides what to do with "I could not tell", and the one
     // thing it may not do is round it into either bucket.
-    const nothingToCommit = /nothing (added )?to commit|no changes added|nothing to commit/i.test(msg);
+    // THE RULE, stated once so it cannot drift: only a lock signature proves BLOCKED, and only a
+    // clean exit proves NOT BLOCKED. Every other refusal is INCONCLUSIVE — including a refusal whose
+    // reason this function cannot read, which is the honest verdict on a message it does not
+    // understand rather than a guess dressed as one.
+    const nothingToCommit = /nothing (added )?to commit|no changes added|On branch |nothing to commit/i.test(streams);
     return {
       attempted: true,
       blocked: lockSignature,
-      inconclusive: !lockSignature && nothingToCommit,
-      reason: lockSignature ? "a lock signature in git's own stderr"
+      inconclusive: !lockSignature,
+      reason: lockSignature ? "a lock signature in git's own output"
         : nothingToCommit ? "git refused for having nothing to commit, which says nothing about locks — UNRUN, not evidence"
-        : "git refused for a reason that carries no lock signature",
+        : "git refused for a reason carrying no lock signature and no recognisable cause — UNRUN, never read as 'not blocked'",
       message: msg,
       get lockLeftBehind() { return LAST_CONFIRM_LEFT_LOCK; },
     };
