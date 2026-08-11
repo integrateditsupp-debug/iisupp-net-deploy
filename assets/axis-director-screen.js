@@ -1,14 +1,17 @@
 // axis-director-screen.js — S12 "AXIS Agent Director" (CC-BRIEF §2E). The director's own room:
 // hero presence · voice/text command channel · CRITICAL-ONLY approvals · sub-agent command board ·
 // platform self-heal. The voice machinery is NOT reimplemented here — axis-app.js owns it and hands
-// it in as ctx.voice (send/micToggle/voiceToggle/mountOrbs/setState/renderLog/voiceOn), including the
-// one orb SVG. Every number on this screen comes from the snapshot; nothing is computed or padded.
+// it in as ctx.voice (send/micToggle/voiceToggle/handsFreeToggle/mountOrbs/setState/renderLog/
+// voiceOn/handsFree), including the one orb SVG. Every number on this screen comes from the
+// snapshot; nothing is computed or padded.
 import { el, ago, fmtMoney, toast, head } from './axis-dom.js';
 import { renderFiguresHTML, claimRows, staleCount, ensureFigureStyles } from './axis-claim-figures.js';
 
 // Element ids axis-app.js already knows about: renderDock() fills #axisDirectorLog, axisSyncVoiceBtn()
-// styles #axisDirectorVoice, and axisSend()/axisMicToggle() read #axisDirectorInput. Keep them exact.
-const LOG_ID = 'axisDirectorLog', INPUT_ID = 'axisDirectorInput', MIC_ID = 'axisDirectorMic', VOICE_ID = 'axisDirectorVoice';
+// styles #axisDirectorVoice, axisSyncWakeBtn() styles #axisDirectorWake, and axisSend()/
+// axisMicToggle() read #axisDirectorInput. Keep them exact.
+const LOG_ID = 'axisDirectorLog', INPUT_ID = 'axisDirectorInput', MIC_ID = 'axisDirectorMic',
+  VOICE_ID = 'axisDirectorVoice', WAKE_ID = 'axisDirectorWake';
 
 // Which agent owns which surface. Names are the real roster (assets/axis-roster.json) — an issue with
 // no owner is a complaint, not a work item, so every check below names one of these.
@@ -242,6 +245,14 @@ function channelSection(voice) {
       onclick: () => voice.micToggle && voice.micToggle(MIC_ID, INPUT_ID, () => voice.send && voice.send(INPUT_ID)) }, '🎙'),
     el('button', { class: 'iconbtn axis-director-control', id: VOICE_ID, title: 'Toggle spoken replies', 'aria-label': 'Toggle spoken replies',
       'aria-pressed': voice.voiceOn ? 'true' : 'false', onclick: () => voice.voiceToggle && voice.voiceToggle() }, '🔊'),
+    // Hands-free (wake word "AXIS"). Same toggle the dock carries — axis-app.js owns the recognizer;
+    // this is only the control. The 15s snapshot poll re-renders this row, so the lit state is read
+    // from voice.handsFree at build time rather than left to the post-toggle sync alone.
+    el('button', { class: 'iconbtn axis-director-control', id: WAKE_ID,
+      title: voice.handsFree ? 'Hands-free ON — say “AXIS …”. Stop: say “AXIS stop” or Ctrl+Alt+K' : 'Hands-free: wake word “AXIS”',
+      'aria-label': 'Toggle hands-free wake word', 'aria-pressed': voice.handsFree ? 'true' : 'false',
+      style: voice.handsFree ? 'color:var(--gold);border-color:var(--gold)' : '',
+      onclick: () => voice.handsFreeToggle && voice.handsFreeToggle() }, '⌁'),
     el('button', { class: 'axis-director-send', title: 'Send to AXIS', 'aria-label': 'Send to AXIS', onclick: submit }, 'Send'),
   ]);
   const chips = [
