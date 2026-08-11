@@ -100,6 +100,44 @@ The v1 console's voice chat (push-to-talk mic + humanized spoken replies, commit
 - Guard: `tests/axis-voice-dock.test.mjs` (fails if the dock ever drops voice again, or if the v1
   console loses its own voice code).
 
+## AXIS JARVIS flow + woman's voice (2026-08-11)
+
+Ahmad: *"add Jarvis but keep the name AXIS, give it a unique woman's voice, proper Jarvis flow —
+do not remove existing functions."* Built **purely additively** on the dock voice above; every v1
+behavior listed in that section is unchanged and still guarded by `tests/axis-voice-dock.test.mjs`.
+
+New module `assets/axis-persona.js` (persona + turn grammar only — it never sends, approves, or pays):
+
+- **The voice.** A woman's voice in an **en-GB** register — Microsoft Sonia / Libby Online (Natural)
+  first, prosody `rate 1.0 / pitch 0.92`. Deliberately apart from the customer ARIA orb
+  (`aria-core.js`: en-US, Samantha/Zira/Karen, `rate .95 / pitch 1.05`), so the director and the
+  product never sound alike. ARIA's own voice names are **demoted −45, not banned** — a bare browser
+  still falls back to a real female voice instead of dropping to a male or legacy-SAPI one.
+  `axisPersonaBonus()` is applied *last* inside the existing `axisScoreVoice()` ranking, so
+  neural > google > premium ordering is extended, not replaced.
+- **Hands-free turn-taking (`⌁` button, OFF by default).** Wake word "AXIS" / "hey AXIS" on a
+  background continuous recognizer → dock opens → ask → instant spoken ack (no dead air) → answer →
+  the mic reopens automatically so the next sentence needs no button. Push-to-talk and the wake
+  listener yield to each other (one `SpeechRecognition` at a time). OFF by default because it holds
+  the microphone open; the choice persists but never auto-starts (browsers require a gesture).
+- **Boot briefing.** Once per authed session, from the real snapshot KPIs. Rule 14: with no snapshot
+  it says *"I do not have the board yet"* — it never reports "all quiet", which would be a claim
+  about data it does not have.
+- **Hard-stops stay hard-stops, spoken.** A routed intent may be confirmed by voice ("confirm" /
+  "cancel") because the worker still runs it behind its rails. Anything the director flags
+  `needsApproval` is **click-only** and AXIS says so aloud. Voice never self-authorizes.
+- **Kill-switch.** Say "AXIS stop" (or stand down / cancel / quiet) or press **Ctrl+Alt+K**. Both
+  abort speech, the mic, the pending turn, and any unconfirmed route. Ctrl+Alt+K is checked *before*
+  ⌘K so it never opens the palette instead, and works from inside a text field.
+- Addresses Ahmad by name — never "sir", never "boss" (vault `07_Cortex/AXIS.md`).
+
+Shell change: one `#axisWake` chip added to the dock input row in **both** `axis.html` and
+`aperture-learning.html` — those two files are byte-identical and both are served; a test asserts
+they stay that way.
+
+Guard: `tests/axis-jarvis-flow.test.mjs` (6 groups). Group 6 is an explicit no-regression check that
+every v1 voice marker is still present in `axis-app.js`.
+
 ## AXIS status feed — headline-only law (2026-07-21)
 
 The public mirrors `.well-known/axis/status.json` + `public/.well-known/axis/status.json` are
