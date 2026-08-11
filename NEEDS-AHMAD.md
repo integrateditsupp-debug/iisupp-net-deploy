@@ -1,6 +1,50 @@
 # NEEDS AHMAD — the whole list, in order
 
-> **UPDATED 2026-08-06, flywheel cycle 135 — this block supersedes the dated notes below it.**
+> **UPDATED 2026-08-11, flywheel cycle 137 (RUN-AU) — this block supersedes everything below it.**
+>
+> **1. SEND THE TWELVE SECOND MESSAGES. ~20 minutes. Still rank 1 — and worth more than it was
+> two cycles ago.** Sheet: `senior-director-state/outbound/SEND-SHEET-2026-08-05.md`. Sent 0.
+> Meetings 0. Revenue none. No software in this repository can send. What changed since you last
+> read this line: a reply now meets an agreement a clone can produce, a proposal generated from
+> published prices, and an invoice path that has actually been walked. The twenty minutes buy more
+> than they used to.
+>
+> **2. DECIDE THE CURRENCY. New this cycle, and it is about money.** `plans/index.html` states
+> **USD** in 8 places. `netlify/functions/stripe-checkout.js:114` charges **CAD** on the inline
+> one-time path. One of the two is wrong and software may not pick which. The preset plan
+> subscriptions use Stripe price IDs whose currency lives inside Stripe and cannot be read from
+> here — so that half is UNRUN, not assumed. Tell me which way and I will make both sides agree.
+>
+> **3. DECIDE FOUR QUOTED FIGURES NOBODY PUBLISHES.** Three client-signable contracts quote prices
+> that appear nowhere a client can check them: `legal/MSA-template.md` lines 203–205 ($5,000 /
+> $3,000 / $3,000 one-time implementation fees) and `legal/DPA-template.md:219` ($625K). Either
+> they get published on the plan page or they stop being quoted. They were NOT deleted to make a
+> gate go green — that would have been the worse failure.
+>
+> **4. PUBLISH THE LINE.** Local `main` is 4 commits ahead of the last known shared reference. The
+> path is rehearsed, not hoped for — the bundle was fetched into a throwaway repository this cycle,
+> the range landed, every published file came back byte-identical, and the serving rules in that
+> landed tree send none of them to a 404 or a gate. Two commands:
+>
+> ```
+> git fetch "senior-director-state/delivery/unpublished-line.bundle" main:refs/heads/publish-line
+> git push origin publish-line:main
+> ```
+>
+> No credential is needed for the first. The second is yours. **Netlify deploy stays your one click
+> after that — merging main does not deploy.**
+>
+> **5. A code-host credential for the sandbox.** Probed again this cycle, refused again, verbatim
+> `could not read Username for 'https://github.com'`. Everything above works without it; this only
+> removes step 4 from your plate permanently.
+>
+> **WITHDRAWN this cycle: nothing here asks you to repair git.** The stale `.git` locks that the
+> last two cycles recorded as a permanent block were renamed into `.git/_stale-locks/` and the
+> index re-synced. It had been 27 entries behind HEAD. The agent did it; you do not need to.
+
+---
+
+> **SUPERSEDED 2026-08-06, flywheel cycle 135 — kept for the record.**
 >
 > **1. SEND THE TWELVE SECOND MESSAGES. ~20 minutes. Still rank 1, still the only item on this
 > list that can turn a zero into a one.** Sheet: `senior-director-state/outbound/SEND-SHEET-2026-08-05.md`.
