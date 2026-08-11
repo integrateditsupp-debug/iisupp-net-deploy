@@ -1,5 +1,34 @@
 # NEEDS AHMAD — the whole list, in order
 
+> **CYCLE 142 (2026-08-11), RUN-AY — one new decision, and it is a contractual one.**
+>
+> This cycle opened the second conversation: the one that starts after money moves. What a PAYING
+> customer receives, what we promised them and how fast, and what their first week costs.
+>
+> **NEW ITEM — DECIDE THE P1 AND P2 RESPONSE TIMES. One sentence, two surfaces, and it is the
+> cheapest it will ever be, because nobody is owed it yet.**
+> Schedule B of the MSA commits an Enterprise customer to a **fifteen-minute P1** and a **one-hour
+> P2** (`legal/MSA-template.md:188-189`). The SIG-Lite their own security reviewer works through
+> states **"P1 within 1 hour to Customer. P2 within 4 hours"** with **no tier written beside it at
+> all** (`compliance/SIG-Lite-prefilled.md:105`). Both documents ship in the same packet, so one buyer
+> can be handed both in the same week. The unqualified sentence is the dangerous half: whoever reads
+> it is never told a tier table exists, so a Personal-plan customer reads an hour they were never
+> sold and an Enterprise customer reads an hour four times slower than the one they paid for.
+>
+> Unlike the currency, this one is breached **silently, by nobody doing anything**. There is no event
+> to catch. The breach happens at minute sixteen and the only person who knows is the customer.
+>
+> Either the questionnaire answer states the tiers, or Schedule B is what we actually commit to. It is
+> a staffing decision as much as a contractual one — what one founder can answer at 3am. **Nothing was
+> edited** (Rule 15); both are declared open in `docs/SUPPORT-COMMITMENT-CONFLICTS.md` and
+> `tests/support-commitments.test.mjs` holds both surfaces to whatever you decide, from then on.
+>
+> **Merging main did NOT publish anything.** The Netlify publish is still your one deliberate click.
+> The line is now **24 commits ahead** of the shared remote and the sandbox still has no code-host
+> credential. Registry 1013/1013 · 368/368 · exit 0.
+>
+> Everything below still stands, in the same order. Item 1 has not moved in twenty-one days.
+
 > **CYCLE 141 (2026-08-11) — nothing was added to this list, and one thing on it got bigger.**
 >
 > This cycle merged the AXIS JARVIS turn flow and its distinct woman's voice onto the line, registered
