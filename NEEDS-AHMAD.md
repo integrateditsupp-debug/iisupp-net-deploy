@@ -1,5 +1,19 @@
 # NEEDS AHMAD — the whole list, in order
 
+> **CYCLE 141 (2026-08-11) — nothing was added to this list, and one thing on it got bigger.**
+>
+> This cycle merged the AXIS JARVIS turn flow and its distinct woman's voice onto the line, registered
+> the suite that proves it (it had been green and uncounted), and swept every remote branch by diff
+> rather than by commit count — nothing left to merge. Registry 968/968 · 365/365 · exit 0.
+>
+> **Merging main did NOT publish anything.** The Netlify publish is still your one deliberate click,
+> and the spoken command layer reaches iisupp.net only when you make it.
+>
+> The line is now **22 commits ahead** of the shared remote and the sandbox has no code-host
+> credential — the push below is unchanged in shape, larger in content.
+>
+> Everything below still stands, in the same order. Item 1 has not moved in twenty-one days.
+
 > **UPDATED 2026-08-11, flywheel cycle 138 (RUN-AV) — this block supersedes everything below it.**
 >
 > Three of the five items below are decisions, not labour. Two of them are about money and software
