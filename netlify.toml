@@ -565,7 +565,6 @@
   status = 301
   force = true
 
-
 # --- HELD: unsigned Sentinel installer must not be publicly downloadable. -----------------
 # The comment on the /sentinel-binaries/* rewrite says the Windows download is held pending an
 # EV cert. It was not held: both of these returned 200 with 102,536,604 bytes. A force-404 is
@@ -653,7 +652,6 @@
   to = "/trust"
   status = 301
 
-
 # Rule 9 — lead-capture merges (2026-06-18)
 # /scorecard → merged conceptually into /health-check (same intent)
 [[redirects]]
@@ -679,40 +677,6 @@
 # copies. Revalidation is the reliable answer — the ETag still yields a 304 when nothing changed, so
 # the cost is one conditional request per file, not a re-download.
 # ORDER MATTERS: Netlify applies the FIRST matching rule, so these must precede /assets/*.
-[[headers]]
-  for = "/assets/axis-app.js"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-
-[[headers]]
-  for = "/assets/axis-globe.js"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-
-[[headers]]
-  for = "/assets/axis-persona.js"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-
-[[headers]]
-  for = "/assets/axis-priorities.js"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-
-[[headers]]
-  for = "/assets/axis-dom.js"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-
-[[headers]]
-  for = "/assets/axis-director-screen.js"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-
-[[headers]]
-  for = "/assets/axis-tokens.css"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
 
 # IIS_CACHE_HEADERS — long cache static, short cache HTML
 [[headers]]
@@ -720,6 +684,40 @@
   [headers.values]
     Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
     X-Content-Type-Options = "nosniff"
+
+# NOTE (measured 2026-08-11): these MUST come AFTER the broad /assets/* rule above.
+# Netlify does not stop at the first matching [[headers]] block — every matching rule is
+# applied, and for a repeated header name the LAST match wins. Placing these first (which is
+# what "first match wins" would imply) left /assets/* overriding them, and a brand-new cache
+# key still returned max-age=604800 on axis-globe.js with Age: 0. Order is the whole fix.
+[[headers]]
+  for = "/assets/axis-app.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/assets/axis-globe.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/assets/axis-persona.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/assets/axis-priorities.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/assets/axis-dom.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/assets/axis-director-screen.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/assets/axis-tokens.css"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/*.html"
