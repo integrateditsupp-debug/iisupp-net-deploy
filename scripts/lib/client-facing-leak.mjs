@@ -29,8 +29,21 @@ import { execFileSync } from "node:child_process";
 
 export const LEAK_SCHEMA = "client-facing-leak/1";
 
-/** Where client-facing documents live in the tracked tree. Discovered, never enumerated by hand. */
-export const CLIENT_FACING_DIRS = ["legal"];
+/**
+ * Where client-facing documents live in the tracked tree. Discovered, never enumerated by hand.
+ *
+ * RUN-AW / AW1 widened this from `["legal"]` — four documents — to the set a client, a prospect, or
+ * a client's own security reviewer can actually receive: the contracts, the compliance pack (the
+ * SIG-Lite and CAIQ-Lite questionnaires an enterprise reviewer works through line by line, the
+ * eleven written policies, the readiness maps, the SOC 2 self-assessment) and the two sales sheets.
+ * Twenty-seven documents. It is the same set AV2's money audit already reads, and it was chosen
+ * there for the same reason: these are the files that leave the building.
+ *
+ * The walk is RECURSIVE as of AW1, because `compliance/policies/` is a directory and a
+ * non-recursive walk had been silently reporting eleven policies as "not found" rather than as
+ * "not clean" — the difference between an unasked question and an answered one.
+ */
+export const CLIENT_FACING_DIRS = ["legal", "compliance", "ARIA Sentinel/sales"];
 
 export const SEVERITY = {
   REFUSE: "refuse", // must never reach a client; the document fails
@@ -79,7 +92,13 @@ export const CHECKS = [
     name: "experience-claim",
     severity: SEVERITY.REFUSE,
     why: "the honest ceiling is 15+ years; anything above it is a fabricated credential (Rule 14)",
-    re: /\b(1[6-9]|[2-9]\d)\+?\s*years?\b(?=[^.\n]{0,40}\b(experience|in IT|serving|industry|practice)\b)/gi,
+    // AW1 STRENGTHENED this, and the strengthening is the finding. The old pattern required the
+    // word `years` spelled out and a qualifying noun within 40 characters. The SOC 2 controls
+    // self-assessment — the document an enterprise buyer's auditor reads first — carried
+    // `Founder 21+ yrs IT` and sailed through every cycle since the check was written, because it
+    // abbreviates and because `IT` is two characters, not the word "experience". A check that only
+    // catches the careful spelling of a claim catches nothing an overclaim would ever be written in.
+    re: /\b(1[6-9]|[2-9]\d)\+?\s*(?:years?|yrs?\.?)\b(?=[^.\n]{0,40}\b(experience|in IT|IT\b|serving|industry|practice)\b)/gi,
   },
   {
     name: "unpublished-price",
@@ -90,6 +109,44 @@ export const CHECKS = [
     resolver: "publishedMoney",
   },
 ];
+
+/**
+ * EXEMPTIONS — the only way a check may be narrowed, and the price of using one is that it is
+ * declared here in code with an argument a person wrote, scoped to the directories where the
+ * argument holds, and COUNTED AND REPORTED on every run. An exemption is never silent: it appears
+ * in `result.exemptions` with its file, its line and its reason, so widening the walk can never be
+ * made to look green by quietly turning a check off (AW1's standing constraint).
+ *
+ * There is exactly one, and it exists because the check is right about the vocabulary and wrong
+ * about this particular word.
+ */
+export const EXEMPTIONS = [
+  {
+    check: "internal-codename",
+    term: "kill-switch",
+    dirs: ["compliance", "ARIA Sentinel/sales"],
+    why:
+      "a kill switch is a PRODUCT CONTROL a buyer is entitled to be told about, not internal process " +
+      "vocabulary. EU AI Act Article 14 human-oversight answers and the NIST AI RMF map are the exact " +
+      "places a reviewer looks for a stop control, and naming it anything else to satisfy a regex would " +
+      "make the answer worse for the reader it is written for. The codename check stays at full strength " +
+      "everywhere else, including in `legal/`, where a contract has no reason to name it at all.",
+  },
+];
+
+const dirScope = (file, dirs) => dirs.some((d) => file === d || file.startsWith(`${d}/`));
+
+/** Does a declared exemption cover this finding? Returns the exemption, or null. */
+export function exemptionFor(finding) {
+  return (
+    EXEMPTIONS.find(
+      (e) =>
+        e.check === finding.check &&
+        dirScope(finding.file, e.dirs) &&
+        String(finding.found).toLowerCase().replace(/\s+/g, "-") === e.term,
+    ) || null
+  );
+}
 
 /** The money figures the company actually publishes, read out of the plan table (never typed). */
 export function publishedMoney({ root, file = "plans/index.html" } = {}) {
@@ -176,13 +233,25 @@ export function auditDocument({ text, file, published, contact }) {
     });
   }
 
-  const refusals = findings.filter((f) => f.severity === SEVERITY.REFUSE);
+  // A declared exemption moves a finding OUT of the refusal set and INTO its own reported set. It
+  // never removes it from `findings`, because the thing an exemption must never do is make the
+  // occurrence invisible to the next person who reads the report.
+  const exempted = [];
+  const live = [];
+  for (const f of findings) {
+    const e = exemptionFor(f);
+    if (e) exempted.push({ ...f, exempt: true, exemption: e.why });
+    else live.push(f);
+  }
+
+  const refusals = live.filter((f) => f.severity === SEVERITY.REFUSE);
   return {
     file,
     ok: refusals.length === 0,
     findings,
     refusals,
-    decisions: findings.filter((f) => f.severity === SEVERITY.DECIDE),
+    exempted,
+    decisions: live.filter((f) => f.severity === SEVERITY.DECIDE),
   };
 }
 
@@ -224,14 +293,23 @@ export function auditClientFacing({ root, dirs = CLIENT_FACING_DIRS } = {}) {
   const contact = publishedContact({ root: base });
   const tracked = trackedSet(base);
 
+  // RECURSIVE as of AW1 — `compliance/policies/` is a directory of eleven documents a reviewer
+  // reads, and a flat readdir had been skipping every one of them without saying so.
+  const markdownUnder = (dir, out = []) => {
+    const abs = path.join(base, dir);
+    if (!fs.existsSync(abs)) return out;
+    for (const entry of fs.readdirSync(abs, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : 1))) {
+      const rel = `${dir}/${entry.name}`;
+      if (entry.isDirectory()) markdownUnder(rel, out);
+      else if (entry.name.endsWith(".md")) out.push(rel);
+    }
+    return out;
+  };
+
   const documents = [];
   for (const dir of dirs) {
-    const abs = path.join(base, dir);
-    if (!fs.existsSync(abs)) continue;
-    for (const name of fs.readdirSync(abs).sort()) {
-      if (!name.endsWith(".md")) continue;
-      const rel = `${dir}/${name}`;
-      const text = fs.readFileSync(path.join(abs, name), "utf8");
+    for (const rel of markdownUnder(dir)) {
+      const text = fs.readFileSync(path.join(base, rel), "utf8");
       const audited = auditDocument({ text, file: rel, published, contact });
       audited.tracked = tracked ? tracked.has(rel) : null;
       audited.bytes = Buffer.byteLength(text);
@@ -241,6 +319,7 @@ export function auditClientFacing({ root, dirs = CLIENT_FACING_DIRS } = {}) {
 
   const refusals = documents.flatMap((d) => d.refusals);
   const decisions = documents.flatMap((d) => d.decisions);
+  const exempted = documents.flatMap((d) => d.exempted);
 
   return {
     schema: LEAK_SCHEMA,
@@ -254,10 +333,12 @@ export function auditClientFacing({ root, dirs = CLIENT_FACING_DIRS } = {}) {
       untracked: documents.filter((d) => d.tracked === false).length,
       refusals: refusals.length,
       decisions: decisions.length,
+      exempted: exempted.length,
       ok: refusals.length === 0 && documents.length > 0,
     },
     refusals,
     decisions,
+    exempted,
   };
 }
 

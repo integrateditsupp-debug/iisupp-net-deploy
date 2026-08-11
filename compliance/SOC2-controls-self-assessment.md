@@ -15,8 +15,8 @@
 |---|---|---|---|---|
 | CC1.1 | Ethical values + integrity | Code of Conduct published (`/governance/code-of-conduct.html`). All contractors sign. | governance page | None |
 | CC1.2 | Board oversight | Sole owner-operator (Ahmad Wasee, CEO). All security decisions logged in memory + git. | git log + Aperture | Note in DPA: small company governance |
-| CC1.3 | Org structure + reporting lines | Documented in `aria_brain_pack/` + `senior-director-state/`. | repo | None |
-| CC1.4 | Competence | Founder 21+ yrs IT. Sub-agents (Codex, KB-agent) operate under documented `LOOP-ENGINEER.md` protocol. | docs | None |
+| CC1.3 | Org structure + reporting lines | Documented in the internal operating record, retained in version control. | repo | None |
+| CC1.4 | Competence | Founder 15+ yrs IT. Automated build and operations agents operate under a documented engineering protocol. | docs | None |
 | CC1.5 | Accountability | Every change attributed via git commit author + agent prefix (`[kb-agent]`, `[ops-agent]`). | git log | None |
 
 ---
@@ -25,7 +25,7 @@
 
 | ID | Criterion | Our Control | Evidence | Gap |
 |---|---|---|---|---|
-| CC2.1 | Internal info quality | All decisions in `senior-director-state/` + git history. | repo | None |
+| CC2.1 | Internal info quality | All decisions in the internal decision log + git history. | repo | None |
 | CC2.2 | Internal communication | Loop-engineer protocol documented + executed daily. | `docs/LOOP-ENGINEER.md` | None |
 | CC2.3 | External communication | Privacy policy + Terms published. Trust Center next deliverable. | `/privacy.html`, `/terms.html` | Trust page: TODO Item 2 |
 
@@ -65,7 +65,7 @@
 
 | ID | Criterion | Our Control | Evidence | Gap |
 |---|---|---|---|---|
-| CC6.1 | Access provisioning | Cowork PAT scoped to one repo, write only. Droplet SSH via SSH key. Netlify via OAuth (Google). | github settings | Future: SCIM for customer admins (TODO Item 12) |
+| CC6.1 | Access provisioning | Automation PAT scoped to one repo, write only. Droplet SSH via SSH key. Netlify via OAuth (Google). | github settings | Future: SCIM for customer admins (TODO Item 12) |
 | CC6.2 | Access removal | PAT revocable at github.com/settings/tokens. Droplet keys removable via ~/.ssh/authorized_keys. | runbook | Document quarterly access review |
 | CC6.3 | RBAC | Single owner today. Multi-tenant RBAC matrix (TODO Item 24) for customer-side. | TBD | TODO |
 | CC6.4 | Physical access | All systems are cloud-hosted (Netlify, DigitalOcean Toronto). No physical office. | provider docs | None |
@@ -128,11 +128,11 @@
 
 | Action | Owner | Effort | Cost |
 |---|---|---|---|
-| Trust Center page publish | Cowork | 3 hrs | $0 |
-| 12 SANS-template policies | Cowork | 6 hrs | $0 |
-| First OWASP ZAP self-scan + report | Cowork+Codex | 4 hrs | $0 |
-| Privacy policy GDPR/CCPA expansion | Cowork | 2 hrs | $0 |
-| DPA template draft | Cowork | 2 hrs | $0 |
+| Trust Center page publish | Engineering | 3 hrs | $0 |
+| 12 SANS-template policies | Engineering | 6 hrs | $0 |
+| First OWASP ZAP self-scan + report | Engineering | 4 hrs | $0 |
+| Privacy policy GDPR/CCPA expansion | Engineering | 2 hrs | $0 |
+| DPA template draft | Engineering | 2 hrs | $0 |
 | Cyber liability insurance quote (procure on first enterprise deal) | Ahmad | 1 hr | ~$3-5K/yr (deferred until deal closes) |
 | Dependabot enable | Ahmad | 5 min | $0 |
 | SOC 2 Type II auditor selection (when ready) | Ahmad | varies | $15-40K (deferred until $625K deal signed) |

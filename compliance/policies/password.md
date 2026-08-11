@@ -18,7 +18,7 @@ Establish authentication standards aligned with NIST SP 800-63B (Digital Identit
 
 ### Multi-factor authentication (MFA)
 - **REQUIRED** for all administrative access:
-  - GitHub (Cowork PAT + repo admin).
+  - GitHub (automation PAT + repo admin).
   - Netlify project owner.
   - DigitalOcean account.
   - Stripe dashboard.

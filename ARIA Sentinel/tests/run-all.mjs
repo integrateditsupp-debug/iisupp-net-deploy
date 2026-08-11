@@ -179,6 +179,27 @@ const TESTS = [
   // suite asserts that. Found by running it in a clone: the sheet is excluded from the tracked tree
   // by the deploy-safety lockdown, reported as its own class rather than moved into served URL space.
   "../../tests/send-sheet-gate.test.mjs",
+  // CLAIM REGISTER 2026-08-11 (RUN-AW / AW2) — AW1 asks whether a document carries anything it should
+  // not. This asks whether what it DOES carry is true. Every factual assertion in the twenty-seven
+  // receivable documents — certification, audit, insurance, retention, uptime, experience — ends in
+  // exactly one of four states: consistent with a published page, explicitly disclaimed by its own
+  // sentence, declared in `docs/CLAIM-REGISTER.md` with a condition (forward-looking) or evidence
+  // (present-tense), or REFUSED as unevidenced. Silent driven to zero without deleting a line
+  // (Rule 15). Found by running it: `Founder 21+ yrs IT` in the SOC 2 self-assessment and the HIPAA
+  // readiness map — above the honest ceiling, in the first two documents an auditor opens, written in
+  // an abbreviation the leak gate's pattern never matched. Two defects caught against this module's
+  // own logic before it shipped: a disclaimer read as an assertion, and first-match-wins handing a
+  // sub-processor's certificate to this company's 2027 target.
+  "../../tests/claim-register.test.mjs",
+  // PROSPECT PACKET 2026-08-11 (RUN-AW / AW3) — AU1 asked whether a clone can produce the one document
+  // a client signs. This asks it of the whole packet a prospect receives after a yes: the contracts,
+  // the security questionnaires, the readiness maps, the eleven policies, the sales sheets and the
+  // client integration guide. Assembled in a throwaway directory from HEAD'S TREE — never the working
+  // copy, never the index (AU3's correction) — so a document that exists only on one machine is
+  // reported UNTRACKED with its reason instead of counted as delivered. No send, no attachment, no
+  // mail path, and the suite asserts that. An empty section fails: promising nothing is not delivering
+  // everything. Wired to AW1 by an invariant — the gate and the packet must see the same documents.
+  "../../tests/prospect-packet.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   // SITE FINEPRINT GATE 2026-08-06 (salvaged from cc/axis-feed-2026-08-04) — the site-wide legal

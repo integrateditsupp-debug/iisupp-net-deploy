@@ -41,7 +41,7 @@ Production systems: iisupp.net, ARIA droplet, Postgres database, Netlify config,
 
 | Change type | Approver |
 |---|---|
-| KB / docs / standard | Cowork (autonomous) + loop-engineer gate |
+| KB / docs / standard | Knowledge-base agent (autonomous) + engineering gate |
 | New feature / connector | CISO (Ahmad) |
 | Auth / sec / data classification | CISO |
 | Sub-processor add | CISO |
@@ -56,9 +56,9 @@ Every change records in git:
 - Commit message with agent prefix (`[kb-agent]`, `[ops-agent]`, `[ccode]`).
 - Description of what + why.
 - Reference to spec / packet / ticket if applicable.
-- Co-Authored-By Claude / Codex attribution.
+- Co-Authored-By attribution for agent-assisted commits.
 
-Major changes additionally documented in `senior-director-state/` + memory.
+Major changes additionally documented in the internal operating record + memory.
 
 ## Testing requirements
 
