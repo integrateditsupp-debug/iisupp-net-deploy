@@ -453,6 +453,19 @@ async function sendTelegram(text) {
   return { ok: r.ok && data.ok !== false, status: r.status };
 }
 
+// Claude's credential precedence is ANTHROPIC_API_KEY → ANTHROPIC_AUTH_TOKEN → the claude.ai OAuth
+// login. If either variable is present, a spawned `claude` silently bills the metered pay-as-you-go
+// account instead of Ahmad's Claude Max plan — which is exactly how that account was drained by
+// 2026-08-11. Ahmad has since removed the machine-wide variable, so this is belt-and-braces: it
+// keeps every child on the plan even if the variable ever returns. Nothing in this file uses the key
+// directly, so removing it from the child env costs nothing.
+const PLAN_ENV = (() => {
+  const e = { ...process.env };
+  delete e.ANTHROPIC_API_KEY;
+  delete e.ANTHROPIC_AUTH_TOKEN;
+  return e;
+})();
+
 function runCommand(command, args, opts = {}) {
   return new Promise((resolve) => {
     const child = spawn(command, args, {
@@ -460,6 +473,7 @@ function runCommand(command, args, opts = {}) {
       shell: false,
       windowsHide: true,
       stdio: ['ignore', 'pipe', 'pipe'],
+      env: PLAN_ENV,
       ...opts
     });
     let stdout = '';
