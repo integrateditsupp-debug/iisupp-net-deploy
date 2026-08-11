@@ -13,6 +13,7 @@ import { renderFleet } from './axis-fleet.js';
 import { renderReports } from './axis-reports.js';
 import { renderDirector } from './axis-director-screen.js';
 import { renderPriorities, collectPriorities, dueLabel, localAnswer } from './axis-priorities.js';
+import { mountGlobes } from './axis-globe.js';
 // AXIS persona + turn grammar (the JARVIS flow). Additive: the voice machinery below is unchanged;
 // this only decides who AXIS sounds like and how a spoken turn is shaped.
 import { axisPersonaBonus, AXIS_PROSODY, ackLine, greetLine, routeTail,
@@ -2144,6 +2145,7 @@ $('axisPubMic')?.addEventListener('click', () => axisMicToggle('axisPubMic', 'ax
 $('axisPubVoice')?.addEventListener('click', axisVoiceToggle);
 document.querySelectorAll('[data-pub-q]').forEach(b => b.addEventListener('click', () => pubAsk(b.dataset.pubQ)));
 mountOrbs();          // fill every static [data-orb] slot (fab, dock header, public panel)
+mountGlobes();        // the console head gets the real 3-D globe; every other slot keeps its orb
 setAxisState('idle'); // orb state machine baseline
 axisSyncVoiceBtn(); // voice defaults ON — show it
 axisSyncWakeBtn();  // hands-free defaults OFF (it holds the mic open) — reflect the stored choice

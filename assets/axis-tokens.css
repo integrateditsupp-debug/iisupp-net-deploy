@@ -475,3 +475,14 @@ a { color:var(--gold); text-decoration:none; }
   border-color:color-mix(in srgb, var(--gold) 14%, var(--line)); }
 
 @media (prefers-reduced-motion:reduce) { .axis-dock-head::after { animation:none; } }
+
+/* ── The globe (assets/axis-globe.js) ──────────────────────────────────────────
+   Bigger than the old orb because it is the instrument, not a bullet point. The
+   canvas draws its own HUD ring, so the CSS containment ring is dropped here. */
+.axis-globe { width:96px; height:96px; flex:none; display:block; position:relative; }
+.axis-globe canvas { filter:drop-shadow(0 0 14px color-mix(in srgb, var(--gold) 34%, transparent)); }
+:root[data-axis-state="listening"] .axis-globe canvas,
+:root[data-axis-state="speaking"] .axis-globe canvas {
+  filter:drop-shadow(0 0 22px color-mix(in srgb, var(--gold) 60%, transparent)); }
+.axis-dock-head { padding:16px 14px 14px; gap:14px; }
+@media (max-width:720px) { .axis-globe { width:74px; height:74px; } }

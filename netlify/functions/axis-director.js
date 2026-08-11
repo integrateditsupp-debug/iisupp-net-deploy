@@ -107,6 +107,28 @@ exports.handler = async (event) => {
   }
 
   // ── chat: talk to AXIS ──
+  // COST CASCADE (2026-08-11). Before spending a metered API token, try — in order — the ARIA
+  // brain, the research agents, then Ahmad's Claude Max plan via the local worker. Only if all
+  // three come back empty do we fall through to the Anthropic API below, exactly as before.
+  // Nothing in this block can break the old path: any failure returns null and we carry on.
+  const lastUser = Array.isArray(body.messages)
+    ? [...body.messages].reverse().find((m) => m && m.role === 'user' && typeof m.content === 'string')
+    : null;
+  const askText = lastUser ? String(lastUser.content).slice(0, 4000) : '';
+  if (askText && body.cascade !== false) {
+    try {
+      const { askBrain } = require('./lib/axis-brain.cjs');
+      const host = (event.headers && (event.headers.host || event.headers.Host)) || '';
+      const hit = await askBrain({ query: askText, origin: host ? `https://${host}` : '' });
+      if (hit && hit.text) {
+        return json(200, {
+          text: hit.text.slice(0, 2000), routedAgent: null, intent: null, needsApproval: false,
+          brainTier: hit.tier, brainSource: hit.source, tried: hit.tried, cost: 0,
+        });
+      }
+    } catch (e) { console.warn('[axis-director] cascade unavailable:', e.message); }
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return json(200, { text: 'No API key is configured, so I have no reasoning brain. Set ANTHROPIC_API_KEY in Netlify. I answer from the board until then.', reason: 'no_key', routedAgent: null, intent: null, degraded: true });
 
@@ -161,6 +183,14 @@ exports.handler = async (event) => {
         out.queued = true;
       } catch { out.queued = false; }
     }
+    // The KB-agent step: bank a metered answer into the ARIA brain so tier 1 serves this question
+    // for free from now on. Gated by worthLearning() — greetings and non-answers are never banked.
+    try {
+      const { learnBack } = require('./lib/axis-brain.cjs');
+      const res = await learnBack({ query: askText, answer: out.text, tier: 'anthropic', source: 'anthropic-api' });
+      out.learned = !!res.learned;
+    } catch (_) { /* banking is best-effort; never fail a good answer over it */ }
+    out.brainTier = 'anthropic';
     return json(200, out);
   } catch (err) {
     console.error('[axis-director] error', err.message);

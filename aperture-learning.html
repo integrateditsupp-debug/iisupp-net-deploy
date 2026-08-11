@@ -96,7 +96,9 @@
     <!-- Head = the identity block. The globe anchors it top-left; name, live state and level meter
          read off it left-to-right. One row, no duplicate orb below it. -->
     <header class="axis-dock-head">
-      <span class="axis-orb axis-orb-hero" data-orb></span>
+      <!-- The globe: a real rotating 3-D wireframe sphere (assets/axis-globe.js), not an icon.
+           Every other [data-orb] slot keeps the original SVG mark, so only this one changes. -->
+      <span class="axis-globe" data-globe></span>
       <div class="axis-head-meta">
         <div class="axis-hero-name">AXIS <span class="axis-state-word" id="axisStateWord" aria-live="polite">idle</span></div>
         <!-- Live line: shows the interim transcript while listening, so it is always visible whether
