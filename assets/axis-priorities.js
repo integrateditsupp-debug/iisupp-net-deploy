@@ -85,6 +85,59 @@ export function collectInFlight(snap) {
   return out;
 }
 
+// ── $0 local answers ─────────────────────────────────────────────────────────
+// When the reasoning brain is unavailable (out of credit, bad key, network), AXIS still answers
+// the questions that only need the board — no LLM, no API call, no spend. Every number below is
+// read straight from the snapshot; if a question needs reasoning, this returns null and the caller
+// reports the real reason instead of guessing. Rule 14 all the way down.
+const listBits = (items, n = 3) => items.slice(0, n)
+  .map(i => `${i.title} (${dueLabel(i.dueAt).text})`).join(', ');
+
+export function localAnswer(question, snap, now = new Date()) {
+  const q = String(question || '').toLowerCase();
+  const items = collectPriorities(snap, now);
+  const overdue = items.filter(i => dueLabel(i.dueAt, now).tone === 'over');
+  const today = items.filter(i => dueLabel(i.dueAt, now).tone === 'today');
+  const kpis = (snap && snap.overview && snap.overview.data && snap.overview.data.kpis) || {};
+  const num = (v) => (typeof v === 'number' && isFinite(v) ? v : null);
+
+  if (/\b(status|going on|today|update|briefing|summary|board)\b/.test(q)) {
+    const a = num(kpis.awaiting_approval), m = num(kpis.messages_waiting), f = num(kpis.followups_due);
+    if (a === null && m === null && f === null && !items.length) return 'I do not have the board yet.';
+    const bits = [];
+    if (a) bits.push(`${a} ${a === 1 ? 'approval' : 'approvals'} waiting`);
+    if (m) bits.push(`${m} client ${m === 1 ? 'reply' : 'replies'} waiting`);
+    if (f) bits.push(`${f} ${f === 1 ? 'follow-up' : 'follow-ups'} due`);
+    if (overdue.length) bits.push(`${overdue.length} overdue`);
+    if (!bits.length) return 'All quiet. Nothing needs you.';
+    return bits.join(', ') + '.' + (items.length ? ' Top: ' + listBits(items) + '.' : '');
+  }
+  if (/\b(need|needs me|waiting on me|my attention|approve|approvals?)\b/.test(q)) {
+    const ap = items.filter(i => i.source === 'Approval');
+    const inbox = items.filter(i => i.source === 'Inbox');
+    if (!ap.length && !inbox.length) return 'Nothing is waiting on you.';
+    const bits = [];
+    if (ap.length) bits.push(`${ap.length} ${ap.length === 1 ? 'approval' : 'approvals'}`);
+    if (inbox.length) bits.push(`${inbox.length} client ${inbox.length === 1 ? 'message' : 'messages'}`);
+    return bits.join(' and ') + ' waiting on you.';
+  }
+  if (/\b(next|most urgent|first|priority|priorities)\b/.test(q)) {
+    if (!items.length) return 'Nothing open. Every queue is clear.';
+    const top = items[0];
+    return `Next: ${top.title} — ${dueLabel(top.dueAt, now).text}. ${top.detail}.`;
+  }
+  if (/\b(overdue|late|behind)\b/.test(q))
+    return overdue.length ? `${overdue.length} overdue: ${listBits(overdue)}.` : 'Nothing is overdue.';
+  if (/\b(due|follow.?up|deadline)\b/.test(q))
+    return today.length ? `${today.length} due today: ${listBits(today)}.` : 'Nothing is due today.';
+  if (/\b(working on|in flight|agents?|fleet|running)\b/.test(q)) {
+    const flight = collectInFlight(snap);
+    return flight.length ? 'Being worked on: ' + flight.map(f => f.title).join(', ') + '.'
+      : 'No agent is reporting active work right now.';
+  }
+  return null;   // needs reasoning — the caller reports the real outage instead of inventing one
+}
+
 const TONE_VAR = { over: 'var(--crit)', today: 'var(--gold)', soon: 'var(--txt-2)', later: 'var(--txt-3)', none: 'var(--txt-3)' };
 
 export function renderPriorities(c, { snap, go, head }) {

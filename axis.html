@@ -93,26 +93,34 @@
     <span class="axis-fab-pill">Ask AXIS</span>
   </button>
   <section class="axis-dock" id="axisDock" hidden aria-label="AXIS director">
+    <!-- Head = the identity block. The globe anchors it top-left; name, live state and level meter
+         read off it left-to-right. One row, no duplicate orb below it. -->
     <header class="axis-dock-head">
-      <span style="display:flex;align-items:center;gap:9px">
-        <span class="axis-orb axis-orb-xs" data-orb></span>
-        <span class="eyebrow" style="color:var(--gold)">AXIS · Director</span>
-        <span class="axis-state-word" id="axisStateWord" aria-live="polite">idle</span>
-      </span>
-      <button class="iconbtn" id="axisClose" aria-label="Close AXIS dock" style="padding:2px 7px">✕</button></header>
-    <div class="axis-hero">
       <span class="axis-orb axis-orb-hero" data-orb></span>
-      <div class="axis-hero-meta">
-        <div class="axis-hero-name">AXIS</div>
+      <div class="axis-head-meta">
+        <div class="axis-hero-name">AXIS <span class="axis-state-word" id="axisStateWord" aria-live="polite">idle</span></div>
         <!-- Live line: shows the interim transcript while listening, so it is always visible whether
              AXIS is actually hearing you. Silence used to be indistinguishable from being broken. -->
         <div class="axis-hear" id="axisHear" aria-live="polite">Press the mic, or type. Say &ldquo;AXIS stop&rdquo; to stand me down.</div>
       </div>
       <div class="axis-wave" id="axisWave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-    </div>
+      <button class="iconbtn axis-close" id="axisClose" aria-label="Close AXIS dock">&times;</button>
+    </header>
+    <!-- Brain-state badge: visible for as long as reasoning is unavailable, so "answering from the
+         board only" is never a surprise. Hidden entirely when the brain is healthy. -->
+    <div class="axis-brain" id="axisBrain" hidden></div>
     <div class="axis-pri" id="axisPri" hidden></div>
     <div class="axis-log" id="axisLog"></div>
-    <div class="axis-input"><input id="axisInput" placeholder="Tell AXIS…" autocomplete="off"><button class="chip" id="axisMic" title="Push to talk (Chrome / Edge)" aria-label="Push to talk">🎙</button><button class="chip" id="axisVoice" title="Toggle spoken replies" aria-pressed="false" aria-label="Toggle spoken replies">🔊</button><button class="chip" id="axisWake" title="Hands-free: wake word &ldquo;AXIS&rdquo;" aria-pressed="false" aria-label="Toggle hands-free wake word">&#9101;</button><button class="chip" id="axisSend">Send</button></div>
+    <!-- Compact input + one grouped control cluster, rather than a row of loose buttons. -->
+    <div class="axis-input">
+      <input id="axisInput" placeholder="Tell AXIS…" autocomplete="off">
+      <span class="axis-ctl" role="group" aria-label="AXIS controls">
+        <button class="chip" id="axisMic" title="Push to talk (Chrome / Edge)" aria-label="Push to talk">&#127908;</button>
+        <button class="chip" id="axisVoice" title="Toggle spoken replies" aria-pressed="false" aria-label="Toggle spoken replies">&#128266;</button>
+        <button class="chip" id="axisWake" title="Hands-free: wake word &ldquo;AXIS&rdquo;" aria-pressed="false" aria-label="Toggle hands-free wake word">&#9101;</button>
+      </span>
+      <button class="chip axis-send" id="axisSend">Send</button>
+    </div>
     <!-- Voice picker: Edge and Chrome ship different voice inventories, so the same page can sound
          different per browser. This exposes what THIS browser actually has and pins a choice. -->
     <div class="axis-foot">

@@ -12,7 +12,7 @@ import { openComposer } from './axis-composer.js';
 import { renderFleet } from './axis-fleet.js';
 import { renderReports } from './axis-reports.js';
 import { renderDirector } from './axis-director-screen.js';
-import { renderPriorities, collectPriorities, dueLabel } from './axis-priorities.js';
+import { renderPriorities, collectPriorities, dueLabel, localAnswer } from './axis-priorities.js';
 // AXIS persona + turn grammar (the JARVIS flow). Additive: the voice machinery below is unchanged;
 // this only decides who AXIS sounds like and how a spoken turn is shaped.
 import { axisPersonaBonus, AXIS_PROSODY, ackLine, greetLine, routeTail,
@@ -1576,6 +1576,19 @@ function axisPopulateVoices() {
   sel.value = cur;
 }
 const AXIS_VOICE_SAMPLE = 'Axis here, Ahmad. This is how I sound in this browser.';
+
+// Persistent brain-state badge. An outage that only shows in one chat line scrolls away; this keeps
+// "answering from the board, reasoning is down" visible for as long as it is true.
+const BRAIN_LABEL = { no_credit: 'brain: out of credit', auth: 'brain: key rejected', no_key: 'brain: no key',
+  permission: 'brain: no access', bad_model: 'brain: bad model', rate_limit: 'brain: rate limited',
+  overloaded: 'brain: overloaded', unreachable: 'brain: unreachable' };
+function axisBrainDown(reason) {
+  const el0 = $('axisBrain'); if (!el0) return;
+  if (!reason) { el0.hidden = true; return; }
+  el0.hidden = false;
+  el0.textContent = BRAIN_LABEL[reason] || 'brain: degraded';
+  el0.title = 'AXIS is answering from the snapshot only — reasoning is unavailable.';
+}
 async function axisSend(inputId = 'axisInput') {
   const inp = $(inputId); const raw = inp?.value.trim(); if (!raw) return; inp.value = '';
   // JARVIS turn grammar, applied before the director ever sees the utterance:
@@ -1614,6 +1627,17 @@ async function axisSend(inputId = 'axisInput') {
     const r = await fetch('/.netlify/functions/axis-director', { method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify({ action: 'chat', messages: dockLog.filter(m => m.role === 'user').map(m => ({ role: 'user', content: m.text })) }) });
     const j = await r.json(); dropPending();
     const reply = { role: 'axis', text: (j && j.text) || 'Heard you.' };
+    // Brain unavailable (no credit / bad key / network): answer from the board instead of going
+    // mute. The outage is reported ONCE per session so it is visible but not repeated every turn.
+    if (j && j.degraded) {
+      const local = localAnswer(text, state.snap);
+      if (local) {
+        reply.text = local;
+        let told = false; try { told = sessionStorage.getItem('axisBrainNoted') === '1'; } catch {}
+        if (!told) { try { sessionStorage.setItem('axisBrainNoted', '1'); } catch {} toast(j.text); dockLog.push({ role: 'axis', text: j.text }); }
+      }
+      axisBrainDown(j.reason || 'degraded');
+    } else axisBrainDown(null);
     if (j && j.routedAgent && j.intent) {
       reply.chips = [{ label: 'Approve route', onclick: () => { postIntent('approve', { intent: j.intent, agent: j.routedAgent }); toast('Routed to ' + j.routedAgent); } }];
       // Hard-stops stay hard-stops, spoken (spec §SAFETY RAILS). A route the worker runs behind its
@@ -1850,8 +1874,20 @@ function axisWakeStart() {
   try { rec.start(); } catch {}
   return true;
 }
-function axisWakePause() { axisWakeArmed = false; try { axisWakeRec && axisWakeRec.abort(); } catch {} }
-function axisWakeResume() { if (axisHandsFree && !axisWakeArmed) { axisWakeArmed = true; try { axisWakeRec ? axisWakeRec.start() : axisWakeStart(); } catch {} } }
+function axisWakePause() { axisWakeArmed = false; try { axisWakeRec && axisWakeRec.abort(); } catch {} axisWakeRec = null; }
+// ALWAYS build a fresh recognizer. Calling .start() on an abort()ed SpeechRecognition throws
+// InvalidStateError in Chrome, and the old catch{} swallowed it — so after AXIS spoke its
+// "hands-free on" confirmation (which pauses the listener), the wake word was dead until a manual
+// mic press created a new instance. That is exactly the "does not listen until I press record" bug.
+function axisWakeResume() { if (axisHandsFree && !axisWakeArmed && !axisListening) axisWakeStart(); }
+
+// Self-heal: browsers stop a continuous recognizer on their own schedule, and a dropped one used to
+// stay dropped. This re-arms whenever hands-free is on but nothing is listening.
+setInterval(() => {
+  if (!axisHandsFree || axisWakeArmed || axisListening) return;
+  if (document.documentElement.dataset.axisState === 'speaking') return;
+  axisWakeStart();
+}, 4000);
 
 // End of an AXIS turn: hand the floor back so Ahmad can just keep talking.
 function axisTurnDone() {
@@ -1885,10 +1921,14 @@ function axisSyncWakeBtn() {
 }
 function axisHandsFreeToggle() {
   if (!axisHandsFree) {
-    if (!axisWakeStart()) return;
+    if (!(window.SpeechRecognition || window.webkitSpeechRecognition)) { axisMicNote('Hands-free needs Chrome or Edge — this browser has no speech recognition.'); return; }
+    // Flip the flag FIRST: the recognizer's own onend/resume paths check it, and starting before it
+    // was set meant the listener never re-armed after the spoken confirmation.
     axisHandsFree = true; axisSyncWakeBtn();
     toast('Hands-free on — say “AXIS”');
-    axisSpeak('Hands-free on. Say AXIS when you need me.');
+    // Speaking pauses the listener (so AXIS can't hear itself). settle() re-arms when the sentence
+    // ends; if voice is off there is no sentence, so arm right now. The watchdog covers both.
+    if (!axisSpeak('Hands-free on. Say AXIS when you need me.')) axisWakeStart();
   } else {
     axisHandsFree = false; axisWakePause(); axisSyncWakeBtn(); toast('Hands-free off');
   }
@@ -2072,7 +2112,10 @@ $('pass').addEventListener('keydown', (e) => e.key === 'Enter' && doLogin());
 $('logoutBtn').addEventListener('click', logout);
 $('axisFab').addEventListener('click', openDock);
 $('axisClose').addEventListener('click', closeDock);
-$('axisSend').addEventListener('click', axisSend);
+// Must be wrapped: addEventListener passes the MouseEvent as the first argument, which would land
+// in axisSend's `inputId` parameter — $(MouseEvent) resolves to null and the send silently no-ops.
+// The Send button never worked; only the Enter key did (found by boot harness, 2026-08-11).
+$('axisSend').addEventListener('click', () => axisSend());
 $('axisMic')?.addEventListener('click', () => axisMicToggle());
 $('axisVoice')?.addEventListener('click', axisVoiceToggle);
 $('axisWake')?.addEventListener('click', axisHandsFreeToggle);

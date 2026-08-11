@@ -108,7 +108,7 @@ exports.handler = async (event) => {
 
   // ── chat: talk to AXIS ──
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return json(200, { text: 'Brain offline. Cant reach reasoning. Try again.', routedAgent: null, intent: null, degraded: true });
+  if (!apiKey) return json(200, { text: 'No API key is configured, so I have no reasoning brain. Set ANTHROPIC_API_KEY in Netlify. I answer from the board until then.', reason: 'no_key', routedAgent: null, intent: null, degraded: true });
 
   const envModel = process.env.ARIA_MODEL;
   const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel : 'claude-sonnet-4-6';
@@ -130,7 +130,11 @@ exports.handler = async (event) => {
     if (!r.ok) {
       const errBody = await r.text();
       console.error('[axis-director] Anthropic error', r.status, errBody.slice(0, 300));
-      return json(200, { text: 'Brain busy. Try again in a sec.', routedAgent: null, intent: null, degraded: true });
+      // Say what is actually wrong. "Brain busy. Try again in a sec." was returned for EVERY
+      // failure — including an out-of-credit account, where retrying can never work. Ahmad chased
+      // that for a day (2026-08-11). The reason code lets the console answer locally instead.
+      const { text, reason } = classifyBrainError(r.status, errBody);
+      return json(200, { text, reason, routedAgent: null, intent: null, degraded: true });
     }
     const data = await r.json();
     const txt = (data.content && data.content[0] && data.content[0].text) || '';
@@ -160,12 +164,31 @@ exports.handler = async (event) => {
     return json(200, out);
   } catch (err) {
     console.error('[axis-director] error', err.message);
-    return json(200, { text: 'Hit a snag reaching the brain. Try again.', routedAgent: null, intent: null, degraded: true });
+    return json(200, { text: 'I could not reach the reasoning service at all — likely a network fault. I answer from the board until it is back.', reason: 'unreachable', routedAgent: null, intent: null, degraded: true });
   }
 };
+
+// Translate an Anthropic failure into something Ahmad can act on. Never invent a cause: anything
+// unrecognised is reported with its real status code rather than dressed up as a transient blip.
+// `reason` is a stable machine code the console keys its local fallback + banner off.
+function classifyBrainError(status, body) {
+  const msg = String(body || '');
+  if (/credit balance is too low/i.test(msg))
+    return { reason: 'no_credit', text: 'My reasoning brain is out of credit. Top up the Anthropic account (Plans & Billing) and I am back. Until then I answer from the board only.' };
+  if (status === 401 || /authentication_error|invalid x-api-key/i.test(msg))
+    return { reason: 'auth', text: 'My API key is being rejected. Check ANTHROPIC_API_KEY in Netlify. I answer from the board until it is fixed.' };
+  if (status === 403 || /permission_error/i.test(msg))
+    return { reason: 'permission', text: 'My API key lacks permission for this model. Until that is fixed I answer from the board only.' };
+  if (status === 404 || /not_found_error/i.test(msg))
+    return { reason: 'bad_model', text: 'The configured model was not found. Check ARIA_MODEL in Netlify. I answer from the board until it is fixed.' };
+  if (status === 429) return { reason: 'rate_limit', text: 'Rate limited. Give it a minute and ask again.' };
+  if (status === 529 || status >= 500) return { reason: 'overloaded', text: 'The brain is overloaded right now. Worth trying again shortly.' };
+  return { reason: 'error_' + status, text: 'Reasoning failed with status ' + status + '. I answer from the board until it is fixed.' };
+}
 
 function sanitize(text, max) {
   return String(text || '').replace(/`[^`]*`/g, '…').replace(/https?:\/\/\S+/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
 }
+exports.classifyBrainError = classifyBrainError; // exported for tests/axis-brain-fallback.test.mjs
 function json(statusCode, b) { return { statusCode, headers: { ...cors(), 'content-type': 'application/json' }, body: JSON.stringify(b) }; }
 function cors() { return { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type, authorization' }; }
