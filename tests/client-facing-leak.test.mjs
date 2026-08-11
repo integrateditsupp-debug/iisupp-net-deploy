@@ -10,7 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   auditClientFacing, auditDocument, publishedMoney, publishedContact,
-  contactContradictions, CHECKS, SEVERITY, statementFor,
+  contactContradictions, CHECKS, SEVERITY, statementFor, EXEMPTIONS, exemptionFor,
 } from "../scripts/lib/client-facing-leak.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
@@ -109,12 +109,79 @@ test("the agreement itself passes the gate it was written for", () => {
 
 test("EVERY client-facing document in the tree is clean, not just the new one", () => {
   const result = auditClientFacing({ root });
-  assert.ok(result.summary.documents >= 4, `expected the legal/ set plus the new agreement (got ${result.summary.documents})`);
+  // AW1 widened the walk from four documents to every document a stranger can receive. The number
+  // is asserted as a FLOOR, not an equality, so adding a policy can never silently shrink the audit.
+  assert.ok(result.summary.documents >= 27,
+    `expected the contracts + the compliance pack + the sales sheets (got ${result.summary.documents})`);
   assert.equal(result.summary.refused, 0,
     `refused: ${result.refusals.map((f) => `${f.file}:${f.line} ${f.check} "${f.found}"`).join(" · ")}`);
   assert.equal(result.summary.untracked, 0,
     "a client-facing document outside the shared line cannot be produced from a clone");
   assert.equal(result.summary.ok, true);
+});
+
+test("AW1 — the walk is recursive, so the eleven written policies are audited and not skipped", () => {
+  const result = auditClientFacing({ root });
+  const files = result.documents.map((d) => d.file);
+  const policies = files.filter((f) => f.startsWith("compliance/policies/"));
+  assert.ok(policies.length >= 11,
+    `a flat readdir reports a directory of policies as absent rather than as unclean (got ${policies.length})`);
+  // The three document classes a reviewer actually asks for, named rather than implied.
+  for (const required of [
+    "compliance/SIG-Lite-prefilled.md",
+    "compliance/CAIQ-Lite-prefilled.md",
+    "compliance/SOC2-controls-self-assessment.md",
+    "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "legal/Pilot-Agreement-TEMPLATE.md",
+  ]) {
+    assert.ok(files.includes(required), `${required} is receivable by a client and must be audited`);
+  }
+});
+
+test("AW1 RED FIRST — the abbreviated experience claim fails, because that is how it was written", () => {
+  // The claim that shipped in the SOC 2 self-assessment for months was `Founder 21+ yrs IT` — the
+  // old pattern required `years` spelled out and a qualifying noun, and caught neither.
+  for (const line of ["Founder 21+ yrs IT.", "Founder trained (21+ yrs IT)", "Principal has 22 years experience"]) {
+    const doc = auditPlanted(line);
+    assert.ok(doc.refusals.some((f) => f.check === "experience-claim"),
+      `an overclaim written as "${line}" must be refused by name`);
+  }
+  // And the honest ceiling is not refused, or the check would force a lie in the other direction.
+  assert.equal(auditPlanted("Founder 15+ yrs IT.").refusals.filter((f) => f.check === "experience-claim").length, 0);
+});
+
+test("AW1 — an exemption is declared in code with an argument, and is never silent", () => {
+  for (const e of EXEMPTIONS) {
+    assert.ok(CHECKS.some((c) => c.name === e.check), `${e.check}: an exemption must name a real check`);
+    assert.ok(Array.isArray(e.dirs) && e.dirs.length, `${e.check}/${e.term}: an exemption must be scoped to directories`);
+    assert.ok(e.why && e.why.length > 80,
+      `${e.check}/${e.term}: an exemption without a written argument is a check quietly turned off`);
+  }
+  const result = auditClientFacing({ root });
+  // Every exemption applied is reported with its file, its line and its reason — the report is the
+  // price of the exemption. An exempted occurrence still appears in `findings`.
+  for (const x of result.exempted) {
+    assert.ok(x.file && x.line > 0 && x.exemption, "an applied exemption carries file, line and reason");
+    const doc = result.documents.find((d) => d.file === x.file);
+    assert.ok(doc.findings.some((f) => f.line === x.line && f.check === x.check),
+      "an exemption moves a finding out of the refusals, never out of the record");
+    assert.equal(doc.refusals.some((f) => f.line === x.line && f.found === x.found), false);
+  }
+  assert.equal(result.summary.exempted, result.exempted.length);
+});
+
+test("AW1 — the exemption is scoped, so the same word still fails where the argument does not hold", () => {
+  // The kill-switch argument is about a product control described to a buyer. A contract has no
+  // reason to name it, and `legal/` is deliberately outside the exemption's scope.
+  const inLegal = auditDocument({ text: "The Provider maintains a kill-switch.", file: "legal/X.md", published, contact });
+  assert.ok(inLegal.refusals.some((f) => f.check === "internal-codename"),
+    "an exemption scoped to compliance and sales must not leak into the contracts");
+  const inCompliance = auditDocument({ text: "The Provider maintains a kill-switch.", file: "compliance/X.md", published, contact });
+  assert.equal(inCompliance.refusals.filter((f) => f.check === "internal-codename").length, 0);
+  assert.equal(inCompliance.exempted.length, 1);
+  // And an exemption never covers a different codename in the same directory.
+  const other = auditDocument({ text: "Handled by Codex.", file: "compliance/X.md", published, contact });
+  assert.ok(other.refusals.some((f) => f.check === "internal-codename"));
 });
 
 test("the audit reports what it did not check rather than implying it checked everything", () => {

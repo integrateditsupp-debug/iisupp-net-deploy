@@ -137,7 +137,7 @@ Within 5 business days of incident resolution:
 | Role | Responsibilities |
 |---|---|
 | CISO (Founder) | Final authority for incident response; customer + regulator notification; PIR convener. |
-| Engineering (Cowork, Codex, Claude Code) | Contain, eradicate, recover under CISO direction. |
+| Engineering (founder + build agents) | Contain, eradicate, recover under CISO direction. |
 | Customer Success (CSM) | Customer communications during incident. |
 | Legal (external counsel as engaged) | Regulatory notification review, PR if material. |
 

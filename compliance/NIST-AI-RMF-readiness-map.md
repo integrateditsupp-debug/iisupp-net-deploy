@@ -14,7 +14,7 @@
 | ID | Subcategory (representative) | Our Control / Status | Evidence | Gap |
 |---|---|---|---|---|
 | GOV-1.1 | Policies/processes for AI risk are in place | Loop-engineer + qa-safety protocol governs AI changes; privacy invariants are policy. | `docs/LOOP-ENGINEER.md`, CLAUDE.md working rules | Formalize a standalone AI risk-management policy |
-| GOV-2.1 | Roles + responsibilities documented | Owner-operator model; agent roles documented (KB-agent, ops-agent, supervisor). | `senior-director-state/`, agent roster | Document accountable owner for each AI risk explicitly |
+| GOV-2.1 | Roles + responsibilities documented | Owner-operator model; agent roles documented (KB-agent, ops-agent, supervisor). | internal operating record, agent roster | Document accountable owner for each AI risk explicitly |
 | GOV-3.2 | Decision-making accountable + traceable | Every change attributed via git author + agent prefix; tamper-evident audit log. | git log, RUN 17 audit-tamper banner | None for current scope |
 | GOV-4.1 | Risk culture: critical thinking + safety-first | Governor gates low-confidence/low-quality outputs; human oversight default-on. | governor gating, kill-switch | None |
 | GOV-6.1 | Third-party / supply-chain risk addressed | Sub-processors (model providers, hosting, payments) documented with DPAs. | sub-processor list / Trust Center | Maintain upstream model-provider risk documentation |

@@ -26,7 +26,7 @@
 | A-2 | §164.308(a)(2) Assigned security responsibility | Owner-operator (CEO) is the security official. | governance docs | Name the HIPAA Security Official in writing |
 | A-3 | §164.308(a)(3) Workforce security | Small workforce; least-privilege access; contractors under conduct code. | access model | Document workforce authorization/clearance for PHI |
 | A-4 | §164.308(a)(4) Information access management | RBAC single-owner today; tenant isolation planned. | access notes | Multi-tenant PHI isolation must be live before PHI |
-| A-5 | §164.308(a)(5) Security awareness + training | Founder trained (21+ yrs IT); no formal HIPAA training record. | — | Complete + record HIPAA workforce training |
+| A-5 | §164.308(a)(5) Security awareness + training | Founder trained (15+ yrs IT); no formal HIPAA training record. | — | Complete + record HIPAA workforce training |
 | A-6 | §164.308(a)(6) Security incident procedures | Incident-response policy exists. | `/governance/incident-response.html` | Add HIPAA breach-notification procedure (§164.400–414) |
 | A-7 | §164.308(a)(7) Contingency plan | Git rollback, Netlify atomic deploys, Tier-2 KB fallback, snapshots. | runbook, fallback bundle | Document RPO/RTO + test restore for PHI data |
 | A-8 | §164.308(a)(8) Evaluation | This readiness map = periodic evaluation. | this doc | Schedule recurring re-evaluation |

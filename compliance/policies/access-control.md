@@ -8,7 +8,7 @@ Ensure that access to Integrated IT Support Inc. systems, applications, and data
 
 ## Scope
 
-All Integrated IT Support personnel (employees, contractors, agents), sub-processors with access to customer data, and automated systems (Cowork, Codex, Claude Code, ARIA, OPS).
+All Integrated IT Support personnel (employees, contractors, agents), sub-processors with access to customer data, and automated systems (build agents, operations agents, ARIA).
 
 ## Policy
 
@@ -25,7 +25,7 @@ All Integrated IT Support personnel (employees, contractors, agents), sub-proces
 - Personal access tokens (PATs) scoped to least privilege; documented at issuance.
 
 ### 3. Authorization & RBAC
-- Roles defined: Founder (full), Cowork agent (KB-owned files + push), OPS agent (OPS-owned files + push), Claude Code (per-packet branch), Codex (per-packet branch).
+- Roles defined: Founder (full), knowledge-base agent (KB-owned files + push), operations agent (OPS-owned files + push), build agents (per-packet branch only).
 - Customer-side RBAC matrix per `aria-architecture/2M-ASSET-REQUIREMENTS.md` Section 5.2.
 - Service accounts use minimum scoping.
 
@@ -45,7 +45,7 @@ All Integrated IT Support personnel (employees, contractors, agents), sub-proces
 - Suspicious session terminated and investigated.
 
 ### 7. Privileged access
-- Production write access limited to Founder + Cowork (PAT scoped to one repo).
+- Production write access limited to Founder + automation (PAT scoped to one repo).
 - All privileged actions logged to Aperture or git audit log.
 - Privileged session recordings retained 90 days (where supported by provider).
 

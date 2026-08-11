@@ -79,7 +79,7 @@
 | H.3 | Strong password requirements? | Yes. NIST SP 800-63B aligned. ≥ 12 chars, no expiration (per NIST). |
 | H.4 | Multi-factor authentication? | Yes for all admin access. Customer-side MFA enforced via IdP (SSO required at Mid-Size+ tier). |
 | H.5 | Access reviews frequency? | Quarterly. |
-| H.6 | Privileged access management? | Yes. Production write access limited to founder + Cowork (via PAT scoped to one repo). |
+| H.6 | Privileged access management? | Yes. Production write access limited to founder + automation (via PAT scoped to one repo). |
 | H.7 | Account lockout? | Yes after 5 failed sign-in attempts (15-minute auto-unlock). |
 | H.8 | Session timeout? | 30 min idle default. Configurable per customer policy. |
 

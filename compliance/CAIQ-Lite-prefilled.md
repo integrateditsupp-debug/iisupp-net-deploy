@@ -99,7 +99,7 @@
 | IAM-02 | MFA for admin access? | Yes. |
 | IAM-03 | Customer SSO supported? | SAML / OIDC planned Q3 2026. |
 | IAM-04 | RBAC implemented? | In progress for customer-side. Provider-side: single owner + scoped PATs. |
-| IAM-05 | Privileged access management? | Yes — production write limited to founder + Cowork PAT. |
+| IAM-05 | Privileged access management? | Yes — production write limited to founder + a scoped automation PAT. |
 | IAM-06 | Access logged? | Yes — Aperture + GitHub audit log. |
 | IAM-07 | Access reviewed quarterly? | Yes. |
 
