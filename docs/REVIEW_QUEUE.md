@@ -13,3 +13,5 @@
 | 2026-08-04 | goal-alignment | P2 | `loops/goal-alignment.yaml` reads `goal:` only; all 27 agent loops use `mandate:`. Spec should accept either key. | Ahmad/Codex | open |
 | 2026-08-04 | goal-alignment | P3 | 18 non-infra loops pass alignment only via `serves: top-goal` — mandate text names no sub-goal. Tighten wording. | Ahmad | open |
 | 2026-08-05 | goal-alignment | ACTIVATION GAP | 35/35 loops aligned but 27 agent loops never run; sub-goal 5 (Capability Statement) 46d overdue, sub-goal 2 (Anthropic Partner) unowned; sub-goals 1/2/4 due 2026-09-30 = 56d out. Recommend activating procurement-mgr + sdr-agent + kb-engineer. | Ahmad |
+
+| 2026-08-11 | goal-alignment | DRIFT | platform-eng, pm-agent, pr-agent, tax-agent, director-idle-improvement | Align loop goal text to CURRENT_GOAL.md sub-goals, or update the goal. |

@@ -81,9 +81,36 @@ export const SKIP = new Map([
   ['aperture-office-view.html', 'HTML fragment, not a page — no <head>/<body>; it is embedded into aperture-learning.html which carries the notice'],
 ]);
 
+/**
+ * DEFECT-223 — scope fix. The site is deployed from git, so a directory that git
+ * ignores is never published and can never carry (or need) the fine print. Local
+ * scratch/vendor trees (`_branch-src/`, `_shipped-src/`, `odysseus/venv/`, …) were
+ * being scanned as if they were public pages, which drowned the gate in ~268 false
+ * violations and hid the real ones. Rather than hardcode a list that rots, read the
+ * top-level directory entries out of `.gitignore` and treat them as non-public.
+ * Purely additive: nothing that git tracks is ever skipped by this.
+ */
+function gitIgnoredDirs() {
+  const out = new Set();
+  try {
+    const raw = readFileSync(join(ROOT, '.gitignore'), 'utf8');
+    for (const line of raw.split('\n')) {
+      const t = line.trim();
+      if (!t || t.startsWith('#') || t.startsWith('!')) continue;
+      if (t.includes('*') || t.includes('?')) continue;   // patterns: too broad to trust here
+      if (!t.endsWith('/')) continue;                     // directories only
+      const name = t.replace(/^\/+/, '').replace(/\/+$/, '');
+      if (name && !name.includes('/')) out.add(name);     // top-level dir names only
+    }
+  } catch { /* no .gitignore -> nothing extra to skip */ }
+  return out;
+}
+
+const IGNORED_DIRS = gitIgnoredDirs();
+
 function walk(dir, out = []) {
   for (const entry of readdirSync(dir)) {
-    if (NON_PUBLIC_DIRS.has(entry)) continue;
+    if (NON_PUBLIC_DIRS.has(entry) || IGNORED_DIRS.has(entry)) continue;
     const full = join(dir, entry);
     if (statSync(full).isDirectory()) walk(full, out);
     else if (/\.html?$/i.test(entry)) out.push(full);

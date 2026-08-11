@@ -1,36 +1,26 @@
-# Codex Playbook — scan 2026-08-05T21:09:45Z
+# Codex Playbook — scan 2026-08-11T11:38Z
 
-## Verdict
-Codex proper: **0 commits, 34 days dormant** (last 2026-07-02). This loop continues to observe a
-Cowork/CC-only commit stream. The "Codex" framing is now purely historical.
+## Top line
+- Window (2d): **0 commits**. Repo HEAD unchanged at `cb4f3f0` since **2026-08-06 02:05 EDT** — **5.4 days frozen**.
+- Since prior scan (2026-08-05T21:09Z): 18 commits, **100% CC Stage2**, all landed inside a ~7-hour Aug 5-6 burst, then silence.
+- Codex proper: **0 commits, 40 days dormant** (last 2026-07-02). 7th consecutive scan recommending rename `codex-observer` -> `repo-observer`.
 
-## Window (2d) — 31 commits, HEAD e413131c on main
-Authors: Cowork 23 | CC Stage2 6 | cowork-loop 1 | Claude Cowork 1
-Top dirs: scripts 28 | tests 27 | netlify 27 | ARIA Sentinel 27 | public 16 | .well-known 16 | assets 14 | root 14
-Top verbs: run 8 | feed 5 | merge 4 | unify 3 | flywheel 3 | security 2
+## What the last active burst was doing
+Three threads, all CC Stage2:
+1. **RUN-AO / AP / AR / AS / AT lettered cycle** — stranger-facing surfaces: first-impression page, six empty screens, the unreachable line, the sixteen checked as a set, and the hour after someone says yes.
+2. **Publish-command hygiene** — pinned then de-pinned the AHMAD-PUSH tip so it stops going stale every cycle (`cc8fc52` -> `bce51bd`); title fix in the file Netlify actually serves.
+3. **Global bid & contracts research agent** — worldwide bid sources, ratchet, Overview panel sync (cycle 3), whitelisting queue, free-visibility channels.
 
-## Delta vs prior scan (13:05Z, HEAD ec9141b9) — +12 commits in ~8h
-- **New dirs: none.** Second consecutive clean-dir scan; structure has settled.
-- **New verbs: `run`, `404`.** `run` now dominant (8) — the RUN-AH..AN lettered-cycle cadence
-  replaced the earlier `feed`/`unify`/`flywheel` hygiene phase as the primary commit shape.
-- Churn shift: `scripts` (8 -> 28) and `ARIA Sentinel` (9 -> 27) tripled; tests kept pace (14 -> 27),
-  so the test-to-source ratio did not degrade during the burst.
+## Pattern shifts vs prior scan
+- Verb `run` still leads but **`global`, `untrack`, `pin` are new** — a move from self-refusing emitters toward outward bid sourcing plus runtime/source separation (`25a6b0a` untracked global-engine state as runtime, not source).
+- `senior-director-state` re-entered the top dirs (10 files) — the state layer is being written to again after several scans of scripts/tests dominance.
+- Second consecutive scan with **no genuinely new directories** — repo structure has settled.
 
-## Notable patterns this window
-1. **RUN-AH -> RUN-AN lettered cycle** (7 commits) — each ships a guard that refuses a class of claim:
-   AJ (a staged click must name what it clicks), AK (claims carry measurement stamps or the write refuses),
-   AL/AM (feed cannot go stale silently), AN (customer-path link graph, 894 links walked, 0 broken).
-2. **Self-refusing emitters** is now the house pattern: guards throw at write time rather than reporting.
-3. **Classifier regression caught in-flight** (RUN-AN): registry arrived RED exit 1, intent `default`
-   85.82% under its 86% floor, traced to one unbounded typo alternate, word-bounded, 92.64% -> 92.96%.
-4. **Discovery worth acting on**: `pricing.html` does not exist — `/plans/` is the real pricing surface.
-5. Business reality unchanged across all 7 RUN commits: **second messages sent 0, meetings 0, revenue none.**
+## Flags
+- **REPO FROZEN 5.4 DAYS.** Every prior scan reported burst cadence. This is the first full stall. Either the agent fleet stopped or nothing has been committed locally.
+- **HARD-RULE file touched:** `aperture-learning.html` in `ea138cd` (flywheel 118b, AXIS feed re-emit). Expected for the AXIS-CC-v2 hub, but log it — this loop treats that file as untouchable.
+- **`.git/index.lock` still present**, 5.4 days old, 0 bytes. Not a live agent — stale residue that survives every session. Matches the standing `project_git_index_lock_blocker` memory: sandbox cannot remove it; **Ahmad must delete it from Windows**.
+- **Business line still flat.** Guard/emitter machinery keeps compounding; the burst added a global bid research agent but no sends, meetings, or revenue recorded.
 
-## Flags for Ahmad
-1. `.git/index.lock` present again — mtime 2026-08-05T17:48Z, ~3h old, stale residue from the 13:48
-   commit (NOT the frozen 07-28 lock, and NOT a live agent). Agents keep leaving it behind. Delete it.
-2. Codex 34 days dormant — rename this loop `repo-observer` or retire it. 6th consecutive scan saying so.
-3. `observe-codex.mjs` still absent and its outputs dir unmounted — every scan since 07-21 is manual
-   reconstruction. Make the fallback official in LOOPS_SPEC.md §6 or rebuild the script in-repo.
-4. Guard machinery is compounding fast; the revenue line has not moved in 7 cycles. The build is
-   getting more honest, not more sold.
+## Constraints honored
+Read-only. No commit, no push, no fetch, no index ops. $0 spend.

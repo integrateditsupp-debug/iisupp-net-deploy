@@ -3,6 +3,25 @@ import path from 'node:path';
 
 const root = process.cwd();
 const skipDirs = new Set(['.git', 'node_modules', 'backups', 'archive', 'artifacts', 'outputs']);
+// DEFECT-222 scope fix (Cowork 2026-08-06): this gate checks PUBLIC ROUTE hygiene, but it
+// was also walking vendored third-party HTML and packaged build output — Python venv
+// site-packages, and the Electron win-unpacked LICENSES.chromium.html shipped inside
+// ARIA Sentinel/dist*. Their internal anchors are not site routes, and the ~150 phantom
+// missingRefs they produced buried the handful of REAL ones. Nothing is deleted and no
+// check is weakened (RULE 15): these directories are out of scope, and the count of what
+// was skipped is printed in the report so the exclusion stays honest and visible.
+const skipDirPatterns = [
+  /^venv$/i,
+  /^\.venv$/i,
+  /^site-packages$/i,
+  /^win-unpacked$/i,
+  /^dist(\.|$)/i,
+];
+let scopeSkippedDirs = 0;
+const isOutOfScopeDir = (name) => {
+  if (skipDirPatterns.some((re) => re.test(name))) { scopeSkippedDirs++; return true; }
+  return false;
+};
 const missingRefs = [];
 const invalidJsonLd = [];
 const sitemapIssues = [];
@@ -12,6 +31,7 @@ function walk(dir, files = []) {
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
     if (ent.isDirectory()) {
       if (skipDirs.has(ent.name)) continue;
+      if (isOutOfScopeDir(ent.name)) continue;
       walk(path.join(dir, ent.name), files);
     } else if (ent.isFile() && ent.name.endsWith('.html')) {
       files.push(path.join(dir, ent.name));
@@ -215,6 +235,7 @@ checkSecurityTxt(redirects, functionRoutes);
 
 const report = {
   scannedHtmlFiles: htmlFiles.length,
+  outOfScopeDirsSkipped: scopeSkippedDirs,
   redirects: redirects.ok.size,
   functionRoutes: functionRoutes.size,
   missingRefs,

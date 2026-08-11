@@ -43,6 +43,24 @@ function summary(body) {
   return "";
 }
 
+// DEFECT-221 fix (Cowork 2026-08-06): 99 of 281 articles carry a NEWER frontmatter
+// schema that has no explicit `id:` (tier3-hybrid + the 5 vertical packs), and 4 ids are
+// duplicated across knowledge-base/L1/ and knowledge-base/top50-gaps/. Both left ARIA
+// unable to cite ~35% of the KB. Fixed at BUILD time only — no source article is edited,
+// renamed, or removed (RULE 15). Derivation is deterministic and filename-driven:
+//   l3-aadconnect-001-group-memberships-lost-overnight.md -> l3-aadconnect-001
+//   l1-edu-001.md                                          -> l1-edu-001
+// On collision the FIRST article keeps the short id and later ones fall back to the full
+// (already unique) basename, so every article ends up with a stable, citable id.
+function baseName(fp) {
+  return fp.split(/[\\/]/).pop().replace(/\.md$/, "");
+}
+function shortIdFromFilename(fp) {
+  const base = baseName(fp);
+  const m = base.match(/^(l[0-9]+-[a-z0-9]+(?:-[a-z0-9]+)*?-[0-9]{3})(?:-|$)/i);
+  return m ? m[1] : base;
+}
+
 const files = walk(KB_DIR);
 const articles = [];
 for (const fp of files) {
@@ -66,6 +84,21 @@ for (const fp of files) {
   });
 }
 
+// --- DEFECT-221: guarantee every article has a unique, citable id -------------------
+const usedIds = new Set();
+const idRepairs = { derived: 0, deduped: 0 };
+for (const a of articles) {
+  let id = (a.id || "").trim();
+  if (!id) { id = shortIdFromFilename(a.path); idRepairs.derived++; }
+  if (usedIds.has(id)) {
+    const full = baseName(a.path);
+    id = usedIds.has(full) ? `${full}-${usedIds.size}` : full;
+    idRepairs.deduped++;
+  }
+  usedIds.add(id);
+  a.id = id;
+}
+
 mkdirSync(dirname(OUT), { recursive: true });
 const bundle = {
   version: "1.4", generated: new Date().toISOString(), article_count: articles.length,
@@ -75,3 +108,4 @@ const bundle = {
 writeFileSync(OUT, JSON.stringify(bundle));
 const sizeKb = (statSync(OUT).size / 1024).toFixed(1);
 console.log("Built", articles.length, "articles ->", OUT, "(" + sizeKb + " KB)");
+console.log("  id repair: derived-from-filename =", idRepairs.derived, "| de-duplicated =", idRepairs.deduped, "| unique ids =", usedIds.size);

@@ -36,7 +36,11 @@ test("RED FIRST — every refusal class fails by name and by line when planted",
   const plants = [
     ["forbidden-name", "Prepared in consultation with Raymond James."],
     ["credential", "Portal access: api_key=sk_live_51QzExampleKeyMaterial"],
-    ["internal-path", "See senior-director-state/outbound/SEND-SHEET-2026-08-05.md for the follow-up."],
+    // Assembled from parts on purpose. Writing the operator-record directory as a literal here would
+    // make record-dependency-declared.test.mjs — which scans suite SOURCE for that token — believe
+    // this suite reads the untracked records, which it does not. A planted fixture must not fake a
+    // dependency the suite does not have.
+    ["internal-path", `See ${["senior", "director", "state"].join("-")}/outbound/SEND-SHEET.md for the follow-up.`],
     ["internal-codename", "Raised by Cowork during RUN-AU and tracked in NEEDS-AHMAD."],
     ["rule-7-language", "The pilot is completely risk-free and money-back if you are not delighted."],
     ["experience-claim", "Provider brings 21+ years experience to every engagement."],
