@@ -242,6 +242,23 @@ const TESTS = [
   // and artefacts and never hours. Manual-BY-DESIGN stays apart from manual-for-want so the program
   // is never pushed toward automating the welcome that is the reason a customer bought from a founder.
   "../../tests/first-week-cost.test.mjs",
+  // CHURN SIGNALS 2026-08-11 (RUN-AZ / AZ1) — AY2 proved the response times we PROMISE disagree.
+  // This asks the prior question: if one were missed, could anything on this machine tell us? Four
+  // states, because a binary would report this environment as healthier than it is — an event that
+  // is received and retained by nothing is TRANSIENT, and one retained that nobody reads is its own
+  // class. No health score is computed: a number derived from signals we do not have is a fabricated
+  // metric with a chart on it. Wired to AY2 — a promise no signal claims must be DECLARED.
+  "../../tests/churn-signals.test.mjs",
+  // TERM AND EXIT 2026-08-11 (RUN-AZ / AZ2) — the first thing in this program that walks OUT of a
+  // contract. Two halves kept apart: whether the customer is TOLD (AY1's SILENT state — a document
+  // that arrives and never mentions its stage is not delivered) and whether the windows AGREE
+  // (AX1's machinery, reused rather than re-implemented). No code path picks which answer is right.
+  "../../tests/term-and-exit.test.mjs",
+  // SECOND SALE COST 2026-08-11 (RUN-AZ / AZ3) — priced in acts a person must perform and artefacts
+  // that must exist, never hours and never money: a figure about a sale that has not happened is a
+  // forecast wearing a measurement's clothes. Resolves through AZ1 and AZ2, so a step blocked by an
+  // unobservable signal or a silent exit stage names it.
+  "../../tests/second-sale-cost.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   // SITE FINEPRINT GATE 2026-08-06 (salvaged from cc/axis-feed-2026-08-04) — the site-wide legal
