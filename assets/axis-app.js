@@ -816,8 +816,10 @@ SCREENS['axis-agent-director'] = (c) => {
       send: () => axisSend('axisDirectorInput'),
       micToggle: () => axisMicToggle('axisDirectorMic', 'axisDirectorInput', () => axisSend('axisDirectorInput')),
       voiceToggle: axisVoiceToggle,
+      handsFreeToggle: axisHandsFreeToggle,
       mountOrbs, setState: setAxisState, renderLog: renderDock,
       get voiceOn() { return axisVoiceOn; },
+      get handsFree() { return axisHandsFree; },
     },
     onIntent: (type, payload) => postIntent(type, payload),
     openComposer,
@@ -1710,6 +1712,15 @@ let axisWakeArmed = false;      // wanted-running (survives the browser's own au
 let axisSpokenTurn = false;     // this turn came in by voice → answer with voice manners
 let axisPendingRoute = null;    // {intent, agent} awaiting a spoken confirm — routes only
 
+// Which surface a hands-free turn belongs to. The Agent Director tab has its own command channel and
+// openDock() deliberately refuses to cover it, so a wake there must drive ITS input, not the hidden
+// dock's. One transcript either way — renderDock() fills both logs.
+function axisSurface() {
+  return state.module === 'axis-agent-director' && $('axisDirectorInput')
+    ? { inputId: 'axisDirectorInput', micId: 'axisDirectorMic' }
+    : { inputId: 'axisInput', micId: 'axisMic' };
+}
+
 function axisWakeStart() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { toast('Hands-free needs Chrome or Edge'); return false; }
@@ -1724,9 +1735,10 @@ function axisWakeStart() {
     if (isStop(said)) { axisStandDown(); return; }           // stand-down wins over everything
     if (!isWake(said)) return;                                // not addressed to AXIS — ignore it
     const rest = stripWake(said);
-    if ($('axisDock') && $('axisDock').hidden) openDock();
-    if (rest) { const i = $('axisInput'); if (i) { i.value = rest; axisSpokenTurn = true; axisSend(); } }
-    else axisMicToggle();                                     // bare "AXIS" → open the mic for the ask
+    const s = axisSurface();
+    if (s.inputId === 'axisInput' && $('axisDock') && $('axisDock').hidden) openDock();
+    if (rest) { const i = $(s.inputId); if (i) { i.value = rest; axisSpokenTurn = true; axisSend(s.inputId); } }
+    else axisMicToggle(s.micId, s.inputId, () => axisSend(s.inputId)); // bare "AXIS" → open the mic
   };
   // Browsers stop a continuous recognizer on their own schedule; re-arm unless we deliberately paused.
   rec.onend = () => { if (axisHandsFree && axisWakeArmed && !axisListening) { try { rec.start(); } catch {} } };
@@ -1747,7 +1759,11 @@ function axisTurnDone() {
   axisSpokenTurn = false;
   if (!axisHandsFree || axisListening) return;
   if ($('axisDock') && $('axisDock').hidden && state.module !== 'axis-agent-director') return;
-  setTimeout(() => { if (axisHandsFree && !axisListening) axisMicToggle(); }, 350);
+  setTimeout(() => {
+    if (!axisHandsFree || axisListening) return;
+    const s = axisSurface();
+    axisMicToggle(s.micId, s.inputId, () => axisSend(s.inputId));
+  }, 350);
 }
 
 // Spoken + keyboard kill-switch. Aborts speech, the mic, the pending turn, and any unconfirmed route.
@@ -1758,11 +1774,15 @@ function axisStandDown() {
   if (document.documentElement.dataset.axisState !== 'idle') setAxisState('idle');
   toast('AXIS stood down');
 }
+// Mirrors axisSyncVoiceBtn: the dock and the Agent Director tab each carry their own control, and
+// both must reflect one state — the recognizer is global, not per-surface.
 function axisSyncWakeBtn() {
-  const b = $('axisWake'); if (!b) return;
-  b.setAttribute('aria-pressed', axisHandsFree ? 'true' : 'false');
-  b.style.color = axisHandsFree ? 'var(--gold)' : ''; b.style.borderColor = axisHandsFree ? 'var(--gold)' : '';
-  b.title = axisHandsFree ? 'Hands-free ON — say “AXIS …”. Stop: say “AXIS stop” or Ctrl+Alt+K' : 'Hands-free: wake word “AXIS”';
+  for (const id of ['axisWake', 'axisDirectorWake']) {
+    const b = $(id); if (!b) continue;
+    b.setAttribute('aria-pressed', axisHandsFree ? 'true' : 'false');
+    b.style.color = axisHandsFree ? 'var(--gold)' : ''; b.style.borderColor = axisHandsFree ? 'var(--gold)' : '';
+    b.title = axisHandsFree ? 'Hands-free ON — say “AXIS …”. Stop: say “AXIS stop” or Ctrl+Alt+K' : 'Hands-free: wake word “AXIS”';
+  }
 }
 function axisHandsFreeToggle() {
   if (!axisHandsFree) {

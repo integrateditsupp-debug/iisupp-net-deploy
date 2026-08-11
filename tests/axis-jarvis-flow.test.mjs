@@ -86,7 +86,22 @@ for (const [name, html] of [['axis.html', shellA], ['aperture-learning.html', sh
 assert.equal(shellA, shellB, 'axis.html and aperture-learning.html stay identical (both are served)');
 ok();
 
-// ---- 6. PURELY ADDITIVE: nothing the v1 voice contract shipped was removed ----
+// ---- 6. the AXIS Agent Director tab carries the same interface ----
+const dir = fs.readFileSync(path.join(root, 'assets', 'axis-director-screen.js'), 'utf8');
+assert.ok(/WAKE_ID = 'axisDirectorWake'/.test(dir), 'Director tab declares its own hands-free control id');
+assert.ok(/id: WAKE_ID/.test(dir), 'Director tab renders the hands-free button in its command channel');
+assert.ok(/voice\.handsFreeToggle/.test(dir), 'Director button calls through to the app-owned toggle (voice machinery is not reimplemented)');
+// The 15s snapshot poll rebuilds that row — the lit state must come from the getter, not survive by luck.
+assert.ok(/voice\.handsFree \? 'true' : 'false'/.test(dir), 'Director button reads its pressed state at build time');
+assert.ok(/handsFreeToggle: axisHandsFreeToggle/.test(app), 'app hands the toggle to the Director screen');
+assert.ok(/get handsFree\(\) \{ return axisHandsFree; \}/.test(app), 'app exposes hands-free state to the Director screen');
+assert.ok(/'axisWake', 'axisDirectorWake'/.test(app), 'one recognizer, both controls kept in sync');
+// A wake on the Director tab must drive ITS input, not the hidden dock's.
+assert.ok(/function axisSurface/.test(app), 'hands-free is surface-aware');
+assert.ok(/axis-agent-director' && \$\('axisDirectorInput'\)/.test(app), 'Director tab routes to its own command channel');
+ok();
+
+// ---- 7. PURELY ADDITIVE: nothing the v1 voice contract shipped was removed ----
 for (const marker of [
   'axisMicToggle', 'axisVoiceToggle', 'axisHumanizeForSpeech', 'axis-voice-name',
   'axisVoiceNext', 'axisSetVoice', 'let axisVoiceOn = true', 'speechSynthesis.cancel()',
@@ -95,4 +110,4 @@ for (const marker of [
 assert.ok(/if \(\/\(guy\|davis\|andrew/.test(app), 'the original voice ranking line is kept intact (superseded, not deleted)');
 ok();
 
-console.log(`axis-jarvis-flow: ${n}/6 groups green — AXIS keeps its name, gains a distinct woman's voice and a JARVIS turn flow; every prior voice behavior intact.`);
+console.log(`axis-jarvis-flow: ${n}/7 groups green — AXIS keeps its name, gains a distinct woman's voice and a JARVIS turn flow; every prior voice behavior intact.`);
