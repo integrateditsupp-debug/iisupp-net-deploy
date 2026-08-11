@@ -1522,6 +1522,31 @@ function renderDock() {
   renderAxisPri();
 }
 
+// Poll the tier-3 queue until the Max plan answer lands, then swap it into the message that is
+// already on screen. Bounded so a dead worker can never leave the console polling forever.
+async function axisCollect(jobId, msg, tries = 0) {
+  if (tries > 30) {                                   // ~60s ceiling
+    msg.text = 'The Max plan did not answer in time. Ask again — it may already be banked.';
+    renderDock(); return;
+  }
+  await new Promise(r => setTimeout(r, 2000));
+  try {
+    const r = await fetch('/.netlify/functions/axis-brain-queue', {
+      method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ action: 'poll', id: jobId }),
+    });
+    const p = await r.json();
+    if (p && p.ready && p.answer) {
+      msg.text = String(p.answer);
+      renderDock();
+      if (axisSpeak(msg.text)) __turnDone = axisTurnDone;
+      return;
+    }
+    if (p && p.ready && p.error) { msg.text = 'The Max plan hit an error on that one.'; renderDock(); return; }
+  } catch { /* transient — keep polling until the ceiling */ }
+  return axisCollect(jobId, msg, tries + 1);
+}
+
 // ── AXIS console furniture (2026-08-11 redesign) ─────────────────────────────
 const HEAR_IDLE = 'Press the mic, or type. Say “AXIS stop” to stand me down.';
 // The live line under the orb. While listening it mirrors the interim transcript, so there is always
@@ -1649,6 +1674,10 @@ async function axisSend(inputId = 'axisInput') {
     }
     dockLog.push(reply); renderDock();
     if (axisSpeak(reply.text)) __turnDone = axisTurnDone; else { setAxisState('idle'); axisTurnDone(); }
+    // The Max plan needs ~17s for a real answer; the function returns in ~10s and hands back a job
+    // id. Collect it here and replace the placeholder in place, so the answer arrives on its own
+    // rather than the user having to ask a second time.
+    if (j && j.pending && j.jobId) axisCollect(j.jobId, reply);
   } catch { dropPending(); dockLog.push({ role: 'axis', text: 'Brain unreachable.' }); renderDock(); if (!axisSpeak('Brain unreachable.')) setAxisState('idle'); axisSpokenTurn = false; }
 }
 
@@ -2063,9 +2092,9 @@ function renderPalette() {
 // ── Auth ──
 function showApp() { $('login').style.display = 'none'; $('app').style.display = 'grid'; renderNav(); renderModule(); fetchSnapshots();
   clearInterval(window.__axisPoll); window.__axisPoll = setInterval(() => { if (!document.hidden) pollVersion(); }, 15000);
-  // R2 auto-open: AXIS greets once per authed session; a close is respected for the whole session.
-  if (sessionStorage.getItem('axisDockDismissed') !== '1')
-    setTimeout(() => { try { if ($('app').style.display !== 'none' && $('axisDock').hidden) openDock(); } catch {} }, 600);
+  // The orbit (globe + one-line bar, bottom centre) is the resting presence — the transcript no
+  // longer auto-opens. Ahmad, 2026-08-11: "without a chat field unless I press a button."
+  // The spoken boot briefing below still runs; it just does not force the panel open.
   axisBootBriefing();
 }
 
@@ -2112,7 +2141,7 @@ $('loginBtn').addEventListener('click', doLogin);
 $('pass').addEventListener('keydown', (e) => e.key === 'Enter' && doLogin());
 $('logoutBtn').addEventListener('click', logout);
 $('axisFab').addEventListener('click', openDock);
-$('axisClose').addEventListener('click', closeDock);
+$('axisClose').addEventListener('click', axisCloseConsole);
 // Must be wrapped: addEventListener passes the MouseEvent as the first argument, which would land
 // in axisSend's `inputId` parameter — $(MouseEvent) resolves to null and the send silently no-ops.
 // The Send button never worked; only the Enter key did (found by boot harness, 2026-08-11).
@@ -2120,6 +2149,35 @@ $('axisSend').addEventListener('click', () => axisSend());
 $('axisMic')?.addEventListener('click', () => axisMicToggle());
 $('axisVoice')?.addEventListener('click', axisVoiceToggle);
 $('axisWake')?.addEventListener('click', axisHandsFreeToggle);
+
+// ── AXIS orbit: the resting presence ─────────────────────────────────────────
+// Globe floats bottom-centre with a one-line bar. Typing there sends immediately and only THEN
+// opens the transcript, so a quick question never requires opening a panel first.
+function axisOpenConsole() {
+  document.documentElement.dataset.axisOpen = '1';
+  try { sessionStorage.removeItem('axisDockDismissed'); } catch {}
+  openDock();
+}
+function axisCloseConsole() { delete document.documentElement.dataset.axisOpen; closeDock(); }
+$('axisOrbGlobe')?.addEventListener('click', axisOpenConsole);
+$('axisOrbGlobe')?.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); axisOpenConsole(); } });
+$('axisQuickOpen')?.addEventListener('click', axisOpenConsole);
+$('axisQuickWake')?.addEventListener('click', axisHandsFreeToggle);
+$('axisQuick')?.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  const v = e.target.value.trim(); if (!v) return;
+  e.target.value = '';
+  axisOpenConsole();
+  const box = $('axisInput'); if (box) { box.value = v; axisSend(); }
+});
+// The wake button exists in two places now; keep both lit in step.
+const __syncWake = axisSyncWakeBtn;
+axisSyncWakeBtn = function () {
+  __syncWake();
+  const q = $('axisQuickWake');
+  if (q) { q.setAttribute('aria-pressed', axisHandsFree ? 'true' : 'false');
+    q.style.color = axisHandsFree ? 'var(--gold)' : ''; }
+};
 // Voice picker: pinning a voice writes the SAME localStorage key the v1 console used, and speaking a
 // sample immediately is the whole point — you pick by ear, not by reading a device name.
 $('axisVoicePick')?.addEventListener('change', (e) => {

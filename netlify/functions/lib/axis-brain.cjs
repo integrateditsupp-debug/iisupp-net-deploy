@@ -134,7 +134,12 @@ async function subscriptionTier(query, { origin, auth, waitMs = SUB_WAIT_MS } = 
         return null;                      // worker reported an error — escalate
       }
     }
-    return null;                          // too slow this time — caller escalates to the metered API
+    // STILL RUNNING, not failed. Measured 2026-08-11: the local CLI needs ~16.7s for a real
+    // question, while a Netlify function must return in ~10s. Returning null here made the caller
+    // fall through to the metered API and report "out of credit" — a wrong diagnosis for a plan
+    // answer that arrives seconds later and is banked correctly. Hand the job id back instead so
+    // the console can collect it.
+    return { pending: true, jobId: q.id, tier: 'subscription', source: 'claude-max-plan', cost: 0 };
   } catch (_) { return null; }
 }
 
@@ -217,7 +222,7 @@ async function askBrain({ query, origin, auth, skip = [], subWaitMs = SUB_WAIT_M
     tried.push(name);
     let hit = null;
     try { hit = await run(); } catch (_) { hit = null; }
-    if (hit && hit.text) return { ...hit, tried };
+    if (hit && (hit.text || hit.pending)) return { ...hit, tried };
   }
   return null;
 }

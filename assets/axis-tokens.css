@@ -486,3 +486,48 @@ a { color:var(--gold); text-decoration:none; }
   filter:drop-shadow(0 0 22px color-mix(in srgb, var(--gold) 60%, transparent)); }
 .axis-dock-head { padding:16px 14px 14px; gap:14px; }
 @media (max-width:720px) { .axis-globe { width:74px; height:74px; } }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   AXIS ORBIT — 2026-08-11. Ahmad: "the globe should be bottom center without a
+   chat field unless I press a button… transparent, hovering and floating at the
+   bottom center, with a small box to type if I want or go hands free."
+   Resting state is the globe alone, floating bottom-centre over the app with a
+   compact type box and two controls. The full transcript is opt-in.
+   ══════════════════════════════════════════════════════════════════════════════ */
+.axis-fab { display:none !important; }        /* the orbit IS the launcher now */
+
+.axis-orbit { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); z-index:72;
+  display:flex; flex-direction:column; align-items:center; gap:9px; pointer-events:none; }
+.axis-orbit > * { pointer-events:auto; }
+.axis-orbit .axis-globe { width:104px; height:104px; cursor:pointer;
+  filter:drop-shadow(0 10px 26px color-mix(in srgb, var(--gold) 30%, transparent)); }
+.axis-orbit .axis-globe:hover { filter:drop-shadow(0 10px 34px color-mix(in srgb, var(--gold) 55%, transparent)); }
+@keyframes axis-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+.axis-orbit .axis-globe { animation:axis-float 6s ease-in-out infinite; }
+
+/* The one-line bar: type box + hands-free + expand. Transparent, no panel behind it. */
+.axis-bar { display:flex; align-items:center; gap:7px; padding:5px;
+  background:color-mix(in srgb, var(--surface) 34%, transparent);
+  backdrop-filter:blur(16px) saturate(140%); -webkit-backdrop-filter:blur(16px) saturate(140%);
+  border:1px solid color-mix(in srgb, var(--gold) 22%, var(--line-2)); border-radius:999px;
+  box-shadow:0 12px 34px -16px #000; }
+.axis-bar input { width:min(280px, 42vw); background:transparent; border:0; outline:none;
+  color:var(--txt); font:inherit; font-size:12.5px; padding:6px 12px; }
+.axis-bar input::placeholder { color:var(--txt-3); }
+.axis-bar .chip { border:0; background:none; border-radius:999px; padding:5px 9px; line-height:1; }
+.axis-bar .chip:hover { background:color-mix(in srgb, var(--gold) 18%, transparent); }
+
+/* The transcript is hidden until asked for; the dock keeps every id it always had. */
+.axis-dock { display:none; }
+:root[data-axis-open="1"] .axis-dock { display:flex; }
+:root[data-axis-open="1"] .axis-orbit .axis-globe { width:74px; height:74px; animation:none; }
+/* Resting state must not shove the page over — only the expanded transcript reserves width. */
+:root[data-axis-dock="open"] .content { padding-right:16px; }
+:root[data-axis-open="1"][data-axis-dock="open"] .content {
+  padding-right:calc(min(430px,calc(100vw - 36px)) + 30px); }
+
+@media (max-width:720px) {
+  .axis-orbit .axis-globe { width:78px; height:78px; }
+  .axis-bar input { width:44vw; }
+}
+@media (prefers-reduced-motion:reduce) { .axis-orbit .axis-globe { animation:none; } }

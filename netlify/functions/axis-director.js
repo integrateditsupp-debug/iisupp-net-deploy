@@ -121,10 +121,21 @@ exports.handler = async (event) => {
       const host = (event.headers && (event.headers.host || event.headers.Host)) || '';
       const auth = (event.headers && (event.headers.authorization || event.headers.Authorization)) || '';
       const hit = await askBrain({ query: askText, origin: host ? `https://${host}` : '', auth });
+      // Answer in hand — return it.
       if (hit && hit.text) {
         return json(200, {
           text: hit.text.slice(0, 2000), routedAgent: null, intent: null, needsApproval: false,
           brainTier: hit.tier, brainSource: hit.source, tried: hit.tried, cost: 0,
+        });
+      }
+      // Max plan is still working (the CLI needs ~16.7s; this function must return in ~10s).
+      // Hand the job id to the console so it can collect the answer — do NOT fall through to the
+      // metered API, which would report an out-of-credit error for a request that is succeeding.
+      if (hit && hit.pending) {
+        return json(200, {
+          text: 'Working on it on your Max plan — one moment.', routedAgent: null, intent: null,
+          needsApproval: false, brainTier: 'subscription-pending', brainSource: hit.source,
+          tried: hit.tried, cost: 0, pending: true, jobId: hit.jobId,
         });
       }
     } catch (e) { console.warn('[axis-director] cascade unavailable:', e.message); }

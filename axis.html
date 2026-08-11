@@ -92,6 +92,18 @@
     <span class="axis-orb" data-orb></span>
     <span class="axis-fab-pill">Ask AXIS</span>
   </button>
+  <!-- AXIS orbit — the resting presence: globe floating bottom-centre, a small type box and two
+       controls. No transcript until asked for. Clicking the globe (or Expand) opens the dock. -->
+  <div class="axis-orbit" id="axisOrbit">
+    <span class="axis-globe" data-globe id="axisOrbGlobe" role="button" tabindex="0"
+          aria-label="Open AXIS conversation" title="AXIS — click to open the conversation"></span>
+    <div class="axis-bar">
+      <input id="axisQuick" placeholder="Ask AXIS…" autocomplete="off" aria-label="Ask AXIS">
+      <button class="chip" id="axisQuickWake" title="Hands-free: wake word &ldquo;AXIS&rdquo;" aria-pressed="false" aria-label="Toggle hands-free">&#9101;</button>
+      <button class="chip" id="axisQuickOpen" title="Open the full conversation" aria-label="Open conversation">&#9711;</button>
+    </div>
+  </div>
+
   <section class="axis-dock" id="axisDock" hidden aria-label="AXIS director">
     <!-- Head = the identity block. The globe anchors it top-left; name, live state and level meter
          read off it left-to-right. One row, no duplicate orb below it. -->
