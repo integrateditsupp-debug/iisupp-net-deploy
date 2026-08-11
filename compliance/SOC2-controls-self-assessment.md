@@ -27,7 +27,7 @@
 |---|---|---|---|---|
 | CC2.1 | Internal info quality | All decisions in the internal decision log + git history. | repo | None |
 | CC2.2 | Internal communication | Loop-engineer protocol documented + executed daily. | `docs/LOOP-ENGINEER.md` | None |
-| CC2.3 | External communication | Privacy policy + Terms published. Trust Center next deliverable. | `/privacy.html`, `/terms.html` | Trust page: TODO Item 2 |
+| CC2.3 | External communication | Privacy policy + Terms published. Trust Center next deliverable. | `/governance/privacy.html`, `/terms.html` | Trust page: TODO Item 2 |
 
 ---
 

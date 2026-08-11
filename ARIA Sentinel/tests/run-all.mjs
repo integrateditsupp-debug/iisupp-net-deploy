@@ -200,6 +200,30 @@ const TESTS = [
   // mail path, and the suite asserts that. An empty section fails: promising nothing is not delivering
   // everything. Wired to AW1 by an invariant — the gate and the packet must see the same documents.
   "../../tests/prospect-packet.test.mjs",
+  // PACK ANSWER CONSISTENCY 2026-08-11 (RUN-AX / AX1) — AW read each client-facing document alone; a
+  // security reviewer never does. The questionnaires, the policies and the contracts are read as ONE
+  // body and every place two of them answer the same reviewer question differently is reported with
+  // both citations. No code path returns agreed while answers disagree, and none picks which answer
+  // is right — that is a promise to a paying customer, not a formatting choice. A disagreement
+  // nobody has written down goes RED; one declared in docs/PACK-ANSWER-CONFLICTS.md with a reason
+  // and a named decider is staged; a declaration that has rotted goes red too.
+  "../../tests/pack-answer-consistency.test.mjs",
+  // ANSWER CITATIONS 2026-08-11 (RUN-AX / AX2) — dozens of answers in the pack do not state a fact,
+  // they POINT at one. Every citation is resolved against HEAD'S TREE (never the working copy, never
+  // the index — AU3's correction), including SECTION citations, which a file-existence check passes
+  // and a reviewer opening the document does not. An artefact that exists under another path is
+  // MISDIRECTED and gets corrected; one nothing carries is a decision and must be declared in
+  // docs/CITATION-GAPS.md. `documents/`-scoped citations are their own class with their reason, so
+  // the lockdown is never weakened to make a number green. Redirect-table-aware on purpose.
+  "../../tests/answer-citations.test.mjs",
+  // ANSWER COST 2026-08-11 (RUN-AX / AX3) — AV3 priced pressing send; this prices the reviewer's
+  // follow-up, in the only unit this environment can honestly measure: questions answered by
+  // pointing at an artefact that exists versus questions requiring a person to compose something
+  // new. NEVER hours — nobody here has timed one and an invented duration is a fabricated metric.
+  // Composed-BY-DESIGN is kept apart from composed-for-want-of-an-artefact so the program is never
+  // pushed toward automating the judgement that wins the deal. Wired to AX2: every composition
+  // forced by a missing artefact names the declared gap it waits on.
+  "../../tests/answer-cost.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   // SITE FINEPRINT GATE 2026-08-06 (salvaged from cc/axis-feed-2026-08-04) — the site-wide legal

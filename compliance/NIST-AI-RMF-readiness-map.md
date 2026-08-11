@@ -27,7 +27,7 @@
 |---|---|---|---|---|
 | MAP-1.1 | Intended purpose + context established | ARIA = IT-support Q&A; Sentinel = device admin agent under human oversight. Scope documented. | product spec, README-MVP | None |
 | MAP-2.3 | Capabilities + limitations characterized | Source badges + confidence scores expose uncertainty; KB-first then LLM fallback. | KB source badges, RUN 31 routing | Publish a documented limitations statement |
-| MAP-3.1 | Benefits + potential harms identified | Privacy-first design; content-blind telemetry limits data-exposure harm. | `network-capture.mjs`, sanitization tests | Maintain a living harm/impact log |
+| MAP-3.1 | Benefits + potential harms identified | Privacy-first design; content-blind telemetry limits data-exposure harm. | `ARIA Sentinel/src/shared/network-capture.mjs`, sanitization tests | Maintain a living harm/impact log |
 | MAP-4.1 | Third-party AI components inventoried | Foundation-model providers inventoried as sub-processors. | sub-processor list | None |
 | MAP-5.1 | Impacts to individuals/groups assessed | Limited PII handling; 30-day purge; erasure on request. | privacy policy | Document a lightweight AI impact assessment |
 
@@ -54,7 +54,7 @@
 | MAN-2.1 | Mechanisms to sustain value while managing risk | Restore points + atomic rollback (git/Netlify) + Tier-2 KB fallback. | runbook, fallback bundle | None |
 | MAN-2.3 | Mechanism to deactivate/override the system | Kill-switch; auto-execution dormant by default; manual publish gates. | kill-switch, RUN 23 notes | None |
 | MAN-2.4 | Incidents + recovery handled | Incident-response policy; git rollback = full recovery. | `/governance/incident-response.html` | Quarterly tabletop drill |
-| MAN-3.1 | Third-party risks managed | Vendor DPAs; content-blind boundary limits data shared with model providers. | DPAs, `network-capture.mjs` | Retain upstream model-provider risk records |
+| MAN-3.1 | Third-party risks managed | Vendor DPAs; content-blind boundary limits data shared with model providers. | DPAs, `ARIA Sentinel/src/shared/network-capture.mjs` | Retain upstream model-provider risk records |
 | MAN-4.1 | Post-deployment monitoring | Aperture latency/anomaly tracking + email evolution reports. | Aperture, `aria-evolution-report` | Add post-deployment AI-incident logging |
 
 ---

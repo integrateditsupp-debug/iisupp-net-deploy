@@ -16,7 +16,7 @@
 | P-1 | No subliminal / manipulative techniques causing harm | ARIA is an IT-support assistant; no manipulative/persuasive-design objectives. Outputs are informational answers + guarded device actions. | product spec, KB renderer | None identified; confirm in legal review |
 | P-2 | No exploitation of vulnerabilities (age, disability, socio-economic) | No targeting of vulnerable groups; B2B IT support context. | offer/positioning docs | None identified |
 | P-3 | No social scoring | Not performed. | — | None |
-| P-4 | No real-time remote biometric identification / emotion inference in workplace | ARIA does not process biometrics or infer emotion. Sentinel is content-blind to user files. | `src/shared/network-capture.mjs`, sanitization tests | None identified |
+| P-4 | No real-time remote biometric identification / emotion inference in workplace | ARIA does not process biometrics or infer emotion. Sentinel is content-blind to user files. | `ARIA Sentinel/src/shared/network-capture.mjs`, sanitization tests | None identified |
 | P-5 | No untargeted scraping of facial images | Not performed. | privacy invariants | None |
 
 ---
@@ -66,7 +66,7 @@
 
 | ID | Requirement / Criterion | Our Control / Status | Evidence | Gap |
 |---|---|---|---|---|
-| R-1 | Logging / traceability of AI events | Tamper-evident audit log + Aperture observability; content-blind telemetry. | RUN 17 audit-tamper banner, `network-capture.mjs` | None for current scope |
+| R-1 | Logging / traceability of AI events | Tamper-evident audit log + Aperture observability; content-blind telemetry. | RUN 17 audit-tamper banner, `ARIA Sentinel/src/shared/network-capture.mjs` | None for current scope |
 | R-2 | Technical documentation of the system | Architecture + README + readiness maps maintained. | repo docs | Consolidate into a single AI Act technical-documentation file before any high-risk deployment |
 | R-3 | Data governance / quality | KB curation + governor gating against low-quality "slop." | learning-loop gating notes | Document data-governance procedure formally |
 | R-4 | Accuracy, robustness, cybersecurity | Tests green per suite; privacy invariants protected by tests. | `npm test` suites | Add adversarial/robustness eval cadence |

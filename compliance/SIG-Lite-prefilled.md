@@ -151,7 +151,7 @@
 
 | Q# | Question | Answer |
 |---|---|---|
-| O.1 | Privacy policy published? | Yes at `/privacy.html`. |
+| O.1 | Privacy policy published? | Yes at `/governance/privacy.html`. |
 | O.2 | Data subject rights process? | Yes per DPA Section 8. Erasure within 30 days. |
 | O.3 | Data inventory maintained? | Yes per SIG question D.1. |
 | O.4 | Privacy impact assessments? | DPIA template available for customer compliance teams. |
