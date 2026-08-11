@@ -57,6 +57,38 @@ export default async (request) => {
     } catch (e) { return json(200, { ok: false, reason: 'enqueue-failed', detail: e.message }); }
   }
 
+  // Bank an answer into the ARIA brain. Two writes are required and BOTH matter:
+  //   1. the learn-* blob (the body), and
+  //   2. an entry in kb-index.json — because aria-kb-query discovers learned bits ONLY through that
+  //      manifest (loadLiveChunks reads kb-index.json → entries[] → store.get(e.key)).
+  // Writing just the blob banks an answer the brain can never find. Measured 2026-08-11: the first
+  // Max-plan answer was stored correctly and still missed on the re-ask for exactly this reason.
+  // (aria-learning-promote.mjs lists blobs directly, so it sees them either way — which is what
+  // made the gap invisible.)
+  if (action === 'learn') {
+    const { key, topic, question, body: text, source } = body;
+    if (!key || !text) return json(400, { error: 'key and body required' });
+    try {
+      const kb = getStore({ name: 'aria-kb-live', consistency: 'strong' });
+      const now = new Date().toISOString();
+      await kb.setJSON(key, {
+        topic, question: String(question || '').slice(0, 500), body: String(text).slice(0, 3500),
+        agent: 'axis-brain', source: source || 'axis-brain', verified_answer: true,
+        promoted: true, promoted_at: now, created_at: now,
+      });
+      // Read-modify-write the manifest. Low volume, so a lost update is unlikely and non-fatal —
+      // the promote cron rebuilds from the blobs regardless.
+      let idx = null;
+      try { idx = await kb.get('kb-index.json', { type: 'json' }); } catch { idx = null; }
+      if (!idx || !Array.isArray(idx.entries)) idx = { entries: [] };
+      idx.entries = idx.entries.filter((e) => e && e.key !== key);
+      idx.entries.push({ key, topic, promoted: true, t: Date.now() });
+      if (idx.entries.length > 5000) idx.entries = idx.entries.slice(-5000);
+      await kb.setJSON('kb-index.json', idx);
+      return json(200, { ok: true, key, indexed: idx.entries.length });
+    } catch (e) { return json(200, { ok: false, reason: 'learn-failed', detail: e.message }); }
+  }
+
   if (action === 'poll') {
     const id = String(body.id || '');
     if (!id) return json(400, { error: 'id required' });

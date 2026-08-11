@@ -28,13 +28,13 @@ const KB_LIVE = 'aria-kb-live';           // same store aria-kb-query merges pro
 const JOBS = 'axis-brain-jobs';           // question queue the local worker polls
 const HEARTBEAT_KEY = 'worker-heartbeat'; // worker liveness; stale ⇒ skip tier 3 rather than stall
 const HEARTBEAT_MAX_MS = 120000;          // 2 min — worker writes every 30s
-const SUB_WAIT_MS = 6500;                 // hard cap; the function itself must return in ~10s
+const SUB_WAIT_MS = 7800;                 // hard cap; the function itself must return in ~10s.
+                                          // The local CLI needs ~6s for a real answer (measured), so a
+                                          // smaller budget escalated to the metered API every time.
 const SUB_POLL_MS = 400;
 
-function store(name, consistency = 'strong') {
-  const { getStore } = require('@netlify/blobs');
-  return getStore({ name, consistency });
-}
+// NOTE: no getStore() anywhere in this file on purpose. Netlify does not inject the Blobs context
+// into legacy CJS `exports.handler` functions, so every Blobs touch goes through axis-brain-queue.mjs.
 
 // ── Tier 1: ARIA brain ───────────────────────────────────────────────────────
 async function kbTier(query, origin) {
@@ -139,26 +139,18 @@ function worthLearning(query, answer, tier) {
 // `promoted: true` is set only for answers that came from a real reasoning tier AND passed the gate
 // — that is the one-shot-learning fast path Ahmad asked for. The existing 3-recurrence promotion
 // path in aria-learning-promote.mjs is untouched and still governs everything else.
-async function learnBack({ query, answer, tier, source }, now = Date.now) {
+async function learnBack({ query, answer, tier, source, origin, auth }, now = Date.now) {
   if (!worthLearning(query, answer, tier)) return { learned: false, reason: 'gate' };
+  if (!origin) return { learned: false, reason: 'no-origin' };
   const topic = String(query).toLowerCase().replace(/[^a-z0-9\s-]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 90);
   const key = 'learn-' + topic.replace(/\s+/g, '-').slice(0, 60) + '-' + now().toString(36);
   try {
-    await store(KB_LIVE).setJSON(key, {
-      topic,
-      question: String(query).slice(0, 500),
-      body: String(answer).slice(0, 3500),
-      agent: 'axis-brain',
-      source: source || tier,
-      verified_answer: true,          // came from a reasoning tier and cleared the quality gate
-      promoted: true,                 // searchable immediately — that is the whole point
-      promoted_at: new Date(now()).toISOString(),
-      created_at: new Date(now()).toISOString(),
+    const r = await queueCall(origin, auth, {
+      action: 'learn', key, topic, question: String(query).slice(0, 500),
+      body: String(answer).slice(0, 3500), source: source || tier,
     });
-    return { learned: true, key };
-  } catch (e) {
-    return { learned: false, reason: 'store-unavailable' };
-  }
+    return r && r.ok ? { learned: true, key } : { learned: false, reason: (r && r.reason) || 'learn-failed' };
+  } catch (_) { return { learned: false, reason: 'unreachable' }; }
 }
 
 // ── The cascade ──────────────────────────────────────────────────────────────

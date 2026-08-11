@@ -101,6 +101,7 @@ assert.ok(cascadeAt > 0 && anthropicAt > 0 && cascadeAt < anthropicAt,
   'the cascade runs before the metered API call, not after');
 assert.match(director, /learnBack\(\{ query: askText, answer: out\.text, tier: 'anthropic'/,
   'a metered answer is banked so the question is free next time');
+assert.match(director, /origin: host2/, 'banking is routed through the v2 helper, not Blobs-from-CJS');
 assert.match(director, /brainTier/, 'the answering tier is reported back to the console');
 ok();
 
@@ -114,4 +115,20 @@ assert.match(worker, /env: PLAN_ENV/, 'the scrubbed env is actually passed to sp
 assert.match(worker, /'--print'/, 'the CLI is invoked non-interactively');
 ok();
 
-console.log(`axis-brain-cascade: ${n}/6 groups green — KB → research → Max plan → metered API, and only real answers are banked.`);
+// ---- 7. Banking registers in kb-index.json, not just the blob ----
+// aria-kb-query discovers learned bits ONLY via kb-index.json (loadLiveChunks reads entries[] then
+// store.get(e.key)). Writing the blob alone banks an answer the brain can never find -- measured
+// 2026-08-11 when the first Max-plan answer stored fine and still missed on the re-ask.
+const queueSrc = fs.readFileSync(path.join(root, 'netlify', 'functions', 'axis-brain-queue.mjs'), 'utf8');
+assert.match(queueSrc, /kb-index\.json/, 'the learn action updates the manifest');
+assert.match(queueSrc, /idx\.entries\.push/, 'the new key is registered in entries[]');
+assert.match(worker, /kb-index\.json/, 'the worker updates the manifest too');
+assert.match(worker, /idx\.entries\.push/, 'the worker registers its key');
+// Assert on the IMPORT, not the identifier — the file mentions getStore() in comments explaining
+// exactly why it must not be used, and a naive /getStore/ match flags its own documentation.
+assert.ok(!/require\(\s*['"]@netlify\/blobs['"]\s*\)/.test(
+  fs.readFileSync(path.join(root, 'netlify', 'functions', 'lib', 'axis-brain.cjs'), 'utf8')),
+  'the CJS cascade never imports @netlify/blobs — every Blobs touch goes through the v2 helper');
+n++;
+
+console.log(`axis-brain-cascade: ${n}/7 groups green — KB → research → Max plan → metered API, and only real answers are banked.`);

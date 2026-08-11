@@ -107,16 +107,30 @@ const worthLearning = (q, a) =>
   String(a).trim().length >= 60 && !SLOP.test(String(a).trim()) &&
   !NON_ANSWER.test(String(a)) && !/\?\s*$/.test(String(a).trim());
 
+// Banking requires TWO writes and both matter:
+//   1. the learn-* blob (the body), and
+//   2. an entry in kb-index.json — aria-kb-query discovers learned bits ONLY through that manifest
+//      (loadLiveChunks reads kb-index.json → entries[] → store.get(e.key)).
+// Writing only the blob banks an answer the brain can never find. Measured 2026-08-11: the first
+// Max-plan answer stored fine and still missed on the re-ask for exactly this reason.
 async function bank(query, answer) {
   if (!worthLearning(query, answer)) return false;
   const topic = String(query).toLowerCase().replace(/[^a-z0-9\s-]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 90);
   const key = 'learn-' + topic.replace(/\s+/g, '-').slice(0, 60) + '-' + Date.now().toString(36);
+  const now = new Date().toISOString();
   try {
     await kbLive.setJSON(key, {
       topic, question: String(query).slice(0, 500), body: String(answer).slice(0, 3500),
       agent: 'axis-brain-worker', source: 'claude-max-plan', verified_answer: true,
-      promoted: true, promoted_at: new Date().toISOString(), created_at: new Date().toISOString(),
+      promoted: true, promoted_at: now, created_at: now,
     });
+    let idx = null;
+    try { idx = await kbLive.get('kb-index.json', { type: 'json' }); } catch { idx = null; }
+    if (!idx || !Array.isArray(idx.entries)) idx = { entries: [] };
+    idx.entries = idx.entries.filter((e) => e && e.key !== key);
+    idx.entries.push({ key, topic, promoted: true, t: Date.now() });
+    if (idx.entries.length > 5000) idx.entries = idx.entries.slice(-5000);
+    await kbLive.setJSON('kb-index.json', idx);
     return true;
   } catch (e) { console.warn('[axis-brain-worker] bank failed:', e.message); return false; }
 }

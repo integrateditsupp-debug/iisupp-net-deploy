@@ -188,7 +188,10 @@ exports.handler = async (event) => {
     // for free from now on. Gated by worthLearning() — greetings and non-answers are never banked.
     try {
       const { learnBack } = require('./lib/axis-brain.cjs');
-      const res = await learnBack({ query: askText, answer: out.text, tier: 'anthropic', source: 'anthropic-api' });
+      const host2 = (event.headers && (event.headers.host || event.headers.Host)) || '';
+      const auth2 = (event.headers && (event.headers.authorization || event.headers.Authorization)) || '';
+      const res = await learnBack({ query: askText, answer: out.text, tier: 'anthropic', source: 'anthropic-api',
+        origin: host2 ? `https://${host2}` : '', auth: auth2 });
       out.learned = !!res.learned;
     } catch (_) { /* banking is best-effort; never fail a good answer over it */ }
     out.brainTier = 'anthropic';
