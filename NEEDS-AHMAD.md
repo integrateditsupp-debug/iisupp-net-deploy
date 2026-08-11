@@ -1,24 +1,33 @@
 # NEEDS AHMAD — the whole list, in order
 
-> **CYCLE 144 (2026-08-11), RUN 152 — NEW TOP ITEM, AND IT IS 30 SECONDS OF YOUR TIME.**
+> **CYCLE 146 (2026-08-11), RUN-BC — the shell is back, the work is merged, and there is exactly ONE
+> thing only you can give this seat.**
 >
-> **0. RESTART THE COWORK SESSION. The build environment is dead and a week of merged work has no
-> second copy.**
-> Every shell call this cycle failed with `No space left on device` on the sandbox host — five in a
-> row, then the harness refused further retries. No git, no node, no tests, no merge, no push. Nothing
-> was built this cycle and nothing is claimed to have been.
+> **0. A CODE-HOST CREDENTIAL. Local `main` is now 49 commits ahead of the shared remote and that
+> work exists on ONE machine.**
+> `git push` refuses, verbatim: `could not read Username for 'https://github.com'`. Everything from
+> RUN-AV through RUN-BC — the legal pack, the claim registers, the AXIS voice console, this cycle's
+> merge — is on this machine and nowhere else. This is not a decision and not labour; it is the one
+> capability the sandbox lacks. Until it exists, every cycle adds more work to a single copy.
 >
-> Read straight off `.git`: `origin/main` is `cb4f3f04`, last pushed **2026-08-06** and unmoved since.
-> Local `main` is `e8783fc6` and carries everything cycles 138–143 merged **today** — RUN-AV through
-> RUN-AZ plus the classifier loop. **That work exists in exactly one place: this machine.** Until a
-> shell comes back it cannot be pushed, and the flywheel cannot add to it.
+> **Merging main did NOT publish anything.** The Netlify publish is still your one deliberate click.
 >
-> This is not a decision and not labour — restart Cowork (or free disk on the sandbox host). The first
-> act of the next shell-capable cycle is `git push origin main`, before any new build.
+> **What cycle 144 asked for is CLOSED and its diagnosis was wrong, which matters more than the fix.**
+> Cycle 144 said the environment was dead and asked you to restart the session. The shell is back and
+> nothing needed restarting on your side. Better: the test suite that has been reading 43–48 of 81 for
+> two cycles was never failing on its own code. `/sessions` — the volume holding the working copy — is
+> at 100% with 0 bytes free, and every failing suite was one that opens a scratch file there. Pointed
+> at a volume with room, the same tree at the same commit reads **81/81**. Nothing in the product was
+> changed to get there, and the emitter now refuses to measure at all rather than report that red as a
+> code fault a third time.
 >
-> The AXIS status feed was deliberately **left untouched** this cycle rather than refreshed with a
-> timestamp and test counts nothing could verify (Rule 14). It still reads `2026-08-11T20:08:11Z` from
-> cycle 143, which is today and not stale.
+> Also closed without asking you: the `.git/index.lock` the observer loop has flagged for five days as
+> *"sandbox cannot rm it, Ahmad must delete from Windows."* This mount refuses `unlink` but permits
+> `rename` — it is parked, along with 58 dangling checkpoint refs that had been silently making every
+> backup bundle refuse.
+>
+> **The AXIS status feed is fresh and true**: regenerated this cycle from readings taken this cycle —
+> registry 1074 / 0 / 372 suites / exit 0, site suite 81/81 — `generatedAt 2026-08-11T23:39:16Z`.
 >
 > Everything below still stands, in the same order.
 
