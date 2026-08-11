@@ -10,7 +10,7 @@
 
 **Data Controller** ("Customer"): [CUSTOMER LEGAL NAME], a [JURISDICTION] [ENTITY TYPE], located at [CUSTOMER ADDRESS].
 
-**Data Processor** ("ARIA Provider"): Integrated IT Support Inc., a Canadian corporation located at 30 Fothergill Court, Whitby, Ontario L1P 2L4.
+**Data Processor** ("ARIA Provider"): Integrated IT Support Inc., a Canadian corporation located at 30 Fothergill Court, Whitby, Ontario L1P 1L4.
 
 This DPA forms part of the Master Services Agreement ("MSA") between the parties dated [MSA DATE]. To the extent of any conflict between this DPA and the MSA, this DPA controls with respect to processing of Personal Data.
 

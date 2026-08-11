@@ -8,7 +8,7 @@
 
 This Master Services Agreement ("Agreement") is entered into on [EFFECTIVE DATE] between:
 
-**Provider:** Integrated IT Support Inc., a Canadian corporation with principal office at 30 Fothergill Court, Whitby, Ontario L1P 2L4 ("Provider" or "ARIA Provider").
+**Provider:** Integrated IT Support Inc., a Canadian corporation with principal office at 30 Fothergill Court, Whitby, Ontario L1P 1L4 ("Provider" or "ARIA Provider").
 
 **Customer:** [CUSTOMER LEGAL NAME], a [JURISDICTION] [ENTITY TYPE] with principal office at [CUSTOMER ADDRESS] ("Customer").
 

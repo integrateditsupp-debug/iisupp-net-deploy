@@ -26,7 +26,7 @@ Rules that are not optional:
 - Legal name is **Integrated IT Support Inc.** — with the period on "Inc." Do not list as
   "Integrated IT Support", "IIS", "IISupport", or "iisupp.net". Directories match on exact
   string; variants create duplicate entities.
-- Postal code is **L1P 1L4**. Some older outbound templates carry **L1P 2L4** — that is
+- Postal code is **L1P 1L4**. Some older outbound templates carry **L1P 1L4** — that is
   wrong, and under CASL an inaccurate physical address in a commercial email is a defect.
   Fix it wherever it appears before it propagates into a public listing.
 - Phone renders as **(647) 581-3182** in North American forms and **+1 647 581 3182**

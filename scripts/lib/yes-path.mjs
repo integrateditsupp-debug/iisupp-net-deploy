@@ -118,6 +118,10 @@ export const STEPS = [
     name: "an agreement exists to sign",
     manual: { because: "a signature is an irreversible act by a named person; software must never forge it" },
     artefacts: [
+      // AU1. The client-facing agreement now lives in the tracked tree, so a clone can produce the
+      // document a client signs. The operator copy under `documents/` is KEPT and still consulted
+      // (Rule 15 — nothing is removed); it simply stops being the only one.
+      { path: "legal/Pilot-Agreement-TEMPLATE.md", kind: "doc", must: ["nonEmpty", "contact"] },
       { path: "documents/sales-marketing/ARIA-Sentinel-14-Day-Pilot-Agreement-TEMPLATE.md", kind: "doc", must: ["nonEmpty", "contact"] },
     ],
   },
@@ -141,17 +145,32 @@ export const STEPS = [
   },
 ];
 
+/**
+ * What the shared line carries. CORRECTED IN AU3, and the correction is the point.
+ *
+ * AT1 asked `git ls-files`, which reads the INDEX. This environment's index has been frozen since a
+ * stale `.git/index.lock` the sandbox cannot unlink (AR3's boundary), and it now sits 27 entries
+ * behind HEAD — so `ls-files` was reporting files a clone demonstrably DOES receive as absent. The
+ * question is "can a clone produce this", and that answer lives in HEAD's TREE. HEAD is the source;
+ * the index is a union on top of it, because a staged file is on its way in. Neither readable is
+ * reported as unreadable, never guessed.
+ */
 function trackedSet(root) {
-  try {
-    const out = execFileSync("git", ["ls-files", "-z"], {
-      cwd: root, encoding: "utf8", maxBuffer: 64 * 1024 * 1024,
-      stdio: ["ignore", "pipe", "ignore"],
-      env: { ...process.env, GIT_TERMINAL_PROMPT: "0" },
-    });
-    return new Set(out.split("\0").filter(Boolean));
-  } catch {
-    return null; // not a repository, or git refused — reported, never guessed
-  }
+  const read = (args) => {
+    try {
+      return execFileSync("git", args, {
+        cwd: root, encoding: "utf8", maxBuffer: 64 * 1024 * 1024,
+        stdio: ["ignore", "pipe", "ignore"],
+        env: { ...process.env, GIT_TERMINAL_PROMPT: "0" },
+      }).split("\0").filter(Boolean);
+    } catch {
+      return null; // not a repository, or git refused — reported, never guessed
+    }
+  };
+  const head = read(["ls-tree", "-r", "-z", "--name-only", "HEAD"]);
+  const index = read(["ls-files", "-z"]);
+  if (head === null && index === null) return null;
+  return new Set([...(head || []), ...(index || [])]);
 }
 
 function judgeArtefact({ root, spec, tracked, contact }) {

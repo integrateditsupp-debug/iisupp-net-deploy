@@ -135,6 +135,28 @@ const TESTS = [
   // DESIGN (the signature, the payment authorisation) is kept apart from manual because nothing
   // carries the step; anything unreadable is UNCOUNTED with its reason rather than estimated to zero.
   "../../tests/time-to-first-dollar.test.mjs",
+  // CLIENT-FACING LEAK GATE 2026-08-11 (RUN-AU / AU1) — the gate that lets a client-signable
+  // agreement live in the shared line WITHOUT weakening the 2026-07-01 lockdown. Every client-facing
+  // document is read for operator-internal content — credential, internal path, internal codename,
+  // the forbidden name, rule-7 language, an experience claim past 15+ years, a contact detail that
+  // contradicts what the company publishes — and each refusal class is proven by planting that exact
+  // leak and asserting it fails BY NAME AND BY LINE. A quoted price the company publishes nowhere is
+  // counted and cited as a DECISION rather than a leak, because a gate that forced working contracts
+  // to be deleted to go green would be the worse failure (Rule 15).
+  "../../tests/client-facing-leak.test.mjs",
+  // INVOICE REHEARSAL 2026-08-11 (RUN-AU / AU2) — the path from an agreed proposal to a raised
+  // invoice, walked end to end in a throwaway directory with no live API call, no key, no network
+  // and no money moved. Every failure class is named and proven red against a fixture built to fail
+  // that way: a figure with no source, a plan not published, a missing client, a plan with no charge
+  // route, an unreadable checkout, and a currency that disagrees with the plan table. The charge
+  // itself is reported UNRUN with its reason — never as a pass.
+  "../../tests/invoice-rehearsal.test.mjs",
+  // YES-PATH REGRESSION 2026-08-11 (RUN-AU / AU3) — tests/yes-path.test.mjs proves the WALKER is
+  // correct against fixtures; this asserts a fact about THIS repository: all six steps from a reply
+  // to a first dollar are carried by artefacts the shared line holds, and the suite goes red the
+  // moment one falls back to untracked, unusable or missing. The detection itself is proven by
+  // pointing a step at a file that does not exist.
+  "../../tests/yes-path-regression.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   // SITE FINEPRINT GATE 2026-08-06 (salvaged from cc/axis-feed-2026-08-04) — the site-wide legal

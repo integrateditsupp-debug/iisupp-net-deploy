@@ -12,7 +12,7 @@
 
 **Covered Entity** ("Customer"): [CUSTOMER LEGAL NAME], a [JURISDICTION] [ENTITY TYPE], located at [CUSTOMER ADDRESS].
 
-**Business Associate** ("ARIA Provider"): Integrated IT Support Inc., a Canadian corporation located at 30 Fothergill Court, Whitby, Ontario L1P 2L4.
+**Business Associate** ("ARIA Provider"): Integrated IT Support Inc., a Canadian corporation located at 30 Fothergill Court, Whitby, Ontario L1P 1L4.
 
 ---
 
