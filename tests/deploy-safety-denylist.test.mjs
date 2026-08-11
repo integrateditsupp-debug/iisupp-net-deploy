@@ -12,29 +12,13 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const out = execFileSync("git", ["ls-files", "-z"], { cwd: repoRoot, maxBuffer: 64 * 1024 * 1024 });
 const files = out.toString("utf8").split("\0").filter(Boolean);
 
-// ARIA Sentinel is the one exception: its recipe/build scripts (*.ps1/*.bat) and CLAUDE.md
-// are desktop-product source that must stay in git; the whole tree is force-404'd live
-// via the /ARIA Sentinel/* redirect, so it never serves.
-// backups/ is NOT denied: main legitimately tracks 7 code-backup files there (no PII),
-// already force-404'd live via /backups/*.
-const SENTINEL_PREFIX = "ARIA Sentinel/";
+// RUN-BA / BA0: the vocabulary moved to scripts/lib/deploy-denylist.mjs so the COMMITTER can refuse
+// with the same list this test reports against. The rules themselves are unchanged, and they are
+// documented at their new home: the Sentinel exemption, and backups/ deliberately not denied.
+// This test keeps every assertion it had — it stopped OWNING the list, it did not stop enforcing it.
+const { denylistViolations } = await import(pathToFileURL(path.join(repoRoot, "scripts/lib/deploy-denylist.mjs")).href);
 
-const DENY_PREFIXES = [
-  "aria-vault/",
-  "senior-director-state/",
-  "documents/",
-  "ARIA-Vault-Backups/",
-  "_vault-backups",
-];
-
-const violations = files.filter((f) => {
-  if (DENY_PREFIXES.some((p) => f.startsWith(p))) return true;
-  if (f.startsWith(SENTINEL_PREFIX)) return false;
-  if (f === "CLAUDE.md" || f.endsWith("/CLAUDE.md")) return true;
-  if (/\.(cmd|bat|ps1)$/i.test(f)) return true;
-  if (f.toLowerCase().endsWith(".tar.gz")) return true;
-  return false;
-});
+const violations = denylistViolations(files).map((v) => v.file);
 
 if (violations.length) {
   console.error(`DEPLOY-SAFETY DENYLIST — ${violations.length} internal path(s) tracked by git (must NEVER ship):`);

@@ -4,6 +4,12 @@
 const TESTS = [
   // SECURITY LOCKDOWN 2026-07-01 — repo-level deploy-safety denylist (lives at repo root; runs first).
   "../../tests/deploy-safety-denylist.test.mjs",
+  // RUN-BA / BA0 — the same denylist, enforced one step EARLIER. `deploy-safety-denylist` reports a
+  // tracked internal path on the next arrival; this asserts the plumbing committer REFUSES it at the
+  // moment of the write, which is the only moment the last commit of a cycle is ever observed.
+  // Registered by hand: RUN-AW recorded that this manifest does not pick up new files, and a suite
+  // running green outside the count is the same lie in a nicer shirt.
+  "../../tests/plumbing-commit-denylist.test.mjs",
   // SERVING-LAYER LOCKDOWN 2026-07-02 — live-probe logic (git-state tests can't see the serving layer).
   "../../tests/probe-deploy-safety.test.mjs",
   // CLONE PREP 2026-08-06 (salvaged from cc/axis-feed-2026-08-04, which is otherwise superseded by

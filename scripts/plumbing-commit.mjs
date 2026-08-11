@@ -20,6 +20,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { denylistViolations } from "./lib/deploy-denylist.mjs";
 
 const root = process.cwd();
 const git = (args, opts = {}) => execFileSync("git", args, {
@@ -28,9 +29,25 @@ const git = (args, opts = {}) => execFileSync("git", args, {
   env: { ...process.env, GIT_TERMINAL_PROMPT: "0", ...(opts.env || {}) },
 }).trim();
 
-export function plumbingCommit({ message, files, branch = "main", dryRun = false }) {
+export function plumbingCommit({ message, files, remove = [], branch = "main", dryRun = false }) {
   if (!message || !message.trim()) throw new Error("a commit without a message is a commit nobody can review");
-  if (!files || !files.length) throw new Error("no files named; a commit that guesses its own contents is not a commit");
+  if ((!files || !files.length) && (!remove || !remove.length)) throw new Error("no files named; a commit that guesses its own contents is not a commit");
+  files = files || [];
+
+  // ── RUN-BA / BA0 — THE REFUSAL THAT REPLACES A REPORT.
+  // `tests/deploy-safety-denylist.test.mjs` has always caught a tracked internal path. It caught the
+  // ten this cycle repaired. What it cannot do is catch them BEFORE the commit, and the write it
+  // could not see is always the last one of a cycle — the ledger head, the queue, the run file,
+  // written after the final registry read. So the committer refuses here, at the only moment that
+  // is still cheap. The list is imported, never restated: one vocabulary, two enforcers.
+  const denied = denylistViolations(files);
+  if (denied.length) {
+    throw new Error(
+      `plumbing-commit: ${denied.length} named path(s) must never be tracked — this repository's publish dir is "." ` +
+      `so every tracked path ships to a clone and to the live deploy:\n` +
+      denied.map((d) => `  ${d.file} — ${d.rule}`).join("\n")
+    );
+  }
 
   const missing = files.filter((f) => !fs.existsSync(path.join(root, f)));
   if (missing.length) throw new Error(`named but not on disk: ${missing.join(", ")}`);
@@ -44,6 +61,11 @@ export function plumbingCommit({ message, files, branch = "main", dryRun = false
     git(["read-tree", before], { env });
     // Chunked so a long file list cannot overflow the argument limit and silently drop a path.
     for (let i = 0; i < files.length; i += 40) git(["add", "--", ...files.slice(i, i + 40)], { env });
+    // Untracking is `--cached` ONLY: the file stays on disk. A repair that deletes an operator's
+    // ledger to make a check green would be a worse defect than the one being repaired (Rule 15).
+    for (let i = 0; i < remove.length; i += 40) {
+      git(["rm", "--cached", "--ignore-unmatch", "-r", "--", ...remove.slice(i, i + 40)], { env });
+    }
     const tree = git(["write-tree"], { env });
 
     if (tree === git(["rev-parse", `${before}^{tree}`])) {
@@ -73,9 +95,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const argv = process.argv.slice(2);
   const take = (flag) => { const i = argv.indexOf(flag); return i === -1 ? null : argv[i + 1]; };
   const files = argv.reduce((acc, a, i) => (a === "--file" ? [...acc, argv[i + 1]] : acc), []);
+  const remove = argv.reduce((acc, a, i) => (a === "--untrack" ? [...acc, argv[i + 1]] : acc), []);
   const listFile = take("--file-list");
   const all = listFile ? [...files, ...fs.readFileSync(listFile, "utf8").split("\n").map((s) => s.trim()).filter(Boolean)] : files;
-  const res = plumbingCommit({ message: take("--message"), files: all, branch: take("--branch") || "main", dryRun: argv.includes("--dry-run") });
+  const res = plumbingCommit({ message: take("--message"), files: all, remove, branch: take("--branch") || "main", dryRun: argv.includes("--dry-run") });
   console.log(JSON.stringify(res, null, 2));
   process.exit(res.ok ? 0 : 1);
 }
