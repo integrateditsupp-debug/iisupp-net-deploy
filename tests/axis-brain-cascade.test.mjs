@@ -115,6 +115,20 @@ assert.match(worker, /env: PLAN_ENV/, 'the scrubbed env is actually passed to sp
 assert.match(worker, /'--print'/, 'the CLI is invoked non-interactively');
 ok();
 
+// ---- 7a. A trailing offer must not bin a real answer ----
+// Measured 2026-08-11: a 1965-char Max-plan answer was discarded because it closed with
+// "Want me to draft the actual rate-card language?" — a bare /\?$/ test cannot tell a friendly
+// sign-off from a clarifying question. The offer is stripped; the answer is kept and banked.
+const WITH_OFFER = LONG + '\n\nWant me to draft the actual rate-card language or the SLA clause?';
+assert.ok(!/want me to/i.test(B.stripTrailingOffer(WITH_OFFER)), 'the trailing offer is stripped');
+assert.ok(B.stripTrailingOffer(WITH_OFFER).length > 100, 'the substance survives stripping');
+assert.ok(B.worthLearning('how should an MSP price after-hours callouts', WITH_OFFER, 'subscription'),
+  'an answer that merely ENDS with an offer is still banked');
+// …but a genuine clarifying question is still refused.
+assert.ok(!B.worthLearning('help me', 'Which printer model are you using, and what error appears?', 'subscription'),
+  'a real clarifying question is still never banked');
+n++;
+
 // ---- 7. Banking registers in kb-index.json, not just the blob ----
 // aria-kb-query discovers learned bits ONLY via kb-index.json (loadLiveChunks reads entries[] then
 // store.get(e.key)). Writing the blob alone banks an answer the brain can never find -- measured
@@ -131,4 +145,4 @@ assert.ok(!/require\(\s*['"]@netlify\/blobs['"]\s*\)/.test(
   'the CJS cascade never imports @netlify/blobs — every Blobs touch goes through the v2 helper');
 n++;
 
-console.log(`axis-brain-cascade: ${n}/7 groups green — KB → research → Max plan → metered API, and only real answers are banked.`);
+console.log(`axis-brain-cascade: ${n}/8 groups green — KB → research → Max plan → metered API, and only real answers are banked.`);

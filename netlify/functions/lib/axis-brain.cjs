@@ -18,10 +18,11 @@
 // CJS on purpose: axis-director.js is `exports.handler` CJS and cannot import ESM.
 //
 // TIERS, cheapest first. Each returns null to fall through; nothing here ever throws upward.
-//   1 kb           — ARIA brain (aria-kb-query, incl. promoted learned bits)   $0
-//   2 research     — the research agents (aria-research)                        $0
-//   3 subscription — local Claude CLI on the Max plan, time-boxed               $0 API spend
-//   4 anthropic    — metered API. Last resort, run by the caller, not here.
+//   1 recall       — ARIA brain, previously-banked answers (never pay twice)     $0
+//   2 kb           — ARIA brain, curated static KB (aria-kb-query)               $0
+//   3 research     — the research agents (aria-research)                         $0
+//   4 subscription — local Claude CLI on the Max plan, time-boxed                $0 API spend
+//   5 anthropic    — metered API. Last resort, run by the caller, not here.
 // Whatever tier ≥2 answers, the result is written back so tier 1 catches it next time.
 
 const KB_LIVE = 'aria-kb-live';           // same store aria-kb-query merges promoted entries from
@@ -37,6 +38,22 @@ const SUB_POLL_MS = 400;
 // into legacy CJS `exports.handler` functions, so every Blobs touch goes through axis-brain-queue.mjs.
 
 // ── Tier 1: ARIA brain ───────────────────────────────────────────────────────
+// Two halves, both $0:
+//   a) previously-banked answers (the learning loop's own output), read via the v2 helper, and
+//   b) the curated static KB via aria-kb-query.
+// (a) goes first because it is the whole point of banking — a question answered once should never
+// be paid for again. It has to be read through axis-brain-queue.mjs because aria-kb-query is a
+// v1-style function with no Blobs context, so its own live-KB merge silently returns nothing.
+async function recallTier(query, origin, auth) {
+  if (!origin) return null;
+  try {
+    const r = await queueCall(origin, auth, { action: 'recall', query });
+    if (!r || !r.ok || !r.match || !r.answer) return null;
+    return { text: String(r.answer).trim(), tier: 'kb-learned', source: r.source || 'aria-brain-learned',
+      confidence: r.confidence || null, cost: 0 };
+  } catch (_) { return null; }
+}
+
 async function kbTier(query, origin) {
   try {
     const r = await fetch(`${origin}/.netlify/functions/aria-kb-query`, {
@@ -116,8 +133,17 @@ const SLOP = /^(hi|hello|hey|sure|ok|okay|got it|heard you|thanks|understood)\b/
 const NON_ANSWER = /\b(i (don'?t|do not) know|i'?m not sure|cannot help|can'?t help|no curated answer|unable to|as an ai)\b/i;
 const IS_QUESTION = /\?\s*$/;
 
+// A long, useful answer often ends with a friendly offer ("Want me to draft the rate card?").
+// That is conversational cruft, not knowledge — strip it rather than discard the whole answer.
+// Measured 2026-08-11: a 1965-character Max-plan answer was thrown away by a bare /\?$/ test
+// purely because of its closing sentence.
+const OFFER = /(?:^|[.!?]\s+)((?:want me to|shall i|should i|would you like|do you want|need me to|let me know if)[^.!?]*\?)\s*$/i;
+function stripTrailingOffer(text) {
+  return String(text || '').trim().replace(OFFER, (m, q, off) => m.slice(0, m.length - q.length)).trim();
+}
+
 function isSubstantive(text) {
-  const t = String(text || '').trim();
+  const t = stripTrailingOffer(text);
   if (t.length < 60) return false;          // one-liners carry no reusable procedure
   if (SLOP.test(t)) return false;
   if (NON_ANSWER.test(t)) return false;
@@ -147,7 +173,7 @@ async function learnBack({ query, answer, tier, source, origin, auth }, now = Da
   try {
     const r = await queueCall(origin, auth, {
       action: 'learn', key, topic, question: String(query).slice(0, 500),
-      body: String(answer).slice(0, 3500), source: source || tier,
+      body: stripTrailingOffer(answer).slice(0, 3500), source: source || tier,
     });
     return r && r.ok ? { learned: true, key } : { learned: false, reason: (r && r.reason) || 'learn-failed' };
   } catch (_) { return { learned: false, reason: 'unreachable' }; }
@@ -162,6 +188,7 @@ async function askBrain({ query, origin, auth, skip = [], subWaitMs = SUB_WAIT_M
   const tried = [];
 
   for (const [name, run] of [
+    ['recall', () => recallTier(q, origin, auth)],   // banked answers first — never pay twice
     ['kb', () => kbTier(q, origin)],
     ['research', () => researchTier(q, origin)],
     ['subscription', () => subscriptionTier(q, { origin, auth, waitMs: subWaitMs })],
@@ -175,5 +202,5 @@ async function askBrain({ query, origin, auth, skip = [], subWaitMs = SUB_WAIT_M
   return null;
 }
 
-module.exports = { askBrain, kbTier, researchTier, subscriptionTier, learnBack, isSubstantive, worthLearning,
+module.exports = { askBrain, stripTrailingOffer, recallTier, kbTier, researchTier, subscriptionTier, learnBack, isSubstantive, worthLearning,
   KB_LIVE, JOBS, HEARTBEAT_KEY, HEARTBEAT_MAX_MS };

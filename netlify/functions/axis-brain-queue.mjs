@@ -89,6 +89,47 @@ export default async (request) => {
     } catch (e) { return json(200, { ok: false, reason: 'learn-failed', detail: e.message }); }
   }
 
+  // Recall a previously-banked answer. THIS IS WHY IT EXISTS (measured 2026-08-11):
+  // aria-kb-query.mjs is a v1-style function (`export async function handler(event)`), and Netlify
+  // does not give those the Blobs context — so its loadLiveChunks() silently catches, caches an
+  // empty list for 10 minutes, and reports live_chunks: 0 forever. Every learned bit the promote
+  // cron has ever written is invisible to it. Rather than convert that production function (it
+  // serves ARIA and Sentinel), the cascade reads the learned store here, in v2, where Blobs works.
+  // aria-kb-query still serves the 281 static chunks exactly as before — this only adds recall.
+  if (action === 'recall') {
+    const query = String(body.query || '').trim();
+    if (!query) return json(400, { error: 'query required' });
+    try {
+      const kb = getStore({ name: 'aria-kb-live', consistency: 'eventual' });
+      const idx = await kb.get('kb-index.json', { type: 'json' });
+      if (!idx || !Array.isArray(idx.entries)) return json(200, { ok: true, match: false, live: 0 });
+
+      const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter((w) => w.length > 3);
+      const qWords = new Set(norm(query));
+      if (!qWords.size) return json(200, { ok: true, match: false, live: idx.entries.length });
+
+      // Score on topic overlap first — cheap, and the topic IS the original question.
+      const ranked = idx.entries
+        .filter((e) => e && e.promoted && e.key)
+        .map((e) => {
+          const tWords = norm(e.topic);
+          const hits = tWords.filter((w) => qWords.has(w)).length;
+          return { e, score: tWords.length ? (hits / Math.max(qWords.size, tWords.length)) * 100 : 0 };
+        })
+        .sort((a, b) => b.score - a.score);
+
+      const top = ranked[0];
+      // 55% token overlap: high enough that a different question never matches, low enough that a
+      // re-phrasing of the same question still does.
+      if (!top || top.score < 55) return json(200, { ok: true, match: false, best: top ? Math.round(top.score) : 0, live: ranked.length });
+
+      const rec = await kb.get(top.e.key, { type: 'json' });
+      if (!rec || !rec.body) return json(200, { ok: true, match: false, live: ranked.length });
+      return json(200, { ok: true, match: true, confidence: Math.round(top.score),
+        answer: rec.body, topic: rec.topic, source: rec.source || 'aria-brain-learned' });
+    } catch (e) { return json(200, { ok: false, reason: 'recall-failed', detail: e.message }); }
+  }
+
   if (action === 'poll') {
     const id = String(body.id || '');
     if (!id) return json(400, { error: 'id required' });

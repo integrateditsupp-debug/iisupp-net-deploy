@@ -35,7 +35,8 @@ const CLAUDE_BIN = process.env.CLAUDE_BIN || 'claude';
 const SYSTEM = `You are AXIS, the operations director for Integrated IT Support Inc.
 Answer the question directly and practically, in plain language. If it is a technical
 problem, give concrete steps. Be concise: no preamble, no sign-off, no markdown headers.
-If you genuinely do not know, say so in one line rather than guessing.`;
+If you genuinely do not know, say so in one line rather than guessing.
+Do not end with an offer or a follow-up question — end on the answer itself.`;
 
 // Blobs credentials. Fall back to the token the Netlify CLI already stored at login, so this runs
 // with no setup on a machine where `netlify` is signed in — no personal access token to mint.
@@ -102,10 +103,19 @@ function askClaude(prompt) {
 // Same gate the cloud side uses — a greeting or a non-answer must never become "knowledge".
 const SLOP = /^(hi|hello|hey|sure|ok|okay|got it|heard you|thanks|understood)\b/i;
 const NON_ANSWER = /\b(i (don'?t|do not) know|i'?m not sure|cannot help|can'?t help|unable to|as an ai)\b/i;
+// A long, useful answer often ends with a friendly offer ("Want me to draft the rate card?").
+// That is conversational cruft, not knowledge — strip it rather than discard the whole answer.
+// Measured 2026-08-11: a 1965-character Max-plan answer was thrown away by a bare /\?$/ test
+// purely because of its closing sentence.
+const OFFER = /(?:^|[.!?]\s+)((?:want me to|shall i|should i|would you like|do you want|need me to|let me know if)[^.!?]*\?)\s*$/i;
+function stripTrailingOffer(text) {
+  return String(text || '').trim().replace(OFFER, (m, q, off) => m.slice(0, m.length - q.length)).trim();
+}
+
 const worthLearning = (q, a) =>
   String(q).trim().length >= 12 && !SLOP.test(String(q).trim()) &&
-  String(a).trim().length >= 60 && !SLOP.test(String(a).trim()) &&
-  !NON_ANSWER.test(String(a)) && !/\?\s*$/.test(String(a).trim());
+  stripTrailingOffer(a).length >= 60 && !SLOP.test(stripTrailingOffer(a)) &&
+  !NON_ANSWER.test(String(a)) && !/\?\s*$/.test(stripTrailingOffer(a));
 
 // Banking requires TWO writes and both matter:
 //   1. the learn-* blob (the body), and
@@ -120,7 +130,7 @@ async function bank(query, answer) {
   const now = new Date().toISOString();
   try {
     await kbLive.setJSON(key, {
-      topic, question: String(query).slice(0, 500), body: String(answer).slice(0, 3500),
+      topic, question: String(query).slice(0, 500), body: stripTrailingOffer(answer).slice(0, 3500),
       agent: 'axis-brain-worker', source: 'claude-max-plan', verified_answer: true,
       promoted: true, promoted_at: now, created_at: now,
     });
