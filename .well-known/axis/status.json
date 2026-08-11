@@ -1,12 +1,12 @@
 {
  "status": "active build",
- "milestone": "The customer-facing product and the operator command centre are built and tested. This cycle repaired a packaging fault of its own making rather than adding surface: ten internal files had become tracked by the last cycle's final commits, and the check that finds them ran one cycle too late to stop the write.",
- "readiness": "Built and tested. Publishing is a deliberate manual step by the operator, never automatic. The internal-path guard now refuses the commit instead of reporting it afterwards.",
+ "milestone": "The operator command centre can now be spoken to and answers out loud. This cycle fixed three faults found by using it rather than by reading it: it did not recognise the spoken name, it gave one vague message for every kind of failure, and its priorities view had no dates on it.",
+ "readiness": "Built and tested. Publishing to the live site stays a deliberate manual step by the operator, never automatic. Where the assistant cannot reach its reasoning service it now says which condition it hit and keeps answering from the last saved snapshot instead of going silent.",
  "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build. This cycle opened on a real red and repaired it: ten internal files that the previous cycle's last two commits had made tracked are tracked no longer, none deleted from disk, and the guard moved from a report into a refusal. Sent: 0. Meetings 0, revenue none. Tests: 1074 pass, 0 fail, 372/372 suites.",
+ "headline": "ARIA / AXIS is in active build and is now voice-operable. Three faults fixed this cycle: the spoken name was not recognised by real browsers, every failure reported the same vague message, and the priorities view carried no dates — dates are shown only where a real one exists, never invented. Sent: 0. Meetings 0, revenue none. Tests: 1074 pass, 0 fail, 372/372 suites; site suite 81/81.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
  "schema": "axis-status/1",
- "generatedAt": "2026-08-11T19:29:07.354Z",
+ "generatedAt": "2026-08-11T20:08:11.037Z",
  "public": true,
  "honest": true
 }
