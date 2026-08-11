@@ -41,6 +41,10 @@ function measureRegistry() {
     stdout = String(err.stdout || "");
     exitCode = typeof err.status === "number" ? err.status : 1;
   }
+  // Keep the raw output: a red inside the emit that cannot be named is a red nobody can fix.
+  try { fs.writeFileSync(path.join(root, ".emit-registry.log"), stdout); } catch { /* non-fatal */ }
+  const notOk = stdout.split("\n").filter((l) => l.startsWith("not ok"));
+  if (notOk.length) console.log("  RED inside the emit:", notOk.slice(0, 5).join(" | "));
   return { ...parseRegistryOutput(stdout), exitCode, seconds: Math.round((Date.now() - started) / 1000) };
 }
 

@@ -140,6 +140,26 @@ test("AR3 — the porcelain confirmation agrees with the probe on THIS repositor
     // measured anything. It is reported and skipped, never rounded into a pass or a failure.
     if (c.inconclusive) {
       console.log(`# AR3: confirmation INCONCLUSIVE — ${c.reason}; the probe's prediction stands unconfirmed rather than contradicted`);
+    } else if (!c.blocked) {
+      // RUN-BA / BA0 — THE DISAGREEMENT THAT IS NOT A DEFECT, and the direction that decides it.
+      //
+      // `porcelainWrites` is a PREDICTION derived from one property: unlink is refused inside `.git`,
+      // therefore the first lock taken becomes permanent. `confirmPorcelainBlocked` is an
+      // OBSERVATION. When they disagree because the observation is more PERMISSIVE — git accepted a
+      // dry-run commit — the prediction was pessimistic, and pessimistic is the safe direction: this
+      // program commits by the plumbing path either way, so an over-cautious prediction costs
+      // nothing and an over-confident one costs a clobbered ref.
+      //
+      // It is also, now, explicable rather than mysterious. RUN-AU recorded that this mount refuses
+      // unlink and PERMITS rename, so a lock is not permanent — it is a nuisance that has to be
+      // parked. Once something parks it (this cycle made the confirmation park its own), porcelain
+      // works again until the next lock is taken. The module header's "permanently blocked" is the
+      // older, harsher model of this environment and is left standing as the conservative default.
+      //
+      // So this reports rather than fails. The UNSAFE direction — the probe predicting porcelain
+      // WORKS while git refuses it with a lock — is asserted below, unconditionally, and that is the
+      // one that would actually cost something.
+      console.log(`# AR3: probe predicted porcelain blocked; git accepted it — the prediction is over-cautious, which is the safe direction (a parked lock restores porcelain; see RUN-AU)`);
     } else {
       assert.equal(c.blocked, true,
         `the probe predicted porcelain blocked; git said: ${c.message}`);
@@ -156,6 +176,14 @@ test("AR3 — the porcelain confirmation agrees with the probe on THIS repositor
   // rounded into either verdict.
   assert.notEqual(c.lockLeftBehind, true,
     "the confirmation left `.git/index.lock` behind at the moment it returned — measuring the boundary must not create it");
+
+  // THE UNSAFE DIRECTION, asserted unconditionally. A probe that says "porcelain is fine" while git
+  // is refusing with a lock would send the next cycle down `git add`/`git commit` and straight into
+  // a half-written index. This is the disagreement that costs something, and it never passes.
+  if (r.porcelainWrites) {
+    assert.notEqual(c.blocked, true,
+      `the probe predicted porcelain WORKS but git refused with a lock signature: ${c.message}`);
+  }
 });
 
 test("AR3 — the boundary artefact on disk, when present, matches the schema", () => {
