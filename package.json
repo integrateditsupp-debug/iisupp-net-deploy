@@ -2,7 +2,7 @@
   "name": "iisupport-net",
   "version": "1.5.0",
   "private": true,
-  "description": "Integrated IT Support — main site + ARIA AI helpdesk",
+  "description": "Integrated IT Support \u2014 main site + ARIA AI helpdesk",
   "engines": {
     "node": ">=20"
   },
@@ -14,9 +14,9 @@
     "business-dev:once": "node scripts/business-development-agent.mjs",
     "opportunities:research": "node scripts/opportunity-research-agent.mjs",
     "opportunities:review": "node scripts/opportunity-review-agent.mjs",
-  "global:research": "node scripts/global-bid-research-agent.mjs",
-  "global:sync": "node scripts/sync-global-panel.mjs",
-  "global:once": "node scripts/global-bid-research-agent.mjs && node scripts/sync-global-panel.mjs",
+    "global:research": "node scripts/global-bid-research-agent.mjs",
+    "global:sync": "node scripts/sync-global-panel.mjs",
+    "global:once": "node scripts/global-bid-research-agent.mjs && node scripts/sync-global-panel.mjs",
     "opportunities:once": "node scripts/opportunity-research-agent.mjs && node scripts/opportunity-review-agent.mjs",
     "opportunities:install-worker": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-opportunity-engine-worker.ps1",
     "interaction-avoidance:once": "node scripts/interaction-avoidance-agent.mjs",
@@ -46,7 +46,9 @@
     "probe:deploy-safety": "node scripts/probe-deploy-safety.mjs",
     "probe:deploy-safety:watch": "node scripts/probe-deploy-safety.mjs --watch 30",
     "vision:test": "node tests/vision-diagnose.test.mjs && node tests/vision-diagnose-handler.test.mjs",
-    "check:held": "node scripts/check-held-release-markers.mjs"
+    "check:held": "node scripts/check-held-release-markers.mjs",
+    "test": "node scripts/run-tests.mjs",
+    "test:all": "node scripts/run-tests.mjs --all"
   },
   "dependencies": {
     "@netlify/blobs": "^7.4.0",

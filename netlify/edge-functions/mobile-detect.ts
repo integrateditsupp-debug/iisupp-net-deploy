@@ -30,5 +30,7 @@ export default async (request: Request, context: Context) => {
 };
 
 export const config: Config = {
-  path: '/'
+  // The handler tests for '/index.html' too, but with path: '/' it is never invoked for that URL,
+  // so a mobile visitor landing on /index.html got the desktop page. Match what the handler claims.
+  path: ['/', '/index.html']
 };

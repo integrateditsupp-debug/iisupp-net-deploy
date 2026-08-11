@@ -23,7 +23,16 @@ const t = (name, cond, detail = '') => {
   fail++;
   console.error('  FAIL', name, detail);
 };
-const count = (needle) => src.split(needle).length - 1;
+// Count against a COMMENT-STRIPPED view of the source.
+//
+// A raw substring count cannot tell live code from a corpse: `//c.append(globalSection())` still
+// contains the needle, so commenting out the call -- which blanks half the Overview tab -- passed
+// this suite green. Presence of the characters is not presence of the behaviour.
+const CODE = src
+  .split('\n')
+  .filter(l => !/^\s*(\/\/|\*|\/\*)/.test(l))
+  .join('\n');
+const count = (needle) => CODE.split(needle).length - 1;
 
 // 1. The Overview screen exists at all. It is the default module (state.module = 'overview'), so if
 //    this is missing the app boots straight into a blank pane.
@@ -63,12 +72,20 @@ if (count('const GLOBAL = {') === 1) {
       for (const k of ['updated', 'cycle', 'counts', 'attention', 'queue', 'registered', 'opportunities', 'marketing']) {
         t(`GLOBAL.${k} is present`, k in parsed);
       }
+      // globalSection() renders g.counts.<k> straight into a KPI tile. Asserting the key exists
+      // does not stop `undefined` from being painted on the page -- assert the type.
+      for (const k of ['countries', 'portals', 'registered', 'queued', 'gated', 'channels']) {
+        t(`GLOBAL.counts.${k} is a number`, typeof (parsed.counts || {})[k] === 'number');
+      }
       t('GLOBAL.opportunities is a non-empty array',
         Array.isArray(parsed.opportunities) && parsed.opportunities.length > 0);
       // Every row the panel renders as a link needs a real href, or the operator clicks into nothing.
       // The panel shape is {code, title, meta, href, cta} — procRow() reads `href`, so that is the
       // field to assert. Asserting `link` (the agent's internal name) passes vacuously and proves nothing.
-      const rows = [...(parsed.opportunities || []), ...(parsed.queue || []), ...(parsed.attention || [])];
+      // All five arrays are rendered through procRow(); checking only three left 22 of 77 rows
+      // unvalidated. If it reaches the page, it gets asserted.
+      const rows = [...(parsed.opportunities || []), ...(parsed.queue || []), ...(parsed.attention || []),
+                    ...(parsed.registered || []), ...(parsed.marketing || [])];
       const bad = rows.filter(o => !o.href || !/^https?:\/\//.test(o.href));
       t('every panel row has an absolute href', bad.length === 0,
         bad.length ? `${bad.length}/${rows.length} bad: ${bad.slice(0, 2).map(o => o.title).join(' | ')}` : '');
@@ -86,19 +103,42 @@ if (count('const GLOBAL = {') === 1) {
 //    So: parse the rewrite out of netlify.toml and assert against the RESOLVED target.
 const toml = fs.readFileSync(path.join(ROOT, 'netlify.toml'), 'utf8');
 
-function resolveRewrite(fromPath) {
-  // Walk [[redirects]] blocks; a status-200 force rewrite replaces the served file.
-  const blocks = toml.split('[[redirects]]').slice(1);
-  for (const b of blocks) {
+// A [[redirects]] block ends at the NEXT TOML section header, not at the next [[redirects]]
+// token -- splitting only on [[redirects]] lets a trailing [[headers]] or [build] section get
+// absorbed into the block above it, so its keys read as if they belonged to that redirect.
+function redirectBlocks() {
+  return toml.split('[[redirects]]').slice(1).map(b => {
+    const stop = b.search(/^\s*\[/m);
+    return stop === -1 ? b : b.slice(0, stop);
+  });
+}
+
+// Return the block itself, not just its target. An earlier version of this test asserted
+// `force = true` with a bounded-lookahead regex over the whole file, which happily matched the
+// force line belonging to the NEXT redirect -- so deleting force from the rule under test still
+// reported green. Scope the check to one block or it proves nothing.
+function findRewrite(fromPath) {
+  for (const b of redirectBlocks()) {
     const from = /^\s*from\s*=\s*"([^"]+)"/m.exec(b);
     const to = /^\s*to\s*=\s*"([^"]+)"/m.exec(b);
     const status = /^\s*status\s*=\s*(\d+)/m.exec(b);
-    if (from && to && status && from[1] === fromPath && status[1] === '200') return to[1];
+    if (from && to && status && from[1] === fromPath && status[1] === '200') {
+      return { to: to[1], forced: /^\s*force\s*=\s*true\s*$/m.test(b) };
+    }
   }
-  return fromPath;
+  return null;
 }
 
-const served = resolveRewrite('/aperture-learning.html');
+const rewrite = findRewrite('/aperture-learning.html');
+
+// No rule found means every check below would silently re-target the SOURCE file -- the exact
+// vacuous assertion this section exists to prevent. Fail loudly instead of degrading.
+t('netlify.toml has a 200 rewrite for /aperture-learning.html', rewrite !== null);
+// Without force = true Netlify serves the real file at that path and the rewrite never fires,
+// which is indistinguishable from never having written it.
+t('the /aperture-learning.html rewrite is forced', rewrite !== null && rewrite.forced);
+
+const served = rewrite ? rewrite.to : '/aperture-learning.html';
 const servedFile = path.join(ROOT, served.replace(/^\//, ''));
 t('the rewrite target for /aperture-learning.html exists on disk', fs.existsSync(servedFile), served);
 

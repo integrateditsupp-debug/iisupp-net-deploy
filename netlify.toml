@@ -528,12 +528,14 @@
 
 [[redirects]]
   from = "/aperture-learning"
-  to = "/aperture-learning.html"
+  to = "/axis.html"
   status = 200
+  force = true
 [[redirects]]
   from = "/aperture-learning/"
-  to = "/aperture-learning.html"
+  to = "/axis.html"
   status = 200
+  force = true
 
 # --- AXIS Command Center v2 (P8): the canonical hub /aperture-learning.html serves the v2 shell
 #     (assets/axis.html); the old consoles redirect in at parity. Auth is unchanged (aperture JWT). ---
@@ -564,20 +566,38 @@
   force = true
 
 
+# --- HELD: unsigned Sentinel installer must not be publicly downloadable. -----------------
+# The comment on the /sentinel-binaries/* rewrite says the Windows download is held pending an
+# EV cert. It was not held: both of these returned 200 with 102,536,604 bytes. A force-404 is
+# the stopgap; the binary also needs to come out of git (it ships in every deploy).
+[[redirects]]
+  from = "/sentinel-binaries/ARIA-Sentinel-0.1.0-unsigned.exe"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/public/sentinel-binaries/*"
+  to = "/index.html"
+  status = 404
+  force = true
+
 # Rule 9 — kills + compliance hub merge (2026-06-18)
 # Fake-competitor page killed (Rule 7 — no fake proof)
 [[redirects]]
   from = "/compare/aria-vs-msp-x"
   to = "/compare/"
   status = 301
+  force = true
 [[redirects]]
   from = "/compare/aria-vs-msp-x/"
   to = "/compare/"
   status = 301
+  force = true
 [[redirects]]
   from = "/compare/aria-vs-msp-x/index.html"
   to = "/compare/"
   status = 301
+  force = true
 
 # Webinar page killed until real webinar scheduled
 [[redirects]]
@@ -588,6 +608,7 @@
   from = "/webinar.html"
   to = "/book"
   status = 301
+  force = true
 
 # Compliance hub: single entry point at /compliance/ — old standalones still accessible as tools
 [[redirects]]
