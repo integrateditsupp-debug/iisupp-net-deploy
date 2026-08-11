@@ -12,6 +12,9 @@
     "suite starts reading untracked state without being listed here."
   ],
   "untrackedRoot": "senior-director-state/",
+  "mentionsOnly": {
+    "../../tests/plumbing-commit-denylist.test.mjs": "RUN-BA / BA0. This suite's SUBJECT is the list of paths that must never be tracked, so it names ten senior-director-state/ paths as literal test data - the exact ten that RUN-AZ's last two commits shipped into a repository whose publish dir is '.'. It opens none of them: every path is a string handed to denylistViolation() or to plumbingCommit({dryRun:true}), both of which are pure and touch no filesystem. Declaring it would put a dependency in this manifest that does not exist and turn the register into a rubber stamp; renaming the constants to dodge the textual scan would be making a check green by hiding from it. The exemption is proven rather than trusted - record-dependency-declared re-checks on every run that no filesystem or process call in this file carries the token, and reports the line number if one ever does."
+  },
   "suites": [
     "../../tests/axis-command-center.test.mjs",
     "../../tests/axis-status-emitter.test.mjs",

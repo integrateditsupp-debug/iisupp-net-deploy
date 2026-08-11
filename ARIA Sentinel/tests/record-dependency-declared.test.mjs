@@ -43,10 +43,55 @@ const rootSuites = existsSync(ROOT_TESTS)
 
 // A suite "depends on the untracked root" if its own source references it. Read the text rather than
 // executing anything: a dependency that only appears at runtime is exactly the kind this must catch.
-const observed = [...localSuites, ...rootSuites]
+const mentions = [...localSuites, ...rootSuites]
   .filter((s) => readFileSync(s.abs, "utf8").includes(ROOT_TOKEN))
   .map((s) => s.name)
   .sort();
+
+// ── RUN-BA / BA0 — MENTIONING A PATH IS NOT READING IT.
+//
+// The textual scan above is deliberately conservative and stays that way: it is the reason no hidden
+// dependency has ever slipped past. But it cannot distinguish a suite that OPENS the untracked root
+// from one that carries the path as DATA — and RUN-BA needed the latter, a suite whose subject is a
+// list of ten paths that must never be tracked. Naming them is the entire assertion.
+//
+// The wrong repairs, both rejected: declaring it (a manifest entry that claims a dependency which does
+// not exist is the register becoming a rubber stamp — the very thing `NOTHING is declared that does
+// not actually read` exists to prevent), or renaming the constants so the token disappears (making a
+// check green by hiding from it, which is the failure class this whole series was built to refuse).
+//
+// So: a MENTIONS-ONLY exemption, in the manifest, with a written reason — and, unlike a plain
+// allowlist, PROVEN rather than trusted. The exemption is only valid while the suite performs no
+// filesystem or process call whose argument carries the token. That is mechanically checkable, it is
+// checked below on every run, and the moment such a call appears the exemption stops applying and the
+// suite must be declared like any other. Same shape as AW1's directory-scoped exemption: narrow,
+// argued in writing, counted and reported every run.
+// The first draft of this check listed the filesystem functions by name — readFileSync, existsSync,
+// execFileSync and so on. It was written, then TESTED by planting a read, and the plant walked
+// straight through it: `import { existsSync as _e }` and the call reads `_e(`, which is not on any
+// list. A check that can be defeated by a rename is not a check, and this program has now caught the
+// same family three times (AW's spelled-out `years` vs `21+ yrs`, AX's link checker normalising the
+// thing it was checking, and this).
+//
+// So the rule inverts and stops trying to recognise anything: a line carrying the token is a READ
+// unless it is inert — a bare string literal, an array element, a simple const assignment, a comment.
+// Anything that CALLS something while holding the path counts, whatever the callee is named. That
+// over-reports by design; over-reporting costs a manifest entry, under-reporting costs the invariant.
+const INERT_LINE = /^\s*(?:(?:const|let|var)\s+[\w$]+\s*=\s*)?(?:["'`][^"'`]*["'`])\s*,?\s*;?\s*(?:\/\/.*)?$/;
+const COMMENT_LINE = /^\s*(?:\/\/|\*|\/\*)/;
+const mentionsOnly = manifest.mentionsOnly || {};
+
+const readsRootFor = (abs) => readFileSync(abs, "utf8")
+  .split("\n")
+  .map((line, i) => ({ line, n: i + 1 }))
+  .filter(({ line }) => line.includes(ROOT_TOKEN) && !COMMENT_LINE.test(line) && !INERT_LINE.test(line));
+
+const observed = mentions.filter((name) => {
+  if (!Object.prototype.hasOwnProperty.call(mentionsOnly, name)) return true;
+  const s = [...localSuites, ...rootSuites].find((x) => x.name === name);
+  // An exempt suite that has started actually reading the root is NOT exempt. Falls back to observed.
+  return readsRootFor(s.abs).length > 0;
+}).sort();
 
 const declared = [...manifest.suites].sort();
 
@@ -83,6 +128,33 @@ test("NOTHING is declared that does not actually read the untracked root", () =>
     "declared as record-dependent but reads nothing from the untracked root - remove it rather than " +
       "carrying a dependency that is not real: " + phantom.join(", "),
   );
+});
+
+// ── RUN-BA / BA0 — the exemption is counted and re-proven on every run, never assumed.
+test("every mentions-only exemption is real, argued, and still earns itself", () => {
+  const names = Object.keys(mentionsOnly);
+  for (const name of names) {
+    const entry = mentionsOnly[name];
+    const suite = [...localSuites, ...rootSuites].find((x) => x.name === name);
+
+    assert.ok(suite, `${name} is exempted but does not exist — a stale exemption is a hole nobody is watching`);
+    assert.ok(mentions.includes(name), `${name} is exempted but does not even mention the root — remove the entry`);
+    assert.equal(typeof entry, "string", `${name} — an exemption without a written reason is a rubber stamp`);
+    assert.ok(entry.trim().length >= 40, `${name} — the reason must be an argument, not a word`);
+    assert.doesNotMatch(entry, /mentions? only\.?$/i, `${name} — a reason that restates the exemption explains nothing`);
+    assert.ok(!declared.includes(name), `${name} is both exempted and declared — one of the two is false`);
+
+    // The proof: no filesystem or process call in this suite carries the token. Reported BY LINE.
+    const reads = readsRootFor(suite.abs);
+    assert.deepEqual(
+      reads.map((r) => `${name}:${r.n}`),
+      [],
+      `${name} claims to only NAME the untracked root, but these lines pass it to a filesystem or ` +
+        `process call — the exemption no longer holds and the suite must be declared: ` +
+        reads.map((r) => `${name}:${r.n} ${r.line.trim()}`).join(" | ")
+    );
+  }
+  console.log(`# record-dependency: ${names.length} mentions-only exemption(s), each re-proven this run: ${names.join(", ") || "none"}`);
 });
 
 test("record absence is REPORTED as a fact and never dressed up as a pass", () => {

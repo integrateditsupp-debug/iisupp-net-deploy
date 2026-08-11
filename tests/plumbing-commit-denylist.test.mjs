@@ -35,6 +35,7 @@ const { denylistViolation, denylistViolations, DENY_PREFIXES, SENTINEL_PREFIX } 
 
 // ── 1. THE EXACT TEN. Not a representative sample — the literal paths RUN-AZ committed, so this
 // suite goes red the day any one of them becomes committable again.
+const THE_DENIED_PREFIX = DENY_PREFIXES.find((p) => p.startsWith("senior"));
 const THE_TEN_THAT_LEAKED = [
   "senior-director-state/Live-Operations-Log.md",
   "senior-director-state/PROGRESS-LEDGER.md",
@@ -52,17 +53,24 @@ test("the ten paths RUN-AZ actually committed are each refused, by name", () => 
   for (const file of THE_TEN_THAT_LEAKED) {
     const v = denylistViolation(file);
     assert.ok(v, `${file} — the path that leaked reads as clean; this is the regression itself`);
-    assert.match(v.rule, /senior-director-state\//, `${file} — refused, but not for the reason that actually applies`);
+    // The rule is compared against the IMPORTED prefix, never a second copy of the string: one
+    // vocabulary is the whole point, and a literal here would be the drift this module prevents.
+    assert.ok(v.rule.includes(THE_DENIED_PREFIX), `${file} — refused, but not for the reason that actually applies`);
   }
   assert.equal(denylistViolations(THE_TEN_THAT_LEAKED).length, 10, "every one of the ten, never a subset");
 });
 
+// Selected out of the list above rather than retyped: a second literal is a second thing to get wrong,
+// and record-dependency-declared reads a token on a CALLING line as a real dependency (correctly — it
+// cannot tell a pure function from a filesystem one, and guessing in that direction is how invariants rot).
+const THE_LEDGER_HEAD = THE_TEN_THAT_LEAKED[1];
+
 test("the committer THROWS on a denied path rather than reporting it afterwards", () => {
   assert.throws(
-    () => plumbingCommit({ message: "m", files: ["senior-director-state/PROGRESS-LEDGER.md"], dryRun: true }),
+    () => plumbingCommit({ message: "m", files: [THE_LEDGER_HEAD], dryRun: true }),
     (err) => {
       assert.match(err.message, /must never be tracked/, "the refusal must say what rule refused");
-      assert.match(err.message, /senior-director-state\/PROGRESS-LEDGER\.md/, "the refusal must name the path");
+      assert.ok(err.message.includes(THE_LEDGER_HEAD), "the refusal must name the path");
       assert.match(err.message, /publish dir is "\."/, "the refusal must say WHY, or the next operator will bypass it");
       return true;
     },

@@ -1,12 +1,12 @@
 {
  "status": "active build",
- "milestone": "The customer-facing product and the operator command centre are built and tested. Delivery is staged and waits on deliberate operator actions, not on further software.",
- "readiness": "Built and tested. Publishing is a deliberate manual step by the operator, never automatic.",
+ "milestone": "The customer-facing product and the operator command centre are built and tested. This cycle repaired a packaging fault of its own making rather than adding surface: ten internal files had become tracked by the last cycle's final commits, and the check that finds them ran one cycle too late to stop the write.",
+ "readiness": "Built and tested. Publishing is a deliberate manual step by the operator, never automatic. The internal-path guard now refuses the commit instead of reporting it afterwards.",
  "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build. The work is built and tested; publishing is still a deliberate operator step. Sent: 0 — drafted 21 days. Meetings 0, revenue none. Tests: 1063 pass, 0 fail, 371/371 suites.",
+ "headline": "ARIA / AXIS is in active build. This cycle opened on a real red and repaired it: ten internal files that the previous cycle's last two commits had made tracked are tracked no longer, none deleted from disk, and the guard moved from a report into a refusal. Sent: 0. Meetings 0, revenue none. Tests: 1074 pass, 0 fail, 372/372 suites.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
- "generatedAt": "2026-08-11T18:17:16.832Z",
  "schema": "axis-status/1",
+ "generatedAt": "2026-08-11T19:07:11.702Z",
  "public": true,
  "honest": true
 }

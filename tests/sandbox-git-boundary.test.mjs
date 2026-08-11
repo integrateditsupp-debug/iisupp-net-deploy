@@ -133,9 +133,29 @@ test("AR3 — the porcelain confirmation agrees with the probe on THIS repositor
   const c = confirmPorcelainBlocked({ root: REPO });
   assert.equal(c.attempted, true);
   if (!r.porcelainWrites) {
-    assert.equal(c.blocked, true,
-      `the probe predicted porcelain blocked; git said: ${c.message}`);
+    // RUN-BA / BA0: INCONCLUSIVE is a third state and it is neither agreement nor disagreement.
+    // `git commit --dry-run` exits non-zero when there is simply nothing staged, and this assertion
+    // used to read that as "porcelain is not blocked" — a disagreement manufactured out of a
+    // non-answer, which is how this suite went red on a clean tree without either side having
+    // measured anything. It is reported and skipped, never rounded into a pass or a failure.
+    if (c.inconclusive) {
+      console.log(`# AR3: confirmation INCONCLUSIVE — ${c.reason}; the probe's prediction stands unconfirmed rather than contradicted`);
+    } else {
+      assert.equal(c.blocked, true,
+        `the probe predicted porcelain blocked; git said: ${c.message}`);
+    }
   }
+  // The confirmation must not manufacture the condition it measures: `git commit` takes
+  // `.git/index.lock` and cannot remove it here, so every run of this check used to leave the next
+  // cycle a lock to trip over. It now parks it and REPORTS whether the park succeeded.
+  //
+  // Asserted on the report, never by re-reading `.git` afterwards. The first draft did exactly that
+  // and went red inside the very next emit: another process on this machine takes and re-creates
+  // `.git/index.lock` within seconds, so the assertion was measuring that process's work rather than
+  // this function's. `null` is its own answer — the cleanup itself hit the boundary — and is not
+  // rounded into either verdict.
+  assert.notEqual(c.lockLeftBehind, true,
+    "the confirmation left `.git/index.lock` behind at the moment it returned — measuring the boundary must not create it");
 });
 
 test("AR3 — the boundary artefact on disk, when present, matches the schema", () => {

@@ -9,8 +9,22 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const out = execFileSync("git", ["ls-files", "-z"], { cwd: repoRoot, maxBuffer: 64 * 1024 * 1024 });
-const files = out.toString("utf8").split("\0").filter(Boolean);
+// RUN-BA / BA0 — TWO SOURCES, NAMED, because they answer two different questions and this cycle saw
+// them disagree by ten paths. `git ls-files` is the INDEX: what the NEXT commit would ship. HEAD's
+// TREE is what a clone and the live deploy ACTUALLY receive today. AU3 recorded the index
+// under-reporting when it was stale; the repair commit that opens this cycle made it over-report,
+// the tree already clean while the index still carried the ten. Either being dirty is a failure, and
+// the report says WHICH — they are different repairs and collapsing them loses that.
+const readIndex = () => execFileSync("git", ["ls-files", "-z"], { cwd: repoRoot, maxBuffer: 64 * 1024 * 1024 })
+  .toString("utf8").split("\0").filter(Boolean);
+const readHeadTree = () => execFileSync("git", ["ls-tree", "-r", "-z", "--name-only", "HEAD"], { cwd: repoRoot, maxBuffer: 64 * 1024 * 1024 })
+  .toString("utf8").split("\0").filter(Boolean);
+
+const SOURCES = [
+  { name: "the git INDEX (what the next commit would ship)", files: readIndex() },
+  { name: "HEAD's TREE (what a clone and the live deploy receive)", files: readHeadTree() },
+];
+const files = SOURCES[0].files;
 
 // RUN-BA / BA0: the vocabulary moved to scripts/lib/deploy-denylist.mjs so the COMMITTER can refuse
 // with the same list this test reports against. The rules themselves are unchanged, and they are
@@ -18,13 +32,17 @@ const files = out.toString("utf8").split("\0").filter(Boolean);
 // This test keeps every assertion it had — it stopped OWNING the list, it did not stop enforcing it.
 const { denylistViolations } = await import(pathToFileURL(path.join(repoRoot, "scripts/lib/deploy-denylist.mjs")).href);
 
-const violations = denylistViolations(files).map((v) => v.file);
-
+let violations = [];
+for (const source of SOURCES) {
+  const bad = denylistViolations(source.files).map((v) => v.file);
+  if (!bad.length) continue;
+  violations = violations.concat(bad);
+  console.error(`DEPLOY-SAFETY DENYLIST — ${bad.length} internal path(s) tracked in ${source.name} (must NEVER ship):`);
+  for (const v of bad.slice(0, 50)) console.error("  " + v);
+  if (bad.length > 50) console.error(`  … and ${bad.length - 50} more`);
+}
 if (violations.length) {
-  console.error(`DEPLOY-SAFETY DENYLIST — ${violations.length} internal path(s) tracked by git (must NEVER ship):`);
-  for (const v of violations.slice(0, 50)) console.error("  " + v);
-  if (violations.length > 50) console.error(`  … and ${violations.length - 50} more`);
-  throw new Error(`deploy-safety-denylist: ${violations.length} denylisted path(s) tracked — run \`git rm --cached\` on them before committing.`);
+  throw new Error(`deploy-safety-denylist: ${violations.length} denylisted path(s) tracked — run \`git rm --cached\` on them before committing (or \`git read-tree HEAD\` if only the index is stale).`);
 }
 
 // ── SERVING-LAYER LOCKDOWN 2026-07-02 (T3) — the force-404 redirect block must exist for every
