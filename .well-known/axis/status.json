@@ -5,7 +5,7 @@
  "revenueToDate": "none",
  "headline": "ARIA / AXIS is in active build. The work is built and tested; publishing is still a deliberate operator step. Sent: 0 — drafted 21 days. Meetings 0, revenue none. Tests: 968 pass, 0 fail, 365/365 suites.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
- "generatedAt": "2026-08-11T15:47:37.424Z",
+ "generatedAt": "2026-08-11T15:52:12.470Z",
  "schema": "axis-status/1",
  "public": true,
  "honest": true
