@@ -22,7 +22,8 @@ const worker = fs.readFileSync(path.join(root, 'scripts', 'axis-brain-worker.mjs
 let n = 0; const ok = () => { n++; };
 
 // ---- 1. Cheapest tier wins, and the order is fixed ----
-// Order: recall (banked answers) → static KB → research → Max plan → metered API.
+// Ahmad's stated order (2026-08-11): ARIA brain (recall) → research agents → KBs → Max plan.
+// The metered API is not a cascade tier at all — it lives after the cascade, in axis-director.js.
 // `recall` returns null under these stubs (the queue helper is not stubbed), so it falls through.
 const realFetch = globalThis.fetch;
 const stub = (routes) => { globalThis.fetch = async (url) => {
@@ -38,13 +39,13 @@ try {
   let hit = await B.askBrain({ query: 'printer queue stuck on windows 11', origin: 'https://x', skip: ['subscription'] });
   assert.equal(hit.tier, 'kb', 'the ARIA brain answers first when it has a match');
   assert.equal(hit.cost, 0);
-  assert.deepEqual(hit.tried, ['recall', 'kb'], 'recall is checked first, then the static KB — research is never reached');
+  assert.deepEqual(hit.tried, ['recall', 'research', 'kb'], "Ahmad's order: ARIA brain > research agents > KBs");
 
-  // KB misses → research picks it up. Still $0, still no metered API.
-  stub({ 'aria-kb-query': { match: false, confidence: 2 }, 'aria-research': { answer: LONG } });
+  // Research answers → the static KB is never consulted. Still $0, still no metered API.
+  stub({ 'aria-kb-query': { match: true, content_excerpt: LONG, confidence: 22 }, 'aria-research': { answer: LONG } });
   hit = await B.askBrain({ query: 'printer queue stuck on windows 11', origin: 'https://x', skip: ['subscription'] });
   assert.equal(hit.tier, 'research');
-  assert.deepEqual(hit.tried, ['recall', 'kb', 'research'], 'research is only tried after recall AND the static KB miss');
+  assert.deepEqual(hit.tried, ['recall', 'research'], 'research answers before the static KB is consulted');
 
   // Everything empty → null, which is the ONLY way the caller reaches the metered API.
   stub({ 'aria-kb-query': { match: false }, 'aria-research': {} });
@@ -147,4 +148,4 @@ assert.ok(!/require\(\s*['"]@netlify\/blobs['"]\s*\)/.test(
   'the CJS cascade never imports @netlify/blobs — every Blobs touch goes through the v2 helper');
 n++;
 
-console.log(`axis-brain-cascade: ${n}/8 groups green — KB → research → Max plan → metered API, and only real answers are banked.`);
+console.log(`axis-brain-cascade: ${n}/8 groups green — ARIA brain → research → KBs → Max plan, metered API last, and only real answers are banked.`);

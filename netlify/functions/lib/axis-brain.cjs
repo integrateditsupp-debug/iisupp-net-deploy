@@ -187,10 +187,17 @@ async function askBrain({ query, origin, auth, skip = [], subWaitMs = SUB_WAIT_M
   if (!q) return null;
   const tried = [];
 
+  // Ahmad's stated order (2026-08-11): "ARIA brain > research agents > KBs we have > max plan."
+  //   recall       = the ARIA brain proper — everything AXIS has previously learned and banked.
+  //   research     = the research agents.
+  //   kb           = the static KB packs (281 curated chunks).
+  //   subscription = the Claude Max plan he pays for monthly.
+  // The metered Anthropic API is not a tier here at all — it stays where it always was, after this
+  // whole cascade returns null, in axis-director.js. All four below are $0.
   for (const [name, run] of [
     ['recall', () => recallTier(q, origin, auth)],   // banked answers first — never pay twice
-    ['kb', () => kbTier(q, origin)],
     ['research', () => researchTier(q, origin)],
+    ['kb', () => kbTier(q, origin)],
     ['subscription', () => subscriptionTier(q, { origin, auth, waitMs: subWaitMs })],
   ]) {
     if (skip.includes(name)) continue;
