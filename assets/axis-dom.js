@@ -17,7 +17,18 @@ export const el = (tag, attrs = {}, kids = []) => {
 export const SVGNS = 'http://www.w3.org/2000/svg';
 export const svg = (tag, attrs = {}, kids = []) => { const n = document.createElementNS(SVGNS, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); (Array.isArray(kids) ? kids : [kids]).forEach(c => c && n.append(c.nodeType ? c : document.createTextNode(String(c)))); return n; };
 export const fmtMoney = (n) => n == null ? '—' : '$' + Number(n).toLocaleString();
-export const ago = (ts) => { if (!ts) return ''; const s = (Date.now() - ts) / 1000; if (s < 3600) return Math.floor(s / 60) + 'm'; if (s < 86400) return Math.floor(s / 3600) + 'h'; return Math.floor(s / 86400) + 'd'; };
+// Accepts epoch ms OR an ISO string. It used to assume a number, so `Date.now() - '2026-08-10T09:00'`
+// was NaN and the Approvals/Inbox rows rendered a literal "NaNd" (seen 2026-08-11). Anything
+// unparseable returns '' — an empty cell is honest, "NaNd" is just broken.
+export const ago = (ts) => {
+  if (!ts) return '';
+  const t = typeof ts === 'number' ? ts : Date.parse(ts);
+  if (!Number.isFinite(t)) return '';
+  const s = (Date.now() - t) / 1000;
+  if (s < 3600) return Math.floor(s / 60) + 'm';
+  if (s < 86400) return Math.floor(s / 3600) + 'h';
+  return Math.floor(s / 86400) + 'd';
+};
 
 // ── init hook ──
 // toast/postIntent originally closed over axis-app's module-local auth state. This module cannot see it,

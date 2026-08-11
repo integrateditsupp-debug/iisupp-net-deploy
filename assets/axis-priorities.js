@@ -1,0 +1,129 @@
+// axis-priorities.js — S15 Priorities: one queue of everything open, ordered by when it is due.
+// Ahmad, 2026-08-11: "add a priority section of all items being worked on and due dates."
+//
+// This screen INVENTS NOTHING. Every row is lifted from a snapshot module that already exists
+// (followups / approvals / inbox / documents / outreach / fleet) and every date is that record's
+// own field. Where a source genuinely has no due date — approvals and inbox carry `created_at`,
+// not a deadline — the row says "no due date" and is aged instead. Rule 14: an honest gap beats a
+// plausible number, and a fabricated deadline is the worst thing this screen could show.
+import { el, ago } from './axis-dom.js';
+
+const DAY = 86400000;
+
+// " · raised 3d" only when the age is genuinely known — never a dangling "raised " with nothing after.
+const aged = (ts) => { const a = ago(ts); return a ? ' · raised ' + a : ''; };
+
+// Whole-day difference in LOCAL time. Comparing raw timestamps makes something due at 9am today
+// read as "overdue" at 10am, which is wrong — a due date is a day, not an instant.
+export function daysUntil(dueAt, now = new Date()) {
+  // `new Date(null)` is the 1970 epoch, NOT an invalid date — without this guard an item with no
+  // deadline renders as "20677 days overdue", which is the exact fabrication this screen must avoid.
+  if (dueAt === null || dueAt === undefined || dueAt === '') return null;
+  const d = new Date(dueAt);
+  if (isNaN(d)) return null;
+  const a = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const b = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.round((a - b) / DAY);
+}
+
+export function dueLabel(dueAt, now = new Date()) {
+  const n = daysUntil(dueAt, now);
+  if (n === null) return { text: 'no due date', tone: 'none' };
+  if (n < -1) return { text: Math.abs(n) + ' days overdue', tone: 'over' };
+  if (n === -1) return { text: 'yesterday', tone: 'over' };
+  if (n === 0) return { text: 'today', tone: 'today' };
+  if (n === 1) return { text: 'tomorrow', tone: 'soon' };
+  if (n <= 7) return { text: 'in ' + n + ' days', tone: 'soon' };
+  return { text: new Date(dueAt).toISOString().slice(0, 10), tone: 'later' };
+}
+
+// Rank: overdue first, then soonest. Undated work sorts last — it is real work, but it cannot
+// out-rank something with an actual deadline.
+const rank = (it) => (it.dueAt ? daysUntil(it.dueAt) : 9999);
+
+// Flatten the snapshot into one list. `dueAt: null` is meaningful and preserved, never defaulted.
+export function collectPriorities(snap, now = new Date()) {
+  const mod = (m) => (snap && snap[m] && snap[m].data) || {};
+  const items = [];
+
+  const fu = mod('followups');
+  for (const [bucket, rows] of [['overdue', fu.overdue], ['due_today', fu.due_today], ['upcoming', fu.upcoming]])
+    for (const f of rows || [])
+      items.push({ title: f.company || 'Prospect', source: 'Follow-up', dueAt: f.due_at || null,
+        detail: 'queued → Approvals', bucket, screen: 'followups' });
+
+  for (const r of mod('approvals').rows || [])
+    if (r.status === 'pending')
+      items.push({ title: r.subject || '(no subject)', source: 'Approval', dueAt: null,
+        detail: 'waiting on you' + aged(r.created_at), screen: 'approvals' });
+
+  const ACTIONABLE = ['reply_to_outreach', 'new_inbound_request'];
+  for (const m of mod('inbox').rows || [])
+    if (ACTIONABLE.includes(m.classification) && !m.actioned && !m.snoozed_until)
+      items.push({ title: m.subject || '(no subject)', source: 'Inbox', dueAt: null,
+        detail: 'client waiting' + (ago(m.received_at) ? ' · ' + ago(m.received_at) : ''), screen: 'inbox' });
+
+  for (const d of mod('documents').rows || [])
+    if ((d.status || '').toLowerCase() === 'draft')
+      items.push({ title: d.title || d.type || 'Document', source: 'Document', dueAt: d.due_at || null,
+        detail: 'draft — not sent', screen: 'documents' });
+
+  return items.sort((a, b) => rank(a) - rank(b));
+}
+
+// "All items being worked on" — the in-flight half. An agent counts as working only if the fleet
+// snapshot says so; there is no derived/guessed activity here.
+export function collectInFlight(snap) {
+  const mod = (m) => (snap && snap[m] && snap[m].data) || {};
+  const out = [];
+  for (const a of mod('fleet').agents || [])
+    if (a.status && /run|active|working/i.test(a.status))
+      out.push({ title: a.name || 'agent', detail: a.role || a.status, source: 'Agent' });
+  const drafts = mod('outreach').drafts;
+  const n = Array.isArray(drafts) ? drafts.length : (typeof drafts === 'number' ? drafts : 0);
+  if (n) out.push({ title: n + (n === 1 ? ' outreach draft' : ' outreach drafts'), detail: 'awaiting approval', source: 'Outreach' });
+  return out;
+}
+
+const TONE_VAR = { over: 'var(--crit)', today: 'var(--gold)', soon: 'var(--txt-2)', later: 'var(--txt-3)', none: 'var(--txt-3)' };
+
+export function renderPriorities(c, { snap, go, head }) {
+  const items = collectPriorities(snap);
+  const flight = collectInFlight(snap);
+  const n = (t) => items.filter(i => dueLabel(i.dueAt).tone === t).length;
+
+  c.append(head('Priorities', 'every open item, ordered by when it is due — nothing here is invented'));
+
+  // Counters. A zero renders as a plain zero, never hidden and never dressed up.
+  const counts = [['Overdue', n('over'), 'var(--crit)'], ['Due today', n('today'), 'var(--gold)'],
+    ['This week', n('soon'), 'var(--txt)'], ['No due date', n('none'), 'var(--txt-3)'],
+    ['In flight', flight.length, 'var(--txt)']];
+  c.append(el('div', { class: 'kpi-grid' }, counts.map(([l, v, col]) =>
+    el('div', { class: 'kpi' }, [el('div', { class: 'label' }, l), el('div', { class: 'value', style: 'color:' + col }, String(v))]))));
+
+  c.append(head('Open items', items.length ? items.length + ' total' : 'nothing open', 'margin-top:22px'));
+  const card = el('div', { class: 'card', style: 'padding:0' });
+  if (!items.length) card.append(el('div', { class: 'empty' }, 'Nothing open. Every queue is clear.'));
+  else items.forEach((it) => {
+    const d = dueLabel(it.dueAt);
+    card.append(el('div', { class: 'row axis-pri-row' }, [
+      el('span', { class: 'axis-pri-bar', style: 'background:' + TONE_VAR[d.tone] }),
+      el('span', { class: 'stage-tag' }, it.source),
+      el('div', { style: 'flex:1;min-width:0' }, [
+        el('div', { style: 'font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap' }, it.title),
+        el('div', { style: 'font-size:12px;color:var(--txt-3)' }, it.detail)]),
+      el('span', { class: 'mono axis-pri-due', style: 'color:' + TONE_VAR[d.tone] }, d.text),
+      el('button', { class: 'chip', onclick: () => go(it.screen) }, 'Open'),
+    ]));
+  });
+  c.append(card);
+
+  c.append(head('Being worked on', 'reported by the fleet, not inferred', 'margin-top:22px'));
+  const fc = el('div', { class: 'card', style: 'padding:0' });
+  if (!flight.length) fc.append(el('div', { class: 'empty' }, 'No agent is reporting active work right now.'));
+  else flight.forEach(f => fc.append(el('div', { class: 'row' }, [
+    el('span', { class: 'stage-tag' }, f.source),
+    el('div', { style: 'flex:1' }, f.title),
+    el('span', { style: 'font-size:12px;color:var(--txt-3)' }, f.detail)])));
+  c.append(fc);
+}

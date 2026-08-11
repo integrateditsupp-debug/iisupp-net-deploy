@@ -77,9 +77,13 @@ const navIds = [...navBlock.matchAll(/id: '([^']+)'/g)].map(m => m[1]);
 // 2026-07-28 (DEFECT-107): commit eecd0510 ADDED a 16th tab `waiting_reply` between `approvals` and
 // `followups`. Nothing was removed, renamed, or reordered — Rule 15 intact — so the guard baseline is
 // extended, not relaxed. Additions still have to be declared here on purpose.
+// 2026-08-11: Ahmad asked for "a priority section of all items being worked on and due dates", so a
+// 17th tab `priorities` is inserted at the head of the Workspace group. Same treatment as the
+// waiting_reply addition above — nothing removed, renamed, or reordered relative to each other, and
+// the addition is declared here deliberately rather than the guard being loosened.
 const EXPECTED = ['overview', 'inbox', 'pipeline', 'crm', 'prospects', 'outreach', 'approvals', 'waiting_reply',
-  'followups', 'documents', 'analytics', 'products', 'fleet', 'axis-agent-director', 'reports', 'settings'];
-t('NAV has exactly 16 tabs', navIds.length === 16);
+  'followups', 'priorities', 'documents', 'analytics', 'products', 'fleet', 'axis-agent-director', 'reports', 'settings'];
+t('NAV has exactly 17 tabs', navIds.length === 17);
 t('NAV ids and order are unchanged', JSON.stringify(navIds) === JSON.stringify(EXPECTED));
 
 const screens = new Set();

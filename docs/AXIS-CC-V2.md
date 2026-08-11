@@ -138,6 +138,51 @@ they stay that way.
 Guard: `tests/axis-jarvis-flow.test.mjs` (6 groups). Group 6 is an explicit no-regression check that
 every v1 voice marker is still present in `axis-app.js`.
 
+## AXIS console redesign + "it does not hear me" fix (2026-08-11)
+
+Ahmad, after using the first build: *"on edge its one voice and chrome another… when I speak to it,
+it does not hear me or respond… its just a small little window at the bottom center… add a priority
+section of all items being worked on and due dates."* All four addressed; still purely additive.
+
+**1. Why it could not hear you — the wake-word homophone bug.** Browser speech-to-text almost never
+returns the literal string `axis`. Chrome and Edge transcribe it as **"access", "axes", "acts",
+"exes", "ax is"**. The matcher only accepted `/axis/`, so the wake listener heard every word and
+silently ignored all of it — indistinguishable from a dead mic. `WAKE_WORD` in `axis-persona.js` is
+now a deliberately generous alternation (a false wake costs one ignored question; a missed wake makes
+the whole feature look broken). `STOP_RE` and `stripWake()` share it. Guard:
+`tests/axis-voice-hearing.test.mjs`.
+
+**2. Failure is now visible.** `interimResults` is on, so your words appear in the box and in a live
+line under the orb as you speak. Every recognition error is translated to plain language with the fix
+(`not-allowed` → "click the padlock, allow the mic, reload"), a silent close says "I did not catch
+that", and AXIS deafens the wake listener while speaking so it cannot wake itself on its own voice.
+
+**3. Voice parity — as close as free TTS allows.** Edge ships the "Online (Natural)" neural set
+(Sonia/Libby); Chrome ships Google's network voices. The *same* voice in both is impossible without a
+paid cloud TTS ($0 rule). Instead `VOICE_PROFILES` corrects each family toward Edge's Sonia as the
+reference — Google's voices run fast and bright, so they are slowed and lowered the most — and a
+**voice picker in the console footer** lists what this browser actually has, best-first, speaking a
+sample on selection (pinned via the same `axis-voice-name` key as v1). `polishForSpeech()` says
+jargon like a person ("KB" → "knowledge base", "$12k" → "12 thousand dollars", "3-5" → "3 to 5") and
+`phraseChunks()` breathes at clauses, not only full stops.
+
+**4. The console.** `.axis-dock` is now a full-height right rail (was a ~520px box at bottom center):
+orb hero with a state-driven level meter, a **top-priorities rail**, roomier transcript, and the voice
+picker footer. Every element id is unchanged — this is a skin plus additions, so all prior guards
+still hold. `:root[data-axis-dock="open"]` yields the content pane's width so the console **docks
+rather than covers** (it was clipping the right-hand KPI cards).
+
+**5. S15 Priorities** (`assets/axis-priorities.js`, 17th tab, head of Workspace). One queue of every
+open item ordered by due date, plus a "Being worked on" section from the fleet. It **invents
+nothing**: every date is that record's own field, and approvals/inbox — which genuinely have no
+deadline field — render "no due date" and sort last rather than being given a plausible one.
+Guard: `tests/axis-priorities.test.mjs`.
+
+Two real bugs the tests caught and fixed: `new Date(null)` is the 1970 epoch (not invalid), so an
+undated item rendered **"20677 days overdue"**; and `ago()` assumed epoch ms, so ISO timestamps
+rendered a literal **"NaNd"** — that one was already live on Approvals and Inbox, now fixed for all
+three. Suite: 17/17 green, headless-Chrome boot verified (4 orbs mounted, 0 JS errors, 0 NaN in DOM).
+
 ## AXIS status feed — headline-only law (2026-07-21)
 
 The public mirrors `.well-known/axis/status.json` + `public/.well-known/axis/status.json` are
