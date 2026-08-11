@@ -224,6 +224,24 @@ const TESTS = [
   // pushed toward automating the judgement that wins the deal. Wired to AX2: every composition
   // forced by a missing artefact names the declared gap it waits on.
   "../../tests/answer-cost.test.mjs",
+  // CUSTOMER PACKET 2026-08-11 (RUN-AY / AY1) — AW3 assembled what a PROSPECT is promised. This is
+  // the packet a PAYING customer receives: onboarding, admin and integration guides, the support
+  // route, a data export, and a way to leave. Same discipline — HEAD's tree is the source, an empty
+  // section fails because promising a customer nothing is not delivering everything, and a document
+  // that never mentions what its section promises is SILENT rather than delivered (a packet that
+  // counts filenames is a packet that has not been read).
+  "../../tests/customer-packet.test.mjs",
+  // SUPPORT COMMITMENTS 2026-08-11 (RUN-AY / AY2) — response times, uptime, escalation and support
+  // hours read off EVERY surface that states one, as one body. Unlike a wrong currency, a missed
+  // response time is breached SILENTLY, by nobody doing anything, which is why it is read by code
+  // rather than remembered. No code path returns agreed while surfaces disagree and none picks which
+  // is right; a disagreement is declared open with a reason and a named decider, or it goes red.
+  "../../tests/support-commitments.test.mjs",
+  // FIRST WEEK COST 2026-08-11 (RUN-AY / AY3) — AT3 counted the distance from yes to money and AX3
+  // the cost of answering a reviewer. This prices the week AFTER the first invoice clears, in acts
+  // and artefacts and never hours. Manual-BY-DESIGN stays apart from manual-for-want so the program
+  // is never pushed toward automating the welcome that is the reason a customer bought from a founder.
+  "../../tests/first-week-cost.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   // SITE FINEPRINT GATE 2026-08-06 (salvaged from cc/axis-feed-2026-08-04) — the site-wide legal
