@@ -69,10 +69,29 @@ assert.ok(!B.worthLearning('printer queue stuck on windows 11', LONG, 'kb'),
   'an answer that CAME from the KB is never written back into the KB');
 ok();
 
-// ---- 4. Tier 3 never stalls on an offline worker ----
-assert.match(B.subscriptionTier.toString(), /workerOnline\(\)/,
-  'the subscription tier checks the heartbeat before queueing');
-assert.ok(B.HEARTBEAT_MAX_MS <= 180000, 'a stale heartbeat counts as offline');
+// ---- 4. Tier 3 never stalls on an offline worker, and never touches Blobs from CJS ----
+// Netlify does not inject the Blobs context into legacy CJS `exports.handler` functions — measured
+// 2026-08-11, axis-director's own getStore() fails with "environment has not been configured to use
+// Netlify Blobs" while a v2 ESM function in the SAME deploy works. So tier 3 goes over HTTP to
+// axis-brain-queue.mjs. If someone "simplifies" that back to a direct getStore(), tier 3 dies silently.
+const subSrc = B.subscriptionTier.toString();
+assert.match(subSrc, /action: 'online'/, 'the heartbeat is checked before a job is queued');
+assert.match(subSrc, /action: 'enqueue'/, 'the question is queued through the v2 helper');
+assert.match(subSrc, /action: 'poll'/, 'the answer is polled through the v2 helper');
+assert.ok(!/getStore/.test(subSrc), 'tier 3 must NOT touch Blobs directly from the CJS function');
+{
+  // Offline worker → no enqueue at all, and a fast null rather than a stalled function.
+  const calls = [];
+  const real = globalThis.fetch;
+  globalThis.fetch = async (url, opt) => { calls.push(JSON.parse(opt.body).action);
+    return { ok: true, json: async () => ({ ok: true, online: false }) }; };
+  try {
+    const t0 = Date.now();
+    assert.equal(await B.subscriptionTier('a real question about printers', { origin: 'https://x', waitMs: 3000 }), null);
+    assert.ok(Date.now() - t0 < 1500, 'an offline worker returns immediately, it does not wait out the budget');
+    assert.deepEqual(calls, ['online'], 'nothing is queued when the worker is offline');
+  } finally { globalThis.fetch = real; }
+}
 ok();
 
 // ---- 5. The director consults the cascade BEFORE spending, and banks after ----

@@ -119,7 +119,8 @@ exports.handler = async (event) => {
     try {
       const { askBrain } = require('./lib/axis-brain.cjs');
       const host = (event.headers && (event.headers.host || event.headers.Host)) || '';
-      const hit = await askBrain({ query: askText, origin: host ? `https://${host}` : '' });
+      const auth = (event.headers && (event.headers.authorization || event.headers.Authorization)) || '';
+      const hit = await askBrain({ query: askText, origin: host ? `https://${host}` : '', auth });
       if (hit && hit.text) {
         return json(200, {
           text: hit.text.slice(0, 2000), routedAgent: null, intent: null, needsApproval: false,

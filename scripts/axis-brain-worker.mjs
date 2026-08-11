@@ -19,6 +19,9 @@
 // Env:  NETLIFY_SITE_ID + NETLIFY_AUTH_TOKEN (Blobs access), CLAUDE_BIN (optional CLI path)
 
 import { spawn } from 'node:child_process';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { getStore } from '@netlify/blobs';
 
 const JOBS = 'axis-brain-jobs';
@@ -34,12 +37,27 @@ Answer the question directly and practically, in plain language. If it is a tech
 problem, give concrete steps. Be concise: no preamble, no sign-off, no markdown headers.
 If you genuinely do not know, say so in one line rather than guessing.`;
 
-const siteID = process.env.NETLIFY_SITE_ID;
-const token = process.env.NETLIFY_AUTH_TOKEN;
-if (!siteID || !token) {
-  console.error('[axis-brain-worker] NETLIFY_SITE_ID and NETLIFY_AUTH_TOKEN are required.');
-  console.error('  NETLIFY_SITE_ID=88265b1c-3380-4611-a1c0-28b4f688562a');
-  console.error('  NETLIFY_AUTH_TOKEN=<personal access token from Netlify user settings>');
+// Blobs credentials. Fall back to the token the Netlify CLI already stored at login, so this runs
+// with no setup on a machine where `netlify` is signed in — no personal access token to mint.
+const SITE_ID_DEFAULT = '88265b1c-3380-4611-a1c0-28b4f688562a'; // iisupp
+function cliToken() {
+  const appData = process.env.APPDATA || path.join(os.homedir(), '.config');
+  for (const p of [path.join(appData, 'netlify', 'Config', 'config.json'),
+                   path.join(appData, 'netlify', 'config.json'),
+                   path.join(os.homedir(), '.netlify', 'config.json')]) {
+    try {
+      const cfg = JSON.parse(fs.readFileSync(p, 'utf8'));
+      const user = cfg.users ? Object.values(cfg.users)[0] : null;
+      if (user && user.auth && user.auth.token) return user.auth.token;
+    } catch { /* try the next location */ }
+  }
+  return null;
+}
+const siteID = process.env.NETLIFY_SITE_ID || SITE_ID_DEFAULT;
+const token = process.env.NETLIFY_AUTH_TOKEN || cliToken();
+if (!token) {
+  console.error('[axis-brain-worker] No Netlify credentials found.');
+  console.error('  Fix: run `netlify login`, or set NETLIFY_AUTH_TOKEN=<personal access token>.');
   process.exit(1);
 }
 const jobs = getStore({ name: JOBS, siteID, token, consistency: 'strong' });

@@ -70,33 +70,42 @@ async function researchTier(query, origin) {
 }
 
 // ── Tier 3: the monthly plan, via the local worker ───────────────────────────
-async function workerOnline() {
-  try {
-    const hb = await store(JOBS, 'eventual').get(HEARTBEAT_KEY, { type: 'json' });
-    return !!(hb && hb.t && (Date.now() - hb.t) < HEARTBEAT_MAX_MS);
-  } catch (_) { return false; }
+// Goes through axis-brain-queue.mjs rather than touching Blobs here. Measured 2026-08-11: Netlify
+// does NOT inject the Blobs context into legacy CJS `exports.handler` functions like axis-director
+// — `getStore()` there throws "The environment has not been configured to use Netlify Blobs", while
+// a v2 ESM function in the SAME deploy gets it automatically. So the mailbox lives in v2 and we call
+// it over HTTP, exactly like tiers 1 and 2 call aria-kb-query / aria-research.
+async function queueCall(origin, auth, payload) {
+  const r = await fetch(`${origin}/.netlify/functions/axis-brain-queue`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', ...(auth ? { authorization: auth } : {}) },
+    body: JSON.stringify(payload),
+  });
+  if (!r.ok) return null;
+  return r.json();
 }
 
-async function subscriptionTier(query, waitMs = SUB_WAIT_MS, now = Date.now) {
-  // Never queue a job nobody will pick up — that would burn the whole budget waiting on silence.
-  if (!(await workerOnline())) return null;
-  const id = 'q-' + now().toString(36) + '-' + Math.floor(Math.random() * 1e6).toString(36);
-  const s = store(JOBS);
+async function subscriptionTier(query, { origin, auth, waitMs = SUB_WAIT_MS } = {}) {
+  if (!origin) return null;
   try {
-    await s.setJSON(`pending/${id}`, { id, query: String(query).slice(0, 4000), t: now() });
-  } catch (_) { return null; }
-  const deadline = now() + waitMs;
-  while (now() < deadline) {
-    await new Promise(r => setTimeout(r, SUB_POLL_MS));
-    try {
-      const done = await s.get(`done/${id}`, { type: 'json' });
-      if (done && done.answer) {
-        return { text: String(done.answer).trim(), tier: 'subscription', source: 'claude-max-plan', cost: 0 };
+    // Never queue a job nobody will pick up — that would burn the whole budget waiting on silence.
+    const live = await queueCall(origin, auth, { action: 'online' });
+    if (!live || !live.online) return null;
+
+    const q = await queueCall(origin, auth, { action: 'enqueue', query: String(query).slice(0, 4000) });
+    if (!q || !q.ok || !q.id) return null;
+
+    const deadline = Date.now() + waitMs;
+    while (Date.now() < deadline) {
+      await new Promise(r => setTimeout(r, SUB_POLL_MS));
+      const p = await queueCall(origin, auth, { action: 'poll', id: q.id });
+      if (p && p.ready) {
+        if (p.answer) return { text: String(p.answer).trim(), tier: 'subscription', source: 'claude-max-plan', cost: 0 };
+        return null;                      // worker reported an error — escalate
       }
-      if (done && done.error) return null;
-    } catch (_) { /* keep waiting until the deadline */ }
-  }
-  return null;   // worker too slow this time — caller escalates to the metered API
+    }
+    return null;                          // too slow this time — caller escalates to the metered API
+  } catch (_) { return null; }
 }
 
 // ── Quality gate ─────────────────────────────────────────────────────────────
@@ -155,7 +164,7 @@ async function learnBack({ query, answer, tier, source }, now = Date.now) {
 // ── The cascade ──────────────────────────────────────────────────────────────
 // Returns an answer from the cheapest tier that has one, or null so the caller escalates to the
 // metered API. `skip` lets tests and callers disable a tier without editing this file.
-async function askBrain({ query, origin, skip = [], subWaitMs = SUB_WAIT_MS }) {
+async function askBrain({ query, origin, auth, skip = [], subWaitMs = SUB_WAIT_MS }) {
   const q = String(query || '').trim();
   if (!q) return null;
   const tried = [];
@@ -163,7 +172,7 @@ async function askBrain({ query, origin, skip = [], subWaitMs = SUB_WAIT_MS }) {
   for (const [name, run] of [
     ['kb', () => kbTier(q, origin)],
     ['research', () => researchTier(q, origin)],
-    ['subscription', () => subscriptionTier(q, subWaitMs)],
+    ['subscription', () => subscriptionTier(q, { origin, auth, waitMs: subWaitMs })],
   ]) {
     if (skip.includes(name)) continue;
     tried.push(name);
