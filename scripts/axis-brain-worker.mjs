@@ -80,12 +80,19 @@ const PLAN_ENV = (() => {
   return e;
 })();
 
-// Run the local CLI on the Max plan. --print gives a single non-interactive answer.
+// Run the local CLI on the Max plan.
+//
+// THE PROMPT GOES OVER STDIN, NOT AS AN ARGUMENT. On Windows `claude` is a .cmd shim, so spawn
+// needs shell:true — and with shell:true Node CONCATENATES argv without escaping (it warns:
+// "arguments are not escaped, only concatenated"). A question containing spaces, quotes or
+// punctuation is therefore shredded by the shell: measured 2026-08-11, the model received the single
+// word "brief" and replied "your message got cut off". Every Max-plan answer produced before this
+// fix was generated from a mangled fragment. stdin has no quoting rules, so it cannot be mangled.
+// The system prompt rides in the same stdin payload for the same reason.
 function askClaude(prompt) {
   return new Promise((resolve) => {
     let out = '', err = '', settled = false;
-    const child = spawn(CLAUDE_BIN, ['--print', '--append-system-prompt', SYSTEM, prompt],
-      { shell: process.platform === 'win32', env: PLAN_ENV });
+    const child = spawn(CLAUDE_BIN, ['--print'], { shell: process.platform === 'win32', env: PLAN_ENV });
     const timer = setTimeout(() => { if (!settled) { settled = true; try { child.kill(); } catch {} resolve({ error: 'timeout' }); } }, CLI_TIMEOUT_MS);
     child.stdout.on('data', (d) => { out += d; });
     child.stderr.on('data', (d) => { err += d; });
@@ -97,6 +104,8 @@ function askClaude(prompt) {
       if (code === 0 && text) resolve({ answer: text });
       else resolve({ error: err.trim().slice(0, 300) || `exit ${code}` });
     });
+    try { child.stdin.write(SYSTEM + '\n\n' + prompt); child.stdin.end(); }
+    catch (e) { if (!settled) { settled = true; clearTimeout(timer); resolve({ error: 'stdin: ' + e.message }); } }
   });
 }
 
@@ -112,10 +121,16 @@ function stripTrailingOffer(text) {
   return String(text || '').trim().replace(OFFER, (m, q, off) => m.slice(0, m.length - q.length)).trim();
 }
 
+// A reply ABOUT the prompt (truncated, empty, unclear) is never knowledge — and it must be caught
+// BEFORE stripTrailingOffer() shaves off its closing question and makes it look substantive.
+// Measured 2026-08-11: mangled prompts produced "your message got cut off … all I received was
+// 'are'", which sailed through the gate and was banked as a real answer five times.
+const BROKEN_PROMPT = /\b(got cut off|all i received|all that came through|could you (share|clarify|resend)|what would you like me to|your message (is|was|got)|didn'?t (receive|get) )\b/i;
+
 const worthLearning = (q, a) =>
   String(q).trim().length >= 12 && !SLOP.test(String(q).trim()) &&
   stripTrailingOffer(a).length >= 60 && !SLOP.test(stripTrailingOffer(a)) &&
-  !NON_ANSWER.test(String(a)) && !/\?\s*$/.test(stripTrailingOffer(a));
+  !NON_ANSWER.test(String(a)) && !BROKEN_PROMPT.test(String(a)) && !/\?\s*$/.test(stripTrailingOffer(a));
 
 // Banking requires TWO writes and both matter:
 //   1. the learn-* blob (the body), and
