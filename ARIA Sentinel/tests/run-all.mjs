@@ -671,6 +671,12 @@ const TESTS = [
   // everywhere else, and sat in the publish directory. Untracked in the same cycle; this keeps the
   // class from returning through git the way the emitter keeps it out of the status feed.
   "../../tests/no-absolute-symlinks.test.mjs",
+  // AXIS JARVIS FLOW 2026-08-11 (cc/axis-jarvis-2026-08-11) — the persona, the wake-word turn flow and
+  // the woman's-voice ranking, plus the additive guard: every voice behaviour the v1 console shipped
+  // must still be present in axis-app.js (Rule 15). Registered BY HAND, because RUN-AW recorded that
+  // this manifest does not pick up new files and a suite running green while the count stands still is
+  // the same lie in a nicer shirt.
+  "../../tests/axis-jarvis-flow.test.mjs",
   // STAGE-3 ARE — packets landed by Cowork run 113 (2026-07-21). Registered here because each packet's
   // run-all patch was cut against an older anchor; the suites themselves are unmodified from the packets.
   "./escalation-decision.test.mjs",
