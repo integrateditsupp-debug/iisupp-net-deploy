@@ -2,12 +2,12 @@
  "_internal": true,
  "_emitRule": "INTERNAL ONLY — force-404 live, served via authenticated /api/axis-status. NEVER copy this content into .well-known: regenerate the public mirrors with scripts/lib/axis-status-emit.mjs (headline-only, leak-scanned).",
  "schema": "axis-status-full/1",
- "generatedAt": "2026-08-11T13:15:09.193Z",
+ "generatedAt": "2026-08-11T14:02:26.516Z",
  "honest": true,
  "claims": {
   "clientFacingDocumentsAudited": {
-   "value": 4,
-   "measuredAt": "2026-08-11T13:17:04.562Z",
+   "value": 27,
+   "measuredAt": "2026-08-11T14:04:25.821Z",
    "source": "every .md under the client-facing directories, read during this emit",
    "kind": "measurement",
    "provenance": "measured",
@@ -21,7 +21,7 @@
   },
   "clientFacingDocumentsRefused": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.562Z",
+   "measuredAt": "2026-08-11T14:04:25.821Z",
    "source": "documents carrying operator-internal content; the emit refuses to write if this is not zero",
    "kind": "blocker",
    "provenance": "measured",
@@ -34,8 +34,8 @@
    "stale": false
   },
   "clientFacingUnpublishedFigures": {
-   "value": 4,
-   "measuredAt": "2026-08-11T13:17:04.562Z",
+   "value": 44,
+   "measuredAt": "2026-08-11T14:04:25.821Z",
    "source": "money figures quoted in a client-facing contract that appear nowhere the company publishes",
    "kind": "blocker",
    "provenance": "measured",
@@ -49,7 +49,7 @@
   },
   "agreementCarriedByTheSharedLine": {
    "value": true,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the yes-path walk: whether the agreement a client signs is in the tree a clone receives",
    "kind": "blocker",
    "provenance": "measured",
@@ -63,7 +63,7 @@
   },
   "invoiceWalkedToARenderedDraft": {
    "value": true,
-   "measuredAt": "2026-08-11T13:17:04.562Z",
+   "measuredAt": "2026-08-11T14:04:25.821Z",
    "source": "a rehearsal in a throwaway directory: no live API call, no key read, no money moved",
    "kind": "measurement",
    "provenance": "measured",
@@ -77,7 +77,7 @@
   },
   "invoiceStepsBroken": {
    "value": 1,
-   "measuredAt": "2026-08-11T13:17:04.562Z",
+   "measuredAt": "2026-08-11T14:04:25.821Z",
    "source": "steps on the path from an agreed proposal to a collected invoice that are broken today",
    "kind": "blocker",
    "provenance": "measured",
@@ -91,7 +91,7 @@
   },
   "invoiceStepsUnrun": {
    "value": 1,
-   "measuredAt": "2026-08-11T13:17:04.562Z",
+   "measuredAt": "2026-08-11T14:04:25.821Z",
    "source": "steps this environment cannot rehearse — reported unrun with a reason, never as a pass",
    "kind": "measurement",
    "provenance": "measured",
@@ -104,8 +104,8 @@
    "stale": false
   },
   "testsPassedAfterWrites": {
-   "value": 898,
-   "measuredAt": "2026-08-11T13:17:04.561Z",
+   "value": 925,
+   "measuredAt": "2026-08-11T14:04:25.821Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (# pass)",
    "kind": "test",
    "provenance": "measured",
@@ -119,7 +119,7 @@
   },
   "testsFailedAfterWrites": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.561Z",
+   "measuredAt": "2026-08-11T14:04:25.821Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (# fail)",
    "kind": "test",
    "provenance": "measured",
@@ -132,8 +132,8 @@
    "stale": false
   },
   "suitesGreenAfterWrites": {
-   "value": 359,
-   "measuredAt": "2026-08-11T13:17:04.561Z",
+   "value": 361,
+   "measuredAt": "2026-08-11T14:04:25.821Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (N/N suites green)",
    "kind": "test",
    "provenance": "measured",
@@ -146,8 +146,8 @@
    "stale": false
   },
   "suitesTotalAfterWrites": {
-   "value": 359,
-   "measuredAt": "2026-08-11T13:17:04.561Z",
+   "value": 361,
+   "measuredAt": "2026-08-11T14:04:25.821Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (N/N suites green)",
    "kind": "test",
    "provenance": "measured",
@@ -161,7 +161,7 @@
   },
   "registryExitCode": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.562Z",
+   "measuredAt": "2026-08-11T14:04:25.821Z",
    "source": "the exit code of the registry run this script performed",
    "kind": "test",
    "provenance": "measured",
@@ -175,7 +175,7 @@
   },
   "testsPassedBeforeAnyWrite": {
    "value": 766,
-   "measuredAt": "2026-08-11T13:17:04.562Z",
+   "measuredAt": "2026-08-11T14:04:25.821Z",
    "source": "not measurable in this environment: the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
    "kind": "test",
    "provenance": "declared-unmeasurable",
@@ -187,7 +187,7 @@
   },
   "suitesGreenBeforeAnyWrite": {
    "value": 350,
-   "measuredAt": "2026-08-11T13:17:04.562Z",
+   "measuredAt": "2026-08-11T14:04:25.821Z",
    "source": "not measurable in this environment: the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
    "kind": "test",
    "provenance": "declared-unmeasurable",
@@ -198,8 +198,8 @@
    "stale": false
   },
   "commitsAheadOfSharedLine": {
-   "value": 7,
-   "measuredAt": "2026-08-11T13:17:04.637Z",
+   "value": 8,
+   "measuredAt": "2026-08-11T14:04:25.926Z",
    "source": "a revision count taken against the last known shared reference during this cycle",
    "kind": "count",
    "provenance": "measured",
@@ -213,7 +213,7 @@
   },
   "sharedLineAdvancedByPush": {
    "value": true,
-   "measuredAt": "2026-08-11T13:17:04.684Z",
+   "measuredAt": "2026-08-11T14:04:25.984Z",
    "source": "the local reflog for the remote-tracking ref, read during this emit",
    "kind": "measurement",
    "provenance": "measured",
@@ -227,7 +227,7 @@
   },
   "sharedLineConfirmedOnRemote": {
    "value": null,
-   "measuredAt": "2026-08-11T13:17:04.684Z",
+   "measuredAt": "2026-08-11T14:04:25.984Z",
    "source": "git ls-remote origin main, run during this emit and refused",
    "kind": "blocker",
    "provenance": "declared-unmeasurable",
@@ -238,7 +238,7 @@
   },
   "pushCredentialRefused": {
    "value": true,
-   "measuredAt": "2026-08-11T13:17:04.914Z",
+   "measuredAt": "2026-08-11T14:04:26.200Z",
    "source": "a remote probe run with prompts disabled during this emit; the refusal is the measurement",
    "kind": "blocker",
    "provenance": "measured",
@@ -252,7 +252,7 @@
   },
   "secondMessagesDrafted": {
    "value": 12,
-   "measuredAt": "2026-08-11T13:17:04.915Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "a read of senior-director-state/outbound/SEND-SHEET-2026-08-05.md on disk during this cycle, counting its entries",
    "kind": "count",
    "provenance": "measured",
@@ -267,7 +267,7 @@
   },
   "customerRoutesResolved": {
    "value": 762,
-   "measuredAt": "2026-08-11T13:17:04.915Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the customer link-graph walk performed during this emit, over the declared customer entry points",
    "kind": "measurement",
    "provenance": "measured",
@@ -281,7 +281,7 @@
   },
   "customerRoutesBroken": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.915Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the same walk; a broken route resolves to no file, an empty file, a force-404 rule, or a login-only body",
    "kind": "blocker",
    "provenance": "measured",
@@ -295,7 +295,7 @@
   },
   "customerRoutesUnchecked": {
    "value": 134,
-   "measuredAt": "2026-08-11T13:17:04.915Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the same walk; external hosts, mail/tel schemes, fragments, runtime hrefs and function routes — undecidable from disk, never counted as passing",
    "kind": "measurement",
    "provenance": "measured",
@@ -309,7 +309,7 @@
   },
   "firstScreensWithAValueClaim": {
    "value": 12,
-   "measuredAt": "2026-08-11T13:17:04.915Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the first-screen audit run during this emit over the declared customer entry points",
    "kind": "measurement",
    "provenance": "measured",
@@ -323,7 +323,7 @@
   },
   "firstScreensWithFindings": {
    "value": 2,
-   "measuredAt": "2026-08-11T13:17:04.915Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the same audit; a finding is a named violation carrying its file and, where the string exists in source, its line",
    "kind": "blocker",
    "provenance": "measured",
@@ -337,7 +337,7 @@
   },
   "firstScreensUnchecked": {
    "value": 1,
-   "measuredAt": "2026-08-11T13:17:04.915Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the same audit; an entry point mounted at runtime or absent from disk — never counted as passing",
    "kind": "measurement",
    "provenance": "measured",
@@ -351,7 +351,7 @@
   },
   "firstScreenRule14Violations": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.915Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the same audit, filtered to the honesty classes: guarantee language, experience overclaim, forbidden name, fabricated proof, uncarried metric",
    "kind": "blocker",
    "provenance": "measured",
@@ -365,7 +365,7 @@
   },
   "salesSurfacesMakingAClaim": {
    "value": 12,
-   "measuredAt": "2026-08-11T13:17:04.915Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the surface-class audit run during this emit; SALES surfaces only — exempt and unchecked are never folded in",
    "kind": "measurement",
    "provenance": "measured",
@@ -379,7 +379,7 @@
   },
   "salesSurfacesStillSilent": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.915Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the same audit; a sales surface that names things and promises nothing a reader can feel",
    "kind": "blocker",
    "provenance": "measured",
@@ -393,7 +393,7 @@
   },
   "obligationSurfacesExempt": {
    "value": 2,
-   "measuredAt": "2026-08-11T13:17:04.915Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the same audit; each exempt surface carries the written argument for its exemption in code",
    "kind": "measurement",
    "provenance": "measured",
@@ -407,7 +407,7 @@
   },
   "entryPointsReachingAConversation": {
    "value": 15,
-   "measuredAt": "2026-08-11T13:17:04.915Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the conversation-path walk run during this emit, from each entry point out to the action that starts a conversation",
    "kind": "measurement",
    "provenance": "measured",
@@ -421,7 +421,7 @@
   },
   "entryPointsWithNoConversation": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.915Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the same walk; no path, a path past the click budget, or a path ending in a form that declares no delivery target",
    "kind": "blocker",
    "provenance": "measured",
@@ -435,7 +435,7 @@
   },
   "entryPointsConversationUnchecked": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.915Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the same walk; an entry point not on disk in this checkout — never counted as reachable",
    "kind": "measurement",
    "provenance": "measured",
@@ -449,7 +449,7 @@
   },
   "outboundLinksResolved": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the audit of every site link in the send sheet, run during this emit",
    "kind": "measurement",
    "provenance": "measured",
@@ -463,7 +463,7 @@
   },
   "unpublishedCommitsTouchingPublicPages": {
    "value": 2,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the commit range origin/main..HEAD read during this emit and classified BY PATH, never by commit message",
    "kind": "measurement",
    "provenance": "measured",
@@ -477,7 +477,7 @@
   },
   "unpublishedPublicFilesChanged": {
    "value": 2,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "the same range read; the distinct set of files in it the open internet can load",
    "kind": "measurement",
    "provenance": "measured",
@@ -491,7 +491,7 @@
   },
   "unpublishedMergeCommitsExcluded": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.201Z",
    "source": "rev-list --count --merges over the same range, so the 49-vs-37 gap is reconciled rather than left to drift",
    "kind": "measurement",
    "provenance": "measured",
@@ -504,8 +504,8 @@
    "stale": false
   },
   "deliveryBundleBytes": {
-   "value": 137831,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "value": 139796,
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the git bundle written and re-verified during this emit; the byte count is stat(), not an estimate",
    "kind": "measurement",
    "provenance": "measured",
@@ -519,7 +519,7 @@
   },
   "deliveryBundleVerified": {
    "value": true,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the verification this emit performed on the bundle it just wrote; a bundle that will not verify aborts the emit",
    "kind": "measurement",
    "provenance": "measured",
@@ -533,12 +533,12 @@
   },
   "gitPorcelainWritesBlocked": {
    "value": true,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "a real write/overwrite/unlink probe inside .git performed during this emit, confirmed against git's own refusal",
    "kind": "blocker",
    "provenance": "measured",
    "read": {
-    "command": "probeGitBoundary() -> the-git-directory-refuses-unlink-so-porcelain-writes-are-permanently-blocked; git said: fatal: Unable to create '/sessions/eloquent-sharp-tesla/mnt/iisupp-net-deploy/.git/index.lock': File exists. Another git",
+    "command": "probeGitBoundary() -> the-git-directory-refuses-unlink-so-porcelain-writes-are-permanently-blocked; git said: fatal: Unable to create '/sessions/compassionate-quirky-thompson/mnt/iisupp-net-deploy/.git/index.lock': File exists. An",
     "exitCode": 0
    },
    "ageHours": 0,
@@ -547,7 +547,7 @@
   },
   "gitStaleLocksPermanent": {
    "value": 1,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the same probe; these lock files exist and this environment cannot unlink them",
    "kind": "measurement",
    "provenance": "measured",
@@ -561,7 +561,7 @@
   },
   "stagedItemsAudited": {
    "value": 6,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the staged-action guard run over the tracked staged-actions module during this emit",
    "kind": "measurement",
    "provenance": "measured",
@@ -575,7 +575,7 @@
   },
   "stagedItemsRanked": {
    "value": 6,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the staged list read during this emit; AN2 requires a rank and an unblocks statement per item",
    "kind": "measurement",
    "provenance": "measured",
@@ -589,7 +589,7 @@
   },
   "secondMessagesSent": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "not measurable in this environment: no send path exists in this environment and none was attempted; the outbound record shows none",
    "kind": "count",
    "provenance": "declared-unmeasurable",
@@ -601,7 +601,7 @@
   },
   "meetingsHeld": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "not measurable in this environment: replies and meetings live in a mailbox and a calendar this environment cannot read",
    "kind": "count",
    "provenance": "declared-unmeasurable",
@@ -613,7 +613,7 @@
   },
   "daysDraftedUnsent": {
    "value": 21,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the date the twelve were first drafted (2026-07-21), differenced against this emit's clock",
    "kind": "measurement",
    "provenance": "measured",
@@ -627,7 +627,7 @@
   },
   "yesPathStepsCarried": {
    "value": 6,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the yes-path walk performed during this emit — reply, booking, scope, agreement, invoice, payment",
    "kind": "measurement",
    "provenance": "measured",
@@ -641,7 +641,7 @@
   },
   "yesPathStepsTotal": {
    "value": 6,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the same walk",
    "kind": "measurement",
    "provenance": "measured",
@@ -655,7 +655,7 @@
   },
   "yesPathStepsMissing": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the same walk; a step nobody can point at is missing, never 'handled manually'",
    "kind": "blocker",
    "provenance": "measured",
@@ -669,7 +669,7 @@
   },
   "manualStepsToFirstDollar": {
    "value": 2,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the yes-path priced during this emit; manual BY DESIGN and manual for want of an artefact counted apart",
    "kind": "measurement",
    "provenance": "measured",
@@ -683,7 +683,7 @@
   },
   "manualStepsByDesign": {
    "value": 2,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the same count — the signature and the payment authorisation are human on purpose and are not defects",
    "kind": "measurement",
    "provenance": "measured",
@@ -697,7 +697,7 @@
   },
   "handInputsToFirstDollar": {
    "value": 14,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "blanks counted out of the artefacts themselves — form fields, underscores, empty signature cells",
    "kind": "measurement",
    "provenance": "measured",
@@ -711,7 +711,7 @@
   },
   "hoursToFirstDollar": {
    "value": null,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "not measurable in this environment: nobody in this repository has ever timed one of these steps; an invented duration would be a fabricated metric, so the distance is reported in acts and blanks, which can be counted",
    "kind": "measurement",
    "provenance": "declared-unmeasurable",
@@ -722,7 +722,7 @@
   },
   "retainerProposalGenerates": {
    "value": true,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "a proposal generated during this emit from the published plan table, then re-checked token by token",
    "kind": "measurement",
    "provenance": "measured",
@@ -736,7 +736,7 @@
   },
   "currencySurfacesDeclaring": {
    "value": 7,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the money-path walk performed during this emit; each currency read out of the file that declares it",
    "kind": "measurement",
    "provenance": "measured",
@@ -750,7 +750,7 @@
   },
   "currenciesInUseOnTheMoneyPath": {
    "value": 2,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the same walk; more than one is a divergence that software may not resolve on its own",
    "kind": "blocker",
    "provenance": "measured",
@@ -764,7 +764,7 @@
   },
   "currencySurfacesOffDirection": {
    "value": 2,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the same walk; each carries its file and line so the correction is one pass, not a search",
    "kind": "blocker",
    "provenance": "measured",
@@ -778,7 +778,7 @@
   },
   "currencyDirectionDeclared": {
    "value": false,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "a read of the decision file in the tree; absent means nobody has decided, and that is reported as such",
    "kind": "measurement",
    "provenance": "measured",
@@ -792,7 +792,7 @@
   },
   "currencyInsideStripeUnrun": {
    "value": null,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "not measurable in this environment: they charge through Stripe price IDs; the currency of a price ID is stored inside Stripe and is not present in this repository, so it can be neither confirmed nor contradicted from here",
    "kind": "measurement",
    "provenance": "declared-unmeasurable",
@@ -803,7 +803,7 @@
   },
   "clientFacingFiguresRead": {
    "value": 65,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "every money token in every .md under 27 client-facing documents, read during this emit",
    "kind": "measurement",
    "provenance": "measured",
@@ -817,7 +817,7 @@
   },
   "clientFacingFiguresPublished": {
    "value": 21,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the same read; a figure a client can check on the published plan page",
    "kind": "measurement",
    "provenance": "measured",
@@ -831,7 +831,7 @@
   },
   "clientFacingFiguresDeclared": {
    "value": 37,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the same read; a figure deliberately quoted outside the table, with a written reason in docs/QUOTED-FIGURES.md",
    "kind": "measurement",
    "provenance": "measured",
@@ -845,7 +845,7 @@
   },
   "clientFacingFiguresSilent": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the same read; a figure quoted to somebody and accounted for by nobody. The emit refuses to write if this is not zero",
    "kind": "blocker",
    "provenance": "measured",
@@ -859,7 +859,7 @@
   },
   "clientFacingSecondPrices": {
    "value": 7,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the same read; a plan the company publishes, quoted at a different amount in a document a prospect is handed",
    "kind": "blocker",
    "provenance": "measured",
@@ -873,7 +873,7 @@
   },
   "staleFigureDeclarations": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the same read; a declaration matching no figure in the tree, so the register cannot rot",
    "kind": "measurement",
    "provenance": "measured",
@@ -887,7 +887,7 @@
   },
   "sendSheetMessagesChecked": {
    "value": 12,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the send sheet parsed and checked during this emit, message by message",
    "kind": "measurement",
    "provenance": "measured",
@@ -901,7 +901,7 @@
   },
   "sendSheetMessagesRefused": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the same check; rule-7 language, an experience overclaim, the forbidden name, an unpublished figure, a dead link or a Rule-11 contact detail",
    "kind": "blocker",
    "provenance": "measured",
@@ -915,7 +915,7 @@
   },
   "judgementCallsBeforeSending": {
    "value": 0,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "the same check; the number of decisions the sender would otherwise have to make by eye, message by message",
    "kind": "measurement",
    "provenance": "measured",
@@ -929,7 +929,7 @@
   },
   "sendSheetCarriedByTheSharedLine": {
    "value": true,
-   "measuredAt": "2026-08-11T13:17:04.916Z",
+   "measuredAt": "2026-08-11T14:04:26.202Z",
    "source": "whether the twelve messages are in the tree a clone receives; they are not, by deploy-safety design",
    "kind": "blocker",
    "provenance": "measured",
@@ -941,9 +941,163 @@
    "maxAgeHours": 72,
    "stale": false
   },
+  "clientFacingDocumentsAuditedWidened": {
+   "value": 27,
+   "measuredAt": "2026-08-11T14:04:26.202Z",
+   "source": "every markdown document under the contracts, the compliance pack and the sales sheets, walked recursively during this emit",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditClientFacing().summary.documents — four before this cycle",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "clientFacingCheckExemptionsApplied": {
+   "value": 6,
+   "measuredAt": "2026-08-11T14:04:26.202Z",
+   "source": "occurrences a declared, directory-scoped exemption moved out of the refusals; each is reported with file, line and the argument for it",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditClientFacing().summary.exempted — an exemption is never silent",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "clientFacingCheckExemptionsDeclared": {
+   "value": 1,
+   "measuredAt": "2026-08-11T14:04:26.202Z",
+   "source": "exemptions declared in code with a written argument; the only way a check may be narrowed",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "EXEMPTIONS.length in scripts/lib/client-facing-leak.mjs",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "factualClaimsInClientFacingDocuments": {
+   "value": 35,
+   "measuredAt": "2026-08-11T14:04:26.202Z",
+   "source": "assertions about certification, audit status, insurance, retention, uptime and experience, extracted from the documents during this emit",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "reconcileClaims().summary.claims",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "factualClaimsSilent": {
+   "value": 0,
+   "measuredAt": "2026-08-11T14:04:26.202Z",
+   "source": "claims asserted to a reviewer, absent from every published page and absent from the register — evidenced by nobody",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "reconcileClaims().summary.silent — the emit refuses above zero",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "factualClaimsDeclaredWithCondition": {
+   "value": 30,
+   "measuredAt": "2026-08-11T14:04:26.202Z",
+   "source": "claims accounted for in docs/CLAIM-REGISTER.md with a reason a person wrote and a condition or a piece of evidence",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "reconcileClaims().summary.declared",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "factualClaimsDisclaimedByTheirOwnSentence": {
+   "value": 4,
+   "measuredAt": "2026-08-11T14:04:26.202Z",
+   "source": "occurrences where the document explicitly denies the claim — a disclaimer is neither an assertion nor a gap",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "reconcileClaims().summary.disclaimed",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "packetDocumentsPromised": {
+   "value": 27,
+   "measuredAt": "2026-08-11T14:04:26.202Z",
+   "source": "the documents a prospect is promised after a yes, expanded from HEAD's tree — never the working copy",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "assemblePacket().summary.promised",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "packetDocumentsAClonveCanProduce": {
+   "value": 27,
+   "measuredAt": "2026-08-11T14:04:26.202Z",
+   "source": "of those, the ones whose bytes HEAD actually carries",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "assemblePacket().summary.arrived",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "packetDocumentsUntracked": {
+   "value": 0,
+   "measuredAt": "2026-08-11T14:04:26.202Z",
+   "source": "promised to a prospect and outside the shared line — sendable from one machine only",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "assemblePacket().summary.untracked",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "packetWasSent": {
+   "value": false,
+   "measuredAt": "2026-08-11T14:04:26.202Z",
+   "source": "this module answers a question about delivery and delivers nothing; asserted in code, not promised in prose",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "assemblePacket().sent — always false; no transport exists in the module",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
   "revenueToDate": {
    "value": "none",
-   "measuredAt": "2026-08-11T13:15:09.193Z",
+   "measuredAt": "2026-08-11T14:02:26.516Z",
    "source": "no invoice has been issued",
    "kind": "fact",
    "ageHours": 0,
@@ -952,7 +1106,7 @@
   },
   "feedMaxAgeHours": {
    "value": 24,
-   "measuredAt": "2026-08-11T13:15:09.193Z",
+   "measuredAt": "2026-08-11T14:02:26.516Z",
    "source": "the freshness policy wired into the served-feed read path",
    "kind": "fact",
    "ageHours": 0,
@@ -963,52 +1117,47 @@
  "claimsPolicy": "Every figure above is { value, measuredAt, source, kind } AND declares who authored the stamp. A figure this environment can read must carry `provenance: measured` plus the command and exit code that produced it — the emit script types none of those numbers, and the emitter refuses the whole write if one arrives hand-typed. A figure that cannot be read here is `declared-unmeasurable` with a reason and, where useful, a value explicitly labelled last known. Only figures with nothing to read may be attested by hand.",
  "program": {
   "series": "flywheel",
-  "sequence": "RUN-AV — the two decisions and the one act (AV1 the currency read off every surface on the money path, never picked · AV2 every client-facing figure published or declared with a reason, silent driven to zero without deleting a contract · AV3 the send sheet checked by code so pressing send needs no judgement call · AV4 feed by measurement)",
-  "previousSequence": "RUN-AU / flywheel cycle 137 — the document a stranger can receive (4/4)",
+  "sequence": "RUN-AW — the twenty-seven documents nobody read (AW1 the leak gate pointed at every document a stranger can receive, recursively, with an exemption mechanism that is declared in code and never silent · AW2 every factual claim published, disclaimed, declared with a condition, or refused · AW3 the whole prospect packet assembled from HEAD's tree, never the working copy · AW4 feed by measurement)",
+  "previousSequence": "RUN-AV / flywheel cycle 138 — the two decisions and the one act (4/4)",
   "tasksBuiltAndGreen": 4,
   "tasksTotal": 4,
   "tasksMerged": 4,
   "pct": 100,
   "tasksStillOpen": [],
-  "carriedFrom": "RUN-AU closed 4/4 and staged two decisions about money it was correct not to make: which currency the company charges, and four figures quoted in signable contracts that the company publishes nowhere. RUN-AV made both decidable — the first by reading every surface instead of two, the second by giving a figure a third honest state — and found a third that is larger than either.",
+  "carriedFrom": "RUN-AV closed 4/4 and produced its largest finding in six cycles not from a cleverer check but from pointing a check at two directories instead of one. RUN-AW took that literally: four of the twenty-seven documents a stranger can receive had ever been read by a gate, and the other twenty-three include the questionnaires an enterprise reviewer works through line by line. Widening the walk found an experience claim above the honest ceiling in the first two documents an auditor opens, written in an abbreviation the check could never have matched.",
   "testsGreen": true,
-  "verificationCycleNote": "The registry arrived GREEN on the real tree — 827/827 · 356/356 · exit 0 — and that is stated first because the previous cycle arrived red and said so. Three new suites were then written red-first: currency-consistency (17), quoted-figures (28) and send-sheet-gate (26). Each was proven against fixtures built to fail the exact class it claims to catch, and each of the three produced a real finding rather than a designed red. Two defects were caught by the suites against their own modules and fixed before anything shipped: an even split between two currencies had the audit quietly nominating a winner alphabetically, which is software leaning on a decision it was told not to make; and the money collector was reading \"$937.5K\" as \"$937\" and \"$73.5\" as \"$73\", misreading a client-facing figure by three orders of magnitude while reporting confidently. A third was caught by an EXISTING invariant, which is the better outcome: record-dependency-declared refused the new send-sheet suite for reading the untracked operator root without being declared, and it is now declared.",
-  "note": "RUN-AU closed the last artefact gap on the route to a first dollar and revenue stayed at zero, because the remaining gap has never been a software gap. RUN-AV therefore stopped adding artefacts and started removing the reasons the path is not used. AV1 walked the whole money path instead of the two surfaces one rehearsal had touched: SEVEN surfaces declare a currency and they do not agree — the renewal email a paying customer receives says USD while the inline charge path that would bill their card says CAD. The audit is built so it cannot report 'consistent' while surfaces disagree, and so it never picks a direction; the moment one is named in the tree the same module enforces it everywhere. AV2 replaced a binary that had only two moves — publish the figure or delete the contract — with a third honest state: DECLARED, in a tracked register, with a reason a person wrote and can be argued with. Silent figures went from forty-four to zero and not one line of any contract was deleted to get there (Rule 15), and the register cannot be used as a rubber stamp: a reason that says nothing is refused and a declaration matching nothing in the tree is stale. Running it turned up something larger than the four figures AU had staged: the Sentinel sales one-pager carries a SECOND price for all five published plans — $599 against $899, $1,500 against $2,250, $156K/yr against $19,500/mo, $312K/yr against $39,000/mo, $625K/yr against $78,125/mo. That is not an unpublished figure, it is a second price for the same named thing in the document a prospect is handed during the exact conversation the twelve messages are meant to start, and it is deliberately NOT declarable in the register: declaring it there would use the register to launder a contradiction. AV3 priced what pressing send costs — twelve separate judgement calls about rule-7 language, experience claims, the forbidden name, unpublished figures, dead links and Rule-11 contact detail — and drove that figure to zero by checking them once, in code, with no transport of any kind. Running THAT in a clone found that the send sheet itself is not in the shared line: it lives under the directory the deploy-safety lockdown excludes because this repository's root is served. It was not moved into served URL space to make a number go green. Second messages sent: still zero."
+  "verificationCycleNote": "The registry arrived GREEN on the real tree — 898/898 · 359/359 · exit 0 — read before any RUN-AW write. 925/925 · 361/361 · exit 0 after every write. The rise of 27 is exactly this cycle's work and nothing else: claim-register 13, prospect-packet 10, and four added to the existing client-facing-leak suite for the widened walk, the strengthened experience check and the exemption mechanism. Both new suites were written red-first against fixtures built to fail the exact class claimed — an unevidenced claim, a hedge standing in for a condition, an empty reason, a stale declaration, a working-copy file counted as deliverable, an empty section reading as clean. TWO DEFECTS were caught by the new suites against their own modules and fixed before anything shipped, both of the same family — a check that was confidently wrong. The claim collector read the ISO Statement of Applicability's own DISCLAIMER as an assertion of the thing it denies, which would have pushed this program toward deleting the most honest paragraph in the compliance pack to go green; negation is now positional, so a trailing \"not attached\" can never launder a certification claim into a denial. And first-match-wins handed a sub-processor's certificate to a declaration about this company's own 2027 target, then reported the correct, purpose-written entry as stale — accounted for by the wrong argument while the right argument looked dead. Most specific match now wins, in the correct direction. A third thing was caught by an EXISTING invariant, which is again the better outcome: the registry manifest does not pick up new suites, so both new files ran green locally while the suite count stayed at 359 — they are now registered, and the count moved.",
+  "note": "RUN-AV found the largest defect in six cycles — a second price for all five published plans — and it did not come from a better check. It came from looking at documents nobody had looked at. RUN-AW took that as the method. Twenty-seven documents leave this building: four contracts, twenty compliance documents, three sales sheets. FOUR had ever been read by a gate. The other twenty-three include the SIG-Lite and CAIQ-Lite questionnaires an enterprise buyer's reviewer works through line by line, eleven written policies, and a SOC 2 controls self-assessment. AW1 pointed the leak gate at all of them and made the walk recursive, because a flat readdir had been reporting a directory of eleven policies as absent rather than as unclean — the difference between an unasked question and an answered one. It found nine documents carrying operator-internal content into a reviewer's hands, and it found something worse: `Founder 21+ yrs IT` in the SOC 2 self-assessment, and again in the HIPAA readiness map. Above the honest ceiling, in the first two documents an auditor opens, and invisible to the check written to catch exactly that — because the check required the word `years` spelled out and the claim was abbreviated. The check was STRENGTHENED rather than the number quietly corrected and the hole left open. The nine documents were fixed by REWRITING the sentences into client-appropriate language, never by deleting a clause (Rule 15); a policy that names its access-control roles still names them, in words a client is entitled to read. Where a check was genuinely wrong about a word rather than about the vocabulary — `kill-switch` is a product control an EU AI Act Article 14 answer is REQUIRED to describe, not internal process vocabulary — the narrowing is a declared, directory-scoped exemption with a written argument, counted and reported on every run with its file and its line. An exemption that is never reported is a check quietly turned off. AW2 then asked the question AW1 cannot: not whether a document carries something it should not, but whether what it DOES carry is true. Thirty-five factual claims about certifications, audits, insurance cover, retention periods and experience, each ending in exactly one of four states — consistent with a published page, explicitly disclaimed by its own sentence, declared in a tracked register with a reason a person wrote and a condition a reader can hold the company to, or REFUSED. Silent went to zero with no document edited to get there. Three claims are registered as OPEN QUESTIONS rather than resolved, because resolving them is a decision and not a computation: the incident-response runbook says the cyber liability insurer is notified per policy terms while every other document in the pack says the cover is still in procurement, and the CCPA answer contradicts itself inside one line — `Yes. Privacy policy expansion in progress for CCPA-specific disclosures.` AW3 asked AU1's question of the whole packet instead of one agreement: twenty-seven promised documents, assembled in a throwaway directory from HEAD'S TREE — never the working copy, never the index — and all twenty-seven arrive. The client integration guide was missing from the first draft of that packet purely because it sits one directory deeper than the sales sheets, which is the kind of omission the module exists to find and found on its first run. Nothing was sent, nothing attached, no mail path touched. Second messages sent: still zero."
  },
  "tests": {
   "afterEveryWrite": {
-   "pass": 898,
+   "pass": 925,
    "fail": 0,
-   "suites": "359/359",
+   "suites": "361/361",
    "exit": 0
   },
   "beforeAnyWriteLastKnown": {
-   "pass": 827,
+   "pass": 898,
    "fail": 0,
-   "suites": "356/356",
+   "suites": "359/359",
    "exit": 0,
-   "note": "the opening read of this cycle, on the real tree, before any RUN-AV write — GREEN"
+   "note": "the opening read of this cycle, on the real tree, before any RUN-AW write — GREEN"
   },
   "arrivalState": {
    "red": false,
-   "detail": "827/827 · 356/356 · exit 0 on the real tree before any RUN-AV write. The previous cycle arrived red and said so; this one arrived green and says that with the same words, so the colour keeps meaning something."
+   "detail": "898/898 · 359/359 · exit 0 on the real tree before any RUN-AW write. Two cycles green on arrival now, after one that arrived red and said so — the colour keeps meaning something because it is read and reported either way."
   },
-  "riseExplained": "this cycle's three new suites (currency-consistency 17, quoted-figures 28, send-sheet-gate 26) and nothing else",
+  "riseExplained": "claim-register 13 + prospect-packet 10 + four added to client-facing-leak for the widened walk, the strengthened experience check and the exemption mechanism = 27, and nothing else",
   "newThisCycle": [
    {
-    "suite": "currency-consistency",
+    "suite": "claim-register",
     "redThenGreen": true,
-    "note": "the invariant proven by fixture: the audit cannot return consistent while surfaces disagree, and cannot pick a direction. Caught its own module nominating a winner alphabetically in an even split"
+    "note": "every state proven against a fixture built to land in it — an unevidenced claim refused by class, file and line; a hedge refused where a condition is required; an empty reason refused; a declaration matching nothing reported stale. Caught its own collector reading a document's DISCLAIMER as an assertion, and its own matcher handing a sub-processor's certificate to this company's target"
    },
    {
-    "suite": "quoted-figures",
+    "suite": "prospect-packet",
     "redThenGreen": true,
-    "note": "every class proven against a fixture built to fail it — silent, empty reason, self-restating reason, stale declaration, a second price for a published plan. Caught its own collector reading $937.5K as $937"
-   },
-   {
-    "suite": "send-sheet-gate",
-    "redThenGreen": true,
-    "note": "seven refusal classes each planted in a message and asserted red by name and by line; asserts in code that the gate carries no transport"
+    "note": "assembled from HEAD's tree in a real scratch repository: a working-copy-only file is UNTRACKED rather than delivered, the bytes are HEAD's bytes and not the edited ones, an empty section fails rather than reading as clean, and the suite asserts in code that the module has no transport. Wired to AW1 by an invariant so the gate and the packet cannot drift"
    }
   ]
  },
@@ -1087,7 +1236,7 @@
  "onTrack": {
   "landing": false,
   "conversion": false,
-  "honestNote": "Nothing published. No customer-visible change and none claimed. The verified work still sits on the local line (7 commits ahead of the last known shared reference) because the environment holds no credential for the shared host — probed again this cycle and refused again."
+  "honestNote": "Nothing published. No customer-visible change and none claimed. The verified work still sits on the local line (8 commits ahead of the last known shared reference) because the environment holds no credential for the shared host — probed again this cycle and refused again."
  },
  "needsAhmad": [
   {
@@ -1254,11 +1403,11 @@
  },
  "unpublishedLine": {
   "ref": "origin/main",
-  "statement": "7 commit(s) are built and tested but unpublished. 2 of them touch 2 file(s) a visitor can load — that share, and only that share, is what publishing would change on screen.",
+  "statement": "8 commit(s) are built and tested but unpublished. 2 of them touch 2 file(s) a visitor can load — that share, and only that share, is what publishing would change on screen.",
   "reconciliation": {
-   "countedHere": 7,
+   "countedHere": 8,
    "mergeCommitsExcluded": 0,
-   "totalIncludingMerges": 7,
+   "totalIncludingMerges": 8,
    "why": "a merge commit introduces no file changes of its own; counting it would attribute every file it carries twice. The ledger's headline figure has always been the total including merges.",
    "consistent": true
   },
@@ -1294,8 +1443,8 @@
    {
     "class": "record-only",
     "why": "the operator's own record of the work — a visitor cannot reach it and no product behaviour changes",
-    "commits": 5,
-    "exclusiveCommits": 1,
+    "commits": 6,
+    "exclusiveCommits": 2,
     "files": 12
    },
    {
@@ -1316,16 +1465,16 @@
  "delivery": {
   "bundle": "senior-director-state/delivery/unpublished-line.bundle",
   "manifest": "senior-director-state/delivery/unpublished-line.manifest.json",
-  "tip": "318540c60400e39ce5564fe07205accefa2a91d5",
-  "tree": "6f7b9690f8409c92cb2b3a29b4828fb625b1027b",
+  "tip": "937ee3d74f70526a5a4c39a163c3be88266d506a",
+  "tree": "da219be748c63cb7dd618d82cecd8f49236b5a45",
   "basedOn": {
    "ref": "origin/main",
    "sha": "cb4f3f0452636e50e9b33572b7960904a639f524"
   },
-  "commits": 7,
-  "bytes": 137831,
-  "sha256": "8297abcb18a7475a58722e696753756f9a68c2b8d51a0fe61f8dde80cbb57137",
-  "fetchCommand": "git fetch \"senior-director-state/delivery/unpublished-line.bundle\" main:refs/heads/from-bundle-318540c",
+  "commits": 8,
+  "bytes": 139796,
+  "sha256": "3a70750d83dd2b84765427dccec38188cdccc27f03a20e71c353a2c4754d1e93",
+  "fetchCommand": "git fetch \"senior-director-state/delivery/unpublished-line.bundle\" main:refs/heads/from-bundle-937ee3d",
   "verifyCommand": "node scripts/verify-range-bundle.mjs",
   "verified": true,
   "tracked": false,
@@ -1339,7 +1488,7 @@
   "staleLocks": [
    {
     "name": "index.lock",
-    "ageSeconds": 283
+    "ageSeconds": 2239
    }
   ],
   "canCreateInGitDir": true,
@@ -1347,7 +1496,7 @@
   "canUnlinkInGitDir": false,
   "porcelainWrites": false,
   "plumbingWrites": true,
-  "gitSaid": "fatal: Unable to create '/sessions/eloquent-sharp-tesla/mnt/iisupp-net-deploy/.git/index.lock': File exists. Another git process seems to be running in this repository, e.g.",
+  "gitSaid": "fatal: Unable to create '/sessions/compassionate-quirky-thompson/mnt/iisupp-net-deploy/.git/index.lock': File exists. Another git process seems to be running in this repository, e.g.",
   "workaround": {
    "why": "porcelain (`git add` / `git commit`) takes `.git/index.lock` and `.git/<ref>.lock` and must REMOVE them afterwards. Where unlink is refused, the very first lock write becomes permanent and every subsequent porcelain command fails with `File exists` — including the commands that would clean it up.",
    "steps": [
@@ -1368,8 +1517,8 @@
   "verdict": "ok",
   "statement": "publish rehearsal: 14 published files fetched from the bundle into a fresh repository, byte-identical to the tested tree, and served without a 404 or a gate",
   "filesChecked": 14,
-  "landedTip": "318540c60400e39ce5564fe07205accefa2a91d5",
-  "landedTree": "6f7b9690f8409c92cb2b3a29b4828fb625b1027b",
+  "landedTip": "937ee3d74f70526a5a4c39a163c3be88266d506a",
+  "landedTree": "da219be748c63cb7dd618d82cecd8f49236b5a45",
   "findings": [],
   "policy": "The whole path is walked in a throwaway directory every cycle: a repository holding only the base commit fetches the bundle from a file, the range lands, every published file is compared blob by blob against the tested tree, and the serving rules are read out of THAT LANDED TREE — not the working copy — so a rule that only exists locally cannot certify a publish that behaves differently once live. It proves the range is safe to publish. It does not publish it."
  },
@@ -1441,7 +1590,7 @@
  },
  "publication": {
   "sharedLineAdvancedByPush": true,
-  "commitsAhead": 7,
+  "commitsAhead": 8,
   "confirmedOnRemote": false,
   "statement": "the shared line has not moved; the range is still local.",
   "stillOperatorOnly": [
@@ -1703,15 +1852,16 @@
   "policy": "No figure in a client-facing proposal may be typed into the generator. Each is selected by key out of the plan table published on the website and carries the file and line it came from; the rendered document is then re-read token by token, and any money figure that cannot be traced back refuses the whole write. Guarantee, money-back and risk-free language, an experience claim past 15+ years, and the forbidden name are refusals rather than warnings. It generates a document. It sends nothing, signs nothing and charges nothing."
  },
  "clientFacing": {
-  "statement": "4/4 client-facing documents carry nothing operator-internal; 4 quoted figure(s) are not published anywhere a client can check them",
+  "statement": "27/27 client-facing documents carry nothing operator-internal; 44 quoted figure(s) are not published anywhere a client can check them",
   "trackedReadable": true,
   "summary": {
-   "documents": 4,
-   "clean": 4,
+   "documents": 27,
+   "clean": 27,
    "refused": 0,
    "untracked": 0,
    "refusals": 0,
-   "decisions": 4,
+   "decisions": 44,
+   "exempted": 6,
    "ok": true
   },
   "documents": [
@@ -1746,6 +1896,190 @@
     "bytes": 2744,
     "refusals": 0,
     "decisions": 0
+   },
+   {
+    "file": "compliance/C2PA-content-provenance-policy.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 5736,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/CAIQ-Lite-prefilled.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 7462,
+    "refusals": 0,
+    "decisions": 1
+   },
+   {
+    "file": "compliance/EU-AI-Act-readiness-map.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 8575,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/HIPAA-readiness-map.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 6871,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/ISO-27001-SoA.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 7455,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/NIST-AI-RMF-readiness-map.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 6664,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/SIG-Lite-prefilled.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 11143,
+    "refusals": 0,
+    "decisions": 6
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 9190,
+    "refusals": 0,
+    "decisions": 7
+   },
+   {
+    "file": "compliance/policies/acceptable-use.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3421,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/access-control.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3662,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/business-continuity.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 4593,
+    "refusals": 0,
+    "decisions": 2
+   },
+   {
+    "file": "compliance/policies/change-management.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3433,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/data-classification.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 5419,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/encryption.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 2473,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/incident-response.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 5968,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/password.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 2918,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/physical-security.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3037,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/risk-management.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3546,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/vendor-management.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3383,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/vulnerability-management.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3072,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3168,
+    "refusals": 0,
+    "decisions": 11
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3903,
+    "refusals": 0,
+    "decisions": 13
+   },
+   {
+    "file": "ARIA Sentinel/sales/client-guides/ClientGuide-ARIA-Sentinel-Entra-AD-Integration.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 4110,
+    "refusals": 0,
+    "decisions": 0
    }
   ],
   "decisions": [
@@ -1771,6 +2105,246 @@
     "file": "legal/MSA-template.md",
     "line": 205,
     "found": "$3,000",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/CAIQ-Lite-prefilled.md",
+    "line": 25,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SIG-Lite-prefilled.md",
+    "line": 20,
+    "found": "$5",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SIG-Lite-prefilled.md",
+    "line": 20,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SIG-Lite-prefilled.md",
+    "line": 104,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SIG-Lite-prefilled.md",
+    "line": 124,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SIG-Lite-prefilled.md",
+    "line": 131,
+    "found": "$1",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SIG-Lite-prefilled.md",
+    "line": 190,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "line": 8,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "line": 103,
+    "found": "$5",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "line": 136,
+    "found": "$3",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "line": 138,
+    "found": "$15",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "line": 138,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "line": 157,
+    "found": "$15",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "line": 167,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/policies/business-continuity.md",
+    "line": 21,
+    "found": "$5",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/policies/business-continuity.md",
+    "line": 66,
+    "found": "$5",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 4,
+    "found": "$15",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 15,
+    "found": "$234",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 15,
+    "found": "$468",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 15,
+    "found": "$937",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 25,
+    "found": "$10,000",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 25,
+    "found": "$60,000",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 33,
+    "found": "$35",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 35,
+    "found": "$73",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 39,
+    "found": "$74,000",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 40,
+    "found": "$368,000",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 41,
+    "found": "$1.84",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 13,
+    "found": "$60",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 13,
+    "found": "$95",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 49,
+    "found": "$599",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 50,
+    "found": "$1,500",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 51,
+    "found": "$156",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 52,
+    "found": "$312",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 53,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 61,
+    "found": "$599",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 61,
+    "found": "$150",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 61,
+    "found": "$300",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 62,
+    "found": "$1,500",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 62,
+    "found": "$3",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 62,
+    "found": "$5",
     "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
    }
   ],
