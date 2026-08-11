@@ -157,6 +157,28 @@ const TESTS = [
   // moment one falls back to untracked, unusable or missing. The detection itself is proven by
   // pointing a step at a file that does not exist.
   "../../tests/yes-path-regression.test.mjs",
+  // CURRENCY CONSISTENCY 2026-08-11 (RUN-AV / AV1) — AU2's rehearsal found the plan page saying USD
+  // and the inline charge path saying CAD, and staged the decision. This walks the WHOLE money path
+  // instead of the two surfaces one rehearsal touched and finds seven declarations in two currencies
+  // — one of them the renewal email a paying customer receives. The invariant: the audit can never
+  // return "consistent" while surfaces disagree, and it never picks a direction. Until Ahmad names
+  // one, the divergence is reported with every file:line; once he does, the same module enforces it.
+  "../../tests/currency-consistency.test.mjs",
+  // QUOTED FIGURES 2026-08-11 (RUN-AV / AV2) — AU1 could only say "this figure is not in the plan
+  // table", which is also true of an insurance limit, so its gate had exactly two moves: publish or
+  // delete. This adds the third honest state — DECLARED in a tracked register with a reason a person
+  // wrote — and drives SILENT to zero without deleting a line of any contract (Rule 15). The register
+  // cannot be used as a rubber stamp: an empty reason is refused, a declaration matching nothing is
+  // stale. Found by running it: the Sentinel sales one-pager carries a SECOND price for all five
+  // published plans, reported as contradictions with both citations and deliberately not declarable.
+  "../../tests/quoted-figures.test.mjs",
+  // SEND SHEET GATE 2026-08-11 (RUN-AV / AV3) — the twelve messages have been rank 1 for six cycles.
+  // What was never priced is what pressing send COSTS: twelve separate judgement calls about rule-7
+  // language, experience claims, forbidden names, unpublished figures, dead links and Rule-11 contact
+  // detail. Checked by code once, driving `judgementCallsLeft` to zero. It has no transport and the
+  // suite asserts that. Found by running it in a clone: the sheet is excluded from the tracked tree
+  // by the deploy-safety lockdown, reported as its own class rather than moved into served URL space.
+  "../../tests/send-sheet-gate.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   // SITE FINEPRINT GATE 2026-08-06 (salvaged from cc/axis-feed-2026-08-04) — the site-wide legal

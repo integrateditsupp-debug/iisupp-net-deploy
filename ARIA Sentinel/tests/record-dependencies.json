@@ -21,6 +21,7 @@
     "../../tests/probe-deploy-safety.test.mjs",
     "../../tests/publish-rehearsal.test.mjs",
     "../../tests/sandbox-git-boundary.test.mjs",
+    "../../tests/send-sheet-gate.test.mjs",
     "../../tests/staged-action-guard.test.mjs",
     "../../tests/unpublished-range.test.mjs",
     "aj2-second-touch-path.test.mjs",
@@ -51,6 +52,7 @@
     "live in the untracked record root by design. It builds its own scratch repositories for every",
     "assertion and does not require the operator's real bundle to pass - but it NAMES the path, and this",
     "check is deliberately about naming rather than about how badly the suite would break. Declared on the",
-    "first run that caught it, which is the check doing exactly its job."
+    "first run that caught it, which is the check doing exactly its job.",
+    "RUN-AV / AV3 (2026-08-11): send-sheet-gate.test.mjs names the send sheet, which lives in the untracked record root because the deploy-safety lockdown excludes it \u2014 this repository's ROOT IS SERVED, and outreach copy in live URL space would be a worse outcome than outreach copy on one laptop. Every refusal class in that suite is proven against fixtures, so it is green in a bare clone; what it cannot do in a clone is check the REAL twelve messages, and it reports that as UNTRACKED rather than as a pass. Declared on the first run that caught it, which is again the check doing exactly its job."
   ]
 }

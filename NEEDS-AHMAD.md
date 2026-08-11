@@ -1,6 +1,75 @@
 # NEEDS AHMAD — the whole list, in order
 
-> **UPDATED 2026-08-11, flywheel cycle 137 (RUN-AU) — this block supersedes everything below it.**
+> **UPDATED 2026-08-11, flywheel cycle 138 (RUN-AV) — this block supersedes everything below it.**
+>
+> Three of the five items below are decisions, not labour. Two of them are about money and software
+> may not make either. Nothing on this list asks you to write code.
+>
+> **1. SEND THE TWELVE SECOND MESSAGES. ~20 minutes. Still rank 1.**
+> Sheet: `senior-director-state/outbound/SEND-SHEET-2026-08-05.md`. Sent 0. Meetings 0. Revenue none.
+> **What changed this cycle: pressing send now costs zero judgement calls.** All twelve messages were
+> read by code and checked for guarantee/risk-free language, an experience claim past 15+ years, the
+> forbidden name, any figure the plan page does not carry, any dead link, and any real contact detail
+> that should not be in that file at all. **12 of 12 clean, 0 refusals, 0 unresolvable links.** You are
+> not being asked to proofread twelve times. You are being asked to paste and send.
+>
+> **2. DECIDE WHICH PRICE LIST THE SENTINEL SALES ONE-PAGER CARRIES. New this cycle, and it is the
+> most expensive thing found in six cycles.** `ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md`
+> quotes **Personal $599/mo · Pro $1,500/mo · Small Business $156K/yr · Mid-Size $312K/yr ·
+> Enterprise $625K/yr**. `plans/index.html` publishes **$899 · $2,250 · $19,500/mo · $39,000/mo ·
+> $78,125/mo** for plans with the **same names**. All five rows disagree. This is the document a
+> prospect is handed during the exact conversation item 1 is meant to start — they read $599, then get
+> quoted $899, and they have watched this company change its price mid-conversation. Either the
+> desktop product has its own price list and the plan names must stop colliding, or the sheet is
+> stale. **Nothing was edited.** Tell me which, and `tests/quoted-figures.test.mjs` holds both surfaces
+> to it from then on.
+>
+> **3. NAME THE CURRENCY. One word: CAD or USD.** Last cycle reported two surfaces disagreeing. The
+> whole money path was walked this cycle and there are **seven**, in two currencies:
+>
+> | surface | says | what it is |
+> |---|---|---|
+> | `plans/index.html:132` | USD | the page a visitor decides on |
+> | `netlify/functions/stripe-checkout.js:114` | **CAD** | the currency a card is actually charged in |
+> | `netlify/functions/aria-web-tier.js:14` | **CAD** | the web tier's own price definition |
+> | `netlify/functions/aria-renewal-reminders.js:63` | USD | the renewal email a paying customer receives |
+> | `netlify/functions/stripe-webhook.js:177` | USD | the payment confirmation a customer receives |
+> | `netlify/functions/aria-mrr-dashboard.js:80` | USD | the recurring-revenue figure you read |
+> | `scripts/lib/retainer-proposal.mjs:80` | USD (typed, not read) | the currency printed on every proposal |
+>
+> Telling a customer an amount in one currency and charging their card in another is a chargeback and
+> a credibility problem in the same message. **Nobody has been charged yet, which is exactly why this
+> is cheap today.** Say the word and `senior-director-state/decisions/currency.json` gets written;
+> from that moment `tests/currency-consistency.test.mjs` enforces it on all seven and goes red on any
+> drift. The half that lives inside Stripe price IDs stays UNRUN with its reason — it is not readable
+> from here and was not guessed.
+>
+> **4. PUBLISH THE LINE.** Local `main` is 6 commits ahead of the last known shared reference. The
+> bundle was rebuilt and verified again this cycle (tip `9dc5699`, 6 commits, 84,470 bytes):
+>
+> ```
+> git fetch "senior-director-state/delivery/unpublished-line.bundle" main:refs/heads/publish-line
+> git push origin publish-line:main
+> ```
+>
+> No credential is needed for the first. The second is yours. **Netlify deploy stays your one click
+> after that — merging main does not deploy.**
+>
+> **5. A code-host credential for the sandbox.** Probed again this cycle, refused again, verbatim
+> `could not read Username for 'https://github.com'`. Everything above works without it; this only
+> removes step 4 from your plate permanently.
+>
+> **CLOSED this cycle: the four unpublished figures from item 3 of the last block.** They are not
+> deleted and they are not published — they are **declared**, in `docs/QUOTED-FIGURES.md`, with a
+> written reason each, alongside twenty more that had never been accounted for at all. Silent figures
+> in client-facing documents went from 44 to 0 without a line of any contract being touched. The two
+> MSA implementation fees still carry an OPEN marker pointing back at you, because "declared" means
+> deliberate, not decided.
+
+---
+
+
+> **SUPERSEDED 2026-08-11, flywheel cycle 138 — kept for the record.**
 >
 > **1. SEND THE TWELVE SECOND MESSAGES. ~20 minutes. Still rank 1 — and worth more than it was
 > two cycles ago.** Sheet: `senior-director-state/outbound/SEND-SHEET-2026-08-05.md`. Sent 0.

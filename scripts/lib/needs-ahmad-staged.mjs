@@ -45,13 +45,56 @@ export const needsAhmadStaged = [
       "how many cycles run, because nothing else here can move them.",
   },
   {
+    item: "Decide which price list the Sentinel sales one-pager carries",
+    what:
+      "Five rows. The one-pager quotes Personal $599/mo, Pro $1,500/mo, Small Business $156K/yr, " +
+      "Mid-Size $312K/yr and Enterprise $625K/yr. The published plan page quotes $899, $2,250, " +
+      "$19,500/mo, $39,000/mo and $78,125/mo for plans with the SAME NAMES. Either the desktop " +
+      "product has its own price list and the plan names must stop colliding, or the sheet is stale.",
+    why:
+      "This is the document a prospect is handed during the exact conversation the twelve messages " +
+      "above are trying to start. A prospect who reads $599 and is later quoted $899 has caught this " +
+      "company changing its price mid-conversation, and no amount of honest engineering elsewhere " +
+      "recovers that. Software may not pick: a second price for a same-named plan is a decision.",
+    artefact: "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    rank: 2,
+    unblocks:
+      "Makes the sales conversation the twelve messages are meant to create survive contact with the " +
+      "plan page. Once decided, `tests/quoted-figures.test.mjs` holds both surfaces to it.",
+    blockedWithout:
+      "Every reply the twelve messages produce walks into a document that contradicts the website on " +
+      "all five plans.",
+  },
+  {
+    item: "Name the currency this company charges in",
+    what:
+      "One word: CAD or USD. Seven surfaces on the money path declare a currency and two of them say " +
+      "CAD while five say USD — including the renewal email a paying customer receives (USD) and the " +
+      "inline charge path that would bill their card (CAD).",
+    why:
+      "Telling a customer an amount in one currency and charging their card in another is a chargeback " +
+      "and a credibility problem in the same message. Nobody has been charged yet, which is exactly " +
+      "why this is cheap to fix today and expensive to fix after the first invoice.",
+    noArtefact:
+      "A currency is a decision, not a document. There is nothing to prepare on disk: naming one " +
+      "writes `senior-director-state/decisions/currency.json`, and from that moment " +
+      "`tests/currency-consistency.test.mjs` enforces it on every surface and goes red on any drift. " +
+      "Writing that file with a guessed currency would be software making a decision about money.",
+    rank: 3,
+    unblocks:
+      "Turns the currency audit from a report into an enforced invariant, and lets the two off-direction " +
+      "surfaces be corrected in one pass.",
+    blockedWithout:
+      "The split stays reported and unresolved, and the first real charge decides it by accident.",
+  },
+  {
     item: "Push the shared line to the code host",
     what: "One push of the shared branch, every commit on it verified against a green full registry.",
     why:
       "The build sandbox holds no code-host credential and that refusal was reproduced against the real " +
       "remote again this cycle. This is the only thing between verified work and the shared host.",
     artefact: "AHMAD-ONE-CLICK.cmd",
-    rank: 3,
+    rank: 5,
     unblocks:
       "Moves every verified commit onto the shared host, where it can be deployed and where a second " +
       "machine can see it. Prerequisite for publishing.",
@@ -68,7 +111,7 @@ export const needsAhmadStaged = [
     noArtefact:
       "Nothing can be prepared on disk for this. It is a credential granted in someone else's account " +
       "settings, and an agent must never hold or create one.",
-    rank: 2,
+    rank: 4,
     unblocks:
       "Retires the push above permanently instead of re-staging it every cycle. It is the only item " +
       "here that removes another item from this list rather than adding a click to it.",
@@ -86,7 +129,7 @@ export const needsAhmadStaged = [
     noArtefact:
       "A publish is a button in the hosting provider's own interface. There is no local object for it, " +
       "and staging one would be theatre.",
-    rank: 4,
+    rank: 6,
     unblocks:
       "Starts the visit log recording, which is the only path to a passive signal that does not depend " +
       "on anyone answering a message.",
