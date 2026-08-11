@@ -531,3 +531,10 @@ a { color:var(--gold); text-decoration:none; }
   .axis-bar input { width:44vw; }
 }
 @media (prefers-reduced-motion:reduce) { .axis-orbit .axis-globe { animation:none; } }
+
+/* The orbit REPLACES the old floating "Ask AXIS" button. Without this the two coexist: the orbit is
+   always present, and syncDockVisibility() re-shows the FAB every time the dock is closed, so AXIS
+   appeared twice — the orbit bottom-centre plus the FAB in a corner (reported 2026-08-11).
+   The JS still toggles .hidden on the FAB; that is harmless, this rule wins either way. The orbit
+   globe is the opener now, so nothing is lost by hiding it. */
+.axis-fab { display:none !important; }

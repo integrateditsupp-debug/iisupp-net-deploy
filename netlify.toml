@@ -671,13 +671,6 @@
   to = "/#aria-demo"
   status = 301
 
-# IIS_CACHE_HEADERS — long cache static, short cache HTML
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
-    X-Content-Type-Options = "nosniff"
-
 # AXIS console assets must NOT sit in a 7-day browser cache (2026-08-11).
 # The shell HTML is on a 5-minute cache, so a deploy shipped new markup while the browser kept
 # week-old JS/CSS — Ahmad loaded the page and saw no change at all, because the module that mounts
@@ -685,16 +678,47 @@
 # is an ES module whose own `import './axis-globe.js'` specifiers would still resolve to cached
 # copies. Revalidation is the reliable answer — the ETag still yields a 304 when nothing changed, so
 # the cost is one conditional request per file, not a re-download.
+# ORDER MATTERS: Netlify applies the FIRST matching rule, so these must precede /assets/*.
 [[headers]]
-  for = "/assets/axis-*.js"
+  for = "/assets/axis-app.js"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
-    X-Content-Type-Options = "nosniff"
+
+[[headers]]
+  for = "/assets/axis-globe.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/assets/axis-persona.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/assets/axis-priorities.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/assets/axis-dom.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/assets/axis-director-screen.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/assets/axis-tokens.css"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+# IIS_CACHE_HEADERS — long cache static, short cache HTML
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
     X-Content-Type-Options = "nosniff"
 
 [[headers]]
