@@ -700,7 +700,7 @@
 # Generated. Do not hand-edit — run scripts/gen-root-serving-denies.mjs.
 # publish = "." makes every root path a URL. These rules refuse the operator-internal ones.
 # Nothing here is deleted or moved (Rule 15); the files simply stop being public.
-# 141 file rules, 17 directory rules.
+# 142 file rules, 17 directory rules.
 [[redirects]]
   from = "/.codex-observer/*"
   to = "/404.html"
@@ -798,6 +798,11 @@
   force = true
 [[redirects]]
   from = "/tools/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/.emit-registry.log"
   to = "/404.html"
   status = 404
   force = true

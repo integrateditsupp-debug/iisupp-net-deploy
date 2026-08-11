@@ -12,10 +12,13 @@ import { openComposer } from './axis-composer.js';
 import { renderFleet } from './axis-fleet.js';
 import { renderReports } from './axis-reports.js';
 import { renderDirector } from './axis-director-screen.js';
+import { renderPriorities, collectPriorities, dueLabel, localAnswer } from './axis-priorities.js';
+import { mountGlobes } from './axis-globe.js';
 // AXIS persona + turn grammar (the JARVIS flow). Additive: the voice machinery below is unchanged;
 // this only decides who AXIS sounds like and how a spoken turn is shaped.
 import { axisPersonaBonus, AXIS_PROSODY, ackLine, greetLine, routeTail,
-  isWake, isStop, isConfirm, isDeny, stripWake } from './axis-persona.js';
+  isWake, isStop, isConfirm, isDeny, stripWake,
+  voiceProfile, voiceFamily, polishForSpeech, phraseChunks } from './axis-persona.js';
 
 const TOKEN_KEY = 'aperture_jwt';
 
@@ -40,6 +43,7 @@ const NAV = [
     { id: 'followups', label: 'Follow-ups', glyph: 'FU' },
   ] },
   { group: 'Workspace', items: [
+    { id: 'priorities', label: 'Priorities', glyph: 'PY' },
     { id: 'documents', label: 'Documents', glyph: 'DO' }, { id: 'analytics', label: 'Analytics', glyph: 'AN' },
     { id: 'products', label: 'Product Discovery', glyph: 'PD' },
   ] },
@@ -1403,6 +1407,10 @@ SCREENS.settings = SCREENS.reports; // Reports & Settings share the screen (spec
 // ── Fleet — the live agent floor. Was the only NAV entry with no SCREENS handler at all, so it fell
 // through to placeholder() and rendered raw snapshot JSON. agent_runs is genuinely empty until the
 // worker records runs, and the screen is built to look correct in that state rather than fake one.
+// S15 Priorities — one queue of everything open, ordered by due date. Reads only existing snapshot
+// modules; no new endpoint, no new field, nothing invented (see assets/axis-priorities.js).
+SCREENS.priorities = (c) => renderPriorities(c, { snap: state.snap, go, head });
+
 SCREENS.fleet = (c) => {
   renderFleet(c, { data: data('fleet'), onIntent: (type, payload) => postIntent(type, payload) });
 };
@@ -1482,7 +1490,7 @@ async function fetchSnapshots() {
   const j = await r.json();
   if (j && j.ok) {
     state.snap = j.snapshots || {}; state.version = j.version; state.source = j.source;
-    renderTick(); renderNav();
+    renderTick(); renderNav(); renderAxisPri();   // the console rail tracks the snapshot, not the dock
     if (overlayOpen()) { state.ui.repaintPending = true; return; }
     renderModule();
   }
@@ -1511,6 +1519,76 @@ function renderDock() {
     const log = $(id);
     if (log) renderAxisLog(log);
   }
+  renderAxisPri();
+}
+
+// ── AXIS console furniture (2026-08-11 redesign) ─────────────────────────────
+const HEAR_IDLE = 'Press the mic, or type. Say “AXIS stop” to stand me down.';
+// The live line under the orb. While listening it mirrors the interim transcript, so there is always
+// visible proof AXIS is hearing you — the old silent mic was indistinguishable from a broken one.
+function axisSetHear(msg, live) {
+  const h = $('axisHear'); if (!h) return;
+  h.textContent = msg || HEAR_IDLE;
+  h.classList.toggle('live', !!(live && msg));
+}
+
+// Top 3 of what is actually due, shown without leaving the conversation. Same source as the
+// Priorities screen, so the two can never disagree.
+const PRI_TONE = { over: 'var(--crit)', today: 'var(--gold)', soon: 'var(--txt-2)', later: 'var(--txt-3)', none: 'var(--txt-3)' };
+function renderAxisPri() {
+  const box = $('axisPri'); if (!box) return;
+  let items = [];
+  try { items = collectPriorities(state.snap).slice(0, 3); } catch { items = []; }
+  box.innerHTML = '';
+  if (!items.length) { box.hidden = true; return; }   // nothing due → no rail at all, never a "0"
+  box.hidden = false;
+  box.append(el('div', { class: 'axis-pri-head' }, [
+    el('span', { class: 'eyebrow' }, 'Top priorities'),
+    el('button', { class: 'chip', onclick: () => go('priorities') }, 'All'),
+  ]));
+  for (const it of items) {
+    const d = dueLabel(it.dueAt); const col = PRI_TONE[d.tone];
+    box.append(el('button', { class: 'axis-pri-item', title: it.title + ' — ' + d.text, onclick: () => go(it.screen) }, [
+      el('span', { class: 'axis-pri-dot', style: 'background:' + col }),
+      el('span', { class: 'axis-pri-t' }, it.title),
+      el('span', { class: 'axis-pri-d', style: 'color:' + col }, d.text),
+    ]));
+  }
+}
+
+// Voice picker. Edge ships the "Online (Natural)" neural set, Chrome ships Google's network voices —
+// so the same page genuinely sounds different per browser and no code can make them identical for
+// free. What this does is show the inventory THIS browser has, ranked best-first, and let a choice
+// be pinned (same localStorage key the v1 console used).
+function axisShortVoice(n) {
+  return String(n || '').replace(/^Microsoft\s+/i, '').replace(/\s*Online\s*\(Natural\)\s*/i, ' ')
+    .replace(/\s*-\s*English.*$/i, '').replace(/\s+/g, ' ').trim();
+}
+function axisPopulateVoices() {
+  const sel = $('axisVoicePick'); if (!sel) return;
+  const all = ((window.speechSynthesis && speechSynthesis.getVoices()) || []).filter(v => /^en/i.test(v.lang || ''));
+  if (!all.length) return;                       // Chrome loads voices async — onvoiceschanged retries
+  let cur = ''; try { cur = localStorage.getItem('axis-voice-name') || ''; } catch {}
+  const auto = axisPickVoice();
+  sel.innerHTML = '';
+  sel.append(el('option', { value: '' }, 'Voice · automatic' + (auto ? ' — ' + axisShortVoice(auto.name) : '')));
+  for (const v of all.slice().sort((a, b) => axisScoreVoice(b) - axisScoreVoice(a)))
+    sel.append(el('option', { value: v.name }, axisShortVoice(v.name) + ' · ' + v.lang + ' · ' + voiceFamily(v.name)));
+  sel.value = cur;
+}
+const AXIS_VOICE_SAMPLE = 'Axis here, Ahmad. This is how I sound in this browser.';
+
+// Persistent brain-state badge. An outage that only shows in one chat line scrolls away; this keeps
+// "answering from the board, reasoning is down" visible for as long as it is true.
+const BRAIN_LABEL = { no_credit: 'brain: out of credit', auth: 'brain: key rejected', no_key: 'brain: no key',
+  permission: 'brain: no access', bad_model: 'brain: bad model', rate_limit: 'brain: rate limited',
+  overloaded: 'brain: overloaded', unreachable: 'brain: unreachable' };
+function axisBrainDown(reason) {
+  const el0 = $('axisBrain'); if (!el0) return;
+  if (!reason) { el0.hidden = true; return; }
+  el0.hidden = false;
+  el0.textContent = BRAIN_LABEL[reason] || 'brain: degraded';
+  el0.title = 'AXIS is answering from the snapshot only — reasoning is unavailable.';
 }
 async function axisSend(inputId = 'axisInput') {
   const inp = $(inputId); const raw = inp?.value.trim(); if (!raw) return; inp.value = '';
@@ -1550,6 +1628,17 @@ async function axisSend(inputId = 'axisInput') {
     const r = await fetch('/.netlify/functions/axis-director', { method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify({ action: 'chat', messages: dockLog.filter(m => m.role === 'user').map(m => ({ role: 'user', content: m.text })) }) });
     const j = await r.json(); dropPending();
     const reply = { role: 'axis', text: (j && j.text) || 'Heard you.' };
+    // Brain unavailable (no credit / bad key / network): answer from the board instead of going
+    // mute. The outage is reported ONCE per session so it is visible but not repeated every turn.
+    if (j && j.degraded) {
+      const local = localAnswer(text, state.snap);
+      if (local) {
+        reply.text = local;
+        let told = false; try { told = sessionStorage.getItem('axisBrainNoted') === '1'; } catch {}
+        if (!told) { try { sessionStorage.setItem('axisBrainNoted', '1'); } catch {} toast(j.text); dockLog.push({ role: 'axis', text: j.text }); }
+      }
+      axisBrainDown(j.reason || 'degraded');
+    } else axisBrainDown(null);
     if (j && j.routedAgent && j.intent) {
       reply.chips = [{ label: 'Approve route', onclick: () => { postIntent('approve', { intent: j.intent, agent: j.routedAgent }); toast('Routed to ' + j.routedAgent); } }];
       // Hard-stops stay hard-stops, spoken (spec §SAFETY RAILS). A route the worker runs behind its
@@ -1645,21 +1734,25 @@ function axisSpeak(text) {
     const gen = ++__speakGen;
     const v = axisPickVoice();
     const natural = !!(v && /natural|neural|google|premium|enhanced/i.test(v.name || ''));
-    // Sentence-chunk so delivery breathes between thoughts (also avoids Chrome's long-utterance cutoff).
-    const chunks = clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [clean];
-    let buf = ''; const queue = [];
-    for (const c of chunks) { if ((buf + c).length > 180 && buf) { queue.push(buf.trim()); buf = c; } else { buf += c; } }
-    if (buf.trim()) queue.push(buf.trim());
+    // Clause-aware chunking so delivery breathes at commas, not only full stops — and still caps at
+    // 180 chars to avoid Chrome's long-utterance cutoff. polishForSpeech says jargon like a person
+    // ("KB" → "knowledge base") instead of spelling it out.
+    const queue = phraseChunks(polishForSpeech(clean), 180);
     setAxisState('speaking');
+    // Deafen the wake listener while AXIS talks, or it hears its own voice say "Axis" and wakes
+    // itself in a loop. The mic comes back in axisTurnDone / restMic.
+    axisWakePause();
     queue.forEach((part, qi) => {
       const u = new SpeechSynthesisUtterance(part);
       if (v) { u.voice = v; u.lang = v.lang; }
-      // Composed register — lower and level, deliberately apart from ARIA's en-US .95/1.05 so the
-      // director and the customer orb are never mistaken for each other.
-      u.rate = natural ? AXIS_PROSODY.rate : AXIS_PROSODY.legacyRate; u.pitch = AXIS_PROSODY.pitch; u.volume = 1;
+      // Cross-engine parity: each voice family is rate/pitch-corrected toward Edge's Sonia, so AXIS
+      // sounds like the same character in Chrome and Edge even though the two ship different voices.
+      // Still deliberately apart from ARIA's en-US .95/1.05.
+      const prof = voiceProfile(v);
+      u.rate = prof.rate; u.pitch = prof.pitch; u.volume = 1;
       // cancel() fires 'error' (interrupted/canceled), not 'end' — without onerror the machine
       // would stick on 'speaking' forever (gate-review finding). Every chunk resets, gen-guarded.
-      const settle = () => { if (gen === __speakGen && document.documentElement.dataset.axisState === 'speaking') setAxisState('idle'); };
+      const settle = () => { if (gen === __speakGen && document.documentElement.dataset.axisState === 'speaking') setAxisState('idle'); axisWakeResume(); };
       // A natural finish on the last chunk ends AXIS's turn and hands the floor back (hands-free).
       // onerror must NOT: that is a barge-in, and the mic is already opening on its own.
       if (qi === queue.length - 1) u.onend = () => { settle(); const done = __turnDone; __turnDone = null; if (gen === __speakGen && done) { try { done(); } catch {} } };
@@ -1683,21 +1776,54 @@ function axisVoiceToggle() {
   else if ('speechSynthesis' in window) { speechSynthesis.cancel(); if (document.documentElement.dataset.axisState === 'speaking') setAxisState('idle'); }
   toast('AXIS voice ' + (axisVoiceOn ? 'on' : 'off'));
 }
+// Collect interim + final text out of a recognition event. Interim is what makes the mic feel alive:
+// Ahmad sees his words land in the box as he speaks, so "is it even listening?" never comes up.
+function axisReadTranscript(ev) {
+  let interim = '', final = '';
+  for (let i = ev.resultIndex; i < ev.results.length; i++) {
+    const r = ev.results[i];
+    if (r.isFinal) final += r[0].transcript; else interim += r[0].transcript;
+  }
+  return { interim: interim.trim(), final: final.trim() };
+}
+function axisFill(inputId, t) {
+  const box = $(inputId); if (box) box.value = t.final || t.interim;
+  axisSetHear(t.interim || t.final, true);   // live proof AXIS is hearing you
+}
+
+// Every way the mic can fail, said in plain language with the fix. Silence was the old behavior and
+// it read as "AXIS is broken" (Ahmad: "it does not hear me or respond").
+function axisMicNote(msg) {
+  dockLog.push({ role: 'axis', text: msg }); renderDock(); toast(msg); axisSetHear(msg, false);
+}
+function axisMicError(e) {
+  const code = (e && e.error) || '';
+  if (code === 'not-allowed' || code === 'service-not-allowed') {
+    axisMicNote('Microphone is blocked. Click the padlock in the address bar, allow the mic, then reload.');
+    axisHandsFree = false; axisWakePause(); axisSyncWakeBtn();
+  } else if (code === 'no-speech') axisMicNote('I did not hear anything. Try again, a little closer to the mic.');
+  else if (code === 'audio-capture') axisMicNote('No microphone found. Check your input device.');
+  else if (code === 'network') axisMicNote('Speech recognition needs the network and it is not reachable right now.');
+  else if (code !== 'aborted') axisMicNote('Microphone error: ' + (code || 'unknown') + '.');
+}
+
 // Push-to-talk, shared by the dock and the public panel (one mic at a time).
 function axisMicToggle(micId = 'axisMic', inputId = 'axisInput', send = axisSend) {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { toast('Mic needs Chrome or Edge'); return; }
+  if (!SR) { axisMicNote('Voice input needs Chrome or Edge — this browser has no speech recognition.'); return; }
   if (axisListening) { try { axisRec && axisRec.stop(); } catch {} return; }
   try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch {} // barge-in: talking over AXIS stops it
   axisWakePause(); // one SpeechRecognition at a time — the wake listener yields to push-to-talk
   const mic = $(micId);
-  const restMic = () => { axisListening = false; if (mic) { mic.style.color = ''; mic.style.borderColor = ''; mic.textContent = '🎙'; } if (document.documentElement.dataset.axisState === 'listening') setAxisState('idle'); axisWakeResume(); };
-  axisRec = new SR(); axisRec.lang = 'en-CA'; axisRec.interimResults = false; axisRec.maxAlternatives = 1;
-  axisRec.onstart = () => { axisListening = true; setAxisState('listening'); if (mic) { mic.style.color = 'var(--gold)'; mic.style.borderColor = 'var(--gold)'; mic.textContent = '⏺'; } };
-  axisRec.onend = restMic;
-  axisRec.onerror = () => { restMic(); toast('Mic error — check browser permission'); };
-  axisRec.onresult = (ev) => { const t = ev.results && ev.results[0] && ev.results[0][0] && ev.results[0][0].transcript.trim(); if (t) { const i = $(inputId); if (i) i.value = t; axisSpokenTurn = true; send(); } };
-  try { axisRec.start(); } catch { toast('Mic busy'); }
+  let heard = '';
+  const restMic = () => { axisListening = false; if (mic) { mic.style.color = ''; mic.style.borderColor = ''; mic.textContent = '🎙'; } if (document.documentElement.dataset.axisState === 'listening') setAxisState('idle'); if (!heard) axisSetHear('', false); axisWakeResume(); };
+  axisRec = new SR(); axisRec.lang = 'en-CA'; axisRec.interimResults = true; axisRec.maxAlternatives = 1;
+  axisRec.onstart = () => { axisListening = true; setAxisState('listening'); axisSetHear('Listening…', false); if (mic) { mic.style.color = 'var(--gold)'; mic.style.borderColor = 'var(--gold)'; mic.textContent = '⏺'; } };
+  // A silent close is the single most confusing outcome — always say something.
+  axisRec.onend = () => { restMic(); if (!heard) axisMicNote('I did not catch that — press the mic and say it again.'); };
+  axisRec.onerror = (e) => { restMic(); axisMicError(e); };
+  axisRec.onresult = (ev) => { const t = axisReadTranscript(ev); axisFill(inputId, t); if (t.final) { heard = t.final; axisSpokenTurn = true; send(); } };
+  try { axisRec.start(); } catch { axisMicNote('Microphone is busy — another tab or app may be using it.'); restMic(); }
 }
 
 // ── AXIS hands-free flow (JARVIS) ────────────────────────────────────────────
@@ -1742,17 +1868,27 @@ function axisWakeStart() {
   };
   // Browsers stop a continuous recognizer on their own schedule; re-arm unless we deliberately paused.
   rec.onend = () => { if (axisHandsFree && axisWakeArmed && !axisListening) { try { rec.start(); } catch {} } };
-  rec.onerror = (e) => {
-    if (e && (e.error === 'not-allowed' || e.error === 'service-not-allowed')) {
-      axisHandsFree = false; axisWakeArmed = false; axisSyncWakeBtn(); toast('Mic permission denied — hands-free off');
-    }
-  };
+  // 'no-speech' is normal for a listener that sits open — never report it. Everything else gets the
+  // same plain-language treatment as push-to-talk.
+  rec.onerror = (e) => { if (e && e.error && e.error !== 'no-speech' && e.error !== 'aborted') axisMicError(e); };
   axisWakeRec = rec; axisWakeArmed = true;
   try { rec.start(); } catch {}
   return true;
 }
-function axisWakePause() { axisWakeArmed = false; try { axisWakeRec && axisWakeRec.abort(); } catch {} }
-function axisWakeResume() { if (axisHandsFree && !axisWakeArmed) { axisWakeArmed = true; try { axisWakeRec ? axisWakeRec.start() : axisWakeStart(); } catch {} } }
+function axisWakePause() { axisWakeArmed = false; try { axisWakeRec && axisWakeRec.abort(); } catch {} axisWakeRec = null; }
+// ALWAYS build a fresh recognizer. Calling .start() on an abort()ed SpeechRecognition throws
+// InvalidStateError in Chrome, and the old catch{} swallowed it — so after AXIS spoke its
+// "hands-free on" confirmation (which pauses the listener), the wake word was dead until a manual
+// mic press created a new instance. That is exactly the "does not listen until I press record" bug.
+function axisWakeResume() { if (axisHandsFree && !axisWakeArmed && !axisListening) axisWakeStart(); }
+
+// Self-heal: browsers stop a continuous recognizer on their own schedule, and a dropped one used to
+// stay dropped. This re-arms whenever hands-free is on but nothing is listening.
+setInterval(() => {
+  if (!axisHandsFree || axisWakeArmed || axisListening) return;
+  if (document.documentElement.dataset.axisState === 'speaking') return;
+  axisWakeStart();
+}, 4000);
 
 // End of an AXIS turn: hand the floor back so Ahmad can just keep talking.
 function axisTurnDone() {
@@ -1786,10 +1922,14 @@ function axisSyncWakeBtn() {
 }
 function axisHandsFreeToggle() {
   if (!axisHandsFree) {
-    if (!axisWakeStart()) return;
+    if (!(window.SpeechRecognition || window.webkitSpeechRecognition)) { axisMicNote('Hands-free needs Chrome or Edge — this browser has no speech recognition.'); return; }
+    // Flip the flag FIRST: the recognizer's own onend/resume paths check it, and starting before it
+    // was set meant the listener never re-armed after the spoken confirmation.
     axisHandsFree = true; axisSyncWakeBtn();
     toast('Hands-free on — say “AXIS”');
-    axisSpeak('Hands-free on. Say AXIS when you need me.');
+    // Speaking pauses the listener (so AXIS can't hear itself). settle() re-arms when the sentence
+    // ends; if voice is off there is no sentence, so arm right now. The watchdog covers both.
+    if (!axisSpeak('Hands-free on. Say AXIS when you need me.')) axisWakeStart();
   } else {
     axisHandsFree = false; axisWakePause(); axisSyncWakeBtn(); toast('Hands-free off');
   }
@@ -1797,7 +1937,8 @@ function axisHandsFreeToggle() {
 }
 
 // Warm up the async voice list (Chrome loads voices lazily) + reflect the default-ON state on the button.
-try { if (window.speechSynthesis) { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); } } catch {}
+// The picker is repopulated on every voiceschanged because Chrome reports an EMPTY list on first call.
+try { if (window.speechSynthesis) { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => { speechSynthesis.getVoices(); axisPopulateVoices(); }; } } catch {}
 
 // ── AXIS orb + state machine (R-series) ──────────────────────────────────────
 // One SVG identity, mounted into every [data-orb] slot (fab, dock header, strip, public panel).
@@ -1960,9 +2101,11 @@ function applyTheme(t) { document.documentElement.setAttribute('data-theme', t);
 function openDock() {
   // On the Director tab the dock would cover that screen's own command channel — send there instead.
   if (state.module === 'axis-agent-director') { const i = $('axisDirectorInput'); if (i) i.focus(); return; }
-  $('axisDock').hidden = false; $('axisFab').hidden = true; renderDock(); $('axisInput').focus();
+  $('axisDock').hidden = false; $('axisFab').hidden = true;
+  document.documentElement.dataset.axisDock = 'open';   // content pane yields the console's width
+  renderDock(); $('axisInput').focus();
 }
-function closeDock() { $('axisDock').hidden = true; $('axisFab').hidden = false; try { sessionStorage.setItem('axisDockDismissed', '1'); } catch {} }
+function closeDock() { $('axisDock').hidden = true; $('axisFab').hidden = false; delete document.documentElement.dataset.axisDock; try { sessionStorage.setItem('axisDockDismissed', '1'); } catch {} }
 $('themeBtn').addEventListener('click', () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
 applyTheme(localStorage.getItem('axis_theme') || 'dark');
 $('loginBtn').addEventListener('click', doLogin);
@@ -1970,10 +2113,30 @@ $('pass').addEventListener('keydown', (e) => e.key === 'Enter' && doLogin());
 $('logoutBtn').addEventListener('click', logout);
 $('axisFab').addEventListener('click', openDock);
 $('axisClose').addEventListener('click', closeDock);
-$('axisSend').addEventListener('click', axisSend);
+// Must be wrapped: addEventListener passes the MouseEvent as the first argument, which would land
+// in axisSend's `inputId` parameter — $(MouseEvent) resolves to null and the send silently no-ops.
+// The Send button never worked; only the Enter key did (found by boot harness, 2026-08-11).
+$('axisSend').addEventListener('click', () => axisSend());
 $('axisMic')?.addEventListener('click', () => axisMicToggle());
 $('axisVoice')?.addEventListener('click', axisVoiceToggle);
 $('axisWake')?.addEventListener('click', axisHandsFreeToggle);
+// Voice picker: pinning a voice writes the SAME localStorage key the v1 console used, and speaking a
+// sample immediately is the whole point — you pick by ear, not by reading a device name.
+$('axisVoicePick')?.addEventListener('change', (e) => {
+  const name = e.target.value || '';
+  axisSetVoice(name);
+  const label = name ? axisShortVoice(name) : 'automatic';
+  toast('AXIS voice: ' + label);
+  if (!axisVoiceOn) { axisVoiceOn = true; axisSyncVoiceBtn(); }   // picking a voice implies wanting to hear it
+  axisSpeak(AXIS_VOICE_SAMPLE);
+  axisPopulateVoices();
+});
+$('axisVoiceTest')?.addEventListener('click', () => {
+  if (!axisVoiceOn) { axisVoiceOn = true; axisSyncVoiceBtn(); }
+  axisSpeak(AXIS_VOICE_SAMPLE);
+});
+axisPopulateVoices();      // may be empty on first paint in Chrome — onvoiceschanged fills it in
+axisSetHear('', false);
 // Public panel (pre-auth): same voice machinery, canned public-safe answers only.
 const pubSubmit = () => { const i = $('axisPubInput'); const q = i.value; i.value = ''; pubAsk(q); };
 $('axisPubSend')?.addEventListener('click', pubSubmit);
@@ -1982,6 +2145,7 @@ $('axisPubMic')?.addEventListener('click', () => axisMicToggle('axisPubMic', 'ax
 $('axisPubVoice')?.addEventListener('click', axisVoiceToggle);
 document.querySelectorAll('[data-pub-q]').forEach(b => b.addEventListener('click', () => pubAsk(b.dataset.pubQ)));
 mountOrbs();          // fill every static [data-orb] slot (fab, dock header, public panel)
+mountGlobes();        // the console head gets the real 3-D globe; every other slot keeps its orb
 setAxisState('idle'); // orb state machine baseline
 axisSyncVoiceBtn(); // voice defaults ON — show it
 axisSyncWakeBtn();  // hands-free defaults OFF (it holds the mic open) — reflect the stored choice

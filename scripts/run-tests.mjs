@@ -18,9 +18,17 @@ const all = process.argv.includes('--all');
 
 // The guard set: the suites that protect the AXIS Command Center shell and the deploy surface.
 // Kept small on purpose so there is no excuse to skip it.
+// A suite that only runs under --all is a suite nobody runs. RUN-AW recorded that lesson about the
+// Sentinel manifest; the same hole exists here. The three 2026-08-11 AXIS suites are added BY HAND
+// because they guard the shell too: whether AXIS can hear a wake word the browser actually returns,
+// whether a dead brain says what is wrong instead of "try again in a sec", and whether the
+// priorities panel ever invents a due date.
 const GUARD = [
   'tests/axis-module-graph.test.mjs',
   'tests/axis-overview-panels.test.mjs',
+  'tests/axis-voice-hearing.test.mjs',
+  'tests/axis-brain-fallback.test.mjs',
+  'tests/axis-priorities.test.mjs',
 ];
 
 const files = all

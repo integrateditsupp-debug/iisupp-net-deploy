@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-08-11T12:24:01.137Z",
+  "generatedAt": "2026-08-11T19:43:35.888Z",
   "health": {
     "worker": "up",
-    "heartbeatAt": "2026-08-11T12:23:59.159Z",
-    "leadsQueued": 349,
+    "heartbeatAt": "2026-08-11T19:43:34.159Z",
+    "leadsQueued": 352,
     "agentsTotal": 27,
-    "approvalsPending": 32,
+    "approvalsPending": 31,
     "classifierSelfTestPassPct": 98.28
   },
   "autoApprove": {
@@ -21,51 +21,51 @@
   },
   "recentActivity": [
     {
-      "at": "2026-08-11T12:21:55.135Z",
+      "at": "2026-08-11T19:31:51.207Z",
+      "agent": "CEO Action Digest Agent",
+      "text": "CEO-only approval, send, publish, and register decisions are compressed into a short digest.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-08-11T19:28:58.184Z",
+      "agent": "Opportunity Review Agent",
+      "text": "Opportunity records were enriched with summaries, drafts, reminders, and required-document scaffolding.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-08-11T19:28:58.086Z",
+      "agent": "Opportunity Research Agent",
+      "text": "Public opportunity sources were rescanned and merged into the opportunity engine.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-08-11T19:28:29.240Z",
+      "agent": "Senior Director Worker",
+      "text": "Director heartbeat, lead scans, mission brief cadence, and operating board orchestration completed for this tick.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-08-11T19:21:55.206Z",
       "agent": "Opportunity Prep Packets Agent",
       "text": "Bid, portal, and job preparation packets are refreshed to the CEO final-action point.",
       "status": "ready"
     },
     {
-      "at": "2026-08-11T12:08:54.300Z",
-      "agent": "Senior Director Worker",
-      "text": "Director heartbeat, lead scans, mission brief cadence, and operating board orchestration completed for this tick.",
+      "at": "2026-08-11T18:47:24.164Z",
+      "agent": "Interaction Avoidance Agent",
+      "text": "Prep-agent routing and one-minute CEO final-action lanes are refreshed.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-08-11T18:44:51.256Z",
+      "agent": "Opportunity Quality Gate Agent",
+      "text": "Opportunity quality gate refreshed the revenue queue and parked weak-fit noise.",
       "status": "ready"
     },
     {
       "at": "2026-08-11T12:00:01.988Z",
       "agent": "Business Development Agent",
       "text": "Daily no-send business-development queue refreshed and routed into the autonomous board.",
-      "status": "ready"
-    },
-    {
-      "at": "2026-08-11T11:47:24.118Z",
-      "agent": "Interaction Avoidance Agent",
-      "text": "Prep-agent routing and one-minute CEO final-action lanes are refreshed.",
-      "status": "ready"
-    },
-    {
-      "at": "2026-08-11T11:44:52.878Z",
-      "agent": "Opportunity Quality Gate Agent",
-      "text": "Opportunity quality gate refreshed the revenue queue and parked weak-fit noise.",
-      "status": "ready"
-    },
-    {
-      "at": "2026-08-11T11:31:51.141Z",
-      "agent": "CEO Action Digest Agent",
-      "text": "CEO-only approval, send, publish, and register decisions are compressed into a short digest.",
-      "status": "ready"
-    },
-    {
-      "at": "2026-08-11T11:28:59.129Z",
-      "agent": "Opportunity Review Agent",
-      "text": "Opportunity records were enriched with summaries, drafts, reminders, and required-document scaffolding.",
-      "status": "ready"
-    },
-    {
-      "at": "2026-08-11T11:28:59.033Z",
-      "agent": "Opportunity Research Agent",
-      "text": "Public opportunity sources were rescanned and merged into the opportunity engine.",
       "status": "ready"
     }
   ],
@@ -222,11 +222,6 @@
     },
     {
       "id": "apr-31",
-      "title": "OpenClaw/Claude OAuth is expired; Ahmad or a signed-in desktop session may need to refresh auth.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-32",
       "title": "Workspace steward has cleanup/retirement recommendations; destructive action stays blocked until a later keep/archive/delete review.",
       "kind": "review"
     }
