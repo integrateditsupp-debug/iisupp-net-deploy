@@ -33,6 +33,9 @@ const SUB_WAIT_MS = 7800;                 // hard cap; the function itself must 
                                           // The local CLI needs ~6s for a real answer (measured), so a
                                           // smaller budget escalated to the metered API every time.
 const SUB_POLL_MS = 400;
+// The cascade's own KB bar. aria-kb-query's floor is 8 and stays 8 for its other callers; a weak
+// topical match must not pre-empt the Max plan with a wrong answer. See kbTier() for the measurements.
+const KB_MIN_CONFIDENCE = 15;
 
 // NOTE: no getStore() anywhere in this file on purpose. Netlify does not inject the Blobs context
 // into legacy CJS `exports.handler` functions, so every Blobs touch goes through axis-brain-queue.mjs.
@@ -63,6 +66,16 @@ async function kbTier(query, origin) {
     if (!r.ok) return null;
     const j = await r.json();
     if (!j || !j.match) return null;                       // below the KB's own confidence floor
+    // aria-kb-query's floor is 8, tuned for Sentinel's troubleshooting queries. The cascade needs a
+    // higher bar, because a weak topical match here PRE-EMPTS the Max plan and ships a wrong answer.
+    // Measured 2026-08-11 against the live KB — the separation is clean:
+    //   "reseller margin for M365 Business Premium" → 8  (returned a TENANT MIGRATION article)
+    //   "Synology NAS degraded RAID"                → 8  (returned a MAPPED DRIVE article)
+    //   "outlook keeps asking for password"         → 28 (correct)
+    //   "printer is offline"                        → 36 (correct)
+    // False positives sit exactly on the floor; real hits are 28+. 15 splits them with room either
+    // side. aria-kb-query is untouched — it still answers ARIA and Sentinel at its own threshold.
+    if (typeof j.confidence === 'number' && j.confidence < KB_MIN_CONFIDENCE) return null;
     const text = String(j.content_excerpt || j.answer || '').trim();
     if (!text) return null;
     return { text, tier: 'kb', source: j.source || 'aria-kb', confidence: j.confidence || null, cost: 0 };

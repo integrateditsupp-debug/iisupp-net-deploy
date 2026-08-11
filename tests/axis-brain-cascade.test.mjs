@@ -60,6 +60,20 @@ try {
   ok();
 } finally { globalThis.fetch = realFetch; }
 
+// ---- 2b. A weak KB match must not pre-empt the Max plan ----
+// Measured against the live KB 2026-08-11: false positives score exactly 8 (the KB's own floor),
+// real hits score 28-36. A confidence-8 "match" shipped a tenant-migration article for a reseller
+// margin question, and a mapped-drive article for a Synology RAID question.
+try {
+  stub({ 'aria-kb-query': { match: true, confidence: 8, content_excerpt: LONG }, 'aria-research': {} });
+  assert.equal(await B.askBrain({ query: 'what margin on m365 business premium resale', origin: 'https://x', skip: ['subscription'] }), null,
+    'a floor-confidence KB match falls through rather than pre-empting a real answer');
+  stub({ 'aria-kb-query': { match: true, confidence: 28, content_excerpt: LONG }, 'aria-research': {} });
+  const good = await B.askBrain({ query: 'outlook keeps asking for password', origin: 'https://x', skip: ['subscription'] });
+  assert.equal(good && good.tier, 'kb', 'a genuine KB hit (28) still answers');
+} finally { globalThis.fetch = realFetch; }
+n++;
+
 // ---- 3. The write-back gate — no slop enters the ARIA brain ----
 assert.ok(B.isSubstantive(LONG), 'a real procedure is bankable');
 for (const bad of ['Hi there!', 'Sure, happy to help.', "I don't know.", 'Could you clarify which printer?', 'ok'])
@@ -148,4 +162,4 @@ assert.ok(!/require\(\s*['"]@netlify\/blobs['"]\s*\)/.test(
   'the CJS cascade never imports @netlify/blobs — every Blobs touch goes through the v2 helper');
 n++;
 
-console.log(`axis-brain-cascade: ${n}/8 groups green — ARIA brain → research → KBs → Max plan, metered API last, and only real answers are banked.`);
+console.log(`axis-brain-cascade: ${n}/9 groups green — ARIA brain → research → KBs → Max plan, metered API last, and only real answers are banked.`);
