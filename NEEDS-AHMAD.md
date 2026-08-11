@@ -1,5 +1,27 @@
 # NEEDS AHMAD — the whole list, in order
 
+> **CYCLE 144 (2026-08-11), RUN 152 — NEW TOP ITEM, AND IT IS 30 SECONDS OF YOUR TIME.**
+>
+> **0. RESTART THE COWORK SESSION. The build environment is dead and a week of merged work has no
+> second copy.**
+> Every shell call this cycle failed with `No space left on device` on the sandbox host — five in a
+> row, then the harness refused further retries. No git, no node, no tests, no merge, no push. Nothing
+> was built this cycle and nothing is claimed to have been.
+>
+> Read straight off `.git`: `origin/main` is `cb4f3f04`, last pushed **2026-08-06** and unmoved since.
+> Local `main` is `e8783fc6` and carries everything cycles 138–143 merged **today** — RUN-AV through
+> RUN-AZ plus the classifier loop. **That work exists in exactly one place: this machine.** Until a
+> shell comes back it cannot be pushed, and the flywheel cannot add to it.
+>
+> This is not a decision and not labour — restart Cowork (or free disk on the sandbox host). The first
+> act of the next shell-capable cycle is `git push origin main`, before any new build.
+>
+> The AXIS status feed was deliberately **left untouched** this cycle rather than refreshed with a
+> timestamp and test counts nothing could verify (Rule 14). It still reads `2026-08-11T20:08:11Z` from
+> cycle 143, which is today and not stale.
+>
+> Everything below still stands, in the same order.
+
 > **CYCLE 142 (2026-08-11), RUN-AY — one new decision, and it is a contractual one.**
 >
 > This cycle opened the second conversation: the one that starts after money moves. What a PAYING
