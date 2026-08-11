@@ -183,6 +183,71 @@ undated item rendered **"20677 days overdue"**; and `ago()` assumed epoch ms, so
 rendered a literal **"NaNd"** — that one was already live on Approvals and Inbox, now fixed for all
 three. Suite: 17/17 green, headless-Chrome boot verified (4 orbs mounted, 0 JS errors, 0 NaN in DOM).
 
+## AXIS brain cost cascade + the globe (2026-08-11)
+
+Ahmad: *"why are we not using the plan I have… the brain should be using ARIA brain, then research
+using the agents we have… then the plan I pay for every month, and move to anthropic if needed…
+once it finds a solution the kb agent notes it down and saves into the ARIA brain so in the future
+we dont have to use anthropic credit and waste tokens and money."*
+
+### Why the Max plan was going unused — two separate causes
+
+1. **The cloud function is metered by design.** `axis-director` calls `api.anthropic.com` with
+   `ANTHROPIC_API_KEY` — a pay-as-you-go account, billed separately from the Max subscription.
+   A Netlify function *cannot* use the subscription: that plan authenticates over OAuth held at
+   `~/.claude/.credentials.json` (`subscriptionType: max`, scope `user:inference`), bound to Claude
+   Code sessions. Shipping those tokens to a server would be a terms violation and a credential leak.
+2. **The local CLI was ALSO on the metered account.** Credential precedence is
+   `ANTHROPIC_API_KEY` → `ANTHROPIC_AUTH_TOKEN` → the claude.ai OAuth login. `ANTHROPIC_API_KEY` is
+   set as a **persistent User environment variable** on Ahmad's machine, so it shadowed the Max
+   login on *every* local `claude` invocation — the whole local agent fleet has been billing the
+   metered account. Measured both ways on 2026-08-11:
+
+   | Command | Result |
+   |---|---|
+   | `claude --print "…"` | *"connectors are disabled because ANTHROPIC_API_KEY … takes precedence over your claude.ai login"* — no answer |
+   | `env -u ANTHROPIC_API_KEY claude --print "…"` | answers normally, **on the plan** |
+
+   `scripts/axis-brain-worker.mjs` therefore scrubs both variables from the CLI child environment.
+   Removing the user-level variable would put the entire local fleet back on the plan — Ahmad's call.
+
+### The cascade (`netlify/functions/lib/axis-brain.cjs`)
+
+CJS on purpose — `axis-director.js` is `exports.handler` CJS and cannot import ESM.
+
+| # | Tier | Source | Cost |
+|---|------|--------|------|
+| 1 | ARIA brain | `aria-kb-query` (static KB + promoted learned bits) | $0 |
+| 2 | Research agents | `aria-research` | $0 |
+| 3 | **The Max plan** | queued to Blobs → `scripts/axis-brain-worker.mjs` runs the local `claude` CLI | $0 API |
+| 4 | Metered API | the original `axis-director` path, unchanged | pay-as-you-go |
+
+Each tier returns null to fall through; nothing throws upward, so the pre-existing path still works
+even if the whole cascade is unavailable. Tier 3 checks a worker heartbeat first and is time-boxed
+to 6.5s — a queued question nobody will answer must never stall the function.
+
+### The KB-agent write-back
+
+Whatever tier ≥2 answers is written into `aria-kb-live` in the shape `aria-kb-query` already merges,
+so tier 1 serves that question for free from then on. Gated by `worthLearning()`: no greetings, no
+clarifying questions, no refusals, minimum length, and **an answer that came from the KB is never
+written back** (that circularity is what made the loop bank ~90% slop before the 2026-06-02 fix).
+Verified answers are marked `promoted: true` for one-shot learning; the existing 3-recurrence
+promotion path in `aria-learning-promote.mjs` is untouched and still governs everything else.
+
+Run the worker: `node scripts/axis-brain-worker.mjs` (needs `NETLIFY_SITE_ID` + `NETLIFY_AUTH_TOKEN`).
+
+### The globe
+
+`assets/axis-globe.js` replaces the flat SVG mark **in the console head only** — every other
+`[data-orb]` slot keeps the original. It projects real meridians and parallels through a tilted
+rotation, so front-facing arcs are bright and the far side falls away; around it sit a tick ring, a
+sweeping scan arc and a satellite on an inclined orbit. Motion is state-driven from
+`:root[data-axis-state]`, pauses on a hidden tab, and honours `prefers-reduced-motion`.
+
+Guard: `tests/axis-brain-cascade.test.mjs` (6 groups — tier order, the metered API as last resort,
+the write-back gate, and the env-scrub that is the entire saving).
+
 ## AXIS status feed — headline-only law (2026-07-21)
 
 The public mirrors `.well-known/axis/status.json` + `public/.well-known/axis/status.json` are
