@@ -22,6 +22,8 @@ const worker = fs.readFileSync(path.join(root, 'scripts', 'axis-brain-worker.mjs
 let n = 0; const ok = () => { n++; };
 
 // ---- 1. Cheapest tier wins, and the order is fixed ----
+// Order: recall (banked answers) → static KB → research → Max plan → metered API.
+// `recall` returns null under these stubs (the queue helper is not stubbed), so it falls through.
 const realFetch = globalThis.fetch;
 const stub = (routes) => { globalThis.fetch = async (url) => {
   for (const [frag, body] of Object.entries(routes))
@@ -36,13 +38,13 @@ try {
   let hit = await B.askBrain({ query: 'printer queue stuck on windows 11', origin: 'https://x', skip: ['subscription'] });
   assert.equal(hit.tier, 'kb', 'the ARIA brain answers first when it has a match');
   assert.equal(hit.cost, 0);
-  assert.deepEqual(hit.tried, ['kb'], 'a KB hit never touches research');
+  assert.deepEqual(hit.tried, ['recall', 'kb'], 'recall is checked first, then the static KB — research is never reached');
 
   // KB misses → research picks it up. Still $0, still no metered API.
   stub({ 'aria-kb-query': { match: false, confidence: 2 }, 'aria-research': { answer: LONG } });
   hit = await B.askBrain({ query: 'printer queue stuck on windows 11', origin: 'https://x', skip: ['subscription'] });
   assert.equal(hit.tier, 'research');
-  assert.deepEqual(hit.tried, ['kb', 'research'], 'research is only tried after the KB misses');
+  assert.deepEqual(hit.tried, ['recall', 'kb', 'research'], 'research is only tried after recall AND the static KB miss');
 
   // Everything empty → null, which is the ONLY way the caller reaches the metered API.
   stub({ 'aria-kb-query': { match: false }, 'aria-research': {} });
