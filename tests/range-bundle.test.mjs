@@ -186,3 +186,17 @@ test("AR2 — the delivered bundle in THIS repository, when present, verifies ag
   // is worse than no bundle.
   assert.equal(git(["cat-file", "-t", res.manifest.tip], REPO).trim(), "commit");
 });
+
+// ── AU4 (2026-08-11). The isolated re-verify, and the reason it is not a weakening. ─────────────
+test("AU4 — when a dangling foreign ref forces the isolated re-verify, it is RECORDED, never silent", () => {
+  const res = verifyRangeBundle({ root: REPO });
+  if (!res.ok) return; // a bundle that is genuinely bad is another test's subject, not this one
+  assert.ok(typeof res.verifiedIn === "string" && res.verifiedIn.length > 0,
+    "every verification says where it ran, so a fallback can never pass as the ordinary path");
+  if (res.verifiedIn !== "this repository") {
+    assert.match(res.verifiedIn, /dangling ref/,
+      "the fallback must state the reason it was needed, in the result an operator reads");
+    assert.match(res.detail, /verified in /,
+      "and it must appear in the human-readable detail too, not only in a field nobody prints");
+  }
+});

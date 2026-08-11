@@ -39,6 +39,7 @@ import { execFileSync } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 
 export const RANGE_BUNDLE_SCHEMA = "range-bundle.v1";
 export const SENDS = false;
@@ -167,12 +168,42 @@ export function verifyRangeBundle({ root = process.cwd(), expectTip = null } = {
   }
 
   let heads;
+  let verifiedIn = "this repository";
   try {
     git(["bundle", "verify", bundleAbs], root);
     heads = git(["bundle", "list-heads", bundleAbs], root);
   } catch (err) {
-    return { ok: false, class: BUNDLE_CLASSES.GIT_REJECTED, manifest,
-      detail: `git refused the bundle: ${String(err.stderr || err.message || err).split("\n").filter(Boolean).slice(-1)[0]}` };
+    const message = String(err.stderr || err.message || err).split("\n").filter(Boolean).slice(-1)[0] || "";
+    // AU4 (2026-08-11), found by running it. `git bundle verify` resolves the bundle's prerequisites
+    // against EVERY ref in the repository, so a dangling ref ANYWHERE — here, three
+    // `refs/codex/turn-diffs/checkpoints/…` refs written by another tool and pointing at objects that
+    // are no longer present — makes git refuse a bundle that is perfectly intact. That is a fact
+    // about this repository's ref namespace, not about the delivery artefact, and reporting it as a
+    // broken bundle would send an operator to fix the wrong thing.
+    //
+    // The retry is NOT a weakening. It re-runs the SAME `git bundle verify` in a throwaway repository
+    // whose object store is this one (via alternates) but whose refs are empty: every prerequisite
+    // object still has to be found, and a genuinely incomplete bundle still fails. What disappears is
+    // the unrelated corruption. The retry is recorded in the result so it can never be silent — and
+    // if the isolated run also refuses, the original refusal is what gets reported.
+    const foreignRef = message.match(/bad object (refs\/(?!heads\/|remotes\/|tags\/)\S+)/);
+    if (!foreignRef) {
+      return { ok: false, class: BUNDLE_CLASSES.GIT_REJECTED, manifest,
+        detail: `git refused the bundle: ${message}` };
+    }
+    const iso = fs.mkdtempSync(path.join(os.tmpdir(), "bundle-verify-"));
+    try {
+      git(["init", "--quiet", iso], root);
+      fs.writeFileSync(path.join(iso, ".git/objects/info/alternates"), `${path.join(root, ".git", "objects")}\n`);
+      git(["bundle", "verify", bundleAbs], iso);
+      heads = git(["bundle", "list-heads", bundleAbs], iso);
+      verifiedIn = `an isolated repository over this one's objects, because ${foreignRef[1].split("/").slice(0, 2).join("/")}/… is a dangling ref that makes git refuse any bundle here`;
+    } catch (err2) {
+      return { ok: false, class: BUNDLE_CLASSES.GIT_REJECTED, manifest,
+        detail: `git refused the bundle: ${message}` };
+    } finally {
+      fs.rmSync(iso, { recursive: true, force: true });
+    }
   }
 
   const tips = heads.split("\n").map((l) => l.trim()).filter(Boolean)
@@ -193,6 +224,6 @@ export function verifyRangeBundle({ root = process.cwd(), expectTip = null } = {
       detail: `tip ${wanted.slice(0, 12)} describes tree ${actualTree.slice(0, 12)} but the manifest recorded ${String(manifest.tree).slice(0, 12)}` };
   }
 
-  return { ok: true, class: BUNDLE_CLASSES.OK, manifest,
-    detail: `${path.basename(BUNDLE_FILE)} verified: tip ${wanted.slice(0, 12)}, tree ${String(manifest.tree).slice(0, 12)}, ${manifest.commits} commit(s), ${manifest.bytes} bytes, sha256 ${String(manifest.sha256 || "none").slice(0, 16)}` };
+  return { ok: true, class: BUNDLE_CLASSES.OK, manifest, verifiedIn,
+    detail: `${path.basename(BUNDLE_FILE)} verified: tip ${wanted.slice(0, 12)}, tree ${String(manifest.tree).slice(0, 12)}, ${manifest.commits} commit(s), ${manifest.bytes} bytes, sha256 ${String(manifest.sha256 || "none").slice(0, 16)}` + (verifiedIn === "this repository" ? "" : ` (verified in ${verifiedIn})`) };
 }
