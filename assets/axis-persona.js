@@ -15,7 +15,7 @@
 // AND a different prosody means the two are never mistaken for each other, even in the worst case
 // where a browser offers only one shared female voice.
 //
-// NOTE: AXIS was lower-pitched than ARIA until 2026-08-12; it now sits ABOVE it (1.08 vs 1.05) after
+// NOTE: AXIS was lower-pitched than ARIA until 2026-08-12; it now sits ABOVE it (1.12 vs 1.05) after
 // Ahmad asked for a younger, softer voice. The separation is preserved, just from the other side —
 // no voice family may land on ARIA's exact rate/pitch pair.
 
@@ -61,8 +61,12 @@ export const AXIS_MALE_DEMOTE = [
 // but classy." The previous setting was deliberately lowered (pitch 0.92) for a composed, older
 // register. Lowering a synthesised voice is exactly what makes it read as machine-like — the formants
 // stop matching the pitch — so raising it back above 1.0 is what buys both "younger" and "more human"
-// at the same time. Softness is volume and pace, not pitch: 0.9 volume and a slightly unhurried rate
-// give the classy register without the breathy-assistant cliché.
+// at the same time. Softness is volume and pace, not pitch: 0.85 volume and a slightly unhurried
+// rate give the classy register without the breathy-assistant cliché.
+//
+// Raised again on 2026-08-12 (1.08 -> 1.12, 0.9 -> 0.85 volume) when Ahmad reported no change. The
+// numbers were only half of it — the real blocker was a pinned voice overriding the persona; see
+// VOICE_POLICY_REV below.
 //
 // AXIS stays apart from ARIA (en-US, rate .95 / pitch 1.05) on ACCENT now rather than on pitch —
 // AXIS is en-GB and scores +40 for it, and the name-collision demotes are untouched.
