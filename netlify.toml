@@ -126,8 +126,12 @@
   to = "/index.html"
   status = 404
   force = true
+# NOTE: Netlify's splat only matches a trailing path segment — "/*.tmp" as a suffix glob silently
+# matches nothing, which is how out1.tmp (internal run notes, branch, commit SHA) sat readable at
+# iisupp.net/out1.tmp. Scratch files have to be denied by exact path. Dotfiles are not served at
+# all, so .lv.new / .probe-write / .tmp-sentinel/ already 404 without a rule.
 [[redirects]]
-  from = "/*.tmp"
+  from = "/out1.tmp"
   to = "/index.html"
   status = 404
   force = true
