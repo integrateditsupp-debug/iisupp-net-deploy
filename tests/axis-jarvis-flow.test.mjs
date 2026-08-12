@@ -17,23 +17,32 @@ let n = 0; const ok = () => { n++; };
 
 // ---- 1. AXIS is a woman's voice, and NOT the customer orb's voice ----
 const score = (name, lang) => P.axisPersonaBonus(name, lang);
-assert.ok(score('Microsoft Sonia Online (Natural)', 'en-GB') > 0, 'the AXIS house voice ranks up');
+const HOUSE = 'Microsoft Ava Online (Natural) - English (United States)';  // en-US, per 2026-08-12
+assert.ok(score(HOUSE, 'en-US') > 0, 'the AXIS house voice ranks up');
 assert.ok(score('Microsoft Guy Online (Natural)', 'en-US') < 0, 'AXIS is never a male voice');
-assert.ok(score('Microsoft Sonia Online (Natural)', 'en-GB') > score('Microsoft Guy Online (Natural)', 'en-US'), 'female beats male');
+assert.ok(score(HOUSE, 'en-US') > score('Microsoft Guy Online (Natural)', 'en-US'), 'female beats male');
 // ARIA (aria-core.js) prefers Samantha/Zira/Google UK English Female. AXIS must not wear them.
+// This matters more since 2026-08-12: both assistants are en-US now, so the name demote and the
+// prosody gap are the only things keeping them apart.
 for (const ariaVoice of ['Samantha', 'Microsoft Zira Desktop', 'Karen', 'Victoria']) {
-  assert.ok(score(ariaVoice, 'en-US') < score('Microsoft Sonia Online (Natural)', 'en-GB'),
+  assert.ok(score(ariaVoice, 'en-US') < score(HOUSE, 'en-US'),
     `AXIS ranks ARIA's "${ariaVoice}" below its own voice — the two products never sound alike`);
 }
 // The demote is a penalty, not a ban: a bare browser still lands on a female voice, never a male one.
 assert.ok(score('Google UK English Female', 'en-GB') > score('Google UK English Male', 'en-GB'),
   'worst case, a shared female voice still beats a male one');
-// Regression: "Female" must not trip the \bmale\b demote pattern.
-assert.ok(score('Google UK English Female', 'en-GB') > 0, '"Female" is not demoted as "male"');
-// Prosody is deliberately apart from ARIA's en-US rate .95 / pitch 1.05.
-// AXIS moved ABOVE ARIA on 2026-08-12 (younger + softer, Ahmad's words). Assert the separation and
-// the softness, not a direction that a later instruction can legitimately reverse.
+// Regression: "Female" must not trip the \bmale\b demote pattern. Asserted against the pattern
+// itself rather than against a positive score — "Google UK English Female" is BOTH on ARIA's
+// preference list and en-GB, so since 2026-08-12 it legitimately scores negative on those two
+// counts, and a `> 0` proxy would now fail for reasons that have nothing to do with \bmale\b.
+assert.ok(!P.AXIS_MALE_DEMOTE.some((w) => new RegExp(w, 'i').test('Google UK English Female')),
+  '"Female" is not caught by the male demote pattern');
+assert.ok(P.AXIS_MALE_DEMOTE.some((w) => new RegExp(w, 'i').test('Google UK English Male')),
+  '…while "Male" still is');
+// Prosody is deliberately apart from ARIA's en-US rate .95 / pitch 1.05 — and it is now the whole
+// separation, because the accent no longer differs. Assert both values are clear of ARIA's.
 assert.notEqual(P.AXIS_PROSODY.pitch, 1.05, 'AXIS never shares ARIAs pitch');
+assert.notEqual(P.AXIS_PROSODY.rate, 0.95, 'AXIS never shares ARIAs rate');
 assert.ok(P.AXIS_PROSODY.volume < 1, 'AXIS is softly spoken, not full-blast');
 assert.ok(P.AXIS_PROSODY.rate < 1, 'AXIS is unhurried');
 ok();

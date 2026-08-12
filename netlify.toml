@@ -756,6 +756,38 @@
   for = "/assets/axis-tokens.css"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+# The rest of the AXIS module graph. axis-app.js imports these seven with NO ?v= on the import
+# specifier, so the 7-file list above was leaving them on /assets/* = 7 days — a change to the
+# hologram, a chart, or the fleet screen would not reach a returning browser for up to a week.
+# That is precisely the 08-11 18:12–19:32 caching firefight, back through a side door.
+[[headers]]
+  for = "/assets/axis-constants.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/assets/axis-charts.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/assets/axis-composer.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/assets/axis-fleet.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/assets/axis-reports.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/assets/axis-hologram.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/assets/axis-claim-figures.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/*.html"

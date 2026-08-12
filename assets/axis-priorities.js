@@ -49,8 +49,11 @@ export function collectPriorities(snap, now = new Date()) {
   const fu = mod('followups');
   for (const [bucket, rows] of [['overdue', fu.overdue], ['due_today', fu.due_today], ['upcoming', fu.upcoming]])
     for (const f of rows || [])
+      // fid/bid are the record ids, carried so a voice removal (board.remove) can name the real
+      // follow_ups row instead of guessing from the title.
       items.push({ title: f.company || 'Prospect', source: 'Follow-up', dueAt: f.due_at || null,
-        detail: 'queued → Approvals', bucket, screen: 'followups' });
+        detail: 'queued → Approvals', bucket, screen: 'followups',
+        fid: f.id || null, bid: f.business_id || null });
 
   for (const r of mod('approvals').rows || [])
     if (r.status === 'pending')
@@ -97,6 +100,19 @@ const listBits = (items, n = 3) => items.slice(0, n)
 // lets a layer that actually knows answer instead.
 const OFF_BOARD = /\b(youtube|videos?|vids?|shorts?|channel|clips?|thumbnail|subscribers?|upload(?:s|ed|ing)?|stripe|invoice|payroll|ticket)\b/i;
 
+// The board ANSWERS questions; it never performs them — and a command that merely NAMES a board
+// noun must not be answered as if it were a question about that noun. Ahmad, 2026-08-12: "remove
+// the items that are in priority list" contained the word "priority", so the next-item branch below
+// claimed it and recited "Next up is Accounting Plus Business Services…" — a request to act,
+// answered with a status line, twice in a row. The verbs here are unambiguous: none of them ever
+// opens a question the board can answer, so declining costs nothing and sends the utterance on to
+// the layers that can actually act (the intent ops, then the brain — which sees the conversation).
+const COMMAND_ANYWHERE = /\b(remove|delete|clear|drop|dismiss|archive|get rid of|wipe|purge|cancel|resched(?:ule)?|reprioriti[sz]e|action (?:it|them|these|those)|open(?:ing)? up)\b/i;
+// Verbs that are commands only when they LEAD the sentence — embedded, they appear in genuine
+// board questions ("what is waiting on me to approve") that the branches below exist to answer.
+const COMMAND_LEADING = /^(?:(?:ok(?:ay)?|all right|alright|please|now|just|yes|yeah|and|then|so)[,\s]+)*(?:go ahead(?: and)?\s+)?(approve|reject|snooze|skip|park|mark|close|complete|finish|handle|move|open|do|work with|talk to|ask)\b/i;
+const isCommand = (q) => COMMAND_ANYWHERE.test(q) || COMMAND_LEADING.test(q);
+
 export function localAnswer(question, snap, now = new Date()) {
   const q = String(question || '').toLowerCase();
   const items = collectPriorities(snap, now);
@@ -112,6 +128,9 @@ export function localAnswer(question, snap, now = new Date()) {
   // claim it. Refusing here sends the question on to the intent layer and then the brain, which is
   // where a topic question belongs. Answering the wrong question confidently is worse than pausing.
   if (OFF_BOARD.test(q)) return null;
+
+  // A command is never a board question, whatever nouns it contains. See isCommand above.
+  if (isCommand(q)) return null;
 
   if (/\b(status|going on|today|update|briefing|summary|board)\b/.test(q)) {
     const a = num(kpis.awaiting_approval), m = num(kpis.messages_waiting), f = num(kpis.followups_due);

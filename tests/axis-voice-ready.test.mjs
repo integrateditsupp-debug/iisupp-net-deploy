@@ -55,10 +55,10 @@ let n = 0; const ok = (m) => { n++; if (m) console.log('  ok —', m); };
 }
 
 // ---- 3. With no rankable voice, the language is still pinned ----
-// An unset lang is how a non-US default got through in the first place.
+// An unset lang is how a wrong-accent default got through in the first place.
 {
-  assert.ok(/else u\.lang = 'en-US'/.test(code),
-    'when no voice ranks, u.lang must still be pinned to en-US');
+  assert.ok(/else u\.lang = 'en-GB'/.test(code),
+    'when no voice ranks, u.lang must still be pinned to en-GB');
   ok('language is pinned even with no voice to rank');
 }
 
@@ -76,7 +76,9 @@ let n = 0; const ok = (m) => { n++; if (m) console.log('  ok —', m); };
   ok('the two-voice machine still resolves to a woman');
 }
 
-// ---- 5. …and an American one wherever a real choice exists ----
+// ---- 5. …and a British woman wherever a real choice exists ----
+// Ahmad, 2026-08-12: "revert the voice back to UK woman." In Chrome the only natural UK woman is
+// Google's — she must not lose to the US voice or to robotic SAPI Zira.
 {
   const chrome = [
     ['Google US English', 'en-US'],
@@ -84,8 +86,8 @@ let n = 0; const ok = (m) => { n++; if (m) console.log('  ok —', m); };
     ['Microsoft Zira Desktop - English (United States)', 'en-US'],
   ];
   const win = chrome.map(([nm, l]) => ({ nm, s: P.axisPersonaBonus(nm, l) })).sort((a, b) => b.s - a.s)[0];
-  assert.equal(win.nm, 'Google US English', 'in Chrome the American voice must win, not the UK one');
-  ok('American wins wherever the browser offers a choice');
+  assert.equal(win.nm, 'Google UK English Female', 'in Chrome the UK woman must win, not the US voice');
+  ok('the UK woman wins wherever the browser offers a choice');
 }
 
 console.log(`axis-voice-ready: ${n} checks passed`);

@@ -115,12 +115,25 @@ exports.handler = async (event) => {
     ? [...body.messages].reverse().find((m) => m && m.role === 'user' && typeof m.content === 'string')
     : null;
   const askText = lastUser ? String(lastUser.content).slice(0, 4000) : '';
+  // The conversation travels WITH the question. This used to collapse body.messages down to the
+  // last user turn before the cascade, so "remove it" reached the Max plan as a two-word orphan and
+  // the model rightly said it had no idea which list Ahmad meant (2026-08-12) — while the metered
+  // API, the LAST resort, was the only tier that ever saw the transcript. Recall/KB tiers still
+  // match on askText alone (banked-answer lookup must not be polluted by conversation noise); only
+  // the subscription tier, where a model actually reasons, receives the turns and the board.
+  const turns = Array.isArray(body.messages)
+    ? body.messages
+        .filter((m) => m && typeof m.content === 'string' && (m.role === 'user' || m.role === 'assistant'))
+        .slice(-10)
+        .map((m) => ({ role: m.role, content: String(m.content).slice(0, 600) }))
+    : [];
+  const board = typeof body.board === 'string' ? body.board.slice(0, 1500) : '';
   if (askText && body.cascade !== false) {
     try {
       const { askBrain } = require('./lib/axis-brain.cjs');
       const host = (event.headers && (event.headers.host || event.headers.Host)) || '';
       const auth = (event.headers && (event.headers.authorization || event.headers.Authorization)) || '';
-      const hit = await askBrain({ query: askText, origin: host ? `https://${host}` : '', auth });
+      const hit = await askBrain({ query: askText, turns, board, origin: host ? `https://${host}` : '', auth });
       // Answer in hand — return it.
       if (hit && hit.text) {
         return json(200, {
@@ -171,7 +184,25 @@ exports.handler = async (event) => {
       // Say what is actually wrong. "Brain busy. Try again in a sec." was returned for EVERY
       // failure — including an out-of-credit account, where retrying can never work. Ahmad chased
       // that for a day (2026-08-11). The reason code lets the console answer locally instead.
-      const { text, reason } = classifyBrainError(r.status, errBody);
+      let { text, reason } = classifyBrainError(r.status, errBody);
+      // The metered API is the LAST resort — the Max plan should have answered this, for free, via
+      // the local worker. So a billing error here is usually not a billing problem: it is the worker
+      // being down, which costs nothing to fix. Telling Ahmad to top up an account when the real fix
+      // is starting a process is the same wrong diagnosis that cost him a day on 2026-08-11, just
+      // from the other direction. Checked only on the error path, so the happy path pays nothing.
+      if (reason === 'no_credit' || reason === 'auth') {
+        try {
+          const { workerOnline } = require('./lib/axis-brain.cjs');
+          const host3 = (event.headers && (event.headers.host || event.headers.Host)) || '';
+          const auth3 = (event.headers && (event.headers.authorization || event.headers.Authorization)) || '';
+          if (!(await workerOnline({ origin: host3 ? `https://${host3}` : '', auth: auth3 }))) {
+            reason = 'worker_offline';
+            text = 'My local worker is not running, so I cannot reach the plan you already pay for — '
+              + 'and the metered account behind it is empty. Start it with '
+              + '"node scripts/axis-brain-worker.mjs" and I am back. No top-up needed.';
+          }
+        } catch (_) { /* keep the original diagnosis if the check itself fails */ }
+      }
       return json(200, { text, reason, routedAgent: null, intent: null, degraded: true });
     }
     const data = await r.json();

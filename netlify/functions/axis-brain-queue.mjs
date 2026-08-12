@@ -24,6 +24,16 @@ const json = (status, body) => new Response(JSON.stringify(body), {
   status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
 });
 
+// Recent conversation turns riding with a question or task. Kept small and typed: the worker feeds
+// these to a model on Ahmad's machine, so nothing but plain role/content pairs may pass.
+function sanitizeTurns(turns) {
+  if (!Array.isArray(turns)) return [];
+  return turns
+    .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
+    .slice(-10)
+    .map((m) => ({ role: m.role, content: m.content.slice(0, 600) }));
+}
+
 export default async (request) => {
   if (request.method !== 'POST') return json(405, { error: 'POST required' });
 
@@ -52,7 +62,13 @@ export default async (request) => {
     if (!query) return json(400, { error: 'query required' });
     const id = 'q-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
     try {
-      await store.setJSON(`pending/${id}`, { id, query, t: Date.now() });
+      await store.setJSON(`pending/${id}`, {
+        id, query, t: Date.now(),
+        // The conversation and the on-screen board, so the worker's model call is not an orphan.
+        // Sanitized here because this mailbox is the trust boundary between cloud and machine.
+        turns: sanitizeTurns(body.turns),
+        board: String(body.board || '').slice(0, 1500),
+      });
       return json(200, { ok: true, id });
     } catch (e) { return json(200, { ok: false, reason: 'enqueue-failed', detail: e.message }); }
   }
@@ -141,14 +157,22 @@ export default async (request) => {
     // never ask for "rm -rf". Every kind here maps to a fixed handler in axis-brain-worker.mjs.
     // cowork.plan is read-only (no edit permission); code.build edits the repo and is confirm-gated
     // on the console side, exactly like self.fix.
+    // fleet.* is the management rail Ahmad asked for (2026-08-12, "give axis full access to manage
+    // them"): the worker maps each verb to a fixed PowerShell scheduled-task cmdlet against its own
+    // named roster — the queue can name an agent, it can never name a command.
     const ALLOWED = ['video.make', 'video.short', 'video.upload', 'video.status', 'self.fix',
-      'cowork.ask', 'cowork.plan', 'code.build', 'machine.run'];
+      'cowork.ask', 'cowork.plan', 'code.build', 'machine.run',
+      'fleet.status', 'fleet.run', 'fleet.pause', 'fleet.resume'];
     if (!ALLOWED.includes(kind)) return json(400, { error: 'unknown task kind' });
     const id = 't-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
     try {
       await store.setJSON(`task/${id}`, {
         id, kind, arg: String(body.arg || '').slice(0, 2000),
         confirmed: body.confirmed === true, t: Date.now(),
+        // Cowork and Claude Code need the conversation too: "remove the items you just mentioned"
+        // is meaningless as a lone sentence — the antecedent lives in the prior turns.
+        turns: sanitizeTurns(body.turns),
+        board: String(body.board || '').slice(0, 1500),
       });
       return json(200, { ok: true, id, kind });
     } catch (e) { return json(200, { ok: false, reason: 'task-failed', detail: e.message }); }

@@ -102,29 +102,38 @@ assert.ok(/\.axis-dock \{ position:fixed; left:50%; right:auto; top:(\d+)px/.tes
   'the dock follows the orbit to the top instead of staying at the bottom');
 ok('in the flow under the director field, with the dock following it');
 
-// ---- 5. the voice: American, classy, upscale — and still never ARIA ----
-// Ahmad 2026-08-12: "change the voice to a english USA accent but classy and up scale style."
+// ---- 5. the voice: British, natural, conversational — and still never ARIA ----
+// Ahmad 2026-08-12: "revert the voice back to UK woman but none robotic, sound like a natural
+// human conversation."
 assert.ok(P.AXIS_PROSODY.pitch > 1.0, 'a human register sits above 1.0, not below it');
 assert.notEqual(P.AXIS_PROSODY.pitch, 1.05, 'never ARIA pitch');
 assert.notEqual(P.AXIS_PROSODY.rate, 0.95, 'never ARIA rate');
 assert.ok(P.AXIS_PROSODY.volume < 1, 'softer is volume');
-assert.ok(P.AXIS_PROSODY.rate < 0.95, 'upscale is unhurried — slower than ARIA, not merely under 1');
+// "None robotic" is prosody near the voice's own training: a neural voice pushed well away from
+// its native pace and pitch is what reads as synthetic. Composed, but close to natural.
+assert.ok(P.AXIS_PROSODY.rate > 0.95 && P.AXIS_PROSODY.rate <= 1.0,
+  'natural is near the voice\'s own pace — just under 1, not dragged');
+assert.ok(P.AXIS_PROSODY.pitch <= 1.05, 'natural pitch stays within a few percent of native');
 const score = (n, l) => P.axisPersonaBonus(n, l);
-const ava = score('Microsoft Ava Online (Natural) - English (United States)', 'en-US');
-const jenny = score('Microsoft Jenny Online (Natural) - English (United States)', 'en-US');
-assert.ok(ava > jenny, 'the upscale US voice (Ava) outranks the default assistant one (Jenny)');
-// The accent is the point of this change: an American voice must beat the old British house voice.
+const sonia = score('Microsoft Sonia Online (Natural) - English (United Kingdom)', 'en-GB');
 const libby = score('Microsoft Libby Online (Natural) - English (United Kingdom)', 'en-GB');
-assert.ok(ava > libby, 'an en-US voice outranks the former en-GB house voice');
-assert.ok(libby > 0, 'en-GB stays eligible — a British AXIS beats a robotic one on a bare machine');
-// Maisie is Microsoft's en-GB CHILD voice — "classy woman" must never resolve to a child.
-assert.ok(score('Microsoft Maisie Online (Natural) - English (United Kingdom)', 'en-GB') < 0,
+assert.ok(sonia > libby, 'Sonia is the house voice; Libby is the alternate');
+// The accent is the point of this change: the UK voice must beat the en-US experiment's pick.
+const ava = score('Microsoft Ava Online (Natural) - English (United States)', 'en-US');
+assert.ok(sonia > ava, 'an en-GB voice outranks the former en-US house voice');
+assert.ok(ava > 0, 'en-US stays eligible — an American AXIS beats a robotic one on a bare machine');
+// On a Chrome with no en-GB Natural set, Google's UK woman is the natural-sounding fallback — the
+// ARIA-collision list must not suppress her now that accent separates the assistants again.
+assert.ok(score('Google UK English Female', 'en-GB') > 0,
+  'Google UK English Female is a valid UK fallback, not an ARIA collision');
+// Maisie is Microsoft's en-GB CHILD voice — "UK woman" must never resolve to a child.
+assert.ok(score('Microsoft Maisie Online (Natural) - English (United Kingdom)', 'en-GB') < sonia - 60,
   'a child voice can never win the ranking');
-assert.ok(score('Microsoft Guy Online (Natural) - English (United States)', 'en-US') < ava, 'never male');
-assert.ok(score('Samantha', 'en-US') < ava, 'never the customer orb voice');
-// Both assistants are American now, so a voice literally named Aria is the worst possible pick.
-assert.ok(score('Microsoft Aria Online (Natural) - English (United States)', 'en-US') < ava,
+assert.ok(score('Microsoft Guy Online (Natural) - English (United States)', 'en-US') < sonia, 'never male');
+assert.ok(score('Samantha', 'en-US') < sonia, 'never the customer orb voice');
+// A voice literally named Aria is still the worst possible pick for the OTHER assistant.
+assert.ok(score('Microsoft Aria Online (Natural) - English (United States)', 'en-US') < sonia,
   'AXIS never speaks in a voice named Aria');
-ok('AXIS is an upscale American woman — not a child, not male, not ARIA');
+ok('AXIS is a natural British woman — not a child, not male, not ARIA');
 
-console.log('ok — globe grows and speaks; voice is American, classy, upscale');
+console.log('ok — globe grows and speaks; voice is British, natural, conversational');
