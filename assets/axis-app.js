@@ -14,11 +14,13 @@ import { renderReports } from './axis-reports.js';
 import { renderDirector } from './axis-director-screen.js';
 import { renderPriorities, collectPriorities, dueLabel, localAnswer } from './axis-priorities.js';
 import { mountGlobes } from './axis-globe.js';
+import { toggleHologram } from './axis-hologram.js';
 // AXIS persona + turn grammar (the JARVIS flow). Additive: the voice machinery below is unchanged;
 // this only decides who AXIS sounds like and how a spoken turn is shaped.
 import { axisPersonaBonus, AXIS_PROSODY, ackLine, greetLine, routeTail,
   isWake, isStop, isConfirm, isDeny, stripWake,
-  voiceProfile, voiceFamily, polishForSpeech, phraseChunks } from './axis-persona.js';
+  voiceProfile, voiceFamily, polishForSpeech, phraseChunks,
+  splitForTurns, isContinue, detectOp } from './axis-persona.js';
 
 const TOKEN_KEY = 'aperture_jwt';
 
@@ -1547,6 +1549,45 @@ async function axisCollect(jobId, msg, tries = 0) {
   return axisCollect(jobId, msg, tries + 1);
 }
 
+
+
+// Queue a real task for the worker on Ahmad's machine (build a video, upload a batch, self-fix).
+// READ-ONLY kinds run immediately; anything that spends, edits or publishes has already been
+// confirmed out loud by the time it gets here.
+async function axisRunOp(op) {
+  try {
+    const r = await fetch('/.netlify/functions/axis-brain-queue', {
+      method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ action: 'task', kind: op.kind, arg: op.arg || '', confirmed: true }),
+    });
+    const j = await r.json();
+    if (!j || !j.ok) { const m = 'Could not queue that.'; dockLog.push({ role: 'axis', text: m }); renderDock(); axisSpeakTurn(m); return; }
+    const ack = op.kind === 'self.fix' ? 'On it — Claude Code is working on that now. I will tell you when it lands.'
+      : op.kind === 'video.upload' ? 'Uploading now. I will report back.'
+      : 'On it.';
+    dockLog.push({ role: 'axis', text: ack }); renderDock(); axisSpeakTurn(ack);
+    axisCollect(j.id, { role: 'axis', text: ack });   // the worker's result replaces this line
+  } catch {
+    const m = 'I could not reach the worker.'; dockLog.push({ role: 'axis', text: m }); renderDock(); axisSpeakTurn(m);
+  }
+}
+
+// Speak a reply the way a person would: the useful part now, the rest on request. The full text is
+// always in the transcript — chunking shapes the SPOKEN turn only, so nothing is ever lost.
+function axisSpeakTurn(text) {
+  const { say, rest, offer } = splitForTurns(text);
+  axisHeldRest = rest || '';
+  const spoken = offer ? say + '\n' + offer : say;
+  if (axisSpeak(spoken)) __turnDone = axisTurnDone; else { setAxisState('idle'); axisTurnDone(); }
+}
+
+// Board questions are answered from the snapshot already in memory — no function call, no network,
+// no model. Ahmad, 2026-08-11: "it takes long to think." For "what needs me" that wait was pure
+// latency for data sitting in the page. Anything this cannot answer falls through untouched.
+function axisInstantAnswer(text) {
+  try { return localAnswer(text, state.snap); } catch { return null; }
+}
+
 // ── AXIS console furniture (2026-08-11 redesign) ─────────────────────────────
 const HEAR_IDLE = 'Press the mic, or type. Say “AXIS stop” to stand me down.';
 // The live line under the orb. While listening it mirrors the interim transcript, so there is always
@@ -1639,7 +1680,41 @@ async function axisSend(inputId = 'axisInput') {
     }
     // Anything else is simply a new question — the unconfirmed route expires, nothing is queued.
   }
+  // "go on" releases the held tail of the last answer — no round trip.
+  if (axisHeldRest && isContinue(text)) {
+    dockLog.push({ role: 'user', text: raw });
+    const rest = axisHeldRest; axisHeldRest = '';
+    dockLog.push({ role: 'axis', text: rest }); renderDock();
+    axisSpeakTurn(rest);
+    return;
+  }
   dockLog.push({ role: 'user', text }); renderDock();
+
+  // A task read back last turn is now confirmed or cancelled.
+  if (axisPendingOp) {
+    const op = axisPendingOp; axisPendingOp = null;
+    if (isConfirm(text)) { await axisRunOp(op); return; }
+    if (isDeny(text)) { const m = 'Cancelled.'; dockLog.push({ role: 'axis', text: m }); renderDock(); axisSpeakTurn(m); return; }
+    // anything else is a new request — fall through, the task simply expires unrun
+  }
+
+  // Does this ask AXIS to DO something? Read it back and wait, except for read-only checks.
+  const op = detectOp(text);
+  if (op) {
+    if (op.kind === 'video.status') { await axisRunOp(op); return; }
+    axisPendingOp = op;
+    dockLog.push({ role: 'axis', text: op.confirm }); renderDock();
+    axisSpeakTurn(op.confirm);
+    return;
+  }
+
+  // Instant path: anything the board can answer needs no network at all.
+  const instant = axisInstantAnswer(text);
+  if (instant) {
+    dockLog.push({ role: 'axis', text: instant }); renderDock();
+    axisSpeakTurn(instant);
+    return;
+  }
   // Remove OUR placeholder by reference, never the array tail — concurrent sends must not eat
   // each other's replies or orphan a fake thinking row (gate-review finding, 2026-07-21).
   const pending = { role: 'axis', text: '…' };
@@ -1673,7 +1748,7 @@ async function axisSend(inputId = 'axisInput') {
       reply.text += ' ' + routeTail(j.routedAgent, j.needsApproval);
     }
     dockLog.push(reply); renderDock();
-    if (axisSpeak(reply.text)) __turnDone = axisTurnDone; else { setAxisState('idle'); axisTurnDone(); }
+    axisSpeakTurn(reply.text);
     // The Max plan needs ~17s for a real answer; the function returns in ~10s and hands back a job
     // id. Collect it here and replace the placeholder in place, so the answer arrives on its own
     // rather than the user having to ask a second time.
@@ -1866,6 +1941,8 @@ let axisWakeRec = null;         // the background continuous recognizer
 let axisWakeArmed = false;      // wanted-running (survives the browser's own auto-stops)
 let axisSpokenTurn = false;     // this turn came in by voice → answer with voice manners
 let axisPendingRoute = null;    // {intent, agent} awaiting a spoken confirm — routes only
+let axisHeldRest = '';          // the un-spoken tail of a chunked answer, released on "go on"
+let axisPendingOp = null;       // an operational task read back and awaiting a spoken confirm
 
 // Which surface a hands-free turn belongs to. The Agent Director tab has its own command channel and
 // openDock() deliberately refuses to cover it, so a wake there must drive ITS input, not the hidden
@@ -2163,6 +2240,8 @@ $('axisOrbGlobe')?.addEventListener('click', axisOpenConsole);
 $('axisOrbGlobe')?.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); axisOpenConsole(); } });
 $('axisQuickOpen')?.addEventListener('click', axisOpenConsole);
 $('axisQuickWake')?.addEventListener('click', axisHandsFreeToggle);
+// Full-screen AXIS presence. Ctrl+Alt+A anywhere, or the ⛶ control on the orbit bar.
+$('axisQuickHolo')?.addEventListener('click', () => toggleHologram());
 $('axisQuick')?.addEventListener('keydown', (e) => {
   if (e.key !== 'Enter') return;
   const v = e.target.value.trim(); if (!v) return;
@@ -2224,6 +2303,7 @@ document.addEventListener('keydown', (e) => {
     if (axisHandsFree) { axisHandsFree = false; axisWakePause(); axisSyncWakeBtn(); }
     return axisStandDown();
   }
+  if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'a') { e.preventDefault(); return void toggleHologram(); }
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); return openPalette(); }
   if (e.key === 'Escape') { $('palette').hidden = true; if (!$('axisDock').hidden) closeDock(); if (state.ui.thread) { state.ui.thread = null; renderModule(); } if (state.ui.crmDrawer) { state.ui.crmDrawer = null; renderModule(); } return; }
   if (!$('palette').hidden) {

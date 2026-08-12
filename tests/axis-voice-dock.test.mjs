@@ -30,7 +30,7 @@ assert.ok(/axis-director/.test(app), 'dock send is wired to the axis-director fu
 ok();
 
 // ---- 3. spoken replies: the reply AXIS returns is spoken ----
-assert.ok(/axisSpeak\(reply\.text\)/.test(app), 'axis-director reply is spoken aloud');
+assert.ok(/axisSpeak(?:Turn)?\(reply\.text\)/.test(app), 'axis-director reply is spoken aloud');
 assert.ok(/let axisVoiceOn = true/.test(app), 'voice defaults ON (v1 behavior — "I want to talk, it\'s faster")');
 assert.ok(/speechSynthesis\.cancel\(\)/.test(app), 'barge-in: new speech/mic cancels current speech');
 ok();

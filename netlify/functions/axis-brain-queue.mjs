@@ -130,6 +130,40 @@ export default async (request) => {
     } catch (e) { return json(200, { ok: false, reason: 'recall-failed', detail: e.message }); }
   }
 
+
+  // A TASK, not a question. AXIS queues real work here — build videos, upload an approved batch,
+  // or fix itself with Claude Code — and the worker on Ahmad's machine runs it. Deliberately a
+  // narrow, named set: the worker maps each `kind` to a specific command, so a compromised or
+  // confused caller cannot ask it to run arbitrary shell.
+  if (action === 'task') {
+    const kind = String(body.kind || '');
+    const ALLOWED = ['video.make', 'video.short', 'video.upload', 'video.status', 'self.fix'];
+    if (!ALLOWED.includes(kind)) return json(400, { error: 'unknown task kind' });
+    const id = 't-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+    try {
+      await store.setJSON(`task/${id}`, {
+        id, kind, arg: String(body.arg || '').slice(0, 2000),
+        confirmed: body.confirmed === true, t: Date.now(),
+      });
+      return json(200, { ok: true, id, kind });
+    } catch (e) { return json(200, { ok: false, reason: 'task-failed', detail: e.message }); }
+  }
+
+  // Progress feed — what the worker and agents are doing right now, so AXIS can volunteer it
+  // instead of Ahmad having to ask.
+  if (action === 'progress') {
+    try {
+      const list = await store.list({ prefix: 'progress/' });
+      const out = [];
+      for (const b of (list.blobs || []).slice(-25)) {
+        const p = await store.get(b.key, { type: 'json' }).catch(() => null);
+        if (p) out.push(p);
+      }
+      out.sort((a, b) => (b.t || 0) - (a.t || 0));
+      return json(200, { ok: true, events: out.slice(0, 12) });
+    } catch { return json(200, { ok: true, events: [] }); }
+  }
+
   if (action === 'poll') {
     const id = String(body.id || '');
     if (!id) return json(400, { error: 'id required' });

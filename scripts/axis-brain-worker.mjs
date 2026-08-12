@@ -22,6 +22,7 @@ import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { getStore } from '@netlify/blobs';
 
 const JOBS = 'axis-brain-jobs';
@@ -109,6 +110,23 @@ function askClaude(prompt) {
   });
 }
 
+// Same as askClaude but with extra CLI flags — used by self.fix, which needs edit permission.
+// The prompt still rides stdin: with shell:true on Windows, argv is concatenated unescaped and any
+// real prompt is shredded before the model sees it.
+function askClaudeIn(prompt, extraArgs = [], timeoutMs = CLI_TIMEOUT_MS) {
+  return new Promise((resolve) => {
+    let out = '', err = '', done = false;
+    const c = spawn(CLAUDE_BIN, ['--print', ...extraArgs], { cwd: REPO, shell: process.platform === 'win32', env: PLAN_ENV });
+    const t = setTimeout(() => { if (!done) { done = true; try { c.kill(); } catch {} resolve({ error: 'timeout' }); } }, timeoutMs);
+    c.stdout.on('data', (d) => { out += d; });
+    c.stderr.on('data', (d) => { err += d; });
+    c.on('error', (e) => { if (!done) { done = true; clearTimeout(t); resolve({ error: e.message }); } });
+    c.on('close', (code) => { if (!done) { done = true; clearTimeout(t);
+      resolve(code === 0 && out.trim() ? { answer: out.trim() } : { error: (err || out).slice(-400) || ('exit ' + code) }); } });
+    try { c.stdin.write(prompt); c.stdin.end(); } catch (e) { }
+  });
+}
+
 // Same gate the cloud side uses — a greeting or a non-answer must never become "knowledge".
 const SLOP = /^(hi|hello|hey|sure|ok|okay|got it|heard you|thanks|understood)\b/i;
 const NON_ANSWER = /\b(i (don'?t|do not) know|i'?m not sure|cannot help|can'?t help|unable to|as an ai)\b/i;
@@ -165,6 +183,106 @@ async function beat() {
   catch (e) { console.warn('[axis-brain-worker] heartbeat failed:', e.message); }
 }
 
+
+// ── Tasks: the half that DOES things ─────────────────────────────────────────
+// Ahmad, 2026-08-11: manage YouTube by voice, and "if I tell it to fix any issues… use claude code
+// to fix itself and tell me once its done."
+//
+// Every task is a NAMED kind mapped to a fixed command below — never a shell string from the queue.
+// That is the whole safety model: the cloud side can ask for "video.make", it cannot ask for
+// "rm -rf". Anything with an external effect (video.upload publishes) requires confirmed:true,
+// which AXIS only sets after Ahmad says yes out loud.
+const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+function run(cmd, cmdArgs, timeoutMs = 900000) {
+  return new Promise((resolve) => {
+    let out = '', err = '', done = false;
+    const c = spawn(cmd, cmdArgs, { cwd: REPO, shell: process.platform === 'win32', env: PLAN_ENV });
+    const t = setTimeout(() => { if (!done) { done = true; try { c.kill(); } catch {} resolve({ error: 'timeout' }); } }, timeoutMs);
+    c.stdout.on('data', (d) => { out += d; });
+    c.stderr.on('data', (d) => { err += d; });
+    c.on('error', (e) => { if (!done) { done = true; clearTimeout(t); resolve({ error: e.message }); } });
+    c.on('close', (code) => { if (!done) { done = true; clearTimeout(t); resolve(code === 0 ? { out } : { error: (err || out).slice(-600) }); } });
+  });
+}
+
+async function progress(msg, kind = 'info') {
+  try { await jobs.setJSON(`progress/${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+    { msg: String(msg).slice(0, 300), kind, t: Date.now() }); } catch {}
+  console.log(`[axis-brain-worker] ${msg}`);
+}
+
+async function runTask(task) {
+  const { kind, arg, confirmed } = task;
+  await progress(`starting ${kind}${arg ? ': ' + arg.slice(0, 60) : ''}`, 'start');
+
+  if (kind === 'video.make' || kind === 'video.short') {
+    const a = ['scripts/yt-factory.mjs', '--count', '1'];
+    if (kind === 'video.short') a.push('--short');
+    if (arg) a.push('--topic', arg);
+    const r = await run('node', a);
+    if (r.error) return { error: 'video build failed: ' + r.error.slice(-200) };
+    const line = (String(r.out).split(String.fromCharCode(10)).find((l) => l.includes('staged')) || '').trim();
+    await progress(`built a ${kind === 'video.short' ? 'short' : 'video'}${arg ? ' on ' + arg : ''}`, 'done');
+    return { answer: `Built. ${line || 'It is staged for your approval.'} Say "upload" when you want it live.` };
+  }
+
+  if (kind === 'video.status') {
+    const r = await run('node', ['scripts/yt-upload.mjs', '--list'], 120000);
+    if (r.error) return { error: r.error.slice(-200) };
+    const staged = (r.out.match(/\[(awaiting|APPROVED)/g) || []).length;
+    const pubd = (r.out.match(/published today: (\d+)/) || [])[1] || '0';
+    return { answer: `${staged} staged, ${pubd} published today. Cap is six a day.` };
+  }
+
+  if (kind === 'video.upload') {
+    // External send. No confirmation, no upload — this is the hard stop.
+    if (!confirmed) return { answer: 'That publishes to the channel. Say confirm and I will do it.' };
+    const dirs = fs.existsSync(path.join(REPO, 'content/youtube/staged'))
+      ? fs.readdirSync(path.join(REPO, 'content/youtube/staged')) : [];
+    for (const d of dirs) await run('node', ['scripts/yt-upload.mjs', '--approve', d], 60000);
+    const r = await run('node', ['scripts/yt-upload.mjs', '--all'], 1800000);
+    if (r.error) return { error: 'upload failed: ' + r.error.slice(-200) };
+    const urls = (r.out.match(/https:\/\/youtu\.be\/\S+/g) || []);
+    await progress(`uploaded ${urls.length} video(s)`, 'done');
+    return { answer: urls.length ? `${urls.length} uploaded, private for your review. ${urls[0]}` : 'Nothing was ready to upload.' };
+  }
+
+  if (kind === 'self.fix') {
+    // AXIS repairing itself. Claude Code runs IN the repo with edit permission, scoped by the
+    // prompt to the console/worker surface and told to verify with the existing suite.
+    if (!arg) return { error: 'nothing to fix' };
+    await progress('asking Claude Code to fix: ' + arg.slice(0, 80), 'start');
+    const prompt = `You are fixing the AXIS command centre in this repo, reported by Ahmad:
+
+"${arg}"
+
+Rules: change the minimum that fixes it. Do not remove existing features. Touch only the AXIS
+surface (assets/axis-*.js, assets/axis-tokens.css, axis.html, aperture-learning.html,
+netlify/functions/axis-*, scripts/axis-*). axis.html and aperture-learning.html must stay identical.
+When done run: for t in tests/axis-*.test.mjs; do node "$t"; done — they must all pass.
+Reply with ONE short sentence saying what you changed, or why no change was needed.`;
+    const r = await askClaudeIn(prompt, ['--permission-mode', 'acceptEdits'], 1500000);
+    return r.error ? { error: 'self-fix failed: ' + String(r.error).slice(-200) }
+                   : { answer: String(r.answer || '').trim().slice(-600) };
+  }
+
+  return { error: 'unknown task kind: ' + kind };
+}
+
+async function drainTasks() {
+  let list;
+  try { list = await jobs.list({ prefix: 'task/' }); } catch { return; }
+  for (const b of (list && list.blobs) || []) {
+    let task; try { task = await jobs.get(b.key, { type: 'json' }); } catch { continue; }
+    if (!task) { try { await jobs.delete(b.key); } catch {} continue; }
+    try { await jobs.delete(b.key); } catch {}
+    const res = await runTask(task);
+    try { await jobs.setJSON(`done/${task.id}`, { ...res, t: Date.now() }); } catch {}
+    if (res.error) await progress('failed: ' + String(res.error).slice(0, 120), 'error');
+  }
+}
+
 async function drain() {
   let list;
   try { list = await jobs.list({ prefix: 'pending/' }); } catch { return; }
@@ -204,4 +322,4 @@ console.log('[axis-brain-worker] online — answering AXIS on the Claude Max pla
 await beat();
 setInterval(beat, HEARTBEAT_MS);
 setInterval(sweep, 120000);
-for (;;) { await drain(); await new Promise((r) => setTimeout(r, POLL_MS)); }
+for (;;) { await drain(); await drainTasks(); await new Promise((r) => setTimeout(r, POLL_MS)); }

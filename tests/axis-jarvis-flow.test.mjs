@@ -105,8 +105,12 @@ ok();
 for (const marker of [
   'axisMicToggle', 'axisVoiceToggle', 'axisHumanizeForSpeech', 'axis-voice-name',
   'axisVoiceNext', 'axisSetVoice', 'let axisVoiceOn = true', 'speechSynthesis.cancel()',
-  'onvoiceschanged', 'axisSpeak(reply.text)', 'natural|neural',
+  'onvoiceschanged', 'natural|neural',
 ]) assert.ok(app.includes(marker), `v1 voice behavior "${marker}" still present — the flow was added, not swapped in`);
+// The director reply must still reach the speaker. It now goes through axisSpeakTurn (which chunks
+// long lists into turns, then calls axisSpeak) — the wrapper is allowed, silence is not.
+assert.ok(/axisSpeak(?:Turn)?\(reply\.text\)/.test(app), 'director reply still spoken');
+assert.ok(/function axisSpeakTurn[\s\S]{0,400}axisSpeak\(/.test(app), 'axisSpeakTurn actually speaks');
 assert.ok(/if \(\/\(guy\|davis\|andrew/.test(app), 'the original voice ranking line is kept intact (superseded, not deleted)');
 ok();
 

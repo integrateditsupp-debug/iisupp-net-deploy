@@ -158,7 +158,11 @@ export function greetLine(kpis, hour = new Date().getHours(), name = AXIS_ADDRES
 // Matching only /axis/ meant the wake listener heard every word and silently ignored all of them.
 // This alternation is the fix — it is deliberately generous, because a false wake costs one
 // ignored question while a missed wake makes the whole feature look broken.
-const WAKE_WORD = '(?:axis|axis\'s|access|axes|acces|actus|acts|exes|ax\\s?is|a\\s?xis|axel|axys)';
+// Ahmad, 2026-08-11: "when I say Axis it hears access so let it hear me when I say Ax or Axie."
+// Short forms are deliberately included: "ax" and "axie" are easier for STT to get right than the
+// full word, which Chrome and Edge both mangle into "access" more often than not. `ax` is bounded
+// by \b at the call site so it cannot fire inside "axle", "fax" or "axes-of-rotation".
+const WAKE_WORD = '(?:axis|axis\'s|axie|axi|ax|access|axes|acces|actus|acts|exes|ax\\s?is|a\\s?xis|axel|axys|axys)';
 export const WAKE_RE = new RegExp('(?:^|\\b)(?:hey\\s+|ok(?:ay)?\\s+|hi\\s+)?' + WAKE_WORD + '\\b', 'i');
 // Stand-down: the spoken kill-switch from the spec ("AXIS stop"). Checked BEFORE everything else.
 // Same homophone treatment, plus a bare "stop"/"cancel" so panic-stopping always works.
@@ -174,6 +178,85 @@ export const isStop = (t) => STOP_RE.test(String(t || ''));
 // Order matters at the call site: stand-down wins over deny, deny wins over confirm.
 export const isConfirm = (t) => !isStop(t) && !DENY_RE.test(String(t || '')) && CONFIRM_RE.test(String(t || ''));
 export const isDeny = (t) => !isStop(t) && DENY_RE.test(String(t || ''));
+
+// ── Operational intents: the things AXIS can DO, not just answer ─────────────
+// Ahmad, 2026-08-11: manage the channel by voice, and "if I tell it to fix any issues… use claude
+// code to fix itself and tell me once its done."
+//
+// Detection is deliberately conservative. A miss costs one repeated sentence; a false positive
+// spends the Max plan, edits the repo, or publishes to the channel. Every match is read back and
+// must be confirmed out loud before anything runs — "only if I make sense it then confirms what I
+// said before executing."
+const OPS = [
+  { kind: 'video.short',  re: /\b(?:make|create|do|build|record)\b[^.?!]*\b(short|shorts|clip|reel)\b/i,
+    arg: /\b(?:about|on|for|covering)\s+(.+)$/i,
+    say: (a) => `Build a short${a ? ' about ' + a : ''}` },
+  { kind: 'video.make',   re: /\b(?:make|create|do|build|record)\b[^.?!]*\b(video|episode|tutorial)\b/i,
+    arg: /\b(?:about|on|for|covering)\s+(.+)$/i,
+    say: (a) => `Build a video${a ? ' about ' + a : ''}` },
+  { kind: 'video.upload', re: /\b(?:upload|publish|post|push)\b[^.?!]*\b(video|videos|shorts?|channel|youtube|them|it)\b|\bupload\s*(?:them|it|now)?\s*$/i,
+    say: () => 'Upload the staged videos to the channel' },
+  { kind: 'video.status', re: /\b(?:how many|what(?:'s| is) )?\b[^.?!]*\b(video|videos|shorts?|channel|youtube)\b[^.?!]*\b(status|staged|ready|queue|left|today)\b|\bchannel status\b/i,
+    say: () => 'Check the channel status' },
+  { kind: 'self.fix',     re: /\b(?:fix|repair|sort out|correct|debug)\b(?!\s+(?:the )?printer)/i,
+    arg: /\b(?:fix|repair|sort out|correct|debug)\s+(.+)$/i,
+    say: (a) => `Have Claude Code fix: ${a || 'the reported issue'}` },
+];
+
+export function detectOp(text) {
+  const t = String(text || '').trim();
+  if (!t || t.length < 4) return null;
+  for (const op of OPS) {
+    if (!op.re.test(t)) continue;
+    let arg = '';
+    if (op.arg) { const m = t.match(op.arg); if (m) arg = m[1].trim().replace(/[.?!]+$/, ''); }
+    // self.fix without a description is useless — better to ask than to guess at what is broken.
+    if (op.kind === 'self.fix' && arg.length < 6) return null;
+    return { kind: op.kind, arg, confirm: op.say(arg) + '. Say confirm, or cancel.' };
+  }
+  return null;
+}
+
+// ── Turn-taking: don't monologue ─────────────────────────────────────────────
+// Ahmad, 2026-08-11: "it just goes on and on and does not pause to say these are the priority items,
+// shall we tackle the first 3 then move to the next?"
+// Spoken output is not written output. A list read end-to-end is unusable by voice — by item six the
+// first is gone. So a long answer, or any list of four or more, is delivered as the first three and
+// an explicit offer. The remainder is held, not discarded, and released on "yes" / "go on".
+const LIST_LINE = /^\s*(?:[-•*·]|\d+[.)])\s+/;
+const SPEAK_BUDGET = 420;          // characters ≈ 25 seconds spoken — past that, attention drops
+
+export function splitForTurns(text) {
+  const t = String(text || '').trim();
+  const lines = t.split('\n').map((l) => l.trim()).filter(Boolean);
+  const items = lines.filter((l) => LIST_LINE.test(l));
+
+  // A real list: lead, first three, offer, hold the rest.
+  if (items.length >= 4) {
+    const lead = lines.slice(0, lines.indexOf(items[0])).join(' ').trim();
+    const first = items.slice(0, 3);
+    const rest = items.slice(3);
+    const say = [lead, ...first].filter(Boolean).join('\n');
+    return { say, rest: rest.join('\n'),
+      offer: `That is the top three of ${items.length}. Shall we take these first, or hear the rest?` };
+  }
+
+  // Long prose: stop at a sentence boundary near the budget rather than mid-thought.
+  if (t.length > SPEAK_BUDGET) {
+    const sentences = t.match(/[^.!?]+[.!?]+/g) || [t];
+    let head = '', i = 0;
+    while (i < sentences.length && (head + sentences[i]).length <= SPEAK_BUDGET) head += sentences[i++];
+    if (head.trim() && i < sentences.length) {
+      return { say: head.trim(), rest: sentences.slice(i).join('').trim(), offer: 'Want the rest?' };
+    }
+  }
+  return { say: t, rest: '', offer: '' };
+}
+
+// "yes", "go on", "keep going" — release the held remainder. Deliberately narrow: anything else is
+// treated as a new question, so a held remainder never hijacks a fresh request.
+const CONTINUE_RE = /^\s*(?:yes|yeah|yep|go on|keep going|continue|carry on|the rest|rest of (?:it|them)|more|next)\b/i;
+export const isContinue = (t) => CONTINUE_RE.test(String(t || ''));
 
 // Strip a leading wake phrase so "AXIS, what's going on" reaches the director as "what's going on".
 // Must strip the same homophone set the wake matcher accepts, or "access what's going on" would be
