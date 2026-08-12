@@ -50,8 +50,12 @@ ok('logout clears both transcripts, in memory and in the DOM');
 // removed, and an absence-check run against the raw file matches that explanation and fails. Every
 // "this must no longer exist" assertion has to run on comment-stripped CSS.
 const cssCode = css.replace(/\/\*[\s\S]*?\*\//g, '');
-assert.ok(/\.axis-orbit \.axis-globe \{ width:135px; height:135px;/.test(cssCode),
-  'one resting size, 30% up from the original 104px');
+// Read the size rather than pinning it — the exact number is owned by axis-globe-voice.test.mjs, and
+// duplicating it here just means two edits per resize. What THIS file guards is that there is exactly
+// one resting size and that no state changes it.
+const restingSize = cssCode.match(/\.axis-orbit \.axis-globe \{ width:(\d+)px; height:(\d+)px;/);
+assert.ok(restingSize, 'the orbit globe has one declared resting size');
+assert.equal(restingSize[1], restingSize[2], 'the resting globe is square');
 for (const st of ['listening', 'speaking', 'thinking']) {
   const re = new RegExp(`:root\\[data-axis-state="${st}"\\] \\.axis-orbit \\.axis-globe \\{[^}]*(?:width|height):`);
   assert.ok(!re.test(cssCode), `${st} must NOT resize the orbit globe`);
