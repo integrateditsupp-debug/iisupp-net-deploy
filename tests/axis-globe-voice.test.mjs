@@ -13,7 +13,10 @@ import * as P from '../assets/axis-persona.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const globe = fs.readFileSync(path.join(ROOT, 'assets', 'axis-globe.js'), 'utf8');
-const css = fs.readFileSync(path.join(ROOT, 'assets', 'axis-tokens.css'), 'utf8');
+const cssRaw = fs.readFileSync(path.join(ROOT, 'assets', 'axis-tokens.css'), 'utf8');
+// Absence-checks must run on declarations, not prose — the comments describe the removed
+// growth behaviour, and matching those would fail for explaining the change.
+const css = cssRaw.replace(/\/\*[\s\S]*?\*\//g, '');
 const ok = (m) => console.log('  ok —', m);
 
 // ---- 1. nothing may SNAP: the Voice Visualizer principle, applied to the globe ----
@@ -40,24 +43,26 @@ assert.ok(/const R = Math\.min\(W, H\) \* 0\.36 \* \(1 \+ env \* 0\.06\)/.test(g
   'the sphere itself swells with the voice');
 ok('speaking is visibly alive — enveloped swell plus a syllable halo');
 
-// ---- 3. growth is gradual, and settling is slower than growing ----
-const grow = css.match(/:root\[data-axis-state="thinking"\] \.axis-orbit \.axis-globe \{\s*transition:width ([\d.]+)s/);
-const rest = css.match(/\.axis-orbit \.axis-globe \{\s*transition:width ([\d.]+)s/);
-assert.ok(grow && rest, 'both a growth and a resting transition are defined');
-const growS = Number(grow[1]), restS = Number(rest[1]);
-assert.ok(growS >= 0.9, `growth must be gradual, got ${growS}s`);
-assert.ok(restS > growS, `settling (${restS}s) must be slower than growing (${growS}s) — the "all of a sudden small"`);
-ok(`growth ${growS}s, settle ${restS}s — it opens and it settles, neither snaps`);
+// ---- 3. ONE resting size, 15% up from the original 104px ----
+// Ahmad, 2026-08-12 (second pass): "take it back to how the globe was initially center and bottom
+// middle and small, but increase the size by 15%." The grow-to-25vh behaviour is gone; any return
+// of it would reintroduce the "big then suddenly small" complaint, so it is asserted against.
+const orbit = css.match(/\.axis-orbit \.axis-globe \{ width:(\d+)px; height:(\d+)px;/);
+assert.ok(orbit, 'the orbit globe has a fixed resting size');
+assert.equal(Number(orbit[1]), Number(orbit[2]), 'the globe is square');
+assert.equal(Number(orbit[1]), Math.round(104 * 1.15), '15% up from the original 104px');
+// No state may resize it — that is what "take it back" means.
+for (const state of ['listening', 'speaking', 'thinking']) {
+  const rule = new RegExp(':root\\[data-axis-state="' + state + '"\\] \\.axis-orbit \\.axis-globe \\{[^}]*(?:width|height):');
+  assert.ok(!rule.test(css), `${state} must not resize the globe`);
+}
+assert.ok(!/\.axis-orbit \.axis-globe[^}]*clamp\([^)]*vh/.test(css), 'no viewport-relative growth remains');
+ok(`one resting size at ${orbit[1]}px (104 + 15%), and no state resizes it`);
 
-// ---- 4. it must not freeze at the exact moment it is talking ----
-const speak = css.slice(css.indexOf(':root[data-axis-state="speaking"] .axis-orbit .axis-globe {\n  animation:'));
-assert.ok(/animation:axis-speak-swell/.test(speak), 'speaking carries its own swell');
-assert.ok(/@keyframes axis-speak-swell/.test(css), 'the swell keyframes exist');
-// The old rule pinned animation:none on speaking, which stilled the globe mid-sentence.
-const speakRule = css.match(/:root\[data-axis-state="speaking"\] \.axis-orbit \.axis-globe \{[^}]*width:clamp[^}]*\}/);
-assert.ok(speakRule && !/animation:none/.test(speakRule[0]),
-  'the speaking size rule must not kill the animation');
-ok('the globe keeps moving while it speaks');
+// ---- 4. it is still bottom-centre ----
+assert.ok(/\.axis-orbit \{ position:fixed; left:50%; bottom:22px; transform:translateX\(-50%\)/.test(css),
+  'the orbit stays pinned bottom-centre');
+ok('bottom-centre, fixed, as it originally was');
 
 // ---- 5. the voice: younger, softer, classy — and still never ARIA ----
 assert.ok(P.AXIS_PROSODY.pitch > 1.0, 'younger reads as a higher pitch, not a lowered one');

@@ -78,4 +78,56 @@ ok('cowork.ask cannot quietly become a change');
 assert.ok(/await progress\('Fixed it: '/.test(worker), '"tell me once its done" — a self-fix speaks up');
 ok('a completed self-fix reports back unprompted');
 
+
+// ---- 7. barge-in: interrupting mid-sentence is a turn, not a reset ----
+// Ahmad, 2026-08-12: "when its talking and I interrupt or stop it to talk about something it
+// mentioned it should listen to me then respond and act accordingly."
+//
+// Brace-match the functions rather than slicing offsets — a fixed window silently stops covering the
+// end of a function as soon as anyone adds a comment (see the axisStandDown guard that went blind).
+function fnBody(src, decl) {
+  const start = src.indexOf(decl);
+  assert.notEqual(start, -1, `${decl} not found`);
+  const open = src.indexOf('{', start);
+  let depth = 0;
+  for (let i = open; i < src.length; i++) {
+    if (src[i] === '{') depth++;
+    else if (src[i] === '}' && --depth === 0) return src.slice(start, i + 1);
+  }
+  throw new Error(`unbalanced braces in ${decl}`);
+}
+
+// The listener must stay armed while AXIS talks, or interrupting by voice is impossible — which is
+// exactly what an unconditional axisWakePause() during speech caused.
+assert.ok(/if \(axisHandsFree\) axisWakeResume\(\); else axisWakePause\(\);/.test(app),
+  'hands-free keeps the mic open while AXIS speaks, so a barge-in can be heard');
+// Leaving the mic open means AXIS can hear itself; that has to be handled, not ignored.
+assert.ok(/function axisIsSelfEcho/.test(app), 'self-echo is filtered rather than the mic being deafened');
+const echo = fnBody(app, 'function axisIsSelfEcho');
+assert.ok(/if \(isStop\(said\)\) return false;/.test(echo),
+  'a stop is never treated as echo — being unable to interrupt is worse than one dropped turn');
+assert.ok(/overlap >= 0\.7/.test(echo), 'echo is judged on word overlap, not an exact string match');
+
+const barge = fnBody(app, 'function axisBargeIn');
+assert.ok(/speechSynthesis\.cancel\(\)/.test(barge), 'barge-in silences the reply at once');
+assert.ok(/axisOpenConvo\(\)/.test(barge), 'and holds the floor for what Ahmad says next');
+// The whole point is that the interruption is ABOUT what was just said.
+assert.ok(!/axisPendingOp\s*=|axisHeldRest\s*=/.test(barge),
+  'barge-in keeps conversational place — the antecedent for "what you just mentioned"');
+
+const stand = fnBody(app, 'function axisStandDown');
+assert.ok(/if \(axisHandsFree\) \{ axisOpenConvo\(\); axisWakeResume\(\); \}/.test(stand),
+  'stopping it hands the floor straight back instead of going quiet');
+ok('interrupting silences AXIS, keeps the context, and listens for the follow-up');
+
+// ---- 8. it must not narrate its own billing ----
+// Ahmad: "it should stop saying using max account when its trying to do something."
+const director = fs.readFileSync(path.join(ROOT, 'netlify', 'functions', 'axis-director.js'), 'utf8');
+for (const [label, src] of [['console', app], ['director', director]]) {
+  const spoken = src.split('\n').filter((l) => !/^\s*(\/\/|\*)/.test(l)).join('\n');
+  assert.ok(!/Max plan|max account/i.test(spoken),
+    `${label} must not tell Ahmad which plan answered — that is plumbing, not conversation`);
+}
+ok('no tier or plan is announced in anything AXIS says');
+
 console.log('ok — proactive AXIS: conversation, updates, attention, and machine rails');

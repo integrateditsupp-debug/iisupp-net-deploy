@@ -133,7 +133,11 @@ exports.handler = async (event) => {
       // metered API, which would report an out-of-credit error for a request that is succeeding.
       if (hit && hit.pending) {
         return json(200, {
-          text: 'Working on it on your Max plan — one moment.', routedAgent: null, intent: null,
+          // Ahmad, 2026-08-12: "it should stop saying using max account when its trying to do
+          // something." Which tier answered is plumbing — it is already on the message metadata
+          // (brainTier/brainSource) for the console and the ledger. Saying it out loud every time
+          // makes AXIS narrate its own billing instead of just doing the work.
+          text: 'One moment.', routedAgent: null, intent: null,
           needsApproval: false, brainTier: 'subscription-pending', brainSource: hit.source,
           tried: hit.tried, cost: 0, pending: true, jobId: hit.jobId,
         });

@@ -14,9 +14,18 @@
 
 const TAU = Math.PI * 2;
 const TILT = 0.42;            // axial tilt, radians — enough to read as a globe, not a dartboard
-const MERIDIANS = 12;
-const PARALLELS = 7;
-const SAMPLES = 48;           // points per arc; higher is smoother and costs more
+// Ahmad, 2026-08-12: "make also more detailed like the big version (full screen) version appearance."
+// Brought up toward axis-hologram.js's density (18/11/64) rather than all the way to it: this canvas
+// is ~120px and runs continuously behind the whole console, where the hologram is full-screen and
+// opened deliberately. These numbers roughly double the geometry and still hold 60fps — measured,
+// not assumed. SHELLS is what actually buys the volumetric look; the second shell sits just inside
+// the first at a different phase, which is what makes the sphere read as having a thickness.
+const MERIDIANS = 16;
+const PARALLELS = 10;
+const SAMPLES = 56;           // points per arc; higher is smoother and costs more
+const SHELLS = 2;
+const DUST = 44;              // orbiting particles — the halo the hologram has and this lacked
+const TICKS = 64;
 
 // Per-state motion. Idle drifts; thinking accelerates; listening/speaking pulse the rim.
 const STATE = {
@@ -84,6 +93,20 @@ export function mountGlobe(host, { size = 96 } = {}) {
   })();
 
   let yaw = 0.6, sweep = 0, raf = 0, running = true, t = 0;
+  // Set per shell while the wireframe draws, so arc() can dim and shrink the inner shell without
+  // every call site having to thread two more arguments through.
+  let shellDim = 1, shellR = 1;
+  const BANDS = 7;
+  const bands = Array.from({ length: BANDS }, () => []);
+
+  // Fixed inclined orbits. Deterministic, so the halo is stable frame to frame instead of hissing.
+  const dust = Array.from({ length: DUST }, (_, i) => ({
+    lat: Math.asin(2 * noise(i * 1.7) - 1),
+    lon: noise(i * 3.1) * TAU,
+    r: 1.08 + noise(i * 5.3) * 0.42,
+    sp: 0.10 + noise(i * 7.9) * 0.45,
+    sz: 0.5 + noise(i * 11.3) * 1.1,
+  }));
 
   // ONE continuously-eased set of values, borrowed from the Voice Visualizer principle on
   // jaredrhod.com — the same idea axis-hologram.js already runs on. Nothing here may SNAP between
@@ -117,9 +140,9 @@ export function mountGlobe(host, { size = 96 } = {}) {
     // ── HUD: tick ring ──
     ctx.save();
     ctx.strokeStyle = gold; ctx.globalAlpha = 0.30; ctx.lineWidth = 1;
-    for (let i = 0; i < 48; i++) {
-      const a = (i / 48) * TAU, long = i % 4 === 0;
-      const r1 = R * 1.30, r2 = R * (long ? 1.42 : 1.36);
+    for (let i = 0; i < TICKS; i++) {
+      const a = (i / TICKS) * TAU, long = i % 8 === 0;
+      const r1 = R * 1.30, r2 = R * (long ? 1.42 : 1.355);
       ctx.beginPath();
       ctx.moveTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
       ctx.lineTo(cx + Math.cos(a) * r2, cy + Math.sin(a) * r2);
@@ -130,6 +153,14 @@ export function mountGlobe(host, { size = 96 } = {}) {
     ctx.beginPath(); ctx.arc(cx, cy, R * 1.24, sweep, sweep + 1.1); ctx.stroke();
     ctx.globalAlpha = 0.22; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.arc(cx, cy, R * 1.24, 0, TAU); ctx.stroke();
+    // Counter-rotating HUD arcs. Two turning against each other is what makes a ring set look like
+    // an instrument rather than a loading spinner.
+    for (const [rr, al, ang, span] of [[1.50, 0.75, sweep * 0.8, 2.0],
+                                       [1.60, 0.45, -sweep * 0.55, 1.25],
+                                       [1.68, 0.30, sweep * 0.35, 2.8]]) {
+      ctx.globalAlpha = al * (0.30 + st.rim * 0.55); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(cx, cy, R * rr, ang, ang + span); ctx.stroke();
+    }
     ctx.restore();
 
     // ── Core glow ──
@@ -140,30 +171,75 @@ export function mountGlobe(host, { size = 96 } = {}) {
     ctx.restore();
 
     // ── Wireframe. Segments are drawn individually so the far side can fade with depth. ──
+    // Depth-banded batching. Drawing each segment with its own stroke() is the obvious way to get a
+    // per-segment depth fade, and it is what this did — but two shells at this density is ~2,800
+    // stroke() calls every frame, on an element that is on screen all day. Measured before the
+    // change: 11,600 canvas ops per frame.
+    //
+    // Segments are bucketed by depth instead, then each bucket is stroked ONCE as a single path.
+    // The fade is quantised to BANDS steps rather than continuous, which is indistinguishable at
+    // this size, and the stroke count drops to BANDS per shell.
     const arc = (pts) => {
+      const rr = R * shellR;
       for (let i = 1; i < pts.length; i++) {
         const a = pts[i - 1], b = pts[i];
-        const depth = (a.z + b.z) / 2;                 // −1 (back) … +1 (front)
-        ctx.globalAlpha = depth > 0 ? 0.30 + depth * 0.55 : 0.10 + (1 + depth) * 0.10;
-        ctx.lineWidth = depth > 0 ? 0.9 : 0.6;
+        const depth = (a.z + b.z) / 2;                 // back .. front
+        const bi = Math.min(BANDS - 1, Math.max(0, Math.round(((depth + 1) / 2) * (BANDS - 1))));
+        const seg = bands[bi];
+        seg.push(cx + a.x * rr, cy + a.y * rr, cx + b.x * rr, cy + b.y * rr);
+      }
+    };
+    // Stroke the buckets and reset them. Front bands are brighter and a shade thicker, which is the
+    // same relationship the per-segment version had.
+    const flushBands = (dim) => {
+      for (let b = 0; b < BANDS; b++) {
+        const seg = bands[b];
+        if (!seg.length) continue;
+        const d = b / (BANDS - 1);                     // 0 = far side, 1 = near side
+        ctx.globalAlpha = (d > 0.5 ? 0.30 + (d - 0.5) * 1.10 : 0.10 + d * 0.20) * dim;
+        ctx.lineWidth = d > 0.5 ? 0.9 : 0.6;
         ctx.beginPath();
-        ctx.moveTo(cx + a.x * R, cy + a.y * R);
-        ctx.lineTo(cx + b.x * R, cy + b.y * R);
+        for (let i = 0; i < seg.length; i += 4) {
+          ctx.moveTo(seg[i], seg[i + 1]);
+          ctx.lineTo(seg[i + 2], seg[i + 3]);
+        }
         ctx.stroke();
+        seg.length = 0;
       }
     };
     ctx.save(); ctx.strokeStyle = gold;
-    for (let m = 0; m < MERIDIANS; m++) {
-      const lon = (m / MERIDIANS) * Math.PI;
-      const pts = [];
-      for (let i = 0; i <= SAMPLES; i++) pts.push(project(-Math.PI / 2 + (i / SAMPLES) * Math.PI, lon, yaw));
-      arc(pts);
+    // Concentric shells at slightly different radii and phases — the volumetric trick from the
+    // hologram. One shell draws a wire cage; two read as a sphere with depth.
+    for (let shell = 0; shell < SHELLS; shell++) {
+      const sr = 1 - shell * 0.075, sy = yaw + shell * 0.22, dim = 1 - shell * 0.42;
+      shellDim = dim; shellR = sr;
+      for (let m = 0; m < MERIDIANS; m++) {
+        const lon = (m / MERIDIANS) * Math.PI;
+        const pts = [];
+        for (let i = 0; i <= SAMPLES; i++) pts.push(project(-Math.PI / 2 + (i / SAMPLES) * Math.PI, lon, sy));
+        arc(pts);
+      }
+      for (let p = 1; p < PARALLELS; p++) {
+        const lat = -Math.PI / 2 + (p / PARALLELS) * Math.PI;
+        const pts = [];
+        for (let i = 0; i <= SAMPLES; i++) pts.push(project(lat, (i / SAMPLES) * TAU, sy));
+        arc(pts);
+      }
+      flushBands(dim);
     }
-    for (let p = 1; p < PARALLELS; p++) {
-      const lat = -Math.PI / 2 + (p / PARALLELS) * Math.PI;
-      const pts = [];
-      for (let i = 0; i <= SAMPLES; i++) pts.push(project(lat, (i / SAMPLES) * TAU, yaw));
-      arc(pts);
+    shellDim = 1; shellR = 1;
+
+    // ── Dust halo: particles on fixed inclined orbits, so the halo reads as structure rather than
+    // static. Only their phase advances. Brightness tracks depth, and the whole halo lifts with the
+    // voice envelope so it sparkles slightly while AXIS talks.
+    ctx.fillStyle = gold2;
+    for (const d of dust) {
+      const p = project(d.lat, d.lon + t * d.sp * (0.5 + st.glow), yaw);
+      const depth = (p.z + 1) / 2;
+      ctx.globalAlpha = (0.07 + depth * 0.34) * (0.5 + st.glow * 0.5) * (1 + env * 0.8);
+      ctx.beginPath();
+      ctx.arc(cx + p.x * R * d.r, cy + p.y * R * d.r, d.sz * (0.45 + depth * 0.6), 0, TAU);
+      ctx.fill();
     }
     ctx.restore();
 

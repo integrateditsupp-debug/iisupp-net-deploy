@@ -36,28 +36,28 @@ for (const id of ['axisLog', 'axisDirectorLog']) {
 assert.ok(/innerHTML = ''/.test(reset), 'clearing must touch the DOM, not only the in-memory log');
 ok('logout clears both transcripts, in memory and in the DOM');
 
-// ---- 3. the globe expands on a live turn and returns on idle ----
-// Sizing must be driven by the shared state machine, so it behaves the same whether Ahmad is
-// talking or AXIS is.
-for (const st of ['listening', 'speaking']) {
-  const re = new RegExp(`:root\\[data-axis-state="${st}"\\] \\.axis-orbit \\.axis-globe`);
-  assert.ok(re.test(css), `${st} resizes the orbit globe`);
+// ---- 3. the globe keeps ONE resting size ----
+// SUPERSEDED, deliberately. This section used to assert the globe grew to ~25vh on a live turn,
+// which was Ahmad's request on 2026-08-11. On 2026-08-12 he reversed it: "take it back to how the
+// globe was initially center and bottom middle and small, but increase the size by 15%." Growing to
+// a quarter of the viewport always read as "big, then suddenly small" when a sentence ended, because
+// any return to rest looks like a collapse at that scale.
+//
+// The liveliness did not disappear — it moved into the canvas (axis-globe.js), where an eased
+// envelope swells the sphere and a halo widens per syllable. That is asserted in
+// tests/axis-globe-voice.test.mjs. Here we guard the footprint: it must not change.
+// Check DECLARATIONS, not prose: the comment above the rules explains that the 25vh growth was
+// removed, and an absence-check run against the raw file matches that explanation and fails. Every
+// "this must no longer exist" assertion has to run on comment-stripped CSS.
+const cssCode = css.replace(/\/\*[\s\S]*?\*\//g, '');
+assert.ok(/\.axis-orbit \.axis-globe \{ width:120px; height:120px;/.test(cssCode),
+  'one resting size, 15% up from the original 104px');
+for (const st of ['listening', 'speaking', 'thinking']) {
+  const re = new RegExp(`:root\\[data-axis-state="${st}"\\] \\.axis-orbit \\.axis-globe \\{[^}]*(?:width|height):`);
+  assert.ok(!re.test(cssCode), `${st} must NOT resize the orbit globe`);
 }
-// "about 25% of the page"
-assert.ok(/width:clamp\(120px, 25vh, 38vw\)/.test(css), 'the live size is ~25% of the viewport height');
-// No idle rule needed — absence of the state attribute falls back to the 104px base, which IS the
-// "returns to original size" behaviour. Assert the base still exists so that fallback is real.
-assert.ok(/\.axis-orbit \.axis-globe \{ width:104px; height:104px;/.test(css),
-  'the base size survives — that is what idle falls back to');
-
-// Source order carries the override here: :root[data-axis-open] and :root[data-axis-state] have
-// identical specificity (0,4,0), so the state rules only win by coming later in the file.
-const openIdx = css.indexOf(':root[data-axis-open="1"] .axis-orbit .axis-globe');
-const stateIdx = css.indexOf(':root[data-axis-state="listening"] .axis-orbit .axis-globe');
-assert.ok(openIdx !== -1 && stateIdx !== -1, 'both rules are present');
-assert.ok(stateIdx > openIdx,
-  'the state rules must come AFTER [data-axis-open] — equal specificity means source order decides');
-ok('globe expands to ~25vh while listening or speaking, and outranks the docked size');
+assert.ok(!/25vh|38vw/.test(cssCode), 'the viewport-relative growth is gone');
+ok('the globe holds one resting size; state drives motion, never footprint');
 
 // ---- 4. a quarter of the screen must not arrive unannounced under reduced motion ----
 // Find the reduced-motion block by what it GOVERNS, not by an exact literal first line. The previous
@@ -89,7 +89,11 @@ assert.ok(/transition:none/.test(rm), 'no animated growth under reduced motion')
 assert.ok(/animation:none/.test(rm), 'no speaking swell under reduced motion');
 assert.ok(/:root\[data-axis-state="speaking"\] \.axis-orbit \.axis-globe/.test(rm),
   'the reduced-motion override matches the state-scoped specificity');
-assert.ok(/width:132px/.test(rm), 'the size signal is kept, just small and instant');
+// There is no longer a reduced-size "signal" to keep, because there is no size change at all — the
+// globe holds one footprint in every state. Reduced motion's job here is now only to still the
+// motion, which the two assertions above cover.
+assert.ok(!/width:\d+px/.test(rm),
+  'reduced motion must not reintroduce a size change the normal path no longer has');
 ok('reduced motion keeps the feedback without the sweep');
 
 console.log('ok — the login screen forgets, and the globe breathes with the turn');
