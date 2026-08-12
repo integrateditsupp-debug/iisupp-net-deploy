@@ -31,7 +31,11 @@ assert.ok(score('Google UK English Female', 'en-GB') > score('Google UK English 
 // Regression: "Female" must not trip the \bmale\b demote pattern.
 assert.ok(score('Google UK English Female', 'en-GB') > 0, '"Female" is not demoted as "male"');
 // Prosody is deliberately apart from ARIA's en-US rate .95 / pitch 1.05.
-assert.ok(P.AXIS_PROSODY.pitch < 1.0 && P.AXIS_PROSODY.pitch !== 1.05, 'AXIS speaks in a lower, composed register');
+// AXIS moved ABOVE ARIA on 2026-08-12 (younger + softer, Ahmad's words). Assert the separation and
+// the softness, not a direction that a later instruction can legitimately reverse.
+assert.notEqual(P.AXIS_PROSODY.pitch, 1.05, 'AXIS never shares ARIAs pitch');
+assert.ok(P.AXIS_PROSODY.volume < 1, 'AXIS is softly spoken, not full-blast');
+assert.ok(P.AXIS_PROSODY.rate < 1, 'AXIS is unhurried');
 ok();
 
 // ---- 2. Turn grammar: wake, stand-down, confirm, deny ----

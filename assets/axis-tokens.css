@@ -550,11 +550,38 @@ a { color:var(--gold); text-decoration:none; }
 
    These rules sit AFTER [data-axis-open] on purpose: identical specificity, so
    source order decides, and a live turn should outrank the docked-down size. */
+/* Ahmad, 2026-08-12: "let the globe expand gradually in a normal speed when it speak. right now it
+   get bigs and all of the sudden small. it should now keep growing but when it talks it should be
+   more lively and appear like its speaking."
+
+   Three separate problems were behind that, and they need three different fixes:
+
+   1. GROWTH WAS A JUMP. .45s with a near-overshoot curve arrives almost at once. Growth is now 1.1s
+      on a plain ease-out, which is the "normal speed" of something opening rather than snapping.
+   2. THE SHRINK WAS WORSE THAN THE GROWTH. Falling back to the resting size used the same fast
+      curve, so the globe collapsed the instant a sentence ended — the "all of a sudden small".
+      Shrinking is now 1.9s, deliberately slower than growing: things settle more slowly than they
+      react, and the pause between two sentences no longer reads as a collapse.
+   3. IT FROZE WHILE TALKING. `animation:none` killed the float exactly when AXIS was speaking, so
+      the liveliest moment was the stillest. Speaking now carries its own slow swell, and the canvas
+      adds a per-syllable pulse of its own (axis-globe.js). */
 .axis-orbit .axis-globe {
-  transition:width .45s cubic-bezier(.22,1,.36,1), height .45s cubic-bezier(.22,1,.36,1); }
+  transition:width 1.9s cubic-bezier(.33,0,.2,1), height 1.9s cubic-bezier(.33,0,.2,1); }
+:root[data-axis-state="listening"] .axis-orbit .axis-globe,
+:root[data-axis-state="speaking"] .axis-orbit .axis-globe,
+:root[data-axis-state="thinking"] .axis-orbit .axis-globe {
+  transition:width 1.1s cubic-bezier(.16,.8,.3,1), height 1.1s cubic-bezier(.16,.8,.3,1); }
+
+/* Keeps growing while it talks: the box eases to its target and this rides on top, so the globe is
+   never static mid-sentence. Slow and shallow — it should read as breathing, not throbbing. */
+@keyframes axis-speak-swell { 0%,100%{transform:scale(1)} 50%{transform:scale(1.045)} }
 :root[data-axis-state="listening"] .axis-orbit .axis-globe,
 :root[data-axis-state="speaking"] .axis-orbit .axis-globe {
-  width:clamp(120px, 25vh, 38vw); height:clamp(120px, 25vh, 38vw); animation:none; }
+  width:clamp(120px, 25vh, 38vw); height:clamp(120px, 25vh, 38vw); }
+:root[data-axis-state="speaking"] .axis-orbit .axis-globe {
+  animation:axis-speak-swell 2.6s ease-in-out infinite; }
+:root[data-axis-state="listening"] .axis-orbit .axis-globe {
+  animation:axis-speak-swell 4.2s ease-in-out infinite; }
 /* Thinking is a half-step. The hologram already treats it as mid-energy (0.62 against 1.0 for
    speaking), and a pause that may last half a second should not claim a quarter of the page. */
 :root[data-axis-state="thinking"] .axis-orbit .axis-globe {
@@ -563,6 +590,12 @@ a { color:var(--gold); text-decoration:none; }
 /* A quarter of the viewport arriving in under half a second is exactly what this setting exists to
    prevent. Keep the size signal — it is feedback, not decoration — but make it small and instant. */
 @media (prefers-reduced-motion:reduce) {
+  /* These must match the specificity of the state-scoped rules above, or they lose to them and the
+     setting is silently ignored — a plain `.axis-orbit .axis-globe` override is NOT enough here. */
+  :root[data-axis-state="listening"] .axis-orbit .axis-globe,
+  :root[data-axis-state="speaking"] .axis-orbit .axis-globe,
+  :root[data-axis-state="thinking"] .axis-orbit .axis-globe {
+    transition:none; animation:none; }
   .axis-orbit .axis-globe { transition:none; }
   :root[data-axis-state="listening"] .axis-orbit .axis-globe,
   :root[data-axis-state="speaking"] .axis-orbit .axis-globe { width:132px; height:132px; }

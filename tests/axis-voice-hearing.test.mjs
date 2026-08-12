@@ -44,8 +44,14 @@ assert.equal(P.voiceFamily('Microsoft Hazel Desktop'), 'legacy');
 // Google's voices run fast and bright; they must be slowed and lowered toward Edge's Sonia.
 assert.ok(chrome.rate < edge.rate, 'Chrome voice is slowed toward the Edge reference');
 assert.ok(chrome.pitch < edge.pitch, 'Chrome voice is lowered toward the Edge reference');
-assert.ok(Object.values(P.VOICE_PROFILES).every(p => p.pitch < 1.0),
-  'every family stays in the composed register — never ARIA\'s brighter 1.05');
+// The real invariant is that AXIS is never mistakable for ARIA (en-US, rate .95 / pitch 1.05) — NOT
+// that AXIS is always the lower of the two. Ahmad asked for a younger, softer voice on 2026-08-12,
+// so AXIS now sits above ARIA rather than below it. The separation is unchanged, just approached
+// from the other side; what must never happen is a family landing on ARIA's own pair.
+assert.ok(Object.values(P.VOICE_PROFILES).every((p) => !(p.rate === 0.95 && p.pitch === 1.05)),
+  'no voice family may land on ARIA rate/pitch');
+assert.ok(Object.values(P.VOICE_PROFILES).every((p) => p.volume <= 0.95),
+  'every family is softened — "softer" is volume and pace, not a lower pitch');
 ok();
 
 // ---- 4. Smarter delivery: jargon is spoken, not spelled ----

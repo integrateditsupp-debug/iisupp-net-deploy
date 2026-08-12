@@ -1894,8 +1894,11 @@ function axisSpeak(text) {
       // Cross-engine parity: each voice family is rate/pitch-corrected toward Edge's Sonia, so AXIS
       // sounds like the same character in Chrome and Edge even though the two ship different voices.
       // Still deliberately apart from ARIA's en-US .95/1.05.
+      // Volume comes from the profile now. It was pinned at 1, which is why AXIS always arrived at
+      // full blast — "softer" (Ahmad, 2026-08-12) is volume and pace, not a lower pitch.
       const prof = voiceProfile(v);
-      u.rate = prof.rate; u.pitch = prof.pitch; u.volume = 1;
+      u.rate = prof.rate; u.pitch = prof.pitch;
+      u.volume = typeof prof.volume === 'number' ? prof.volume : 1;
       // cancel() fires 'error' (interrupted/canceled), not 'end' — without onerror the machine
       // would stick on 'speaking' forever (gate-review finding). Every chunk resets, gen-guarded.
       const settle = () => { if (gen === __speakGen && document.documentElement.dataset.axisState === 'speaking') setAxisState('idle'); axisWakeResume(); };

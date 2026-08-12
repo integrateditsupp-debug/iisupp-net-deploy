@@ -60,8 +60,35 @@ assert.ok(stateIdx > openIdx,
 ok('globe expands to ~25vh while listening or speaking, and outranks the docked size');
 
 // ---- 4. a quarter of the screen must not arrive unannounced under reduced motion ----
-const rm = css.slice(css.indexOf('@media (prefers-reduced-motion:reduce) {\n  .axis-orbit .axis-globe { transition:none;'));
+// Find the reduced-motion block by what it GOVERNS, not by an exact literal first line. The previous
+// anchor pinned that line verbatim, so merely adding a rule to the block made indexOf return -1 and
+// the assertion then ran against the tail of the file instead of the block it meant to check —
+// passing for the wrong reason.
+// Brace-match each block. Slicing to the next "\n}" looks right but breaks on single-line media
+// queries — their closing brace has no newline before it, so the slice runs on into whatever CSS
+// follows and produces a block that matches things it does not actually contain.
+function mediaBlocks(src, at) {
+  const out = [];
+  for (let i = src.indexOf(at); i !== -1; i = src.indexOf(at, i + 1)) {
+    const open = src.indexOf('{', i);
+    if (open === -1) continue;
+    let depth = 0;
+    for (let j = open; j < src.length; j++) {
+      if (src[j] === '{') depth++;
+      else if (src[j] === '}' && --depth === 0) { out.push(src.slice(i, j + 1)); break; }
+    }
+  }
+  return out;
+}
+const rmBlocks = mediaBlocks(css, '@media (prefers-reduced-motion:reduce)');
+const rm = rmBlocks.find((b) => /axis-orbit \.axis-globe/.test(b) && /data-axis-state/.test(b)) || '';
+assert.ok(rm, 'a reduced-motion block governs the orbit globe');
 assert.ok(/transition:none/.test(rm), 'no animated growth under reduced motion');
+// Growth is now accompanied by a speaking swell; reduced motion must kill that too, and it has to do
+// so at the SAME specificity as the state rules or it silently loses to them.
+assert.ok(/animation:none/.test(rm), 'no speaking swell under reduced motion');
+assert.ok(/:root\[data-axis-state="speaking"\] \.axis-orbit \.axis-globe/.test(rm),
+  'the reduced-motion override matches the state-scoped specificity');
 assert.ok(/width:132px/.test(rm), 'the size signal is kept, just small and instant');
 ok('reduced motion keeps the feedback without the sweep');
 

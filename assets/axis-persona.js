@@ -10,21 +10,36 @@
 //   2. HOW A TURN FLOWS — wake word, instant acknowledgement, hands-free turn-taking, stand-down.
 
 // ── 1. Voice identity ────────────────────────────────────────────────────────
-// AXIS is a woman's voice with an en-GB register: composed, lower-pitched, unhurried. ARIA (the
-// customer orb, assets/aria-core.js) is en-US at rate 0.95 / pitch 1.05. Keeping AXIS on a different
-// accent AND a different prosody means the two are never mistaken for each other, even in the worst
-// case where a browser offers only one shared female voice.
+// AXIS is a woman's voice with an en-GB register: warm, unhurried, softly spoken. ARIA (the customer
+// orb, assets/aria-core.js) is en-US at rate 0.95 / pitch 1.05. Keeping AXIS on a different accent
+// AND a different prosody means the two are never mistaken for each other, even in the worst case
+// where a browser offers only one shared female voice.
+//
+// NOTE: AXIS was lower-pitched than ARIA until 2026-08-12; it now sits ABOVE it (1.08 vs 1.05) after
+// Ahmad asked for a younger, softer voice. The separation is preserved, just from the other side —
+// no voice family may land on ARIA's exact rate/pitch pair.
 
 // Preferred, in order. Edge/Windows exposes the "Online (Natural)" neural set; macOS exposes Siri/
 // premium; Chrome exposes the Google network voices.
 // Short tokens are word-bounded on purpose: an unbounded 'ava' would also match "Savannah", and an
 // unbounded 'male' in the demote list below would match "English Female" and demote every one of them.
+// Ordered youngest-and-warmest first, per Ahmad 2026-08-12 ("softer and younger woman but classy").
+// Libby leads now instead of Sonia: both are en-GB Online (Natural), but Sonia is the poised,
+// older-sounding newsreader register and Libby is the younger, warmer one. Sonia stays second — it
+// is still the right voice on any machine that lacks Libby.
+//
+// Maisie was REMOVED from this list: it is Microsoft's en-GB *child* voice, so it scored a +34
+// preference and could win outright on a machine without the others. It is demoted below instead.
 export const AXIS_FEMALE_PREF = [
-  '\\bsonia\\b',   // Microsoft Sonia Online (Natural) — en-GB. The AXIS house voice.
-  '\\blibby\\b',   // Microsoft Libby Online (Natural) — en-GB
-  '\\bmaisie\\b', '\\bolivia\\b', '\\bava\\b', '\\bemma\\b', '\\bjenny\\b', '\\bmichelle\\b',
+  '\\blibby\\b',   // Microsoft Libby Online (Natural) — en-GB. The AXIS house voice.
+  '\\bsonia\\b',   // Microsoft Sonia Online (Natural) — en-GB, more formal
+  '\\babbi\\b', '\\bbella\\b', '\\bhollie\\b',  // en-GB Natural, young + warm
+  '\\bolivia\\b', '\\bava\\b', '\\bemma\\b', '\\bjenny\\b', '\\bmichelle\\b',
   '\\bnova\\b', '\\bclara\\b', '\\bmartha\\b', '\\bfemale\\b',
 ];
+
+// Not male, not ARIA — just wrong for AXIS. Child and novelty voices must never win the ranking.
+export const AXIS_CHILD_DEMOTE = ['\\bmaisie\\b', '\\bana\\b', '\\bkid\\b', '\\bchild\\b'];
 
 // ARIA's own preference list (aria-core.js line 381). AXIS DEMOTES these rather than banning them:
 // a penalty keeps AXIS off ARIA's voice whenever any alternative exists, but still lets a bare
@@ -42,8 +57,16 @@ export const AXIS_MALE_DEMOTE = [
   '\\barthur\\b', '\\bgeorge\\b', '\\bjames\\b', '\\bmark\\b', '\\bdavid\\b', '\\bmale\\b',
 ];
 
-// Lower and level — the composed register. (ARIA: rate .95 / pitch 1.05. AXIS is deliberately apart.)
-export const AXIS_PROSODY = { rate: 1.0, pitch: 0.92, legacyRate: 1.02 };
+// Ahmad, 2026-08-12: "change the voice also to be more human like and a softer and younger woman
+// but classy." The previous setting was deliberately lowered (pitch 0.92) for a composed, older
+// register. Lowering a synthesised voice is exactly what makes it read as machine-like — the formants
+// stop matching the pitch — so raising it back above 1.0 is what buys both "younger" and "more human"
+// at the same time. Softness is volume and pace, not pitch: 0.9 volume and a slightly unhurried rate
+// give the classy register without the breathy-assistant cliché.
+//
+// AXIS stays apart from ARIA (en-US, rate .95 / pitch 1.05) on ACCENT now rather than on pitch —
+// AXIS is en-GB and scores +40 for it, and the name-collision demotes are untouched.
+export const AXIS_PROSODY = { rate: 0.97, pitch: 1.08, legacyRate: 1.0, volume: 0.9 };
 
 // CROSS-ENGINE PARITY (2026-08-11, Ahmad: "on edge its one voice and chrome another").
 // Edge and Chrome ship different voice inventories — Edge has the "Online (Natural)" neural set
@@ -53,10 +76,10 @@ export const AXIS_PROSODY = { rate: 1.0, pitch: 0.92, legacyRate: 1.02 };
 // and every other family is rate/pitch-corrected toward it — Google's voices run fast and bright,
 // so they get slowed and lowered the most. The result is one recognisable AXIS in either browser.
 export const VOICE_PROFILES = {
-  neural:  { rate: 0.98, pitch: 0.92 }, // Edge "Online (Natural)" — THE REFERENCE
-  google:  { rate: 0.88, pitch: 0.82 }, // Chrome network voices: fast + bright → slow + lower
-  premium: { rate: 0.95, pitch: 0.90 }, // macOS Siri/premium/enhanced
-  legacy:  { rate: 0.94, pitch: 0.96 }, // SAPI desktop — pitch-shifting these sounds artificial
+  neural:  { rate: 0.97, pitch: 1.08, volume: 0.90 }, // Edge "Online (Natural)" — THE REFERENCE
+  google:  { rate: 0.92, pitch: 1.02, volume: 0.90 }, // Chrome network voices run fast + bright
+  premium: { rate: 0.95, pitch: 1.06, volume: 0.90 }, // macOS Siri/premium/enhanced
+  legacy:  { rate: 0.95, pitch: 1.07, volume: 0.94 }, // SAPI desktop — heavy shifts sound artificial
 };
 export function voiceFamily(name) {
   const n = String(name || '');
@@ -118,10 +141,18 @@ export function axisPersonaBonus(name, lang) {
   const n = String(name || '');
   const l = String(lang || '');
   let s = 0;
-  if (hasAny(n, AXIS_FEMALE_PREF)) s += 34;          // a named AXIS voice
+  // Position in AXIS_FEMALE_PREF has to count for something, or the list is only a set and Libby
+  // ties with Sonia at exactly the same score — leaving the actual choice to whatever order the
+  // browser happened to enumerate voices in. Earlier in the list wins.
+  const pref = AXIS_FEMALE_PREF.findIndex((w) => new RegExp(w, 'i').test(n));
+  if (pref >= 0) s += 34 + Math.max(0, 10 - pref);   // a named AXIS voice, best-first
   if (/^en(-|_)?GB/i.test(l)) s += 40;               // the en-GB register — ARIA is en-US
   if (hasAny(n, AXIS_ARIA_COLLISION)) s -= 45;       // don't wear the customer orb's voice
   if (hasAny(n, AXIS_MALE_DEMOTE)) s -= 60;          // AXIS is never male
+  if (hasAny(n, AXIS_CHILD_DEMOTE)) s -= 70;         // "younger" means young woman, not a child
+  // "More human like": the Natural/Neural set is the only genuinely non-robotic family in a free
+  // browser, so it gets its own bonus rather than relying on the caller's ranking alone.
+  if (/natural|neural/i.test(n)) s += 18;
   return s;
 }
 
@@ -211,7 +242,18 @@ const OPS = [
   { kind: 'machine.run',  re: /\b(?:take control|on my (?:machine|computer|pc)|run (?:this|that|it) locally)\b/i,
     arg: /\b(?:and|to|:)\s+(.+)$/i,
     say: (a) => `Run on your machine: ${a || 'the request'}` },
-  { kind: 'self.fix',     re: /\b(?:fix|repair|sort out|correct|debug)\b(?!\s+(?:the )?printer)/i,
+  // Self-repair. The verb alone can NEVER be the trigger: "fix" is a word Ahmad uses constantly
+  // about client problems — "how do I fix a stuck windows update", "the client needs us to fix
+  // their vpn". Measured 2026-08-12, the bare-verb version hijacked 5 of 16 realistic questions
+  // into "say confirm, or cancel" instead of answering them. That is the whole "it is failing more
+  // than before" complaint.
+  //
+  // So a self-fix needs BOTH a repair verb AND something naming AXIS itself, and it must not be a
+  // question — a question about fixing something is a support request, not an instruction.
+  { kind: 'self.fix',
+    re: /\b(?:fix|repair|sort out|correct|debug)\b/i,
+    self: /\b(?:yourself|your\s+\w+|you\s+(?:keep|always|never|are|were|do|don'?t|can'?t|cannot|won'?t)|the way you|wake\s?word|hands[-\s]?free|the globe|the hologram|the mic|the dock|the console|the voice|axis|the way it works)\b/i,
+    notAsk: /^\s*(?:how|what|why|when|where|who|which|is|are|does|do|did|can|could|should|would)\b/i,
     arg: /\b(?:fix|repair|sort out|correct|debug)\s+(.+)$/i,
     say: (a) => `Have Claude Code fix: ${a || 'the reported issue'}` },
 ];
@@ -221,12 +263,20 @@ export function detectOp(text) {
   if (!t || t.length < 4) return null;
   for (const op of OPS) {
     if (!op.re.test(t)) continue;
+    // Extra qualifiers, where matching the verb is not enough to be sure the request is an order
+    // aimed at AXIS rather than a question about the same subject.
+    if (op.self && !op.self.test(t)) continue;
+    if (op.notAsk && op.notAsk.test(t)) continue;
     let arg = '';
     // Alternation patterns leave undefined groups — take the first that actually captured.
     if (op.arg) {
       const m = t.match(op.arg);
       if (m) arg = String(m.slice(1).find(Boolean) || '').trim().replace(/[.?!]+$/, '');
     }
+    // "you keep cutting me off, fix that" captures only "that". For a self-fix the whole sentence is
+    // the better description anyway — it is what Claude Code needs to act on, and the self-reference
+    // test above has already established the request is aimed at AXIS.
+    if (op.kind === 'self.fix' && (arg.length < 6 || /^(?:that|this|it|them|those)\b/i.test(arg))) arg = t;
     // These are meaningless without a subject, and guessing at one is worse than asking. "fix it"
     // with no antecedent must not become a repo edit.
     if (['self.fix', 'machine.run', 'cowork.ask'].includes(op.kind) && arg.length < 6) return null;
