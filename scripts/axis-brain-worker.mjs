@@ -153,7 +153,24 @@ function askClaude(prompt, { model = null, system = null } = {}) {
 // those tiers have declined. What the worker adds is the vault: first as an answer in its own right,
 // and — when it cannot answer alone — as context that makes the plan's answer specific to Ahmad's
 // operation rather than generic. Partial vault knowledge is still worth spending, and costs nothing.
-async function answerQuestion(query) {
+// The recent conversation and the on-screen board, rendered for the model. The CLI runs with
+// --no-session-persistence — every question is a fresh process — so continuity has to arrive IN the
+// prompt. Before this, "remove it" reached the model as a two-word orphan and it rightly answered
+// "this session starts fresh, I don't have the list you're pointing at" (2026-08-12) about rows
+// AXIS itself had spoken thirty seconds earlier.
+function conversationBlock(turns, board) {
+  const parts = [];
+  if (Array.isArray(turns) && turns.length > 1) {
+    const lines = turns.slice(0, -1)             // the last turn IS the question; don't repeat it
+      .map((m) => `${m.role === 'assistant' ? 'AXIS' : 'Ahmad'}: ${String(m.content || '').trim()}`)
+      .filter((l) => l.length > 6);
+    if (lines.length) parts.push('The conversation so far (AXIS is you):\n' + lines.join('\n'));
+  }
+  if (board) parts.push(String(board).trim());
+  return parts.join('\n\n');
+}
+
+async function answerQuestion(query, { turns = [], board = '' } = {}) {
   const t0 = Date.now();
 
   // Brain #1, alone. A confident vault hit skips the model entirely: no tokens, no plan usage, and
@@ -166,10 +183,14 @@ async function answerQuestion(query) {
 
   // Brain #1 as context for brain #2.
   const context = vault.vaultContext(query);
-  const route = classify(query, { contextChars: context.length });
+  const convo = conversationBlock(turns, board);
+  const route = classify(query, { contextChars: context.length + convo.length });
 
-  const prompt = context
-    ? `Context from Ahmad's AXIS vault. Prefer it over general knowledge where they disagree, and say so if it is silent on the question.\n\n${context}\n\n---\n\nAhmad asks: ${query}`
+  const pieces = [];
+  if (convo) pieces.push(convo);
+  if (context) pieces.push(`Context from Ahmad's AXIS vault. Prefer it over general knowledge where they disagree, and say so if it is silent on the question.\n\n${context}`);
+  const prompt = pieces.length
+    ? `${pieces.join('\n\n---\n\n')}\n\n---\n\nAhmad asks: ${query}`
     : query;
 
   let tierName = route.tier;
@@ -210,11 +231,16 @@ async function answerQuestion(query) {
   // would put a hallucination into the brain with the same standing as RULES.md. So a fast-tier
   // answer is banked as low, and AXIS says so out loud when it leans on one (see 13_Learned).
   const CONFIDENCE = { fast: 'low', standard: 'medium', deep: 'high' };
-  const w = vault.learn({
-    question: query, answer: stripTrailingOffer(res.answer),
-    source: 'claude-max', model: TIER_BY_NAME[tierName].model,
-    confidence: CONFIDENCE[tierName] || 'medium',
-  });
+  // Same gate as bank(): a clarifying question, hedge, or reply about the prompt is not knowledge.
+  // Measured 2026-08-12: "Which list do you mean — …?" was written to 13_Learned as a fact because
+  // this call had no gate while bank() did. The vault is the *durable* brain — it needs the gate more.
+  const w = worthLearning(query, res.answer)
+    ? vault.learn({
+        question: query, answer: stripTrailingOffer(res.answer),
+        source: 'claude-max', model: TIER_BY_NAME[tierName].model,
+        confidence: CONFIDENCE[tierName] || 'medium',
+      })
+    : { written: false, reason: 'not-knowledge' };
 
   return { answer: res.answer, tier: tierName, model: TIER_BY_NAME[tierName].model,
     escalatedFrom, ms: Date.now() - t0, vaultContext: context.length, learned: w.written,
@@ -335,6 +361,11 @@ async function progress(msg, kind = 'info') {
 
 async function runTask(task) {
   const { kind, arg, confirmed } = task;
+  // "Work with Claude Cowork to remove the three items you just mentioned" — the antecedent is in
+  // the conversation, not the sentence. Every model-backed task gets the same block the Q&A path
+  // gets, so a spoken follow-up lands as a follow-up instead of an orphan.
+  const convo = conversationBlock(task.turns, task.board);
+  const convoBlock = convo ? `\n\n${convo}\n` : '';
   await progress(`starting ${kind}${arg ? ': ' + arg.slice(0, 60) : ''}`, 'start');
 
   if (kind === 'video.make' || kind === 'video.short') {
@@ -367,6 +398,39 @@ async function runTask(task) {
     const urls = (r.out.match(/https:\/\/youtu\.be\/\S+/g) || []);
     await progress(`uploaded ${urls.length} video(s)`, 'done');
     return { answer: urls.length ? `${urls.length} uploaded, private for your review. ${urls[0]}` : 'Nothing was ready to upload.' };
+  }
+
+  if (kind === 'fleet.status') {
+    // "All the agents report to AXIS." The watchdog already gathers success evidence for every
+    // registered job hourly; this makes it pullable on demand, spoken. Read-only.
+    const r = await run(process.execPath, [path.join(REPO, 'scripts', 'job-watchdog.mjs'), '--json'], 60000);
+    if (r.error) return { error: 'watchdog failed: ' + String(r.error).slice(-200) };
+    try {
+      const rep = JSON.parse(String(r.out));
+      const results = Array.isArray(rep.results) ? rep.results : [];
+      const bad = results.filter((x) => !['ok', 'recovering', 'unobserved'].includes(x.status));
+      const watched = results.filter((x) => x.status !== 'unobserved').length;
+      const line = bad.length
+        ? `${bad.length} of ${watched} agents need attention: ` + bad.map((b) => `${b.label} is ${b.status}`).join(', ') + '.'
+        : `All ${watched} watched agents are healthy. Every one has succeeded inside its window.`;
+      return { answer: line };
+    } catch { return { error: 'watchdog output did not parse' }; }
+  }
+
+  if (kind === 'fleet.run' || kind === 'fleet.pause' || kind === 'fleet.resume') {
+    // "Give AXIS full access to manage them" — within the same safety model as everything else:
+    // a NAMED verb against a NAMED agent from the fixed roster below, never a shell string from the
+    // queue, and always behind the spoken confirm the console already collected. Pausing stops an
+    // agent producing; that is the backpressure lever the queue-steward rules call for.
+    if (confirmed !== true) return { error: 'that needs confirming out loud first' };
+    const agent = resolveFleetAgent(arg);
+    if (!agent) return { answer: 'Which agent? I manage: ' + Object.keys(FLEET_AGENTS).join(', ') + '.' };
+    const VERB = { 'fleet.run': 'Start-ScheduledTask', 'fleet.pause': 'Disable-ScheduledTask', 'fleet.resume': 'Enable-ScheduledTask' };
+    const r = await psScheduledTask(VERB[kind], agent);
+    if (r.error) return { error: `${kind} failed on "${agent}": ` + String(r.error).slice(-200) };
+    const did = kind === 'fleet.run' ? 'is running now' : kind === 'fleet.pause' ? 'is paused — say resume when you want it back' : 'is back on its schedule';
+    await progress(`${agent} ${did}`, 'done');
+    return { answer: `${agent} ${did}.` };
   }
 
   if (kind === 'self.fix') {
@@ -407,7 +471,7 @@ Reply with ONE short sentence saying what you changed, or why no change was need
       `You are Claude Cowork for IIS/ARIA, following CLAUDE.md in this repo. Ahmad asked, by voice:
 
 "${arg}"
-
+${convoBlock}
 Answer from what is actually in the repo. If you do not know, say so plainly rather than guessing.
 Reply in at most four sentences — this is going to be read aloud.`,
       [], 600000, coworkPick.model);
@@ -436,7 +500,7 @@ Reply in at most four sentences — this is going to be read aloud.`,
 Ahmad, out loud, not writing him a document. He said, by voice:
 
 "${arg}"
-
+${convoBlock}
 Ground the plan in what is actually in this repo and in the standing rules (spend cap, no fake proof,
 preview-before-push, ARIA and Aperture never break). If the request conflicts with a rule, say so in
 one line and plan the version that does not.
@@ -462,7 +526,7 @@ This is being read aloud, so keep it under about six short sentences.`,
       `You are Claude Code working in the IIS/ARIA repo, following CLAUDE.md. Ahmad asked, by voice:
 
 "${arg}"
-
+${convoBlock}
 Build the smallest thing that satisfies it. Follow the standing rules: do not publish or deploy, do
 not send anything externally, do not spend money, do not touch credentials, and never break ARIA,
 Aperture or Sentinel. Do not change look, theme or copy on iisupp.net without a preview.
@@ -500,7 +564,7 @@ Reply with ONE short sentence saying what you built and which tests cover it.`,
       `Ahmad asked, by voice, for this to be done on his machine:
 
 "${arg}"
-
+${convoBlock}
 You are in the IIS/ARIA repo and must follow CLAUDE.md. Do the smallest thing that satisfies the
 request. Do NOT delete anything, publish, deploy, send anything externally, spend money, or touch
 credentials — if the request needs any of those, stop and say so instead of doing it.
@@ -539,7 +603,7 @@ async function drain() {
     if (Date.now() - (job.t || 0) > 20000) { try { await jobs.delete(b.key); } catch {} continue; }
 
     console.log(`[axis-brain-worker] ${job.id} → ${String(job.query).slice(0, 70)}`);
-    const res = await answerQuestion(job.query);
+    const res = await answerQuestion(job.query, { turns: job.turns, board: job.board });
     try { await jobs.setJSON(`done/${job.id}`, { answer: res.answer, error: res.error, t: Date.now() }); } catch {}
     try { await jobs.delete(b.key); } catch {}
     if (res.answer) {

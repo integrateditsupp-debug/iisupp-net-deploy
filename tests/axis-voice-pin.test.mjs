@@ -39,20 +39,26 @@ assert.ok((app.match(/setItem\('axis-voice-rev', VOICE_POLICY_REV\)/g) || []).le
 assert.ok(/window\.axisClearVoice/.test(app), 'there is an escape hatch to drop a pin');
 ok('a deliberate pick survives, and can be cleared');
 
-// ---- 5. the resulting voice is young, soft, professional, classy ----
+// ---- 5. the resulting voice is a natural UK woman — soft, composed, never synthetic ----
+// Ahmad, 2026-08-12: "revert the voice back to UK woman but none robotic, sound like a natural
+// human conversation." Natural means prosody near the voice's own training, not a stylised shift.
 const s = (n, l) => P.axisPersonaBonus(n, l);
-const libby = s('Microsoft Libby Online (Natural) - English (United Kingdom)', 'en-GB');
-assert.ok(P.AXIS_PROSODY.pitch > 1.05, 'young reads as a raised pitch');
+const sonia = s('Microsoft Sonia Online (Natural) - English (United Kingdom)', 'en-GB');
+assert.ok(P.AXIS_PROSODY.pitch > 1.0 && P.AXIS_PROSODY.pitch <= 1.05,
+  'human register: barely above native pitch, never a cartoon lift');
 assert.ok(P.AXIS_PROSODY.volume <= 0.85, 'softer is volume, not pitch');
-assert.ok(P.AXIS_PROSODY.rate < 1, 'classy is unhurried');
-assert.ok(libby > s('Microsoft Sonia Online (Natural) - English (United Kingdom)', 'en-GB'),
-  'the younger en-GB Natural voice leads');
+assert.ok(P.AXIS_PROSODY.rate > 0.95 && P.AXIS_PROSODY.rate < 1,
+  'composed is just under the voice\'s own pace, not dragged');
+assert.ok(sonia > s('Microsoft Libby Online (Natural) - English (United Kingdom)', 'en-GB'),
+  'Sonia leads — the composed en-GB Natural voice is the house voice');
+assert.ok(sonia > s('Microsoft Ava Online (Natural) - English (United States)', 'en-US'),
+  'the UK voice outranks the en-US experiment\'s house voice');
 assert.ok(s('Microsoft Maisie Online (Natural) - English (United Kingdom)', 'en-GB') < 0,
-  '"young woman" must never resolve to a child voice');
+  '"UK woman" must never resolve to a child voice');
 // Every family softened, and none may collide with ARIA's own rate/pitch.
 assert.ok(Object.values(P.VOICE_PROFILES).every((p) => p.volume <= 0.9), 'every family is softened');
 assert.ok(Object.values(P.VOICE_PROFILES).every((p) => !(p.rate === 0.95 && p.pitch === 1.05)),
   'no family lands on ARIA rate/pitch');
-ok('young, softer, professional — and still never ARIA');
+ok('a natural UK woman — soft, composed, and still never ARIA');
 
 console.log('ok — the voice changes, and a stale pin can no longer hide it');

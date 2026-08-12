@@ -1568,10 +1568,36 @@ async function axisCollect(jobId, msg, tries = 0) {
 // READ-ONLY kinds run immediately; anything that spends, edits or publishes has already been
 // confirmed out loud by the time it gets here.
 async function axisRunOp(op) {
+  // Board removal runs HERE, not on the worker: the rows are in the snapshot already in memory,
+  // and the write path is the same intent queue every screen button uses. Scheduled follow-ups are
+  // cancellable by voice; approvals and client messages are decisions and stay Ahmad's to click —
+  // the reply says which is which instead of pretending everything vanished.
+  if (op.kind === 'board.remove') {
+    const rows = collectPriorities(state.snap).filter((i) => i.source === 'Follow-up' && i.fid);
+    const kept = collectPriorities(state.snap).filter((i) => i.source !== 'Follow-up').length;
+    let line;
+    if (!rows.length) {
+      line = kept
+        ? 'Nothing on the board is a scheduled follow-up. The rest are approvals and client messages — those need your click, I do not decide them.'
+        : 'The board is already clear.';
+    } else {
+      let n = 0;
+      for (const it of rows) {
+        try { postIntent('cancel_followup', { follow_up_id: it.fid, business_id: it.bid }); n++; } catch {}
+      }
+      line = `Queued ${n} follow-up ${n === 1 ? 'cancellation' : 'cancellations'} — the worker applies them on its next pass and the rows drop off at the next sync.`
+        + (kept ? ` ${kept} ${kept === 1 ? 'item stays' : 'items stay'}: approvals and client messages are yours to click.` : '');
+    }
+    dockLog.push({ role: 'axis', text: line }); renderDock(); axisSpeakTurn(line);
+    return;
+  }
   try {
     const r = await fetch('/.netlify/functions/axis-brain-queue', {
       method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ action: 'task', kind: op.kind, arg: op.arg || '', confirmed: true }),
+      // The conversation and the board ride along: "remove the three items you just mentioned" is
+      // meaningless to a worker that only sees the one sentence — the antecedent is in the turns.
+      body: JSON.stringify({ action: 'task', kind: op.kind, arg: op.arg || '', confirmed: true,
+        turns: axisHistory(null).slice(-10), board: axisBoardContext() }),
     });
     const j = await r.json();
     if (!j || !j.ok) { const m = 'Could not queue that.'; dockLog.push({ role: 'axis', text: m }); renderDock(); axisSpeakTurn(m); return; }
@@ -1631,6 +1657,22 @@ function axisHistory(exclude) {
 // latency for data sitting in the page. Anything this cannot answer falls through untouched.
 function axisInstantAnswer(text) {
   try { return localAnswer(text, state.snap); } catch { return null; }
+}
+
+// What is on Ahmad's screen right now, as one short block the brain can read. Without it, "remove
+// these items" reached the model as an orphan — the priority list lived only in the browser, so the
+// brain answered "I don't have the list you're pointing at" about rows AXIS itself had just spoken
+// (2026-08-12). Top rows only, titles and due states, no markup: this rides every request, so it
+// has to stay cheap.
+function axisBoardContext(n = 8) {
+  try {
+    const items = collectPriorities(state.snap);
+    if (!items.length) return '';
+    const rows = items.slice(0, n).map((it, i) =>
+      `${i + 1}. ${it.title} — ${it.source}, ${dueLabel(it.dueAt).text}${it.detail ? ` (${it.detail})` : ''}`);
+    const more = items.length > n ? `\n…and ${items.length - n} more.` : '';
+    return `Priority board on screen (top ${Math.min(n, items.length)} of ${items.length}):\n` + rows.join('\n') + more;
+  } catch { return ''; }
 }
 
 // ── AXIS console furniture (2026-08-11 redesign) ─────────────────────────────
@@ -1693,7 +1735,10 @@ const AXIS_VOICE_SAMPLE = 'Axis here, Ahmad. This is how I sound in this browser
 // "answering from the board, reasoning is down" visible for as long as it is true.
 const BRAIN_LABEL = { no_credit: 'brain: out of credit', auth: 'brain: key rejected', no_key: 'brain: no key',
   permission: 'brain: no access', bad_model: 'brain: bad model', rate_limit: 'brain: rate limited',
-  overloaded: 'brain: overloaded', unreachable: 'brain: unreachable' };
+  overloaded: 'brain: overloaded', unreachable: 'brain: unreachable',
+  // The director rewrites a billing error to worker_offline when the local worker's heartbeat is
+  // stale — the badge exists precisely so that outage does not scroll away as a generic "degraded".
+  worker_offline: 'brain: worker offline — node scripts/axis-brain-worker.mjs' };
 function axisBrainDown(reason) {
   const el0 = $('axisBrain'); if (!el0) return;
   if (!reason) { el0.hidden = true; return; }
@@ -1797,7 +1842,7 @@ async function axisSend(inputId = 'axisInput') {
   // already show the thinking dots and stay silent — this is not chatter added to keyboard use.
   if (axisSpokenTurn || axisHandsFree) axisSpeak(ackLine());
   try {
-    const r = await fetch('/.netlify/functions/axis-director', { method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify({ action: 'chat', messages: axisHistory(pending) }) });
+    const r = await fetch('/.netlify/functions/axis-director', { method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify({ action: 'chat', messages: axisHistory(pending), board: axisBoardContext() }) });
     const j = await r.json(); dropPending();
     const reply = { role: 'axis', text: (j && j.text) || 'Heard you.' };
     // Brain unavailable (no credit / bad key / network): answer from the board instead of going
@@ -2008,12 +2053,12 @@ function axisSpeak(text) {
       const u = new SpeechSynthesisUtterance(part);
       if (v) { u.voice = v; u.lang = v.lang; }
       // No rankable voice even after waiting (a browser that exposes none). Pin the LANGUAGE at
-      // least, so the engine resolves an American voice rather than whatever the system locale
-      // happens to be — an unset lang is how a British default got through.
-      else u.lang = 'en-US';
-      // Cross-engine parity: each voice family is rate/pitch-corrected toward Edge's Sonia, so AXIS
-      // sounds like the same character in Chrome and Edge even though the two ship different voices.
-      // Still deliberately apart from ARIA's en-US .95/1.05.
+      // least, so the engine resolves a British voice rather than whatever the system locale
+      // happens to be — an unset lang is how a wrong-accent default gets through.
+      else u.lang = 'en-GB';
+      // Cross-engine parity: each voice family is rate/pitch-corrected toward Edge's en-GB Sonia,
+      // so AXIS sounds like the same character in Chrome and Edge even though the two ship
+      // different voices. Still deliberately apart from ARIA's en-US .95/1.05.
       // Volume comes from the profile now. It was pinned at 1, which is why AXIS always arrived at
       // full blast — "softer" (Ahmad, 2026-08-12) is volume and pace, not a lower pitch.
       const prof = voiceProfile(v);

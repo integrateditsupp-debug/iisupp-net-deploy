@@ -115,14 +115,32 @@ async function queueCall(origin, auth, payload) {
   return r.json();
 }
 
-async function subscriptionTier(query, { origin, auth, waitMs = SUB_WAIT_MS } = {}) {
+// Is the local worker alive? Exported so the caller can tell "the plan is unreachable" apart from
+// "the plan answered nothing". Those need opposite advice: the first is fixed for free by starting a
+// process, the second by topping up an account. Reporting the second when it is the first is what
+// sent Ahmad to Plans & Billing on 2026-08-12 for a problem that cost nothing to fix.
+async function workerOnline({ origin, auth } = {}) {
+  if (!origin) return false;
+  try {
+    const live = await queueCall(origin, auth, { action: 'online' });
+    return !!(live && live.online);
+  } catch (_) { return false; }
+}
+
+async function subscriptionTier(query, { origin, auth, waitMs = SUB_WAIT_MS, turns = [], board = '' } = {}) {
   if (!origin) return null;
   try {
     // Never queue a job nobody will pick up — that would burn the whole budget waiting on silence.
     const live = await queueCall(origin, auth, { action: 'online' });
     if (!live || !live.online) return null;
 
-    const q = await queueCall(origin, auth, { action: 'enqueue', query: String(query).slice(0, 4000) });
+    // The conversation and the on-screen board ride with the question, because this is the tier
+    // where a model reasons — "remove it" without its antecedent turns is unanswerable by design.
+    const q = await queueCall(origin, auth, {
+      action: 'enqueue', query: String(query).slice(0, 4000),
+      turns: Array.isArray(turns) ? turns.slice(-10) : [],
+      board: String(board || '').slice(0, 1500),
+    });
     if (!q || !q.ok || !q.id) return null;
 
     const deadline = Date.now() + waitMs;
@@ -200,7 +218,7 @@ async function learnBack({ query, answer, tier, source, origin, auth }, now = Da
 // ── The cascade ──────────────────────────────────────────────────────────────
 // Returns an answer from the cheapest tier that has one, or null so the caller escalates to the
 // metered API. `skip` lets tests and callers disable a tier without editing this file.
-async function askBrain({ query, origin, auth, skip = [], subWaitMs = SUB_WAIT_MS }) {
+async function askBrain({ query, turns = [], board = '', origin, auth, skip = [], subWaitMs = SUB_WAIT_MS }) {
   const q = String(query || '').trim();
   if (!q) return null;
   const tried = [];
@@ -216,7 +234,7 @@ async function askBrain({ query, origin, auth, skip = [], subWaitMs = SUB_WAIT_M
     ['recall', () => recallTier(q, origin, auth)],   // banked answers first — never pay twice
     ['research', () => researchTier(q, origin)],
     ['kb', () => kbTier(q, origin)],
-    ['subscription', () => subscriptionTier(q, { origin, auth, waitMs: subWaitMs })],
+    ['subscription', () => subscriptionTier(q, { origin, auth, waitMs: subWaitMs, turns, board })],
   ]) {
     if (skip.includes(name)) continue;
     tried.push(name);
@@ -227,5 +245,5 @@ async function askBrain({ query, origin, auth, skip = [], subWaitMs = SUB_WAIT_M
   return null;
 }
 
-module.exports = { askBrain, stripTrailingOffer, recallTier, kbTier, researchTier, subscriptionTier, learnBack, isSubstantive, worthLearning,
+module.exports = { askBrain, stripTrailingOffer, recallTier, kbTier, researchTier, subscriptionTier, workerOnline, learnBack, isSubstantive, worthLearning,
   KB_LIVE, JOBS, HEARTBEAT_KEY, HEARTBEAT_MAX_MS };

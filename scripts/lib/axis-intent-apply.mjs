@@ -53,8 +53,43 @@ function applyDelegateFollowup(db, payload) {
   return { ok: true, scheduled: ids.length, follow_up_ids: ids, business_id: businessId, capped: ids.length === 0 };
 }
 
+// ── cancel_followup ───────────────────────────────────────────────────────────────────────────────
+// Ahmad, 2026-08-12, by voice: "remove all these items from the to-do list". The board's follow-up
+// rows are follow_ups records with status 'scheduled'; removal IS cancellation, a state the system
+// already has (auto_cancelled uses it). This cancels the schedule row and, when the linked outreach
+// item is still a PENDING follow-up draft sitting in Approvals, cancels that too — a chase message
+// for a cancelled chase is noise in the queue. It never touches anything sent, and it never touches
+// approvals that are not follow-up drafts: those are decisions, and decisions stay Ahmad's.
+function applyCancelFollowup(db, payload) {
+  const fid = int(payload.follow_up_id);
+  const businessId = int(payload.business_id);
+  if (!fid && !businessId) return { ok: false, reason: 'follow_up_id or business_id required' };
+
+  const rows = fid
+    ? [db.prepare('SELECT id,outreach_item_id,status FROM follow_ups WHERE id=?').get(fid)].filter(Boolean)
+    : db.prepare("SELECT id,outreach_item_id,status FROM follow_ups WHERE business_id=? AND status='scheduled'").all(businessId);
+  if (!rows.length) return { ok: false, reason: fid ? `follow_up ${fid} not found` : `no scheduled follow_ups for business ${businessId}` };
+
+  let cancelled = 0, drafts = 0;
+  for (const r of rows) {
+    if (r.status !== 'scheduled') continue;            // sent/cancelled rows are history, not queue
+    db.prepare("UPDATE follow_ups SET status='cancelled' WHERE id=? AND status='scheduled'").run(r.id);
+    cancelled++;
+    if (r.outreach_item_id) {
+      const oi = db.prepare('SELECT id,status,kind FROM outreach_items WHERE id=?').get(r.outreach_item_id);
+      if (oi && oi.status === 'pending' && oi.kind === 'followup') {
+        db.prepare("UPDATE outreach_items SET status='cancelled' WHERE id=? AND status='pending'").run(oi.id);
+        drafts++;
+      }
+    }
+  }
+  // Zero cancelled means every named row had already left 'scheduled' — a stale click, not an error.
+  return { ok: true, cancelled, drafts_cancelled: drafts, stale: cancelled === 0 };
+}
+
 export const V2_HANDLERS = {
   delegate_followup: applyDelegateFollowup,
+  cancel_followup: applyCancelFollowup,
 };
 
 // Pure-ish dispatcher (side effects are confined to the handlers, which write SQLite).
