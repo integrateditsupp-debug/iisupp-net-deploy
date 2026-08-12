@@ -50,8 +50,8 @@ ok('logout clears both transcripts, in memory and in the DOM');
 // removed, and an absence-check run against the raw file matches that explanation and fails. Every
 // "this must no longer exist" assertion has to run on comment-stripped CSS.
 const cssCode = css.replace(/\/\*[\s\S]*?\*\//g, '');
-assert.ok(/\.axis-orbit \.axis-globe \{ width:120px; height:120px;/.test(cssCode),
-  'one resting size, 15% up from the original 104px');
+assert.ok(/\.axis-orbit \.axis-globe \{ width:135px; height:135px;/.test(cssCode),
+  'one resting size, 30% up from the original 104px');
 for (const st of ['listening', 'speaking', 'thinking']) {
   const re = new RegExp(`:root\\[data-axis-state="${st}"\\] \\.axis-orbit \\.axis-globe \\{[^}]*(?:width|height):`);
   assert.ok(!re.test(cssCode), `${st} must NOT resize the orbit globe`);
