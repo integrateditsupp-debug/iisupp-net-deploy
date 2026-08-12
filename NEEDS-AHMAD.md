@@ -1,5 +1,37 @@
 # NEEDS AHMAD — the whole list, in order
 
+> **CYCLE 147 (2026-08-12), RUN-BE — one capability only you can give, and one sentence that is
+> cheapest to fix today.**
+>
+> **0. A CODE-HOST CREDENTIAL. Local `main` is now 53 commits ahead of the shared remote.**
+> `git push` refuses, verbatim: `could not read Username for 'https://github.com'`. No token, no
+> `gh`, no credential helper, no `.netrc`. Everything through RUN-BE is on ONE machine. Not a
+> decision and not labour — the one capability the sandbox lacks.
+>
+> **NEW — WRITE A TIER BESIDE THE SIG-LITE SENTENCE.** `compliance/SIG-Lite-prefilled.md:105`, the
+> questionnaire a customer's security reviewer completes, says **"P1 within 1 hour. P2 within 4
+> hours"** with **no tier beside either number**, and it ships in the same packet as the tiered MSA.
+> Untiered, it reads as the floor for everybody: over-promising by ~a day against Personal, by three
+> hours against Pro, and **under-selling Enterprise by 45 minutes** in the exact document a reviewer
+> uses to judge whether that tier is worth its price. One sentence. **Nobody is owed it yet**, which
+> is the only window in which fixing it costs nothing.
+>
+> **AND THE BIGGER ONE BEHIND IT — the agreement binds 10 response-time commitments and the page a
+> buyer chooses from publishes ZERO of them.** `legal/MSA-template.md:188-189` commits a P1 and a P2
+> for all five tiers with service credits attached; `plans/index.html` carries only `SLA tracking ✓`,
+> which says an SLA is *tracked*, never what it is. Customers meet the number at signature instead of
+> at decision. Three questions, all one-liners, all in `docs/RESPONSE-TIME-DECISIONS.md`: publish the
+> bound times? does Personal carry an SLA at all (the matrix and the agreement contradict each
+> other)? do the retainer decks map onto matrix tiers? Answers go in
+> `senior-director-state/decisions/response-times.json` and the suite enforces them from then on.
+>
+> **The AXIS status feed is fresh and true**: regenerated this cycle from readings taken this cycle —
+> registry 1074 / 0 / 372 suites / exit 0, site suite 82/82 — `generatedAt 2026-08-12T01:00:25Z`.
+>
+> Merging main did NOT publish anything. The Netlify publish is still your one deliberate click.
+>
+> Everything below still stands, in the same order.
+
 > **CYCLE 146 (2026-08-11), RUN-BC — the shell is back, the work is merged, and there is exactly ONE
 > thing only you can give this seat.**
 >
