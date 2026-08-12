@@ -18,7 +18,7 @@ import { toggleHologram } from './axis-hologram.js';
 // AXIS persona + turn grammar (the JARVIS flow). Additive: the voice machinery below is unchanged;
 // this only decides who AXIS sounds like and how a spoken turn is shaped.
 import { axisPersonaBonus, AXIS_PROSODY, VOICE_POLICY_REV, ackLine, greetLine, routeTail,
-  isWake, isStop, isConfirm, isDeny, stripWake,
+  isWake, isStop, isConfirm, isDeny, stripWake, smallTalk, stripMetaNarration, markRepeat,
   voiceProfile, voiceFamily, polishForSpeech, speechify, phraseChunks,
   splitForTurns, isContinue, isReferential, detectOp } from './axis-persona.js';
 
@@ -1750,11 +1750,23 @@ async function axisSend(inputId = 'axisInput') {
     return;
   }
 
+  // Turn-management is not a question. "okay hold on", "thanks", "you there" get answered right
+  // here, because sending them to a model is what produced a paragraph of narration about a
+  // two-word pause — and it spent a round trip to do it.
+  const chat = smallTalk(text);
+  if (chat) {
+    dockLog.push({ role: 'axis', text: chat }); renderDock();
+    axisSpeakTurn(chat);
+    return;
+  }
+
   // Instant path: anything the board can answer needs no network at all.
   const instant = axisInstantAnswer(text);
   if (instant) {
-    dockLog.push({ role: 'axis', text: instant }); renderDock();
-    axisSpeakTurn(instant);
+    const line = markRepeat(instant, axisLastAnswer);
+    axisLastAnswer = instant;
+    dockLog.push({ role: 'axis', text: line }); renderDock();
+    axisSpeakTurn(line);
     return;
   }
   // Remove OUR placeholder by reference, never the array tail — concurrent sends must not eat
@@ -1789,6 +1801,13 @@ async function axisSend(inputId = 'axisInput') {
       if (!j.needsApproval) axisPendingRoute = { intent: j.intent, agent: j.routedAgent };
       reply.text += ' ' + routeTail(j.routedAgent, j.needsApproval);
     }
+    // A model sometimes narrates the conversation instead of joining it ("The user said X, they're
+    // pausing"). That is a note ABOUT the turn, not the turn, and it is bizarre to hear aloud.
+    reply.text = stripMetaNarration(reply.text);
+    // And repeating an identical paragraph verbatim is how a machine answers. Acknowledge the repeat
+    // rather than re-wording the content — inventing variation in real numbers would be worse.
+    reply.text = markRepeat(reply.text, axisLastAnswer);
+    axisLastAnswer = reply.text;
     dockLog.push(reply); renderDock();
     axisSpeakTurn(reply.text);
     // The Max plan needs ~17s for a real answer; the function returns in ~10s and hands back a job
@@ -2011,7 +2030,14 @@ function axisMicToggle(micId = 'axisMic', inputId = 'axisInput', send = axisSend
   axisRec = new SR(); axisRec.lang = 'en-CA'; axisRec.interimResults = true; axisRec.maxAlternatives = 1;
   axisRec.onstart = () => { axisListening = true; setAxisState('listening'); axisSetHear('Listening…', false); if (mic) { mic.style.color = 'var(--gold)'; mic.style.borderColor = 'var(--gold)'; mic.textContent = '⏺'; } };
   // A silent close is the single most confusing outcome — always say something.
-  axisRec.onend = () => { restMic(); if (!heard) axisMicNote('I did not catch that — press the mic and say it again.'); };
+  axisRec.onend = () => {
+    restMic();
+    // In hands-free the mic re-arms itself, so "press the mic" is advice for a button Ahmad is not
+    // holding — and it was the FIRST thing in his 2026-08-12 transcript. Say nothing and listen again.
+    if (heard) return;
+    if (axisHandsFree) { axisOpenConvo(); axisWakeResume(); return; }
+    axisMicNote('I did not catch that — press the mic and say it again.');
+  };
   axisRec.onerror = (e) => { restMic(); axisMicError(e); };
   axisRec.onresult = (ev) => { const t = axisReadTranscript(ev); axisFill(inputId, t); if (t.final) { heard = t.final; axisSpokenTurn = true; send(); } };
   try { axisRec.start(); } catch { axisMicNote('Microphone is busy — another tab or app may be using it.'); restMic(); }
@@ -2033,6 +2059,7 @@ let axisPendingOp = null;       // an operational task read back and awaiting a 
 const OP_TTL_MS = 5 * 60 * 1000; // a confirm must answer a RECENT read-back, never a stale one
 let axisConvoUntil = 0;         // until this ms, speech counts as addressed without the wake word
 let axisSpokenNow = '';         // what AXIS is saying right now — used to reject its own echo
+let axisLastAnswer = '';        // the previous reply, so a verbatim repeat can be acknowledged
 
 // Is this transcript just AXIS hearing itself? Compared on words rather than characters: the
 // recognizer never returns the synthesiser's exact string, but it does return a run of the same

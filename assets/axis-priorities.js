@@ -93,6 +93,10 @@ export function collectInFlight(snap) {
 const listBits = (items, n = 3) => items.slice(0, n)
   .map(i => `${i.title} (${dueLabel(i.dueAt).text})`).join(', ');
 
+// Subjects the priorities board has no data about. If one of these appears, the board declines and
+// lets a layer that actually knows answer instead.
+const OFF_BOARD = /\b(youtube|videos?|vids?|shorts?|channel|clips?|thumbnail|subscribers?|upload(?:s|ed|ing)?|stripe|invoice|payroll|ticket)\b/i;
+
 export function localAnswer(question, snap, now = new Date()) {
   const q = String(question || '').toLowerCase();
   const items = collectPriorities(snap, now);
@@ -100,6 +104,14 @@ export function localAnswer(question, snap, now = new Date()) {
   const today = items.filter(i => dueLabel(i.dueAt, now).tone === 'today');
   const kpis = (snap && snap.overview && snap.overview.data && snap.overview.data.kpis) || {};
   const num = (v) => (typeof v === 'number' && isFinite(v) ? v : null);
+
+  // The board knows approvals, the inbox and follow-ups. It knows NOTHING about the YouTube channel,
+  // a specific client's file, or anything else — so a question that merely CONTAINS a board word
+  // must not be answered from the board. Ahmad, 2026-08-12: "what is the status on the YouTube
+  // videos" was answered with follow-up counts, three times, because the word "status" was enough to
+  // claim it. Refusing here sends the question on to the intent layer and then the brain, which is
+  // where a topic question belongs. Answering the wrong question confidently is worse than pausing.
+  if (OFF_BOARD.test(q)) return null;
 
   if (/\b(status|going on|today|update|briefing|summary|board)\b/.test(q)) {
     const a = num(kpis.awaiting_approval), m = num(kpis.messages_waiting), f = num(kpis.followups_due);

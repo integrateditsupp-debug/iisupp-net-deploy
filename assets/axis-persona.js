@@ -273,13 +273,29 @@ export function greetLine(kpis, hour = new Date().getHours(), name = AXIS_ADDRES
 // utterance, which is where a person actually puts a name when addressing someone. That keeps the
 // mishear coverage Ahmad needs without the console answering its own name in the middle of a
 // sentence about something else.
-const WAKE_STRICT = '(?:axis(?:\'s)?|axie|axi|ax|ax\\s?is|a\\s?xis|axys|axel)';
-const WAKE_LOOSE = '(?:access|acces|axes|acts|actus|exes)';
-const GREET = '(?:hey\\s+|ok(?:ay)?\\s+|hi\\s+)?';
+const WAKE_STRICT = '(?:axis(?:\'s)?|axie|axi|axic|axik|aksi|axy|ax|ax\\s?is|a\\s?xis|axys|axel)';
+const WAKE_LOOSE = '(?:access|acces|axes|acts|actus|exes|axed)';
+const GREET = '(?:hey\\s+|ok(?:ay)?\\s+|hi\\s+|so\\s+|um+\\s+|uh+\\s+)?';
 const WAKE_WORD = '(?:' + WAKE_STRICT + '|' + WAKE_LOOSE + ')';
+// A homophone followed by a question word or an order is somebody addressing AXIS, wherever it sits
+// in the sentence. Ahmad, 2026-08-12: "sometimes it hears axic as 'access' which then it ignores me."
+// Start-of-utterance alone was not enough — "so Axie, what's the status" comes back as "so access
+// what's the status", and the name is no longer first. This is what makes the mishears usable
+// without letting "we need access to the portal" wake anything: there, "access" is followed by "to".
+// Question words and imperatives only. Copulas and auxiliaries ("is", "are", "do") follow a noun
+// perfectly naturally — "remote access is down", "access is restricted" — so treating them as a
+// form of address woke AXIS on ordinary IT sentences, which in this business are constant.
+const ADDRESSED = '\\s+(?:what|whats|what\'s|hows?|how\'s|when|where|why|who|which|give|tell|show|check|make|open|start|stop|status|read|list|find|run|play|pause|please)\\b';
+// At the front of a sentence a homophone is usually the name — but not when the next word makes it
+// the SUBJECT. "Access is restricted", "access to the portal", "access control" are IT sentences this
+// business says constantly, and waking on them is worse than missing one address.
+const LOOSE_NOUN = '(?!\\s+(?:is|was|are|were|to|for|from|on|in|of|and|or|has|have|had|will|would|' +
+  'can|could|should|control|point|points|level|levels|rights|denied|granted|log|logs|list|card|code|' +
+  'key|keys|token|issue|issues|problem|problems|request|requests|error|errors)\\b)';
 export const WAKE_RE = new RegExp(
-  '^\\s*' + GREET + WAKE_WORD + '\\b' +               // addressed by name, at the front
-  '|\\b' + GREET + WAKE_STRICT + '\\b', 'i');         // or an unambiguous form, anywhere
+  '^\\s*' + GREET + '(?:' + WAKE_STRICT + '|' + WAKE_LOOSE + LOOSE_NOUN + ')\\b' +  // addressed by name, at the front
+  '|\\b' + GREET + WAKE_STRICT + '\\b' +                      // an unambiguous form, anywhere
+  '|\\b' + WAKE_LOOSE + ADDRESSED, 'i');                      // a mishear that is clearly an address
 // Stand-down: the spoken kill-switch from the spec ("AXIS stop"). Checked BEFORE everything else.
 // Same homophone treatment, plus a bare "stop"/"cancel" so panic-stopping always works.
 export const STOP_RE = new RegExp(
@@ -312,7 +328,11 @@ const OPS = [
     say: (a) => `Build a video${a ? ' about ' + a : ''}` },
   { kind: 'video.upload', re: /\b(?:upload|publish|post|push)\b[^.?!]*\b(video|videos|shorts?|channel|youtube|them|it)\b|\bupload\s*(?:them|it|now)?\s*$/i,
     say: () => 'Upload the staged videos to the channel' },
-  { kind: 'video.status', re: /\b(?:how many|what(?:'s| is) )?\b[^.?!]*\b(video|videos|shorts?|channel|youtube)\b[^.?!]*\b(status|staged|ready|queue|left|today)\b|\bchannel status\b/i,
+  // Either word order. The original required the subject BEFORE the status word, so Ahmad's actual
+  // question — "what is the status on the YouTube videos" — did not match, fell through to the
+  // board, and got answered with follow-up counts three times in a row (2026-08-12 transcript).
+  { kind: 'video.status',
+    re: /\b(?:youtube|videos?|shorts?|channel|clips?)\b[^.?!]*\b(?:status|staged|ready|queued?|left|today|uploaded|posted|published)\b|\b(?:status|how many|how'?s|what'?s|what is|update on|where are)\b[^.?!]*\b(?:youtube|videos?|shorts?|channel|clips?)\b/i,
     say: () => 'Check the channel status' },
   // Talking to Claude Cowork. Read-only, so this only ever comes back as an answer.
   { kind: 'cowork.ask',   re: /\b(?:ask|check with|talk to|speak (?:to|with)|get)\s+(?:claude\s+)?cowork(?:er)?\b|\bask claude\b/i,
@@ -434,7 +454,11 @@ export const isReferential = (t) => !isStop(t) && REFERENTIAL_RE.test(String(t |
 // Strip a leading wake phrase so "AXIS, what's going on" reaches the director as "what's going on".
 // Must strip the same homophone set the wake matcher accepts, or "access what's going on" would be
 // sent to the director verbatim and answered as nonsense.
-const STRIP_RE = new RegExp('^\\s*(?:hey\\s+|ok(?:ay)?\\s+|hi\\s+)?' + WAKE_WORD + '\\b[\\s,.:!?-]*', 'i');
+// Leading fillers are consumed too. A wake word is rarely the literal first token in real speech —
+// "so, Axie, check the channel" is normal — and without this the brain receives "so axie check the
+// channel", wake word and all.
+const FILLER = '(?:(?:so|well|now|um+|uh+|ok(?:ay)?|alright|hey|hi|yo|bro|and)[\\s,]+)*';
+const STRIP_RE = new RegExp('^\\s*' + FILLER + GREET + WAKE_WORD + '\\b[\\s,.:!?-]*', 'i');
 export function stripWake(text) {
   return String(text || '').replace(STRIP_RE, '').trim();
 }
@@ -445,4 +469,59 @@ export function stripWake(text) {
 export function routeTail(agent, needsApproval) {
   if (needsApproval) return `That one needs your click, ${AXIS_ADDRESS}. It is waiting in Approvals.`;
   return `Route to ${agent}? Say confirm, or cancel.`;
+}
+
+// ── Talking like a person, not a process ─────────────────────────────────────
+// Ahmad, 2026-08-12, from a real transcript: he said "okay hold on" and AXIS replied "The user said
+// 'okay hold on' — they're pausing. I'll wait. / Standing by." Then he asked the same question three
+// times and got the identical paragraph back, word for word, each time.
+//
+// Three separate faults, three fixes below.
+
+// 1. SMALL TALK NEVER NEEDED A BRAIN. "hold on", "thanks", "you there" are turn-management, not
+//    questions. Routing them to a model is what produced a paragraph of narration about a
+//    two-word pause — and it cost a round trip to do it.
+const SMALL_TALK = [
+  [/^\s*(?:ok(?:ay)?[,\s]*)?(?:hold on|hang on|one (?:sec|second|moment)|wait|gimme a sec|give me a sec|just a sec)\b/i,
+    ['Sure.', 'Take your time.', 'No rush.']],
+  [/^\s*(?:thanks|thank you|cheers|appreciate it|nice one)\b/i, ['Anytime.', 'Of course.', 'Happy to.']],
+  [/^\s*(?:never ?mind|forget it|scratch that|ignore that)\b/i, ['No problem.', 'Dropped it.']],
+  [/^\s*(?:you there|are you there|hello|hi|hey)\s*\??\s*$/i, ['Right here.', 'Listening.', 'Here.']],
+  [/^\s*(?:sorry|my bad|oops)\b/i, ['All good.', 'No harm done.']],
+  [/^\s*(?:good|great|perfect|nice|cool|awesome|excellent)\s*[.!]?\s*$/i, ['Good.', 'Glad that works.']],
+  [/^\s*(?:ok(?:ay)?|alright|right|got it|understood)\s*[.!]?\s*$/i, ['Mm-hm.', 'Right.']],
+];
+let __st = 0;
+export function smallTalk(text) {
+  const t = String(text || '').trim();
+  if (!t || t.length > 40) return null;          // a long sentence is a real turn, not a filler
+  for (const [re, replies] of SMALL_TALK) {
+    if (re.test(t)) return replies[(__st++) % replies.length];
+  }
+  return null;
+}
+
+// 2. AXIS MUST NEVER TALK ABOUT AHMAD IN THE THIRD PERSON. A model asked to be helpful sometimes
+//    narrates its own reasoning — "The user said X, they're pausing, I'll wait." That is a note
+//    about the conversation, not a turn in it, and hearing it out loud is deeply strange.
+//    Whole sentences of it are dropped; if that leaves nothing, a short human line stands in.
+const META_SENTENCE = /(?:^|\s)(?:the user|the human|they(?:'re| are)\s+(?:pausing|waiting|asking|telling)|user (?:said|asked|wants)|i(?:'m| am)\s+(?:being asked|instructed)|as an ai|my (?:instructions|system prompt))\b/i;
+export function stripMetaNarration(text) {
+  const raw = String(text || '').trim();
+  if (!raw) return raw;
+  const sentences = raw.match(/[^.!?]+[.!?]*/g) || [raw];
+  const kept = sentences.filter((s) => !META_SENTENCE.test(s)).join(' ').replace(/\s{2,}/g, ' ').trim();
+  if (kept) return kept;
+  return 'Standing by.';                         // everything was narration — say the one useful bit
+}
+
+// 3. SAYING THE IDENTICAL PARAGRAPH AGAIN IS HOW A MACHINE ANSWERS. A person notices they are
+//    repeating themselves. This does not re-word the content — inventing variation in numbers would
+//    be worse — it just acknowledges the repeat, which is what makes it land as a conversation.
+const AGAIN = ['Same as a moment ago — ', 'Still the same — ', 'Unchanged — '];
+let __again = 0;
+export function markRepeat(text, lastText) {
+  const a = String(text || '').trim(), b = String(lastText || '').trim();
+  if (!a || a !== b) return text;
+  return AGAIN[(__again++) % AGAIN.length] + a.charAt(0).toLowerCase() + a.slice(1);
 }
