@@ -12,9 +12,25 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { makeScratchDir } from './lib/scratch-dir.mjs';
 
 const ROOT = process.cwd();
 const all = process.argv.includes('--all');
+
+// RUN-BF: the RUNNER owns the scratch floor, so no suite has to.
+//
+// RUN-BC traced a flickering site suite to `ENOSPC ... mkdtemp` on the volume holding the working
+// copy, and RUN-BE extracted `scratch-dir.mjs` so a caller could survive it. Both remedies required
+// every suite to opt in, and most do not: a suite calling `os.tmpdir()` directly still dies, and it
+// dies with an error about mkdtemp rather than about the thing under test. Measured this cycle: 33
+// of 84 suites failed that way on a run where the identical tree read 84/84 with the scratch path
+// redirected, and not one failure was about the code.
+//
+// A remedy each caller has to remember is a remedy that only works on the callers that remembered.
+// The runner is the one place every suite passes through, so it picks a directory that has been
+// PROVEN writable and hands it to every child. A suite may still override it; nothing has to.
+const SCRATCH = makeScratchDir('run-tests-');
+const ENV = { ...process.env, TMPDIR: SCRATCH, TEMP: SCRATCH, TMP: SCRATCH, AXIS_SCRATCH_DIR: process.env.AXIS_SCRATCH_DIR || SCRATCH };
 
 // The guard set: the suites that protect the AXIS Command Center shell and the deploy surface.
 // Kept small on purpose so there is no excuse to skip it.
@@ -43,7 +59,7 @@ const failed = [];
 for (const f of files) {
   if (!fs.existsSync(path.join(ROOT, f))) { failed.push([f, 'missing']); continue; }
   try {
-    execFileSync(process.execPath, [f], { cwd: ROOT, stdio: 'pipe', timeout: 120000 });
+    execFileSync(process.execPath, [f], { cwd: ROOT, stdio: 'pipe', timeout: 120000, env: ENV });
     passed++;
   } catch (e) {
     const out = (e.stdout?.toString() || '') + (e.stderr?.toString() || '');
