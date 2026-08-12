@@ -108,6 +108,16 @@ export const PUBLISHED_SURFACES = Object.freeze([
     why: "the home page states a response commitment in prose, attached to a price band rather than to a matrix tier",
     kind: "prose",
   }),
+  Object.freeze({
+    // Named by RUN-AY before this module existed, and it is the most dangerous of the three: a
+    // security reviewer works through this document, and the sentence carries NO TIER at all. Both
+    // it and the MSA ship in the same packet, so one buyer can be handed a tiered commitment and an
+    // untiered one in the same week — and the untiered one reads as the floor for everybody.
+    file: "compliance/SIG-Lite-prefilled.md",
+    what: "the pre-filled SIG-Lite a security reviewer completes",
+    why: "states a P1 and a P2 with no tier written beside them, in a packet that also carries the tiered agreement",
+    kind: "prose",
+  }),
 ]);
 
 /** MSA tier label → published tier label. Declared, with a reason. Never inferred. */
@@ -281,23 +291,59 @@ export function readPublished({ root = process.cwd(), surfaces = PUBLISHED_SURFA
       continue;
     }
 
-    // prose
-    const proseRe = /([^<>\n]{0,80}?(?:response|respond|reply)[^<>\n]{0,80})/gi;
+    // prose.
+    // `response|respond|reply` alone was not enough — found by running it against the surface RUN-AY
+    // had already named. The SIG-Lite sentence a security reviewer reads is "P1 within 1 hour to
+    // Customer. P2 within 4 hours", which contains none of those three words and is the single most
+    // exposed commitment in the packet. A matcher that misses the dangerous sentence and catches the
+    // safe one is worse than no matcher, because it reports a clean scan.
+    const proseRe = /([^<>\n|]{0,80}?(?:response|respond|reply|\bP[12]\b|SLA)[^<>\n|]{0,90})/gi;
     let p, seen = 0;
+    const already = new Set();
     while ((p = proseRe.exec(text)) !== null) {
       const frag = p[1].trim();
       const num = frag.match(/(\d+)\s*(hour|hr|minute|min)s?/i);
       if (!num) continue;
       const parsed = parseCommitment(`${num[1]} ${num[2]}`);
       if (!parsed) continue;
+      const line = lineOf(text, p.index);
+      // A priority named in the sentence is carried; its ABSENCE is the finding on this surface.
+      const pri = frag.match(/\bP([12])\b/i);
+      const row = pri ? `P${pri[1]}` : null;
+      const key = `${line}:${row}:${parsed.text}`;
+      if (already.has(key)) continue;
+      already.add(key);
       seen++;
       unattached.push({
-        class: CLASS.PUBLISHED, file: s.file, line: lineOf(text, p.index),
-        tier: null, row: null, commitment: parsed,
+        class: CLASS.PUBLISHED, file: s.file, line,
+        tier: null, row, commitment: parsed,
         evidence: frag.slice(0, 160),
-        why: "stated against a price band rather than a matrix tier, so no tier row can be checked against it",
+        why: row
+          ? `states a ${row} commitment with no tier written beside it, so it reads as the floor for every customer`
+          : "stated against a price band rather than a matrix tier, so no tier row can be checked against it",
       });
     }
+    // A second, narrower pass. The generic one above takes the FIRST number in a fragment, so a
+    // sentence carrying two commitments — "P1 within 1 hour to Customer. P2 within 4 hours" — was
+    // reported as one. Each priority/duration pair is picked up on its own terms here.
+    const pairRe = /\bP([12])\b[^<>\n|]{0,40}?(\d+)\s*(hour|hr|minute|min)s?/gi;
+    let q;
+    while ((q = pairRe.exec(text)) !== null) {
+      const parsed = parseCommitment(`${q[2]} ${q[3]}`);
+      if (!parsed) continue;
+      const line = lineOf(text, q.index);
+      const row = `P${q[1]}`;
+      const key = `${line}:${row}:${parsed.text}`;
+      if (already.has(key)) continue;
+      already.add(key);
+      seen++;
+      unattached.push({
+        class: CLASS.PUBLISHED, file: s.file, line, tier: null, row, commitment: parsed,
+        evidence: q[0].trim().slice(0, 160),
+        why: `states a ${row} commitment with no tier written beside it, so it reads as the floor for every customer`,
+      });
+    }
+
     if (!seen) unreadable.push({ file: s.file, what: s.what, reason: "the file is present and states no readable response commitment" });
   }
   return { published, unattached, unreadable };

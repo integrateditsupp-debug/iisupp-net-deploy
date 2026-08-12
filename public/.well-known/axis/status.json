@@ -6,7 +6,7 @@
  "headline": "ARIA / AXIS is in active build and is voice-operable: the spoken status answer reads this feed, and this feed is regenerated from measurements taken this cycle. Sent: 0. Meetings 0, revenue none. Tests: 1074 pass, 0 fail, 372/372 suites; site suite 82/82.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
  "schema": "axis-status/1",
- "generatedAt": "2026-08-12T00:52:54.482Z",
+ "generatedAt": "2026-08-12T01:00:25.301Z",
  "public": true,
  "honest": true
 }

@@ -46,6 +46,30 @@ It sits on a retainer deck priced **$14,000 – $24,000 / mo**, which is a price
 tier. It is recorded here as UNATTACHED: it may well describe the Small Business tier, whose bound P1
 is exactly 1 hr, but "may well" is not a mapping, and the audit is forbidden from inventing one.
 
+## The surface that matters most, and it has no tier at all
+
+RUN-AY named this before the audit existed, and adding it here is the reason the audit exists.
+`compliance/SIG-Lite-prefilled.md:105` — the pre-filled security questionnaire a customer's reviewer
+works through — answers the incident-notification SLA question:
+
+> **P1 within 1 hour to Customer. P2 within 4 hours.**
+
+**No tier is written beside either number.** The SIG-Lite and the MSA ship in the same packet, so one
+buyer can be handed both in the same week, and an untiered sentence reads as the floor for everybody:
+
+- Against **Personal** ($899/mo, bound to next business day) it over-promises by roughly a day.
+- Against **Pro** ($2,250/mo, bound to 4 hr) it over-promises by three hours.
+- Against **Enterprise** (bound to 15 min) it *under*-sells the tier by 45 minutes, in the document a
+  reviewer uses to decide whether the tier is worth its price.
+
+It is wrong in both directions at once, which is what an unqualified commitment always is.
+
+Two matcher notes, recorded because both were found by running it rather than by reading the code:
+the sentence contains none of the words `response`, `respond` or `reply`, so the first matcher missed
+the most dangerous surface while catching the safe one — a scan that reports clean by not looking. And
+the sentence carries **two** commitments, so a matcher taking the first number in a fragment reported
+one. Both are now their own finding, and both are held by a fixture.
+
 ## Why this is a decision and not a bug to be fixed quietly
 
 Three separate things are wrong and they have three different remedies, so collapsing them into one
@@ -80,6 +104,11 @@ The two documents disagree. Answering Q2 decides which one gets corrected.
 If yes, the mapping gets declared and the 1-hour line becomes checkable. If no, the line is restated
 against something a buyer can act on.
 
+**Q4 — Does the SIG-Lite sentence get a tier written beside it?**
+This is the cheapest of the four and the most exposed. It is one sentence, it is in a document handed
+to security reviewers, it currently over-promises to two tiers and under-sells a third, and **nobody
+is owed it yet** — which is the only window in which fixing it costs nothing.
+
 ## How the answer is recorded
 
 One file, written by Ahmad or on his explicit instruction, never by software:
@@ -104,7 +133,8 @@ commitment is published nowhere** — there is no code path that produces it, an
 
 ```
 response times: UNDECIDED — 10 commitment(s) bound by the agreement and published nowhere,
-1 stated in prose against a price band rather than a tier
+3 stated in prose with no tier beside them
 ```
 
-10 bindings · 0 published · 0 tier-mapping failures · 1 unattached · 0 unreadable.
+10 bindings · 0 published on the buying surface · 0 tier-mapping failures · 3 unattached · 0
+unreadable. Held by 22 tests in `tests/response-time-consistency.test.mjs`.

@@ -240,6 +240,36 @@ test("prose stated against a price band is UNATTACHED — reported, and never ma
   });
 });
 
+test("an UNTIERED priority commitment is caught, and both halves of one sentence are counted separately", () => {
+  withFixture({
+    "legal/MSA-template.md": MSA({ Enterprise: "15 min" }, { Enterprise: "1 hr" }),
+    "plans/index.html": MATRIX(),
+    // The shape RUN-AY found in the SIG-Lite: no tier written beside either number, and two
+    // commitments in one sentence. A matcher that reports this as one finding has missed one.
+    "compliance/SIG-Lite-prefilled.md": "| J.3 | Incident notification SLA? | P1 within 1 hour to Customer. P2 within 4 hours. |",
+  }, (dir) => {
+    const r = auditResponseTimes(SURF(dir));
+    const rows = r.unattached.map((u) => u.row).sort();
+    assert.deepEqual(rows, ["P1", "P2"], "each priority in the sentence is its own commitment");
+    for (const u of r.unattached) {
+      assert.equal(u.tier, null, "the finding is precisely that no tier is written beside it");
+      assert.match(u.why, /floor for every customer/);
+    }
+    assert.notEqual(r.verdict, VERDICT.CONSISTENT);
+  });
+});
+
+test("a document that mentions a priority but commits to no duration produces no commitment", () => {
+  withFixture({
+    "legal/MSA-template.md": MSA({ Enterprise: "15 min" }),
+    "plans/index.html": MATRIX(),
+    "compliance/SIG-Lite-prefilled.md": "| J.3 | P1 incidents are escalated to the founder immediately. |",
+  }, (dir) => {
+    const r = auditResponseTimes(SURF(dir));
+    assert.equal(r.unattached.length, 0, "'immediately' is not a duration and is never rendered as one");
+  });
+});
+
 /* ── 4. software does not pick the direction ──────────────────────────────────────────────────── */
 
 test("with no direction declared the verdict is UNDECIDED and the file that would carry it is named", () => {
