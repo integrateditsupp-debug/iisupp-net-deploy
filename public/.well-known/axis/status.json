@@ -1,12 +1,12 @@
 {
  "status": "active build",
- "milestone": "This cycle the command centre can answer the first question a stranger asks — what does this cost — honestly. Every published price is now read together rather than page by page, and the figures agree across every surface that quotes them. What the check refuses to call agreement is which company size belongs to which plan; that is being settled before anyone is quoted.",
- "readiness": "Built and tested, both suites green on the working tree this cycle. Publishing to the live site stays a deliberate manual step by the operator, never automatic. Pricing and the names of the plans are under review before they are published rather than after, so that a customer is quoted the same thing whichever page they arrive on.",
+ "milestone": "The assistant now has a full-screen presence you can talk to, and the work that built it is no longer sitting on one machine unrecorded. This cycle also closed a gap in how the build checks itself: every piece of code the site sends to a browser is now handed to the engine that runs it before anything is published, so a file that could not load can no longer pass as working.",
+ "readiness": "Built and tested, both suites green on the working tree this cycle, and every shipped script verified to load. Publishing to the live site stays a deliberate manual step by the operator, never automatic. Pricing and the names of the plans remain under review before they are published rather than after, so a customer is quoted the same thing whichever page they land on.",
  "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build and is voice-operable: the spoken status answer reads this feed, and this feed is regenerated from measurements taken this cycle. Sent: 0. Meetings 0, revenue none. Tests: 1074 pass, 0 fail, 372/372 suites; site suite 84/84.",
+ "headline": "ARIA / AXIS is in active build and is voice-operable: the spoken status answer reads this feed, and this feed is regenerated from measurements taken this cycle. Sent: 0. Meetings 0, revenue none. Tests: 1074 pass, 0 fail, 372/372 suites; site suite 87/87.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
  "schema": "axis-status/1",
- "generatedAt": "2026-08-12T02:11:15.147Z",
+ "generatedAt": "2026-08-12T02:52:46.115Z",
  "public": true,
  "honest": true
 }
