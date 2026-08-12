@@ -294,8 +294,19 @@ function stripTrailingOffer(text) {
 // 'are'", which sailed through the gate and was banked as a real answer five times.
 const BROKEN_PROMPT = /\b(got cut off|all i received|all that came through|could you (share|clarify|resend)|what would you like me to|your message (is|was|got)|didn'?t (receive|get) )\b/i;
 
+// A question about LIVE STATE is never knowledge — its answer is stale in minutes and recalls at
+// 55%+ forever. Measured 2026-08-12: "tell me the most prioritized item" was banked promoted:true
+// and would have answered every future asking of it with that afternoon's board. Deixis the same:
+// "tell me more about that" was banked as the timeless answer "I don't have anything to point back
+// to". Mirrors the gate in axis-brain-queue.mjs's learn action, because bank() writes to Blobs
+// DIRECTLY and never passes through it. "status" is listed and "update" is not, deliberately —
+// "give me status update" is state, "how do I fix a stuck windows update" is knowledge.
+const STATE_QUERY = /\b(?:priorit\w*|queued?|board|overdue|status|working on|to.?dos?|follow.?ups?|due today|most (?:urgent|overdue|important)|in (?:the )?queue)\b/i;
+const DEIXIS = /^\s*(?:tell me more|more about|go on|continue|what about (?:it|that|them)|about (?:it|that))\b|\b(?:you (?:already|just) said|said that|talking about|not what i)\b/i;
+
 const worthLearning = (q, a) =>
   String(q).trim().length >= 12 && !SLOP.test(String(q).trim()) &&
+  !STATE_QUERY.test(String(q)) && !DEIXIS.test(String(q)) &&
   stripTrailingOffer(a).length >= 60 && !SLOP.test(stripTrailingOffer(a)) &&
   !NON_ANSWER.test(String(a)) && !BROKEN_PROMPT.test(String(a)) && !/\?\s*$/.test(stripTrailingOffer(a));
 

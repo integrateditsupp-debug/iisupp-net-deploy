@@ -84,6 +84,21 @@ export default async (request) => {
   if (action === 'learn') {
     const { key, topic, question, body: text, source } = body;
     if (!key || !text) return json(400, { error: 'key and body required' });
+    // The gate at the CHOKE POINT, because both bankers (the cloud cascade's learnBack and the
+    // local worker's bank()) flow through here and each had its own partial gate. Measured
+    // 2026-08-12, the store held — promoted:true, recall-eligible — "tell me the most prioritized
+    // item", "give me status update", "tell me what do we have in the queue", "you already said
+    // that what are the", "listen look at". Each is a future wrong answer: a question about LIVE
+    // STATE banks an answer that is stale in minutes and recalls at 55%+ forever; a continuation
+    // or a correction banks a sentence about the conversation, not the world. "status" is in the
+    // list and "update" is not, deliberately — "give me status update" is state, "how do I fix a
+    // stuck windows update" is knowledge.
+    const qq = String(question || topic || '').trim();
+    const STATE_QUERY = /\b(?:priorit\w*|queued?|board|overdue|status|working on|to.?dos?|follow.?ups?|due today|most (?:urgent|overdue|important)|in (?:the )?queue)\b/i;
+    const DEIXIS = /^\s*(?:tell me more|more about|go on|continue|what about (?:it|that|them)|about (?:it|that))\b|\b(?:you (?:already|just) said|said that|talking about|not what i)\b/i;
+    if (STATE_QUERY.test(qq) || DEIXIS.test(qq) || qq.split(/\s+/).filter(Boolean).length < 3) {
+      return json(200, { ok: false, reason: 'not-knowledge', detail: 'state, deixis, or garble — never banked' });
+    }
     try {
       const kb = getStore({ name: 'aria-kb-live', consistency: 'strong' });
       const now = new Date().toISOString();

@@ -492,6 +492,27 @@ const OPS = [
     say: (a) => `Have Claude Code fix: ${a || 'the reported issue'}` },
 ];
 
+// ── Production directions ────────────────────────────────────────────────────
+// Ahmad, 2026-08-12, by voice: "videos sound very robotic have it sound more smooth human-like and
+// make it more clear text on the page one for the cover so that it attracts people's attention."
+// That is a DIRECTION for the video pipeline — voice settings, covers, quality all live in this
+// repo — and it had nowhere to land: no op matched, so the brain cascade keyword-matched it into a
+// Teams helpdesk article. It also hides inside status asks ("what's the status of the YouTube
+// videos AND can we enhance the quality"), where video.status ran and the direction was silently
+// dropped. Detected separately from OPS so the caller can check for it AFTER a status op too.
+// Routed to Claude Code (code.build) on confirm: the pipeline is code, and editing code is what
+// Claude Code is for — this is "talk to AXIS as if talking to Claude" for production work.
+const VIDEO_DIRECTION_RE = /\b(?:videos?|shorts?|clips?|covers?|thumbnails?|voice ?over|narration)\b[^.?!]*\b(?:sounds?|looks?|quality|robotic|human|smoother?|clearer?|attracts?|enhanc\w+|improv\w+|better|image|text)\b|\b(?:enhance|improve|upgrade|sharpen)\b[^.?!]*\b(?:videos?|shorts?|quality|covers?|thumbnails?|audio|voice)\b/i;
+const VIDEO_DIRECTION_ASK = /^\s*(?:how|why|when|where|who|which|is|are|does|do|did)\b|^\s*what(?!\s+about)\b/i;
+export function detectVideoDirection(text) {
+  const t = String(text || '').trim();
+  if (t.length < 12) return null;
+  if (!VIDEO_DIRECTION_RE.test(t)) return null;
+  if (VIDEO_DIRECTION_ASK.test(t)) return null;         // "why do the videos sound robotic" is a question
+  return { kind: 'video.direct', arg: t,
+    confirm: 'Hand that to Claude Code as a direction for the video pipeline — voice, covers and quality live in the repo it edits. Say confirm, or cancel.' };
+}
+
 export function detectOp(text) {
   const t = String(text || '').trim();
   if (!t || t.length < 4) return null;

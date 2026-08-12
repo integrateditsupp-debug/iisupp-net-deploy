@@ -20,7 +20,7 @@ import { toggleHologram } from './axis-hologram.js';
 import { axisPersonaBonus, AXIS_PROSODY, VOICE_POLICY_REV, ackLine, greetLine, routeTail,
   isWake, isStop, isConfirm, isDeny, stripWake, smallTalk, stripMetaNarration, markRepeat,
   voiceProfile, voiceFamily, polishForSpeech, speechify, phraseChunks,
-  splitForTurns, isContinue, isReferential, detectOp } from './axis-persona.js';
+  splitForTurns, isContinue, isReferential, detectOp, detectVideoDirection } from './axis-persona.js';
 
 const TOKEN_KEY = 'aperture_jwt';
 
@@ -1617,6 +1617,13 @@ async function axisRunOp(op) {
     dockLog.push({ role: 'axis', text: line }); renderDock(); axisSpeakTurn(line);
     return;
   }
+  // A confirmed video direction is a Claude Code job: the pipeline's voice, covers and quality are
+  // code in this repo, and code.build is already the rail with edit permission. Framed so the model
+  // knows it is production direction, not a bug report.
+  if (op.kind === 'video.direct') {
+    op = { kind: 'code.build',
+      arg: 'Direction for the YouTube video pipeline, from Ahmad by voice. Find the pipeline scripts (TTS/voice settings, thumbnail/cover generation) and apply it: ' + op.arg };
+  }
   try {
     const r = await fetch('/.netlify/functions/axis-brain-queue', {
       method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }),
@@ -1832,10 +1839,34 @@ async function axisSend(inputId = 'axisInput') {
   // Does this ask AXIS to DO something? Read it back and wait, except for read-only checks.
   const op = detectOp(text);
   if (op) {
-    if (op.kind === 'video.status' || op.kind === 'fleet.status') { await axisRunOp(op); return; }
+    if (op.kind === 'video.status' || op.kind === 'fleet.status') {
+      await axisRunOp(op);
+      // A status ask often carries a direction in the same breath — "what's the status of the
+      // YouTube videos AND can we enhance the quality" (2026-08-12). The status used to claim the
+      // whole utterance and the direction evaporated. Park it for a confirm like any other op.
+      const dir = detectVideoDirection(text);
+      if (dir) {
+        axisPendingOp = { ...dir, t: Date.now() };
+        dockLog.push({ role: 'axis', text: dir.confirm }); renderDock();
+        axisSpeakTurn(dir.confirm);
+      }
+      return;
+    }
     axisPendingOp = { ...op, t: Date.now() };
     dockLog.push({ role: 'axis', text: op.confirm }); renderDock();
     axisSpeakTurn(op.confirm);
+    return;
+  }
+
+  // A production direction with no op verb — "videos sound very robotic, have it sound more
+  // human-like, make the cover text clearer" — is WORK, not a question. Unrouted, the cascade's
+  // keyword tiers matched it into a Teams helpdesk article (2026-08-12, verbatim). It goes to
+  // Claude Code on confirm, like any other build instruction.
+  const dir = detectVideoDirection(text);
+  if (dir) {
+    axisPendingOp = { ...dir, t: Date.now() };
+    dockLog.push({ role: 'axis', text: dir.confirm }); renderDock();
+    axisSpeakTurn(dir.confirm);
     return;
   }
 

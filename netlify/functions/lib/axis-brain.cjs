@@ -215,6 +215,36 @@ async function learnBack({ query, answer, tier, source, origin, auth }, now = Da
   } catch (_) { return { learned: false, reason: 'unreachable' }; }
 }
 
+// ── Conversation detector ────────────────────────────────────────────────────
+// The keyword tiers see ONE bare sentence and score word overlap. That is right for a lookup
+// ("printer is offline") and catastrophically wrong for a turn in a conversation. Measured
+// 2026-08-12, verbatim: "videos sound very robotic have it sound more smooth human-like" pulled
+// the "Teams: no audio in meetings" helpdesk article (sound/audio overlap); the correction
+// "I don't know what are you talking about teams I'm talking about YouTube" contained the word
+// "teams" and RE-MATCHED the same article; "that's not what I'm asking you about" pulled outreach
+// copy. Three turns of a person being misunderstood, each answered by a document matcher.
+//
+// A CORRECTION or an INSTRUCTION is not a knowledge question. Only the tier that reads the
+// conversation — the subscription worker, which gets the turns and the board — can answer one.
+// Lookup verbs (tell/show/list/what/how) stay OUT of the instruction test on purpose, so genuine
+// questions still hit the $0 banked tiers first.
+const CORRECTION = new RegExp(
+  '\\b(?:that\'?s |this is )?not what i(?:\'m| am| was)? (?:asking|talking|saying|meant?)'
+  + '|\\bi(?:\'m| am) talking about\\b'
+  + '|\\bwhat are you talking about\\b'
+  + '|\\byou(?:\'re| are)? (?:not listening|misunderstanding|off topic)\\b'
+  + '|\\bwrong (?:answer|topic|thing)\\b'
+  + '|\\bi didn\'?t ask\\b'
+  + '|\\bno[,.]? i (?:said|meant|asked)\\b'
+  + '|\\bnothing to do with\\b'
+  + '|\\bstill (?:wrong|not it|not what)\\b', 'i');
+const INSTRUCTION_LEAD = /^\s*(?:(?:ok(?:ay)?|all right|alright|please|now|just|so|and|then|also|looks?|perfect)[,\s]+)*(?:have|make|give|let|set|change|update|ensure|turn|adjust|improve|enhance|render|keep|redo|rework)\b/i;
+const INSTRUCTION_BODY = /\b(?:have (?:it|them|the \w+)|make (?:it|them|the \w+)|it should|they should|sound (?:more|less|smoother|better)|look (?:more|less|smoother|better)|more human|less robotic|human[- ]?like)\b/i;
+function isConversational(query) {
+  const q = String(query || '');
+  return CORRECTION.test(q) || INSTRUCTION_LEAD.test(q) || INSTRUCTION_BODY.test(q);
+}
+
 // ── The cascade ──────────────────────────────────────────────────────────────
 // Returns an answer from the cheapest tier that has one, or null so the caller escalates to the
 // metered API. `skip` lets tests and callers disable a tier without editing this file.
@@ -222,6 +252,9 @@ async function askBrain({ query, turns = [], board = '', origin, auth, skip = []
   const q = String(query || '').trim();
   if (!q) return null;
   const tried = [];
+  // A conversational turn goes straight to the tier that can see the conversation. The keyword
+  // tiers are not "skipped" so much as ineligible: they answer questions, and this is not one.
+  const conversational = isConversational(q);
 
   // Ahmad's stated order (2026-08-11): "ARIA brain > research agents > KBs we have > max plan."
   //   recall       = the ARIA brain proper — everything AXIS has previously learned and banked.
@@ -237,6 +270,7 @@ async function askBrain({ query, turns = [], board = '', origin, auth, skip = []
     ['subscription', () => subscriptionTier(q, { origin, auth, waitMs: subWaitMs, turns, board })],
   ]) {
     if (skip.includes(name)) continue;
+    if (conversational && name !== 'subscription') continue;
     tried.push(name);
     let hit = null;
     try { hit = await run(); } catch (_) { hit = null; }
@@ -245,5 +279,5 @@ async function askBrain({ query, turns = [], board = '', origin, auth, skip = []
   return null;
 }
 
-module.exports = { askBrain, stripTrailingOffer, recallTier, kbTier, researchTier, subscriptionTier, workerOnline, learnBack, isSubstantive, worthLearning,
+module.exports = { askBrain, stripTrailingOffer, recallTier, kbTier, researchTier, subscriptionTier, workerOnline, learnBack, isSubstantive, worthLearning, isConversational,
   KB_LIVE, JOBS, HEARTBEAT_KEY, HEARTBEAT_MAX_MS };
