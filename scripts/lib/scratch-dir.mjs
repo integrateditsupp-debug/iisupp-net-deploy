@@ -84,6 +84,129 @@ function sealRepoBoundary(base) {
   process.env.GIT_CEILING_DIRECTORIES = prev ? `${prev}:${ceiling}` : ceiling;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// RUN-BL / BL3. THE FAILURE THAT NAMES THE FIX.
+//
+// RUN-BK watched the gate above catch a suite that had not existed when the cycle began: another
+// seat wrote `tests/axis-vault-brain.test.mjs`, took `mkdtempSync(os.tmpdir())` in it, and three
+// minutes later the site suite read 95/96. The gate was right and it was fast. What it could not do
+// was tell that writer ANYTHING except that they were wrong — the message named the module but not
+// the line, so meeting it costs a reader a detour into someone else's file to work out what the
+// substitution actually is.
+//
+// A guard that reports a verdict makes the same writer pay the same tax every time. A guard that
+// reports the one-line substitution is read once and obeyed. So the offending line is quoted back
+// with its number, and the exact replacement is printed under it. Nothing here edits a file: a file
+// another seat is actively writing is the wrong thing to reach into (R16), and a gate that silently
+// rewrote a stranger's test would be a far worse failure than the one it is preventing.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const IMPORT_LINE = 'import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";';
+
+/**
+ * Every shape of "scratch space that was never probed" this repository has actually met, each with
+ * the substitution that replaces it. Declared, not inferred — a pattern list that grows by evidence.
+ */
+export const RAW_SCRATCH_PATTERNS = Object.freeze([
+  // The `fs.` (or any object) prefix is part of what gets replaced. Written the other way round
+  // first, and the gate printed `const tmp = fs.makeScratchDir(...)` — a substitution that does not
+  // run. A guard that prints a fix which does not compile has replaced one detour with a worse one,
+  // so the replacement text is proven by test against every shape below, not eyeballed.
+  Object.freeze({
+    id: "mkdtemp-path-join-tmpdir",
+    re: /(?:[A-Za-z_$][\w$]*\.)?mkdtempSync\(\s*path\.join\(\s*os\.tmpdir\(\)\s*,\s*([^)]*?)\s*\)\s*\)/,
+    replace: (m) => `makeScratchDir(${String(m[1]).trim() || '"scratch-"'})`,
+    why: "mkdtemp can succeed on a full volume; the write after it is what fails",
+  }),
+  Object.freeze({
+    id: "mkdtemp-tmpdir-direct",
+    re: /(?:[A-Za-z_$][\w$]*\.)?mkdtempSync\(\s*os\.tmpdir\(\)\s*(?:\+\s*([^)]*?))?\s*\)/,
+    replace: (m) => `makeScratchDir(${m[1] ? String(m[1]).trim() : '"scratch-"'})`,
+    why: "the same call without the join — equally unprobed",
+  }),
+  Object.freeze({
+    // Only the `os.tmpdir()` TOKEN is replaced, and the surrounding `path.join(...)` is left exactly
+    // as its author wrote it. Replacing the whole call would change what the expression evaluates to
+    // — a directory instead of a file path — and the printed fix would silently break the suite it
+    // was offered to.
+    // Anchored on `path.join(` on purpose: a bare `os.tmpdir()` also appears in suites that
+    // deliberately exercise a hostile TMPDIR, and flagging those would make the gate a nuisance
+    // rather than a floor. Precision here is what keeps it obeyed.
+    id: "tmpdir-joined-by-hand",
+    re: /path\.join\(\s*os\.tmpdir\(\)/,
+    replace: () => 'path.join(makeScratchDir("scratch-")',
+    why: "a path built under os.tmpdir() by hand is the same unprobed volume with extra steps",
+  }),
+]);
+
+/**
+ * Read a source file and return every unprobed-scratch line in it, each with the line number, the
+ * text as written, and the line that replaces it.
+ *
+ * PURE — takes text, returns findings. No filesystem, so the gate can prove it against fixtures.
+ * @returns {Array<{pattern:string, line:number, found:string, replacement:string, why:string}>}
+ */
+/**
+ * Is the match at `index` inside a quoted string on this line?
+ *
+ * RUN-BL / BL3, found by running it: the suite that PROVES the substitutions necessarily contains
+ * every offending shape as DATA — `line: "const d = fs.mkdtempSync(...)"` — and a gate that reads
+ * raw text flagged its own fixtures. So did a prose comment describing the old call. A guard that
+ * cannot tell code from the text describing code is a guard that gets suppressed within a week.
+ * Code is what is flagged; a string literal and a comment are not code.
+ */
+export function insideQuotesOrComment(text, index) {
+  const before = text.slice(0, index);
+  const trimmed = text.trimStart();
+  if (trimmed.startsWith("//") || trimmed.startsWith("*") || trimmed.startsWith("/*")) return true;
+  if (before.includes("//")) return true; // a trailing comment on a code line
+  for (const q of ['"', "'", "`"]) {
+    // An escaped quote does not open or close a string.
+    const opens = (before.match(new RegExp(`(?<!\\\\)${q === "\\" ? "\\\\" : q}`, "g")) || []).length;
+    if (opens % 2 === 1) return true;
+  }
+  return false;
+}
+
+export function scratchSubstitutions(source) {
+  const out = [];
+  const lines = String(source ?? "").split("\n");
+  lines.forEach((text, i) => {
+    for (const p of RAW_SCRATCH_PATTERNS) {
+      const m = text.match(p.re);
+      if (!m) continue;
+      if (insideQuotesOrComment(text, m.index)) continue;
+      out.push({
+        pattern: p.id,
+        line: i + 1,
+        found: text.trim(),
+        replacement: text.replace(p.re, p.replace(m)).trim(),
+        why: p.why,
+      });
+      break; // one finding per line: the first pattern that matches is the one to substitute
+    }
+  });
+  return out;
+}
+
+/** The message a writer meets. Names the file, the line, the substitution, and the import. */
+export function substitutionReport(file, findings) {
+  if (!findings.length) return "";
+  const body = findings.map((f) =>
+    `  ${file}:${f.line}\n` +
+    `    found:   ${f.found}\n` +
+    `    replace: ${f.replacement}\n` +
+    `    why:     ${f.why}`).join("\n");
+  return `${body}\n    import:  ${IMPORT_LINE}`;
+}
+
+/** Printed when every candidate refuses, so the failure is actionable rather than final. */
+export const SUBSTITUTION_HINT =
+  "  every candidate refused a write. Set AXIS_SCRATCH_DIR to a path on a volume with space and it " +
+  "is tried FIRST, before anything is guessed:\n" +
+  "    AXIS_SCRATCH_DIR=/some/writable/dir node scripts/run-tests.mjs --all\n" +
+  `  and in a suite, obtain scratch space with:  ${IMPORT_LINE}`;
+
 export function makeScratchDir(prefix = "scratch-") {
   const failures = [];
   for (const pick of CANDIDATES) {
@@ -113,7 +236,9 @@ export function makeScratchDir(prefix = "scratch-") {
       try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* a full volume can refuse unlink too */ }
     }
   }
-  throw new Error(`no writable scratch location — ${failures.join("; ") || "no candidate produced a path"}`);
+  throw new Error(
+    `no writable scratch location — ${failures.join("; ") || "no candidate produced a path"}\n${SUBSTITUTION_HINT}`,
+  );
 }
 
 /** Run `fn` against a fresh scratch directory and remove it afterwards, even on throw. */
@@ -122,4 +247,7 @@ export function withScratchDir(prefix, fn) {
   try { return fn(dir); } finally { try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* best effort */ } }
 }
 
-export default { makeScratchDir, withScratchDir, CANDIDATES };
+export default {
+  makeScratchDir, withScratchDir, CANDIDATES,
+  scratchSubstitutions, substitutionReport, RAW_SCRATCH_PATTERNS, IMPORT_LINE, SUBSTITUTION_HINT,
+};

@@ -16,7 +16,7 @@ import path from "node:path";
 import os from "node:os";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { makeScratchDir, CANDIDATES } from "../scripts/lib/scratch-dir.mjs";
+import { makeScratchDir, CANDIDATES, scratchSubstitutions, substitutionReport, insideQuotesOrComment } from "../scripts/lib/scratch-dir.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const TESTS = HERE;
@@ -25,15 +25,33 @@ const TESTS = HERE;
 const RAW_SCRATCH = /mkdtempSync\(\s*path\.join\(\s*os\.tmpdir\(\)/;
 
 test("BH2 — no suite obtains a scratch directory without the probe", () => {
+  // RUN-BL / BL3: the gate still fails the same suites; what changed is what a writer READS when it
+  // does. BK watched this catch a file another seat had written three minutes earlier, and all it
+  // could say was "you are wrong, go read a module". Now it quotes the offending line back with its
+  // number and prints the line that replaces it, so meeting this costs one edit rather than a detour.
   const offenders = [];
+  const reports = [];
   for (const f of fs.readdirSync(TESTS).filter((n) => n.endsWith(".test.mjs"))) {
     const src = fs.readFileSync(path.join(TESTS, f), "utf8");
-    if (RAW_SCRATCH.test(src)) offenders.push(f);
+    const findings = scratchSubstitutions(src);
+    if (!findings.length) {
+      // Belt and braces: the original single pattern must never outlive the list that replaced it.
+      // Applied line by line and only to CODE, because the suite that proves the substitutions holds
+      // every offending shape as fixture data and a string is not a call (BL3).
+      const missed = src.split("\n").filter((l) => {
+        const m = l.match(RAW_SCRATCH);
+        return m && !insideQuotesOrComment(l, m.index);
+      });
+      assert.deepEqual(missed, [], `${f} matches the original raw-scratch pattern in code and produced no substitution — the pattern list has a hole in it`);
+      continue;
+    }
+    offenders.push(f);
+    reports.push(substitutionReport(path.join("tests", f), findings));
   }
   assert.deepEqual(offenders, [],
-    `these suites take a scratch directory that has never been probed for writes: ${offenders.join(", ")}. ` +
-    "Use makeScratchDir(prefix) from scripts/lib/scratch-dir.mjs — mkdtemp can succeed on a full volume; " +
-    "the write after it is what fails.");
+    "these suites take a scratch directory that has never been probed for writes — mkdtemp can " +
+    "succeed on a full volume; the write after it is what fails. The substitution, line by line:\n" +
+    `${reports.join("\n")}`);
 });
 
 test("BH2 — the directory it returns actually accepts content, not just a name", () => {

@@ -144,4 +144,85 @@ export function validateReading(reading, { root = process.cwd(), local = DEFAULT
   return { valid: true, reason: `taken against ${usedRef}, the reference this checkout resolves to` };
 }
 
-export default { resolveBranchReference, branchDistance, validateReading, REFERENCE_CLASSES, BRANCH_REFERENCE_SCHEMA };
+// ─────────────────────────────────────────────────────────────────────────────
+// RUN-BL / BL2. THE PART THAT MAKES THE ABOVE MATTER: BEING CALLED.
+//
+// BH1 built everything above and nothing consumed it. Three cycles running, the branch reading in
+// the ledger was taken BY HAND, and the two modules that actually measure the distance —
+// `unpublished-range.mjs` and `range-bundle.mjs` — carried `ref = "origin/main"` as a DEFAULT
+// PARAMETER. A module written to stop a reading being taken against a stale pointer sat beside two
+// modules whose default was that exact pointer. A guard nothing calls is a comment.
+//
+// `resolveReadingRef` is what a caller uses instead of typing a ref. It does NOT substitute: an
+// explicitly-requested ref is honoured exactly as asked, because a caller with a fixture repository
+// means the ref it named and silently swapping it would make the fixture untestable. What it does
+// is force the reading to CARRY the reference — requested, resolved, and whether the two agree —
+// so that a number and the thing it was measured from can never again travel separately.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** The value a caller passes to mean "you work out what the reference is here". */
+export const RESOLVE_HERE = null;
+
+/**
+ * Resolve the ref a range/distance reading should be taken against, and describe the choice.
+ *
+ * @param {string|null} ref  an explicit ref, or RESOLVE_HERE to let this module choose
+ * @returns {{ref:string|null, sha:string|null, requested:string|null, resolvedHere:boolean,
+ *            agreesWithReference:boolean, stale:boolean, staleBy:number|null, class:string,
+ *            statement:string}}
+ */
+export function resolveReadingRef({ root = process.cwd(), ref = RESOLVE_HERE, local = DEFAULT_LOCAL, remote = DEFAULT_REMOTE } = {}) {
+  const pick = resolveBranchReference({ root, local, remote });
+  const stale = (pick.staleBy || 0) > 0;
+
+  if (ref === RESOLVE_HERE || ref === undefined || ref === "auto") {
+    return {
+      ref: pick.reference, sha: pick.sha, requested: null, resolvedHere: true,
+      agreesWithReference: true, stale, staleBy: pick.staleBy, class: pick.class,
+      statement: pick.statement,
+    };
+  }
+
+  const agrees = ref === pick.reference;
+  const sha = resolve(ref, root);
+  return {
+    ref, sha, requested: ref, resolvedHere: false, agreesWithReference: agrees,
+    stale: stale && !agrees, staleBy: agrees ? pick.staleBy : (stale ? pick.staleBy : 0),
+    class: pick.class,
+    statement: agrees
+      ? `taken against ${ref}, which is also the reference this checkout resolves to — ${pick.statement}`
+      : stale
+        // Named, never swapped. A caller that asked for a specific ref gets it; what it does not get
+        // is the ability to publish the number without the fact that the ref lags attached to it.
+        ? `taken against ${ref} AS ASKED, while this checkout resolves to ${pick.reference} which is ` +
+          `${pick.staleBy} commit(s) further along — the distance below is real but is NOT the distance ` +
+          `to the line this machine is on, and no caller may print it as if it were`
+        : `taken against ${ref} as asked; this checkout resolves to ${pick.reference} and neither lags the other`,
+  };
+}
+
+/**
+ * RED-maker for the suites. A reading may not be published unless it names what it was measured
+ * from. Returns { ok, reason } — never throws, so a checker can report every offender in one pass
+ * rather than dying on the first.
+ */
+export function assertNamesReference(reading) {
+  if (!reading || typeof reading !== "object") {
+    return { ok: false, reason: "there is no reading here at all, and an absent reading is not a clean one" };
+  }
+  const named = reading.reference && typeof reading.reference === "object"
+    ? reading.reference.ref
+    : (reading.reference || reading.ref || null);
+  if (!named) {
+    return { ok: false, reason: "the reading carries a distance and does not name the reference it was measured from — the two numbers a stale pointer confuses are indistinguishable in this output" };
+  }
+  if (typeof reading.reference === "object" && !reading.reference.statement) {
+    return { ok: false, reason: `the reading names ${named} but does not say why that ref was the right one to measure from` };
+  }
+  return { ok: true, reason: `names ${named} as the reference it was taken against` };
+}
+
+export default {
+  resolveBranchReference, branchDistance, validateReading, resolveReadingRef, assertNamesReference,
+  REFERENCE_CLASSES, BRANCH_REFERENCE_SCHEMA, RESOLVE_HERE,
+};
