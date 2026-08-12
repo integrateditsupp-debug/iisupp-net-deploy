@@ -1,12 +1,12 @@
 {
- "status": "active build — a suite is red",
- "milestone": "The four facts a visitor is asked for when they request a custom quote now land in a defined record instead of loose prose in an inbox, and the questions in that record are read from the page itself so the two can never drift. An answer a visitor did not give is recorded as not given — never filled in with a default.",
- "readiness": "Built and tested. Both suites are reported as they read rather than rounded up: the checks held open are work in progress on the build machine, not on the published line. Publishing to the live site stays a deliberate manual step. Plan names, pricing, deposit amounts and how a custom quote is priced stay under review before publication, not after.",
+ "status": "active build — a lane merged, the full registry not re-run",
+ "milestone": "The newest direction for the AXIS console — the globe above the Overview deck it fronts, and an unhurried American voice — was built on top of the shared line and had never been merged into it. It is merged now, so the console a browser loads is the one most recently asked for.",
+ "readiness": "Built and tested. Measured this cycle: the merged result of the changed files was materialised and run, and both suites covering it are green. The full registry was not re-run this cycle and is therefore not claimed green, and the last figure taken is not repeated as if fresh. Publishing to the live site stays a deliberate manual step.",
  "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build and is voice-operable: the spoken status answer reads this feed, and this feed is regenerated from measurements taken this cycle. Sent: 0. Meetings 0, revenue none. Tests: 1073 pass, 1 fail (registry exit 1 — a suite is held open and is not counted as green); site suite 104/105.",
+ "headline": "ARIA / AXIS is in active build and is voice-operable: the spoken status answer reads this feed, regenerated from measurements taken this cycle. Sent: 0. Meetings 0, revenue none. Tests this cycle: both suites covering the merged change ran green on the merged result; the full registry was not re-run.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
  "schema": "axis-status/1",
- "generatedAt": "2026-08-12T16:53:38.195Z",
+ "generatedAt": "2026-08-12T17:41:35.814Z",
  "public": true,
  "honest": true
 }
