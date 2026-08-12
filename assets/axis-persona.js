@@ -368,6 +368,31 @@ const OPS = [
     notAsk: /^\s*(?:how|what|why|when|where|who|which|should|could|would)\b/i,
     say: () => 'Clear the scheduled follow-ups off the priority board — approvals stay yours to click' },
 
+  // ── Fleet management, by voice ─────────────────────────────────────────────
+  // Ahmad, 2026-08-12: "have all the agents report to axis and give axis full access to manage
+  // them." Reporting is the watchdog/steward digests already in the vault; these are the controls.
+  // fleet.status is read-only and runs unconfirmed, like video.status. run/pause/resume act on a
+  // scheduled agent and go through the spoken confirm; the worker resolves the agent against its
+  // fixed roster and reads the roster back if the name does not match.
+  { kind: 'fleet.status',
+    re: /\b(?:fleet|agents)\b[^.?!]*\b(?:status|health|healthy|failing|broken|report(?:ing)?)\b|\b(?:how (?:is|are)|check)\s+(?:the\s+)?(?:fleet|agents)\b/i,
+    say: () => 'Check the fleet' },
+  { kind: 'fleet.run',
+    re: /\b(?:run|kick off|trigger|launch|fire)\b[^.?!]*\b(?:agent|kb pull|opportunity engine|prep packets|quality gate|ceo digest|business development|interaction avoidance|workspace cleanup|watchdog|steward)\b/i,
+    notAsk: /^\s*(?:how|what|why|when|where|who|which|is|are|does|do|did|should|would|could)\b/i,
+    arg: /\b(?:run|kick off|trigger|launch|fire)\s+(?:the\s+)?(.+)$/i,
+    say: (a) => `Run the ${a || 'named'} agent now` },
+  { kind: 'fleet.pause',
+    re: /\b(?:pause|disable|hold|suspend)\b[^.?!]*\b(?:agent|kb pull|opportunity engine|prep packets|quality gate|ceo digest|business development|interaction avoidance|workspace cleanup)\b/i,
+    notAsk: /^\s*(?:how|what|why|when|where|who|which|is|are|does|do|did|should|would|could)\b/i,
+    arg: /\b(?:pause|disable|hold|suspend)\s+(?:the\s+)?(.+)$/i,
+    say: (a) => `Pause the ${a || 'named'} agent — it stays off until you resume it` },
+  { kind: 'fleet.resume',
+    re: /\b(?:resume|re-?enable|unpause|restart)\b[^.?!]*\b(?:agent|kb pull|opportunity engine|prep packets|quality gate|ceo digest|business development|interaction avoidance|workspace cleanup)\b/i,
+    notAsk: /^\s*(?:how|what|why|when|where|who|which|is|are|does|do|did|should|would|could)\b/i,
+    arg: /\b(?:resume|re-?enable|unpause|restart)\s+(?:the\s+)?(.+)$/i,
+    say: (a) => `Put the ${a || 'named'} agent back on its schedule` },
+
   { kind: 'video.short',  re: /\b(?:make|create|do|build|record)\b[^.?!]*\b(short|shorts|clip|reel)\b/i,
     arg: /\b(?:about|on|for|covering)\s+(.+)$/i,
     say: (a) => `Build a short${a ? ' about ' + a : ''}` },

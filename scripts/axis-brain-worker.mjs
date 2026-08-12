@@ -359,6 +359,48 @@ async function progress(msg, kind = 'info') {
   console.log(`[axis-brain-worker] ${msg}`);
 }
 
+// ── Fleet management ─────────────────────────────────────────────────────────
+// Ahmad, 2026-08-12: "have all the agents report to axis and give axis full access to manage them."
+// The REPORTING half already exists — the watchdog and queue steward run in this process and write
+// their digests into the vault hourly. This is the MANAGING half: run, pause, resume — against a
+// FIXED roster mapping spoken names to the exact Windows scheduled-task names the watchdog observes
+// (scripts/lib/job-registry.mjs). The roster is the safety model: the queue can name an agent, it
+// can never name a command, and an unknown name gets the roster read back instead of a guess.
+const FLEET_AGENTS = {
+  'kb pull': 'ARIA KB Pull',
+  'business development': 'IIS Business Development Agent Morning',
+  'ceo digest': 'IIS CEO Action Digest Hourly',
+  'interaction avoidance': 'IIS Interaction Avoidance Agent Hourly',
+  'opportunity engine': 'IIS Opportunity Engine Hourly',
+  'prep packets': 'IIS Opportunity Prep Packets Hourly',
+  'quality gate': 'IIS Opportunity Quality Gate Hourly',
+  'workspace cleanup': 'IIS Workspace Cleanup Agent Daily',
+};
+function resolveFleetAgent(text) {
+  const t = String(text || '').toLowerCase();
+  for (const [key, task] of Object.entries(FLEET_AGENTS))
+    if (key.split(' ').every((w) => t.includes(w))) return task;
+  return null;
+}
+// powershell.exe is a real executable, not a .cmd shim, so no shell:true — which matters because
+// this repo's path has spaces and an em dash (same reasoning as job-watchdog.mjs). The task name is
+// interpolated from OUR roster above, never from the queue, so it is letters and spaces by
+// construction.
+function psScheduledTask(verb, taskName) {
+  return new Promise((resolve) => {
+    let out = '', err = '', done = false;
+    const c = spawn('powershell.exe',
+      ['-NoProfile', '-NonInteractive', '-Command', `${verb} -TaskName "${taskName}"`],
+      { windowsHide: true });
+    const t = setTimeout(() => { if (!done) { done = true; try { c.kill(); } catch {} resolve({ error: 'timeout' }); } }, 60000);
+    c.stdout.on('data', (d) => { out += d; });
+    c.stderr.on('data', (d) => { err += d; });
+    c.on('error', (e) => { if (!done) { done = true; clearTimeout(t); resolve({ error: e.message }); } });
+    c.on('close', (code) => { if (!done) { done = true; clearTimeout(t);
+      resolve(code === 0 ? { out: out.trim() } : { error: (err || out).trim().slice(-300) || ('exit ' + code) }); } });
+  });
+}
+
 async function runTask(task) {
   const { kind, arg, confirmed } = task;
   // "Work with Claude Cowork to remove the three items you just mentioned" — the antecedent is in
@@ -402,18 +444,24 @@ async function runTask(task) {
 
   if (kind === 'fleet.status') {
     // "All the agents report to AXIS." The watchdog already gathers success evidence for every
-    // registered job hourly; this makes it pullable on demand, spoken. Read-only.
-    const r = await run(process.execPath, [path.join(REPO, 'scripts', 'job-watchdog.mjs'), '--json'], 60000);
-    if (r.error) return { error: 'watchdog failed: ' + String(r.error).slice(-200) };
+    // registered job hourly; this makes it pullable on demand, spoken. Read-only. NOT run through
+    // run(): the watchdog exits non-zero precisely when an agent is broken, and a broken agent is
+    // the answer here, never an error.
+    const r = await new Promise((resolve) => {
+      let out = '', done = false;
+      const c = spawn(process.execPath, [path.join(REPO, 'scripts', 'job-watchdog.mjs'), '--json'],
+        { cwd: REPO, env: PLAN_ENV, windowsHide: true });
+      const t = setTimeout(() => { if (!done) { done = true; try { c.kill(); } catch {} resolve(null); } }, 60000);
+      c.stdout.on('data', (d) => { out += d; });
+      c.on('error', () => { if (!done) { done = true; clearTimeout(t); resolve(null); } });
+      c.on('close', () => { if (!done) { done = true; clearTimeout(t); resolve(out); } });
+    });
+    if (!r) return { error: 'watchdog did not run' };
     try {
-      const rep = JSON.parse(String(r.out));
-      const results = Array.isArray(rep.results) ? rep.results : [];
-      const bad = results.filter((x) => !['ok', 'recovering', 'unobserved'].includes(x.status));
-      const watched = results.filter((x) => x.status !== 'unobserved').length;
-      const line = bad.length
-        ? `${bad.length} of ${watched} agents need attention: ` + bad.map((b) => `${b.label} is ${b.status}`).join(', ') + '.'
-        : `All ${watched} watched agents are healthy. Every one has succeeded inside its window.`;
-      return { answer: line };
+      const rep = JSON.parse(String(r));
+      // spokenSummary from the registry is already voice-shaped; the bad list adds the names.
+      const names = (rep.bad || []).map((b) => b.label).join(', ');
+      return { answer: String(rep.spoken || 'No report.') + (names ? ` Affected: ${names}.` : '') };
     } catch { return { error: 'watchdog output did not parse' }; }
   }
 

@@ -1806,7 +1806,7 @@ async function axisSend(inputId = 'axisInput') {
   // Does this ask AXIS to DO something? Read it back and wait, except for read-only checks.
   const op = detectOp(text);
   if (op) {
-    if (op.kind === 'video.status') { await axisRunOp(op); return; }
+    if (op.kind === 'video.status' || op.kind === 'fleet.status') { await axisRunOp(op); return; }
     axisPendingOp = { ...op, t: Date.now() };
     dockLog.push({ role: 'axis', text: op.confirm }); renderDock();
     axisSpeakTurn(op.confirm);
