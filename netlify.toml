@@ -103,6 +103,34 @@
   to = "/index.html"
   status = 404
   force = true
+# Working-tree scratch. publish = "." uploads whatever is sitting in the directory, and none of
+# these are gitignored, so without these rules a stray out1.tmp or a _to_delete/ folder becomes a
+# public URL on iisupp.net. Deny the paths rather than trusting that nobody leaves a file behind.
+[[redirects]]
+  from = "/_to_delete/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/zz_test/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/zz_test"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/.tmp-sentinel/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/*.tmp"
+  to = "/index.html"
+  status = 404
+  force = true
 [[redirects]]
   from = "/.github/*"
   to = "/index.html"
@@ -120,6 +148,12 @@
   force = true
 [[redirects]]
   from = "/artifacts/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  # Staged video media. publish="." would otherwise serve every mp4/wav from the site root.
+  from = "/content/*"
   to = "/index.html"
   status = 404
   force = true
