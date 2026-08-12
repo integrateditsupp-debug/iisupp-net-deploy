@@ -20,7 +20,7 @@ import { toggleHologram } from './axis-hologram.js';
 import { axisPersonaBonus, AXIS_PROSODY, ackLine, greetLine, routeTail,
   isWake, isStop, isConfirm, isDeny, stripWake,
   voiceProfile, voiceFamily, polishForSpeech, phraseChunks,
-  splitForTurns, isContinue, detectOp } from './axis-persona.js';
+  splitForTurns, isContinue, isReferential, detectOp } from './axis-persona.js';
 
 const TOKEN_KEY = 'aperture_jwt';
 
@@ -1581,6 +1581,33 @@ function axisSpeakTurn(text) {
   if (axisSpeak(spoken)) __turnDone = axisTurnDone; else { setAxisState('idle'); axisTurnDone(); }
 }
 
+// The conversation as the brain must see it — BOTH sides of it.
+//
+// This used to send `dockLog.filter(m => m.role === 'user')`: AXIS's own replies were stripped out
+// before the request left the browser, so the model never saw a single word it had said. That is
+// why "do what you just mentioned" drew a blank — not a memory bug, a transcript that had been
+// censored down to half a conversation. The screen showed the full exchange the whole time, which
+// is exactly what made it look like forgetting.
+//
+// Shaping rules the Messages API enforces: roles must alternate, the first message must be from the
+// user, and the last must be too. Consecutive same-role lines (AXIS often pushes two in a row) are
+// joined rather than dropped, so nothing it said is lost.
+function axisHistory(exclude) {
+  const turns = [];
+  for (const m of dockLog) {
+    if (m === exclude) continue;                       // our own '…' placeholder is not a turn
+    const text = String(m.text || '').trim();
+    if (!text || text === '…') continue;
+    const role = m.role === 'axis' ? 'assistant' : 'user';
+    const prev = turns[turns.length - 1];
+    if (prev && prev.role === role) prev.content += '\n' + text;
+    else turns.push({ role, content: text });
+  }
+  const recent = turns.slice(-16);                     // the server caps at 16; trim here too
+  while (recent.length && recent[0].role !== 'user') recent.shift();  // must OPEN on a user turn
+  return recent;
+}
+
 // Board questions are answered from the snapshot already in memory — no function call, no network,
 // no model. Ahmad, 2026-08-11: "it takes long to think." For "what needs me" that wait was pure
 // latency for data sitting in the page. Anything this cannot answer falls through untouched.
@@ -1664,7 +1691,14 @@ async function axisSend(inputId = 'axisInput') {
   //   3. A leading wake phrase is stripped so "AXIS, what's going on" asks "what's going on".
   if (isStop(raw)) {
     dockLog.push({ role: 'user', text: raw }); axisStandDown();
-    dockLog.push({ role: 'axis', text: 'Stood down.' }); renderDock(); return;
+    // Stop silences the voice. It does NOT wipe the conversation's place — the parked proposal and
+    // the un-spoken tail both survive, so "do what you just mentioned" still has an antecedent.
+    // Saying what is still held is the difference between interrupting a person and resetting a
+    // machine: you cut them off, they stop talking, and the thing they offered is still on the table.
+    const held = axisPendingOp ? axisPendingOp.confirm.replace(/\.\s*Say confirm.*$/i, '')
+      : axisHeldRest ? 'the rest of that list' : '';
+    const line = held ? 'Stood down. Still holding: ' + held + '.' : 'Stood down.';
+    dockLog.push({ role: 'axis', text: line }); renderDock(); return;
   }
   const text = stripWake(raw) || raw;
   if (axisPendingRoute) {
@@ -1681,7 +1715,7 @@ async function axisSend(inputId = 'axisInput') {
     // Anything else is simply a new question — the unconfirmed route expires, nothing is queued.
   }
   // "go on" releases the held tail of the last answer — no round trip.
-  if (axisHeldRest && isContinue(text)) {
+  if (axisHeldRest && (isContinue(text) || isReferential(text))) {
     dockLog.push({ role: 'user', text: raw });
     const rest = axisHeldRest; axisHeldRest = '';
     dockLog.push({ role: 'axis', text: rest }); renderDock();
@@ -1690,19 +1724,27 @@ async function axisSend(inputId = 'axisInput') {
   }
   dockLog.push({ role: 'user', text }); renderDock();
 
-  // A task read back last turn is now confirmed or cancelled.
+  // A task AXIS read back is confirmed, cancelled — or simply left parked.
+  //
+  // It used to be consumed after exactly one turn: whatever you said next, the proposal was gone.
+  // Say "stop" in between and it vanished silently, so "do the thing you just mentioned" had no
+  // antecedent left to point at. A proposal now survives an interruption and an aside; it expires on
+  // a timer instead, because a stale "go ahead" must never fire something offered ten minutes ago.
+  if (axisPendingOp && Date.now() - (axisPendingOp.t || 0) > 5 * 60 * 1000) axisPendingOp = null;
   if (axisPendingOp) {
-    const op = axisPendingOp; axisPendingOp = null;
-    if (isConfirm(text)) { await axisRunOp(op); return; }
-    if (isDeny(text)) { const m = 'Cancelled.'; dockLog.push({ role: 'axis', text: m }); renderDock(); axisSpeakTurn(m); return; }
-    // anything else is a new request — fall through, the task simply expires unrun
+    const op = axisPendingOp;
+    if (isConfirm(text) || isReferential(text)) { axisPendingOp = null; await axisRunOp(op); return; }
+    if (isDeny(text)) { axisPendingOp = null; const m = 'Cancelled.'; dockLog.push({ role: 'axis', text: m }); renderDock(); axisSpeakTurn(m); return; }
+    // Anything else is a new request. The proposal stays parked rather than being thrown away —
+    // it is still the antecedent for a later "do that", and detectOp below replaces it outright if
+    // you ask for something different.
   }
 
   // Does this ask AXIS to DO something? Read it back and wait, except for read-only checks.
   const op = detectOp(text);
   if (op) {
     if (op.kind === 'video.status') { await axisRunOp(op); return; }
-    axisPendingOp = op;
+    axisPendingOp = { ...op, t: Date.now() };
     dockLog.push({ role: 'axis', text: op.confirm }); renderDock();
     axisSpeakTurn(op.confirm);
     return;
@@ -1725,7 +1767,7 @@ async function axisSend(inputId = 'axisInput') {
   // already show the thinking dots and stay silent — this is not chatter added to keyboard use.
   if (axisSpokenTurn || axisHandsFree) axisSpeak(ackLine());
   try {
-    const r = await fetch('/.netlify/functions/axis-director', { method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify({ action: 'chat', messages: dockLog.filter(m => m.role === 'user').map(m => ({ role: 'user', content: m.text })) }) });
+    const r = await fetch('/.netlify/functions/axis-director', { method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify({ action: 'chat', messages: axisHistory(pending) }) });
     const j = await r.json(); dropPending();
     const reply = { role: 'axis', text: (j && j.text) || 'Heard you.' };
     // Brain unavailable (no credit / bad key / network): answer from the board instead of going

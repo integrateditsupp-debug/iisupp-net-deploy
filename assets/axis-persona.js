@@ -255,8 +255,28 @@ export function splitForTurns(text) {
 
 // "yes", "go on", "keep going" — release the held remainder. Deliberately narrow: anything else is
 // treated as a new question, so a held remainder never hijacks a fresh request.
-const CONTINUE_RE = /^\s*(?:yes|yeah|yep|go on|keep going|continue|carry on|the rest|rest of (?:it|them)|more|next)\b/i;
+const CONTINUE_RE = /^\s*(?:yes|yeah|yep|go on|keep going|continue|carry on|finish (?:it|them|the list)|the rest|rest of (?:it|them)|and then|more|next)\b/i;
 export const isContinue = (t) => CONTINUE_RE.test(String(t || ''));
+
+// Referential: Ahmad points at something AXIS just said instead of naming it again — "do what you
+// just mentioned", "go ahead", "make it so". A person tracks the antecedent across an interruption;
+// before this, "stop" followed by "do that" fell through to the brain as a brand-new question with
+// no idea what "that" was.
+//
+// Kept separate from isConfirm on purpose. isConfirm answers a question AXIS asked ("say confirm,
+// or cancel"). This resolves a pronoun to whatever is currently parked, which is a different job and
+// must NOT satisfy a safety gate on its own — an ambiguous "go ahead" with nothing parked resolves
+// to nothing and goes to the brain like any other sentence.
+const REFERENTIAL_RE = new RegExp(
+  '^\\s*(?:(?:ok(?:ay)?|yes|yeah|sure|alright|right|please)[,\\s]+)?' +
+  '(?:go ahead|do (?:that|it|this|so)|(?:do|run|execute|start|finish) (?:what|the thing) (?:you|u) ' +
+  '(?:just )?(?:said|mentioned|suggested|offered|described)|make it (?:so|happen)|proceed|' +
+  'carry on with (?:that|it)|(?:that|the (?:first|second|third|last)) one)' +
+  // Anchored to the END of the utterance, not just the start. "go ahead" is a pronoun; "go ahead
+  // AND tell me about pricing" is a fresh instruction that merely opens with the same two words.
+  // Only trailing politeness is allowed to follow.
+  '(?:\\s+(?:please|now|then|thanks|thank you))*\\s*[.!?]*\\s*$', 'i');
+export const isReferential = (t) => !isStop(t) && REFERENTIAL_RE.test(String(t || ''));
 
 // Strip a leading wake phrase so "AXIS, what's going on" reaches the director as "what's going on".
 // Must strip the same homophone set the wake matcher accepts, or "access what's going on" would be
