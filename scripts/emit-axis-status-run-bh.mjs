@@ -212,17 +212,14 @@ if (unparseable.length) {
 const publicFields = {
   status: green ? "active build" : "active build — a suite is red",
   milestone:
-    "The assistant has a full-screen presence you can talk to, and this cycle went underneath it: the "
-    + "test suites that prove the product works were themselves standing on a temporary directory that "
-    + "was full, so a third of them could fail for a reason that had nothing to do with the product. "
-    + "That floor is now guaranteed to every suite however it is started, and a suite goes red if any "
-    + "future one reaches past it.",
+    "This cycle went underneath the product: the suites that prove it works were standing on a "
+    + "temporary directory that was full, so a third of them could fail for reasons that had nothing "
+    + "to do with the software. Every suite now gets a working floor however it is started.",
   readiness:
     "Built and tested, both suites green on the working tree this cycle, every shipped script verified "
     + "to load, and every suite proven to get a writable place to work before it asserts anything. "
     + "Publishing to the live site stays a deliberate manual step by the operator, never automatic. "
-    + "Pricing and the names of the plans remain under review before they are published rather than "
-    + "after, so a customer is quoted the same thing whichever page they land on.",
+    + "Plan names and pricing stay under review before publication, not after.",
   revenueToDate: "none",
   headline:
     "ARIA / AXIS is in active build and is voice-operable: the spoken status answer reads this feed, and "
