@@ -21,6 +21,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { denylistViolations } from "./lib/deploy-denylist.mjs";
+import { makeScratchDir } from "./lib/scratch-dir.mjs";
 
 const root = process.cwd();
 const git = (args, opts = {}) => execFileSync("git", args, {
@@ -54,7 +55,13 @@ export function plumbingCommit({ message, files, remove = [], branch = "main", d
 
   const ref = `refs/heads/${branch}`;
   const before = git(["rev-parse", ref]);
-  const indexFile = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "plumbing-index-")), "index");
+  // RUN-BF: was `fs.mkdtempSync(path.join(os.tmpdir(), ...))`, and it died on
+  // `ENOSPC ... mkdtemp` — the full volume RUN-BE extracted `scratch-dir.mjs` to survive. BE fixed
+  // the suites and the status emitter and left THIS caller, the one that runs at the very end of
+  // every cycle and is the only thing standing between a cycle's work and it existing nowhere. The
+  // remedy is now used where it matters most, and `makeScratchDir` probes the directory rather than
+  // trusting that `mkdtemp` succeeding means the volume will accept content.
+  const indexFile = path.join(makeScratchDir("plumbing-index-"), "index");
   const env = { GIT_INDEX_FILE: indexFile };
 
   try {

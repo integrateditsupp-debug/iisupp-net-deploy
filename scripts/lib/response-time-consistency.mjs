@@ -48,6 +48,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { slaToMatrixMap } from "./tier-registry.mjs";
 
 export const RESPONSE_TIME_SCHEMA = "response-time-consistency/1";
 
@@ -120,14 +121,16 @@ export const PUBLISHED_SURFACES = Object.freeze([
   }),
 ]);
 
-/** MSA tier label → published tier label. Declared, with a reason. Never inferred. */
-export const TIER_MAP = Object.freeze([
-  Object.freeze({ binding: "Personal", published: "Personal", why: "identical label on both sides" }),
-  Object.freeze({ binding: "Pro", published: "Pro", why: "identical label on both sides" }),
-  Object.freeze({ binding: "SBA", published: "Small Business", why: "the agreement abbreviates the tier the matrix spells out; same price row" }),
-  Object.freeze({ binding: "Mid", published: "Mid Size", why: "the agreement shortens the tier the matrix spells out; same price row" }),
-  Object.freeze({ binding: "Enterprise", published: "Enterprise", why: "identical label on both sides" }),
-]);
+/**
+ * MSA tier label → published tier label. Declared, with a reason. Never inferred.
+ *
+ * RUN-BF / BF2: this table used to be written out here. It is now DERIVED from
+ * `scripts/lib/tier-registry.mjs`, the single place a tier name is declared. Two copies of a
+ * mapping is how two surfaces start disagreeing about which tier a customer is on without anybody
+ * editing either of them — and this module is the one that would then report them as agreeing.
+ * The shape is unchanged, so this is a substitution and not a rewrite of a working audit.
+ */
+export const TIER_MAP = slaToMatrixMap();
 
 /** The rows Schedule B carries that this module treats as response commitments. */
 export const COMMITMENT_ROWS = Object.freeze(["P1 response time", "P2 response time"]);
