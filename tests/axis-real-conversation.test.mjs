@@ -62,13 +62,15 @@ function fnBody(src, decl) {
   }
   throw new Error(`unbalanced braces in ${decl}`);
 }
+// Since 2026-08-12 smallTalk stands aside on a meta turn ("I didn't ask what's waiting…"), so the
+// consultation reads `meta ? null : smallTalk(text)` — same rail, one new guard in front of it.
 const sendFn = fnBody(app, 'async function axisSend');
-const chatAt = sendFn.indexOf('const chat = smallTalk(text)');
+const chatAt = sendFn.indexOf('const chat = meta ? null : smallTalk(text)');
 const fetchAt = sendFn.indexOf('axis-director');
-assert.notEqual(chatAt, -1, 'axisSend consults smallTalk');
+assert.notEqual(chatAt, -1, 'axisSend consults smallTalk (behind the meta-turn guard)');
 assert.notEqual(fetchAt, -1, 'axisSend calls the director');
 assert.ok(chatAt < fetchAt, 'small talk is handled before the director call, not after it');
-assert.ok(/const chat = smallTalk\(text\);[\s\S]{0,320}return;/.test(sendFn),
+assert.ok(/const chat = meta \? null : smallTalk\(text\);[\s\S]{0,320}return;/.test(sendFn),
   'small talk returns without calling the brain');
 ok('turn-management is answered locally, without a round trip');
 

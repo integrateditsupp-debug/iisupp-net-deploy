@@ -131,8 +131,10 @@ db.close();
 ok('named removal cancels the named company\'s whole chase and nothing else, proven against the real schema');
 
 // ---- 5. A recognised command with no rail gets one honest sentence, not a model round trip ----
+// "open up the prioritized items" GRADUATED from this rail on 2026-08-12: opening a screen became
+// a real client action (detectUiOpen → go(), asserted in axis-assistant-behaviors.test.mjs), so it
+// is no longer an honest refusal. What remains here is what still has no rail.
 for (const s of [
-  'okay can you open up all the prioritized items so we can action it',   // 19s of model time today
   'mark that one done',
   'snooze this for a week',
   'approve the first one',

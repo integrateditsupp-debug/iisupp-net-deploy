@@ -20,7 +20,8 @@ import { toggleHologram } from './axis-hologram.js';
 import { axisPersonaBonus, AXIS_PROSODY, VOICE_POLICY_REV, ackLine, greetLine, routeTail,
   isWake, isStop, isConfirm, isDeny, stripWake, smallTalk, stripMetaNarration, markRepeat,
   voiceProfile, voiceFamily, polishForSpeech, speechify, phraseChunks,
-  splitForTurns, isContinue, isReferential, detectOp, detectVideoDirection } from './axis-persona.js';
+  splitForTurns, isContinue, isReferential, detectOp, detectVideoDirection,
+  detectUiOpen, detectQueueWork, detectSearchAsk, isMetaTurn } from './axis-persona.js';
 
 const TOKEN_KEY = 'aperture_jwt';
 
@@ -1624,6 +1625,13 @@ async function axisRunOp(op) {
     op = { kind: 'code.build',
       arg: 'Direction for the YouTube video pipeline, from Ahmad by voice. Find the pipeline scripts (TTS/voice settings, thumbnail/cover generation) and apply it: ' + op.arg };
   }
+  // The pending queue handed to Cowork as one job. The board and the recent turns already ride in
+  // the task payload below; Cowork drafts every move, ready for a one-click yes — it never sends,
+  // approves or submits anything itself.
+  if (op.kind === 'queue.work') {
+    op = { kind: 'cowork.plan',
+      arg: 'Work the pending queue with Ahmad. The priority board rides with this task. For each pending approval and queued follow-up on it, draft the reply or propose the single concrete next action, ready for his one-click yes. His ask, verbatim: ' + op.arg };
+  }
   try {
     const r = await fetch('/.netlify/functions/axis-brain-queue', {
       method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }),
@@ -1690,6 +1698,77 @@ function axisHistory(exclude) {
 // latency for data sitting in the page. Anything this cannot answer falls through untouched.
 function axisInstantAnswer(text) {
   try { return localAnswer(text, state.snap); } catch { return null; }
+}
+
+// ── Real navigation: DO the open, then say what was done ─────────────────────
+// "okay can you open it up on a web page or something so that I can see the details" (2026-08-12)
+// reached the model, which answered "That's open in your browser, Ahmad" — about an action nothing
+// had performed. Rule 1 (evidence only, never guess) cuts both ways: never claim an act that did
+// not happen, and when the act is one synchronous client call, PERFORM it and then report it.
+const SCREEN_ALIASES = [
+  ['approvals', /\bapprovals?\b/i],
+  ['followups', /\bfollow.?ups?\b/i],
+  ['inbox', /\b(?:inbox|client (?:messages?|repl(?:y|ies)))\b/i],
+  ['pipeline', /\bpipeline\b/i],
+  ['crm', /\bcrm\b/i],
+  ['prospects', /\bprospects?\b/i],
+  ['outreach', /\boutreach\b/i],
+  ['waiting_reply', /\bwaiting repl(?:y|ies)\b/i],
+  ['documents', /\bdocuments?\b/i],
+  ['analytics', /\banalytics\b/i],
+  ['products', /\bproducts?\b/i],
+  ['fleet', /\b(?:fleet|agents)\b/i],
+  ['axis-agent-director', /\bdirector\b/i],
+  ['reports', /\breports?\b/i],
+  ['settings', /\bsettings\b/i],
+  ['overview', /\b(?:overview|dashboard)\b/i],
+  // LAST: half the board vocabulary points here, so every specific screen must get its chance first.
+  ['priorities', /\b(?:priorit\w*|to.?do|board)\b/i],
+];
+const UI_OPEN_FILLER = /^(?:open|show|pull|bring|take|display|details?|pages?|screens?|browser|web|webpage|that|this|it|them|those|these|the|and|something|can|you|me|see|up|on|or|so|to|of|a|an|for)$/i;
+function axisOpenTarget(text) {
+  let items = [];
+  try { items = collectPriorities(state.snap); } catch { items = []; }
+  let screen = null, subject = '';
+  for (const [id, re] of SCREEN_ALIASES) if (re.test(text)) { screen = id; break; }
+  if (!screen) {
+    // A named board item — "open the <company> one" — lands on the screen that holds it.
+    const words = String(text).toLowerCase().split(/[\s,]+/).filter((w) => w.length > 3 && !UI_OPEN_FILLER.test(w));
+    const hit = items.find((i) => words.some((w) => String(i.title || '').toLowerCase().includes(w)));
+    if (hit) { screen = hit.screen; subject = hit.title; }
+  }
+  if (!screen && items.length) { screen = items[0].screen; subject = items[0].title; } // "it" = the item just spoken
+  if (!screen) screen = 'priorities';
+  go(screen);
+  const label = (navItem(screen) || {}).label || screen;
+  const line = `Done — ${label} is on screen now, in this console${subject ? `; ${subject} is on it` : ''}. Say "open ${label === 'Priorities' ? 'approvals' : 'priorities'}" or any screen name to move.`;
+  dockLog.push({ role: 'axis', text: line }); renderDock(); axisSpeakTurn(line);
+}
+
+// ── Search: the snapshot first, Cowork on a miss ─────────────────────────────
+function axisRunSearch(arg) {
+  const needles = String(arg).toLowerCase().split(/[\s,]+/).filter((w) => w.length > 2);
+  const rows = [];
+  try { for (const i of collectPriorities(state.snap)) rows.push({ title: i.title, where: i.screen, what: i.source }); } catch {}
+  const mod = (m) => (state.snap[m] && state.snap[m].data) || {};
+  for (const d of mod('documents').rows || []) rows.push({ title: d.title || d.type || '', where: 'documents', what: 'Document' });
+  for (const p of mod('prospects').rows || []) rows.push({ title: p.name || p.company || '', where: 'prospects', what: 'Prospect' });
+  for (const c of mod('crm').rows || mod('crm').contacts || []) rows.push({ title: c.name || c.company || '', where: 'crm', what: 'Contact' });
+  const hits = rows.filter((r) => { const t = String(r.title).toLowerCase(); return t && needles.some((n) => t.includes(n)); });
+  let line;
+  if (hits.length) {
+    go(hits[0].where);
+    const label = (navItem(hits[0].where) || {}).label || hits[0].where;
+    line = `Found ${hits.length}: ` + hits.slice(0, 3).map((h) => `${h.title} (${h.what})`).join(', ')
+      + (hits.length > 3 ? `, and ${hits.length - 3} more` : '') + `. ${label} is on screen now.`;
+  } else {
+    // Not on the board — that is a fact, said as one, and Cowork can go deeper on a confirm.
+    axisPendingOp = { kind: 'cowork.ask', t: Date.now(),
+      arg: `Search the repo, the vault notes, and project state for: ${arg}. Report where it lives and what it says.`,
+      confirm: `Nothing on the board matches “${arg}”. Have Cowork search the repo and the vault for it. Say confirm, or cancel.` };
+    line = axisPendingOp.confirm;
+  }
+  dockLog.push({ role: 'axis', text: line }); renderDock(); axisSpeakTurn(line);
 }
 
 // What is on Ahmad's screen right now, as one short block the brain can read. Without it, "remove
@@ -1858,6 +1937,27 @@ async function axisSend(inputId = 'axisInput') {
     return;
   }
 
+  // Opening a screen is an action this page performs itself, synchronously — never something to
+  // describe, promise, or hallucinate. Runs unconfirmed like the other read-only ops: showing a
+  // screen risks nothing.
+  const nav = detectUiOpen(text);
+  if (nav) { axisOpenTarget(text); return; }
+
+  // "Tackle all of these, work with me" — the pending queue handed to Cowork as one job, with the
+  // board and the conversation riding along. Confirm-gated: it spends the plan.
+  const qw = detectQueueWork(text);
+  if (qw) {
+    axisPendingOp = { ...qw, t: Date.now() };
+    dockLog.push({ role: 'axis', text: qw.confirm }); renderDock();
+    axisSpeakTurn(qw.confirm);
+    return;
+  }
+
+  // "Search for X" / "find X": the snapshot in memory first — free, instant, and it can point at
+  // the screen. A miss offers Cowork, which can grep the repo and the vault.
+  const sk = detectSearchAsk(text);
+  if (sk) { axisRunSearch(sk.arg); return; }
+
   // A production direction with no op verb — "videos sound very robotic, have it sound more
   // human-like, make the cover text clearer" — is WORK, not a question. Unrouted, the cascade's
   // keyword tiers matched it into a Teams helpdesk article (2026-08-12, verbatim). It goes to
@@ -1870,10 +1970,16 @@ async function axisSend(inputId = 'axisInput') {
     return;
   }
 
+  // A meta turn — "I didn't ask what's waiting", "you didn't do anything", "show me where" — is
+  // about THIS conversation. The board's status branch answered one with the same recital twice
+  // (2026-08-12), because "going on" matched. Every local answerer stands aside; only the brain,
+  // which gets the turns, can see what AXIS said and did.
+  const meta = isMetaTurn(text);
+
   // Turn-management is not a question. "okay hold on", "thanks", "you there" get answered right
   // here, because sending them to a model is what produced a paragraph of narration about a
   // two-word pause — and it spent a round trip to do it.
-  const chat = smallTalk(text);
+  const chat = meta ? null : smallTalk(text);
   if (chat) {
     dockLog.push({ role: 'axis', text: chat }); renderDock();
     axisSpeakTurn(chat);
@@ -1881,7 +1987,7 @@ async function axisSend(inputId = 'axisInput') {
   }
 
   // Instant path: anything the board can answer needs no network at all.
-  const instant = axisInstantAnswer(text);
+  const instant = meta ? null : axisInstantAnswer(text);
   if (instant) {
     const line = markRepeat(instant, axisLastAnswer);
     axisLastAnswer = instant;
@@ -1896,13 +2002,13 @@ async function axisSend(inputId = 'axisInput') {
   // to the LLM: 19-69 seconds of model time to talk about an action nothing performed, or a timeout
   // and dead silence (2026-08-12 worker log). The model cannot click an approval either — routing
   // it there was spend with no possible outcome. One sentence that says what works costs 0ms.
-  if (unsupportedBoardCommand(text)) {
+  if (!meta && unsupportedBoardCommand(text)) {
     let top = '';
     try {
       const items = collectPriorities(state.snap).slice(0, 3);
       if (items.length) top = ' On the board now: ' + items.map((i) => `${i.title} (${dueLabel(i.dueAt).text})`).join(', ') + '.';
     } catch {}
-    const line = 'I can\'t do that one by voice yet. I can remove or cancel scheduled follow-ups; approvals and client replies stay your click — on screen or here in the dock.' + top;
+    const line = 'I can\'t do that one by voice yet. I can remove or cancel follow-ups, open any screen, search the board, and hand the pending queue to Cowork; approvals and client replies stay your click.' + top;
     dockLog.push({ role: 'axis', text: line }); renderDock();
     axisSpeakTurn(line);
     return;
@@ -1923,7 +2029,9 @@ async function axisSend(inputId = 'axisInput') {
     // Brain unavailable (no credit / bad key / network): answer from the board instead of going
     // mute. The outage is reported ONCE per session so it is visible but not repeated every turn.
     if (j && j.degraded) {
-      const local = localAnswer(text, state.snap);
+      // Never on a meta turn: falling back to the board for "I didn't ask what's waiting" would
+      // recite the exact answer being complained about, a third time, with a straight face.
+      const local = meta ? null : localAnswer(text, state.snap);
       if (local) {
         reply.text = local;
         let told = false; try { told = sessionStorage.getItem('axisBrainNoted') === '1'; } catch {}

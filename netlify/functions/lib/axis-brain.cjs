@@ -240,10 +240,37 @@ const CORRECTION = new RegExp(
   + '|\\bstill (?:wrong|not it|not what)\\b', 'i');
 const INSTRUCTION_LEAD = /^\s*(?:(?:ok(?:ay)?|all right|alright|please|now|just|so|and|then|also|looks?|perfect)[,\s]+)*(?:have|make|give|let|set|change|update|ensure|turn|adjust|improve|enhance|render|keep|redo|rework)\b/i;
 const INSTRUCTION_BODY = /\b(?:have (?:it|them|the \w+)|make (?:it|them|the \w+)|it should|they should|sound (?:more|less|smoother|better)|look (?:more|less|smoother|better)|more human|less robotic|human[- ]?like)\b/i;
+// A turn that references what AXIS said, did, or failed to do. Measured 2026-08-12, second
+// round: "yes but I literally told you… you didn't do anything… work with me" pulled a lost-laptop
+// KB article ("show me… work laptop" overlap), and "I don't see anything opened on the browser
+// show me where" pulled a raw vault note. Only the tier holding the transcript can answer these.
+const META_REFERENCE = new RegExp(
+  '\\byou (?:said|told me|mentioned|repeated|didn\'?t|never|just said|were supposed|haven\'?t)\\b'
+  + '|\\bi (?:literally |just )?(?:told|asked) you\\b'
+  + '|\\bwork with me\\b'
+  + '|\\bi don\'?t see (?:it|that|anything)\\b'
+  + '|\\bshow me where\\b'
+  + '|\\bwhy is it taking (?:you )?so long\\b'
+  + '|\\bsame (?:thing|answer) again\\b'
+  + '|\\bstop repeating\\b', 'i');
 function isConversational(query) {
   const q = String(query || '');
-  return CORRECTION.test(q) || INSTRUCTION_LEAD.test(q) || INSTRUCTION_BODY.test(q);
+  return CORRECTION.test(q) || META_REFERENCE.test(q) || INSTRUCTION_LEAD.test(q) || INSTRUCTION_BODY.test(q);
 }
+
+// ── Source routing: three corpora, three jobs ────────────────────────────────
+// Ahmad, 2026-08-12: "It cannot tell the difference between using ARIA brain for troubleshooting
+// or Obsidian for memory or claude and agents for new solutions." The kb tier is 281 curated
+// HELPDESK chunks — printers, Outlook, Teams, lost laptops. It answers troubleshooting; on
+// anything else its best keyword hit is a wrong document delivered confidently (three measured
+// hijacks on 2026-08-12 alone). So kb is ELIGIBLE only when the question looks like
+// troubleshooting. Memory questions ("what did we decide…", "remind me…") belong to what the
+// system has learned — recall and the vault-reading worker — never to the helpdesk corpus or the
+// research agents.
+const TROUBLESHOOT = /\b(?:error|fail(?:s|ed|ing)?|broken|not working|can'?t|cannot|won'?t|stuck|slow|crash\w*|frozen|offline|password|log ?in|sign ?in|printer|outlook|teams|excel|word|onedrive|sharepoint|windows|mac(?:book)?|laptop|desktop|phone|device|wi.?fi|network|vpn|email|mailbox|licen[cs]e\w*|mfa|2fa|azure|intune|m365|microsoft 365|backup|restore|virus|malware|phishing|ransomware|update|install|uninstall|configure|set ?up|migrat\w+|tenant|dns|domain|server|firewall|router|lost|stolen)\b|\bhow (?:do|can|would) (?:i|we|you)\b/i;
+const MEMORY_QUERY = /\b(?:what did (?:we|you|i)|remind me|our notes?|the vault|we (?:decided|agreed|learned|said|discussed)|last time|previously|do you remember|what do you know about (?:our|my)|from (?:the|our) (?:vault|notes|memory))\b/i;
+const isTroubleshoot = (q) => TROUBLESHOOT.test(String(q || ''));
+const isMemoryQuery = (q) => MEMORY_QUERY.test(String(q || ''));
 
 // ── The cascade ──────────────────────────────────────────────────────────────
 // Returns an answer from the cheapest tier that has one, or null so the caller escalates to the
@@ -271,6 +298,10 @@ async function askBrain({ query, turns = [], board = '', origin, auth, skip = []
   ]) {
     if (skip.includes(name)) continue;
     if (conversational && name !== 'subscription') continue;
+    // The helpdesk corpus answers helpdesk questions ONLY — on anything else its best hit is a
+    // wrong document delivered confidently. Memory questions never go to helpdesk or research.
+    if (name === 'kb' && !isTroubleshoot(q)) continue;
+    if (isMemoryQuery(q) && (name === 'kb' || name === 'research')) continue;
     tried.push(name);
     let hit = null;
     try { hit = await run(); } catch (_) { hit = null; }
@@ -279,5 +310,5 @@ async function askBrain({ query, turns = [], board = '', origin, auth, skip = []
   return null;
 }
 
-module.exports = { askBrain, stripTrailingOffer, recallTier, kbTier, researchTier, subscriptionTier, workerOnline, learnBack, isSubstantive, worthLearning, isConversational,
+module.exports = { askBrain, stripTrailingOffer, recallTier, kbTier, researchTier, subscriptionTier, workerOnline, learnBack, isSubstantive, worthLearning, isConversational, isTroubleshoot, isMemoryQuery,
   KB_LIVE, JOBS, HEARTBEAT_KEY, HEARTBEAT_MAX_MS };

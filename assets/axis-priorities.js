@@ -162,9 +162,12 @@ export function resolveRemovalTargets(arg, rows) {
 // them lets the console say what it can and cannot do in one honest sentence instead. Narrower
 // than COMMAND_LEADING on purpose: "do", "open", "ask", "move" alone open genuine questions
 // ("do we have anything overdue?"), so each verb here needs a board-shaped object in the clause.
+// "open up" and "action" left this list on 2026-08-12: opening a screen became a REAL rail
+// (detectUiOpen → go()) and actioning the queue became queue.work → Cowork. This is the fallback
+// for what still has no rail — approve/snooze/mark-done by voice stay clicks.
 const UNSUPPORTED_BOARD_COMMAND = new RegExp(
   '^\\s*(?:(?:ok(?:ay)?|all right|alright|please|now|just|yes|yeah|and|then|so)[,\\s]+)*(?:go ahead(?: and)?\\s+)?(?:(?:can|could|would) you\\s+|you can\\s+)?'
-  + '(?:approve|reject|snooze|park|mark|close|complete|finish|handle|move|bump|defer|postpone|reprioriti[sz]e|resched(?:ule)?|prioriti[sz]e|action|open(?:ing)?\\s+up)\\b'
+  + '(?:approve|reject|snooze|park|mark|close|complete|finish|move|bump|defer|postpone|reprioriti[sz]e|resched(?:ule)?|prioriti[sz]e)\\b'
   + '[^.?!]*\\b(?:it|that|this|them|those|these|ones?|items?|approvals?|messages?|repl(?:y|ies)|follow.?ups?|first|second|third|last|top|list|board|queued?|priorit\\w*|everything|all|done|complete)\\b', 'i');
 export const unsupportedBoardCommand = (q) => UNSUPPORTED_BOARD_COMMAND.test(String(q || ''));
 

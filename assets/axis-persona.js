@@ -513,6 +513,79 @@ export function detectVideoDirection(text) {
     confirm: 'Hand that to Claude Code as a direction for the video pipeline — voice, covers and quality live in the repo it edits. Say confirm, or cancel.' };
 }
 
+// ── Meta turns: the user talking about the CONVERSATION, not the world ───────
+// The 2026-08-12 late transcript: "I didn't ask what's waiting I asked what's going on" was
+// answered by the BOARD — twice — because the words "going on" matched the status branch and no
+// layer knew a correction from a question. Then "yes but I literally told you… you didn't do
+// anything… work with me" pulled a lost-laptop KB article, and "I don't see anything opened on the
+// browser show me where" pulled a raw vault note. A turn that references what AXIS said, did, or
+// failed to do can only be answered by the tier that can SEE what AXIS said and did — the brain
+// with the turns. Everything local must stand aside.
+const META_TURN = new RegExp(
+  '\\b(?:that\'?s |this is )?not what i (?:asked|meant|said|was asking)'
+  + '|\\bi didn\'?t ask\\b'
+  + '|\\bi (?:literally |just )?(?:told|asked) you\\b'
+  + '|\\byou (?:said|told me|mentioned|repeated|didn\'?t|never|just said|were supposed|haven\'?t)\\b'
+  + '|\\bwhat are you talking about\\b'
+  + '|\\bi\'?m talking about\\b'
+  + '|\\byou\'?re (?:repeating|not listening|off topic)\\b'
+  + '|\\bsame (?:thing|answer) again\\b'
+  + '|\\bstop repeating\\b'
+  + '|\\bwork with me\\b'
+  + '|\\bwhy is it taking (?:you )?so long\\b'
+  + '|\\bi don\'?t see (?:it|that|anything)\\b'
+  + '|\\bshow me where\\b'
+  + '|\\bwrong (?:answer|topic|thing)\\b', 'i');
+export const isMetaTurn = (t) => META_TURN.test(String(t || ''));
+
+// ── Open a screen: navigation is an ACTION the console can actually perform ──
+// "okay can you open it up on a web page or something so that I can see the details" (2026-08-12)
+// fell to the model, which replied "That's open in your browser, Ahmad" — a claim about an action
+// nothing performed (Rule 1: evidence only, never guess). The console has go(<screen>) and
+// seventeen screens; opening one is a synchronous client call. detectUiOpen names the intent; the
+// app resolves the target (screen alias, named item, or "it" = the last item mentioned) and then
+// SAYS WHAT IT DID, after doing it.
+const UI_OPEN_RE = /\b(?:open(?:\s+(?:it|that|this|them|those|up))?|show me|pull up|bring up|take me to|go to|display)\b[^.?!]*\b(?:screen|page|tab|browser|web ?page|details?|approvals?|follow.?ups?|inbox|pipeline|crm|prospects?|outreach|waiting reply|priorit\w*|to.?do|board|documents?|analytics|products?|fleet|agents|director|reports?|settings|overview|dashboard)\b|\bwhere is (?:the\s+)?(?:approvals?|inbox|pipeline|crm|board|priorit\w*|fleet|reports?|documents?)\b|\bopen (?:it|that|this) up\b/i;
+const UI_OPEN_ASK = /^\s*(?:how|why|should|would|did|has|have)\b|\bhow (?:do|can|would) i\b/i;
+export function detectUiOpen(text) {
+  const t = String(text || '').trim();
+  if (t.length < 5) return null;
+  if (!UI_OPEN_RE.test(t)) return null;
+  if (UI_OPEN_ASK.test(t)) return null;        // "how do I open a shared mailbox" is a support question
+  return { kind: 'ui.open', arg: t };
+}
+
+// ── Work the queue WITH Claude ───────────────────────────────────────────────
+// "at least tackle all of these work with me" / "take the pending items to Claude and action
+// them" (2026-08-12): the pending approvals and queued follow-ups are on the board, Cowork can
+// read them (the task payload already carries turns + board), and drafting replies or proposing
+// next actions is exactly its work. This routes the ask there instead of letting it die in the
+// honesty rail. Approving and sending stay Ahmad's clicks — Cowork drafts, it never submits.
+const QUEUE_WORK_RE = /\b(?:tackle|work (?:with me )?(?:on|through)|go through|process|handle|action|clear|draft)\b[^.?!]*\b(?:these|those|them|all of (?:these|those|them|it)|the (?:queue|pending|backlog|approvals?|repl(?:y|ies)|board|items?)|everything (?:pending|waiting|queued)|pending (?:items?|repl(?:y|ies)|approvals?))\b|\btake (?:the\s+)?(?:pending|queued?)\b[^.?!]*\bto (?:claude|cowork)\b|\bwork (?:the|our) (?:queue|backlog)\b/i;
+const QUEUE_WORK_ASK = /^\s*(?:how|why|what|when|where|who|which|should|did|is|are)\b/i;
+export function detectQueueWork(text) {
+  const t = String(text || '').trim();
+  if (t.length < 8) return null;
+  if (!QUEUE_WORK_RE.test(t)) return null;
+  if (QUEUE_WORK_ASK.test(t)) return null;
+  return { kind: 'queue.work', arg: t,
+    confirm: 'Take the pending queue to Claude Cowork — it reads the board and drafts the moves; approving and sending stay yours. Say confirm, or cancel.' };
+}
+
+// ── Search: find the thing, say where it is ──────────────────────────────────
+// "It also cannot search for what we are looking for" (Ahmad, 2026-08-12). Local first: the
+// snapshot in memory holds every board row, approval, message and document — searching it costs
+// nothing and answers "where is X" with the screen X is on. Only a miss escalates to Cowork.
+const SEARCH_RE = /^\s*(?:(?:ok(?:ay)?|please|now|just|can you|could you)[,\s]+)*(?:search(?:\s+for)?|find|look\s?up|look for|locate)\s+(.{3,})$/i;
+export function detectSearchAsk(text) {
+  const t = String(text || '').trim().replace(/[.?!]+$/, '');
+  const m = t.match(SEARCH_RE);
+  if (!m) return null;
+  const arg = m[1].trim();
+  if (/^(?:out|into|at|up)\b/i.test(arg)) return null;   // "find out whether…" is a question, not a lookup
+  return { kind: 'search.find', arg };
+}
+
 export function detectOp(text) {
   const t = String(text || '').trim();
   if (!t || t.length < 4) return null;

@@ -27,6 +27,11 @@ import { getStore } from '@netlify/blobs';
 import * as vault from './lib/axis-vault-brain.mjs';
 import { classify, escalate, answerUsable, recordUse, usageReport, TIER_BY_NAME,
          modelForRequest } from './lib/axis-model-router.mjs';
+// The same conversation detector the cloud cascade uses (Node ESM imports the CJS lib directly).
+// Measured 2026-08-12: "I don't see anything opened on the browser show me where" hit the vault's
+// DIRECT tier and came back as a raw feedback note — wikilinks and all — because vault matching is
+// word overlap and cannot know a correction from a question. One detector, both brains.
+import { isConversational } from '../netlify/functions/lib/axis-brain.cjs';
 
 const JOBS = 'axis-brain-jobs';
 const KB_LIVE = 'aria-kb-live';
@@ -174,8 +179,10 @@ async function answerQuestion(query, { turns = [], board = '' } = {}) {
   const t0 = Date.now();
 
   // Brain #1, alone. A confident vault hit skips the model entirely: no tokens, no plan usage, and
-  // an answer in single-digit milliseconds instead of seconds.
-  const direct = vault.vaultTier(query);
+  // an answer in single-digit milliseconds instead of seconds. But NEVER for a conversational turn
+  // — a correction or an instruction answered by note-matching is how "show me where" became a
+  // pasted feedback note. The vault still rides along as CONTEXT below either way.
+  const direct = isConversational(query) ? null : vault.vaultTier(query);
   if (direct) {
     return { answer: direct.text, tier: 'vault', model: null, source: direct.source,
       ms: Date.now() - t0, learned: false };
