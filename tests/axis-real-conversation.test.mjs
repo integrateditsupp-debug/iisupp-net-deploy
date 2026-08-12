@@ -108,11 +108,18 @@ ok('"Axie" wakes it even when heard as "access" — and ordinary IT talk does no
 
 // ---- 6. hands-free never tells him to press a button he is not holding ----
 // It was the first line of his transcript.
-const onendRaw = app.slice(app.indexOf('axisRec.onend = () => {'), app.indexOf('axisRec.onend = () => {') + 600);
-// Ordering must be judged on CODE. The comment above the branch quotes the very string being
-// ordered against ("press the mic"), so an offset comparison on the raw text compares a comment to
-// a statement and reports the opposite of the truth.
-const onend = onendRaw.split('\n').filter((l) => !/^\s*\/\//.test(l)).join('\n');
+// Strip comments BEFORE slicing, and slice to the handler's own closing brace rather than a fixed
+// byte count. Both matter: the comment above the branch quotes the very string being ordered
+// against ("press the mic"), so an offset comparison on raw text compares a comment to a statement
+// and reports the opposite of the truth — and a fixed 600-char window silently stopped covering the
+// branch as soon as comments were added above it, which is the blind-guard rot in
+// source-grep-guards-go-blind. Now it cannot drift with length.
+const appCode = app.split('\n').filter((l) => !/^\s*\/\//.test(l)).join('\n');
+const onendStart = appCode.indexOf('axisRec.onend = () => {');
+assert.ok(onendStart > 0, 'axisRec.onend handler not found');
+const onendEnd = appCode.indexOf('\n  };', onendStart);
+assert.ok(onendEnd > onendStart, 'could not find the end of the axisRec.onend handler');
+const onend = appCode.slice(onendStart, onendEnd);
 assert.ok(/if \(axisHandsFree\) \{ axisOpenConvo\(\); axisWakeResume\(\); return; \}/.test(onend),
   'in hands-free a missed phrase just listens again');
 assert.ok(onend.indexOf('axisHandsFree') < onend.indexOf('press the mic'),

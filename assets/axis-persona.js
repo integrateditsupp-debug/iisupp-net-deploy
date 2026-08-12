@@ -395,6 +395,41 @@ const OPS = [
   //
   // So a self-fix needs BOTH a repair verb AND something naming AXIS itself, and it must not be a
   // question — a question about fixing something is a support request, not an instruction.
+  // ── Planning WITH Ahmad, via Claude Cowork ─────────────────────────────────
+  // Ahmad, 2026-08-12: "nor does it plan out with me anything or work with me like I would with
+  // claude cowork or claude code. I want Axis basically the visual and verbal extension of claude
+  // code and cowork. claude cowork to be use by axis for planning."
+  //
+  // cowork.ask above only fires when he SAYS "ask cowork". Nobody talks that way while planning —
+  // he says "let's plan the migration" or "work out the approach with me". Those fell through to the
+  // brain cascade and came back as a generic answer with no repo context, which is exactly the
+  // "doesn't work with me like Cowork would" complaint. This routes them to Cowork, which reads the
+  // repo under CLAUDE.md, and never runs below the standard tier (see COWORK_FLOOR).
+  //
+  // Read-only by construction: cowork.plan gets no edit permission, so a planning conversation can
+  // never quietly become a commit.
+  { kind: 'cowork.plan',
+    re: /\b(?:let'?s|lets|help me|work with me|together we|i want to|we need to|can we)\b[^.?!]*\b(?:plan|planning|strategi[sz]e|map out|work out|think through|figure out|scope|design|approach|decide|prioriti[sz]e|break down)\b|\b(?:plan|scope|map)\s+(?:out\s+)?(?:the|our|a|this)\b[^.?!]*\b(?:with me|together)\b/i,
+    // A plan needs a subject; "let's plan" alone is not actionable.
+    arg: /\b(?:plan|planning|strategi[sz]e|map out|work out|think through|figure out|scope|design|approach|decide|prioriti[sz]e|break down)\s+(?:out\s+)?(.+)$/i,
+    notAsk: /^\s*(?:what|why|when|where|who|which)\b/i,
+    say: (a) => `Plan with Claude Cowork: ${a || 'the request'}` },
+
+  // ── Building, via Claude Code ──────────────────────────────────────────────
+  // "claude code to execute any code." self.fix below is REPAIR only — it needs a repair verb and a
+  // reference to AXIS itself, deliberately, so that "how do I fix a stuck Windows update" stays a
+  // support question. That left new work with no route at all: "build the intake form", "add a
+  // column to the roster", "wire the webhook" all fell through to being answered rather than done.
+  //
+  // Narrower than it looks: it needs a build verb AND a code-ish object, and it must not be a
+  // question. "Should we build a portal?" is a strategy question and goes to Cowork above, not here.
+  { kind: 'code.build',
+    re: /\b(?:build|implement|add|create|write|wire|hook up|set up|refactor|migrate|rename|delete|remove)\b/i,
+    self: /\b(?:function|endpoint|route|page|panel|tab|component|script|test|tests|suite|cron|worker|handler|webhook|api|field|column|table|schema|migration|module|file|repo|branch|commit|css|html|button|form|toggle|flag|the console|the site|the vault|axis|aria|sentinel)\b/i,
+    notAsk: /^\s*(?:how|what|why|when|where|who|which|is|are|does|do|did|can|could|should|would|shall)\b/i,
+    arg: /\b(?:build|implement|add|create|write|wire|hook up|set up|refactor|migrate|rename|delete|remove)\s+(.+)$/i,
+    say: (a) => `Have Claude Code build: ${a || 'the request'}` },
+
   { kind: 'self.fix',
     re: /\b(?:fix|repair|sort out|correct|debug)\b/i,
     self: /\b(?:yourself|your\s+\w+|you\s+(?:keep|always|never|are|were|do|don'?t|can'?t|cannot|won'?t)|the way you|wake\s?word|hands[-\s]?free|the globe|the hologram|the mic|the dock|the console|the voice|axis|the way it works)\b/i,
@@ -424,7 +459,7 @@ export function detectOp(text) {
     if (op.kind === 'self.fix' && (arg.length < 6 || /^(?:that|this|it|them|those)\b/i.test(arg))) arg = t;
     // These are meaningless without a subject, and guessing at one is worse than asking. "fix it"
     // with no antecedent must not become a repo edit.
-    if (['self.fix', 'machine.run', 'cowork.ask'].includes(op.kind) && arg.length < 6) return null;
+    if (['self.fix', 'machine.run', 'cowork.ask', 'cowork.plan', 'code.build'].includes(op.kind) && arg.length < 6) return null;
     return { kind: op.kind, arg, confirm: op.say(arg) + '. Say confirm, or cancel.' };
   }
   return null;
@@ -560,8 +595,21 @@ export function stripMetaNarration(text) {
 //    be worse — it just acknowledges the repeat, which is what makes it land as a conversation.
 const AGAIN = ['Same as a moment ago — ', 'Still the same — ', 'Unchanged — '];
 let __again = 0;
+
+// A HOLDING LINE IS NOT AN ANSWER, so repeating one is not repeating yourself. Two slow questions in
+// a row both return the ack "One moment.", and marking the second as a repeat produced the line
+// Ahmad actually heard: "Unchanged - one moment." and then "Same as a moment ago - one moment."
+// which says nothing at all and reads as a broken machine. The repeat-marker exists for a
+// substantive paragraph delivered twice; acks and the pending placeholder are exempt.
+// The pending text comes from axis-director.js's subscription-pending branch.
+const TRANSIENT = new Set([...ACKS, 'One moment.', 'Standing by.'].map((s) => s.toLowerCase()));
+export function isTransientLine(text) {
+  return TRANSIENT.has(String(text || '').trim().toLowerCase());
+}
+
 export function markRepeat(text, lastText) {
   const a = String(text || '').trim(), b = String(lastText || '').trim();
   if (!a || a !== b) return text;
+  if (isTransientLine(a)) return text;          // holding lines repeat freely
   return AGAIN[(__again++) % AGAIN.length] + a.charAt(0).toLowerCase() + a.slice(1);
 }

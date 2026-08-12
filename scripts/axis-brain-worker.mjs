@@ -24,6 +24,9 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getStore } from '@netlify/blobs';
+import * as vault from './lib/axis-vault-brain.mjs';
+import { classify, escalate, answerUsable, recordUse, usageReport, TIER_BY_NAME,
+         modelForRequest } from './lib/axis-model-router.mjs';
 
 const JOBS = 'axis-brain-jobs';
 const KB_LIVE = 'aria-kb-live';
@@ -33,11 +36,26 @@ const POLL_MS = 1500;
 const CLI_TIMEOUT_MS = 55000;
 const CLAUDE_BIN = process.env.CLAUDE_BIN || 'claude';
 
-const SYSTEM = `You are AXIS, the operations director for Integrated IT Support Inc.
-Answer the question directly and practically, in plain language. If it is a technical
-problem, give concrete steps. Be concise: no preamble, no sign-off, no markdown headers.
-If you genuinely do not know, say so in one line rather than guessing.
-Do not end with an offer or a follow-up question — end on the answer itself.`;
+// The system prompt lives in the Obsidian vault at 00_Index/AXIS-SYSTEM.md so Ahmad can edit AXIS's
+// character in Obsidian without touching code. This fallback is used only when the vault is missing,
+// and is deliberately a compressed version of the same instructions rather than a different persona
+// — a worker that quietly becomes a different assistant when a folder is absent is worse than one
+// that refuses to start.
+const SYSTEM_FALLBACK = `You are AXIS, Ahmad Wasee's operating partner at Integrated IT Support Inc.
+Address him as "Ahmad". Answer the question that was asked, directly, in plain language, leading with
+the answer itself. If it is a technical problem, give concrete steps. No preamble, no sign-off, no
+markdown headers, no closing offer or follow-up question. Keep it to the length the question needs.
+Say plainly when you do not know rather than guessing. Deliver the scope asked for — do not widen it.`;
+
+// Read once at boot, then re-read whenever the note changes, so editing the prompt in Obsidian takes
+// effect on the next question instead of requiring a worker restart.
+let _systemCache = { prompt: null, at: 0 };
+function systemPrompt() {
+  if (Date.now() - _systemCache.at > 15000) {
+    _systemCache = { prompt: vault.loadSystemPrompt() || SYSTEM_FALLBACK, at: Date.now() };
+  }
+  return _systemCache.prompt;
+}
 
 // Blobs credentials. Fall back to the token the Netlify CLI already stored at login, so this runs
 // with no setup on a machine where `netlify` is signed in — no personal access token to mint.
@@ -90,10 +108,24 @@ const PLAN_ENV = (() => {
 // word "brief" and replied "your message got cut off". Every Max-plan answer produced before this
 // fix was generated from a mangled fragment. stdin has no quoting rules, so it cannot be mangled.
 // The system prompt rides in the same stdin payload for the same reason.
-function askClaude(prompt) {
+// FLAGS, and why each one is here (measured 2026-08-12 on this machine, "reply OK" round trip):
+//   bare `--print`                                    4355 ms
+//   + --strict-mcp-config --no-session-persistence
+//     --exclude-dynamic-system-prompt-sections        2609 ms   (~40% off every single answer)
+// --strict-mcp-config with no --mcp-config means "no MCP servers at all": the connector handshake is
+// pure startup cost here, since this call answers from the prompt, not from tools.
+// NO FLAG MAY TAKE A PATH OR A QUOTED STRING. On Windows `claude` is a .cmd shim needing shell:true,
+// and Node then concatenates argv unescaped — a path containing spaces (this repo lives under
+// "ARIA — Real-Time AI Assistant") would be shredded exactly like the prompt was before it moved to
+// stdin. Model ids and bare switches are safe because they contain neither spaces nor quotes.
+const FAST_FLAGS = ['--strict-mcp-config', '--no-session-persistence', '--exclude-dynamic-system-prompt-sections'];
+
+function askClaude(prompt, { model = null, system = null } = {}) {
   return new Promise((resolve) => {
     let out = '', err = '', settled = false;
-    const child = spawn(CLAUDE_BIN, ['--print'], { shell: process.platform === 'win32', env: PLAN_ENV });
+    const args = ['--print', ...FAST_FLAGS];
+    if (model) args.push('--model', model);            // safe: ids are [a-z0-9-] only
+    const child = spawn(CLAUDE_BIN, args, { shell: process.platform === 'win32', env: PLAN_ENV });
     const timer = setTimeout(() => { if (!settled) { settled = true; try { child.kill(); } catch {} resolve({ error: 'timeout' }); } }, CLI_TIMEOUT_MS);
     child.stdout.on('data', (d) => { out += d; });
     child.stderr.on('data', (d) => { err += d; });
@@ -105,18 +137,107 @@ function askClaude(prompt) {
       if (code === 0 && text) resolve({ answer: text });
       else resolve({ error: err.trim().slice(0, 300) || `exit ${code}` });
     });
-    try { child.stdin.write(SYSTEM + '\n\n' + prompt); child.stdin.end(); }
+    try { child.stdin.write((system || systemPrompt()) + '\n\n' + prompt); child.stdin.end(); }
     catch (e) { if (!settled) { settled = true; clearTimeout(timer); resolve({ error: 'stdin: ' + e.message }); } }
   });
+}
+
+// ── The two brains, in order ─────────────────────────────────────────────────
+// Ahmad, 2026-08-12: "Axis looks at both brains starting with obsidian."
+//
+//   1. Obsidian AXIS vault   ~5ms   $0, no model   ← brain #1, and the only one written to
+//   2. Claude Max plan       ~2-17s $0 API credits ← brain #2 supplies context, the plan reasons
+//
+// The ARIA brain (Blobs KB, research agents) is already searched on the cloud side in
+// axis-brain.cjs before a question is ever queued here, so by the time the worker sees a question,
+// those tiers have declined. What the worker adds is the vault: first as an answer in its own right,
+// and — when it cannot answer alone — as context that makes the plan's answer specific to Ahmad's
+// operation rather than generic. Partial vault knowledge is still worth spending, and costs nothing.
+async function answerQuestion(query) {
+  const t0 = Date.now();
+
+  // Brain #1, alone. A confident vault hit skips the model entirely: no tokens, no plan usage, and
+  // an answer in single-digit milliseconds instead of seconds.
+  const direct = vault.vaultTier(query);
+  if (direct) {
+    return { answer: direct.text, tier: 'vault', model: null, source: direct.source,
+      ms: Date.now() - t0, learned: false };
+  }
+
+  // Brain #1 as context for brain #2.
+  const context = vault.vaultContext(query);
+  const route = classify(query, { contextChars: context.length });
+
+  const prompt = context
+    ? `Context from Ahmad's AXIS vault. Prefer it over general knowledge where they disagree, and say so if it is silent on the question.\n\n${context}\n\n---\n\nAhmad asks: ${query}`
+    : query;
+
+  let tierName = route.tier;
+  let escalatedFrom = null;
+  let res = null;
+
+  // Climb one rung at a time, and only on evidence — an empty, hedged, or clarifying reply. This is
+  // what "no choice" means: the cheap model was tried and demonstrably could not answer.
+  for (let hop = 0; hop < 3; hop++) {
+    const tier = TIER_BY_NAME[tierName];
+    const started = Date.now();
+    res = await askClaude(prompt, { model: tier.model });
+    const ms = Date.now() - started;
+    recordUse(tierName, tier.model, { escalatedFrom, ms });
+
+    if (res.error) {
+      const up = escalate(tierName);
+      if (!up) return { error: res.error };
+      console.log(`[axis-brain-worker] ${tierName} errored (${String(res.error).slice(0, 60)}) → ${up.name}`);
+      escalatedFrom = tierName; tierName = up.name; continue;
+    }
+    const usable = answerUsable(res.answer);
+    if (usable.ok) break;
+    const up = escalate(tierName);
+    if (!up) break;                       // top of the ladder — ship what we have
+    console.log(`[axis-brain-worker] ${tierName} ${usable.reason} → escalating to ${up.name}`);
+    escalatedFrom = tierName; tierName = up.name;
+  }
+
+  if (!res || res.error || !res.answer) return { error: (res && res.error) || 'no answer' };
+
+  // "Future info and learning will be saved in obsidian axis vault (brain)."
+  // The vault write is what makes the next identical question free — brain #1 will answer it.
+  // Confidence tracks the tier that produced the answer, not whether it escalated. The quality gate
+  // upstream checks the *form* of an answer — long enough, not a hedge, not a question — and cannot
+  // check whether it is true. Measured 2026-08-12: asked what MERX stands for, the fast tier
+  // produced a confident, plausible, wrong expansion that passed every gate. Banking that as "high"
+  // would put a hallucination into the brain with the same standing as RULES.md. So a fast-tier
+  // answer is banked as low, and AXIS says so out loud when it leans on one (see 13_Learned).
+  const CONFIDENCE = { fast: 'low', standard: 'medium', deep: 'high' };
+  const w = vault.learn({
+    question: query, answer: stripTrailingOffer(res.answer),
+    source: 'claude-max', model: TIER_BY_NAME[tierName].model,
+    confidence: CONFIDENCE[tierName] || 'medium',
+  });
+
+  return { answer: res.answer, tier: tierName, model: TIER_BY_NAME[tierName].model,
+    escalatedFrom, ms: Date.now() - t0, vaultContext: context.length, learned: w.written,
+    learnedFile: w.rel || null, learnSkipped: w.written ? null : w.reason };
 }
 
 // Same as askClaude but with extra CLI flags — used by self.fix, which needs edit permission.
 // The prompt still rides stdin: with shell:true on Windows, argv is concatenated unescaped and any
 // real prompt is shredded before the model sees it.
-function askClaudeIn(prompt, extraArgs = [], timeoutMs = CLI_TIMEOUT_MS) {
+// `model` is REQUIRED in practice even though it defaults to null: passing no --model meant every
+// Claude Code run (self.fix, machine.run) and every Cowork question inherited whatever the CLI
+// session defaulted to. Ahmad, 2026-08-12: "ensure claude code uses opus 5 to execute unless I
+// specify to use fable 5 or any other model." Callers resolve it with modelForRequest().
+//
+// Deliberately does NOT take FAST_FLAGS. Those strip MCP servers and dynamic system-prompt sections,
+// which is right for a prompt-only answer and wrong here: cowork.ask and self.fix are supposed to
+// operate in the repo under CLAUDE.md. Only --model is added, because a model id is [a-z0-9-] and so
+// survives the Windows shell:true argv concatenation that shreds anything with a space in it.
+function askClaudeIn(prompt, extraArgs = [], timeoutMs = CLI_TIMEOUT_MS, model = null) {
   return new Promise((resolve) => {
     let out = '', err = '', done = false;
-    const c = spawn(CLAUDE_BIN, ['--print', ...extraArgs], { cwd: REPO, shell: process.platform === 'win32', env: PLAN_ENV });
+    const args = ['--print', ...(model ? ['--model', model] : []), ...extraArgs];
+    const c = spawn(CLAUDE_BIN, args, { cwd: REPO, shell: process.platform === 'win32', env: PLAN_ENV });
     const t = setTimeout(() => { if (!done) { done = true; try { c.kill(); } catch {} resolve({ error: 'timeout' }); } }, timeoutMs);
     c.stdout.on('data', (d) => { out += d; });
     c.stderr.on('data', (d) => { err += d; });
@@ -262,7 +383,9 @@ surface (assets/axis-*.js, assets/axis-tokens.css, axis.html, aperture-learning.
 netlify/functions/axis-*, scripts/axis-*). axis.html and aperture-learning.html must stay identical.
 When done run: for t in tests/axis-*.test.mjs; do node "$t"; done — they must all pass.
 Reply with ONE short sentence saying what you changed, or why no change was needed.`;
-    const r = await askClaudeIn(prompt, ['--permission-mode', 'acceptEdits'], 1500000);
+    const pick = modelForRequest(arg, 'execute');
+    await progress('Claude Code on ' + pick.model + ' (' + pick.why + ')', 'info');
+    const r = await askClaudeIn(prompt, ['--permission-mode', 'acceptEdits'], 1500000, pick.model);
     if (r.error) return { error: 'self-fix failed: ' + String(r.error).slice(-200) };
     // "tell me once its done" — a self-fix finishing is exactly the kind of thing worth speaking up
     // about unprompted, so it goes out on the progress channel as well as answering the caller.
@@ -276,7 +399,10 @@ Reply with ONE short sentence saying what you changed, or why no change was need
     // this repo under CLAUDE.md. This is the READ side: ask it something, get an answer back. No
     // edit permission, so a question can never quietly become a change.
     if (!arg) return { error: 'nothing to ask' };
-    await progress('asking Claude Cowork: ' + arg.slice(0, 80), 'start');
+    // Cowork picks the model that fits the request, never below `standard` - a planning
+    // conversation answered on the fast tier is exactly the quality loss to avoid.
+    const coworkPick = modelForRequest(arg, 'cowork');
+    await progress('asking Claude Cowork on ' + coworkPick.model + ' (' + coworkPick.why + ')', 'start');
     const r = await askClaudeIn(
       `You are Claude Cowork for IIS/ARIA, following CLAUDE.md in this repo. Ahmad asked, by voice:
 
@@ -284,10 +410,73 @@ Reply with ONE short sentence saying what you changed, or why no change was need
 
 Answer from what is actually in the repo. If you do not know, say so plainly rather than guessing.
 Reply in at most four sentences — this is going to be read aloud.`,
-      [], 600000);
+      [], 600000, coworkPick.model);
     if (r.error) return { error: 'cowork failed: ' + String(r.error).slice(-200) };
     await progress('Cowork answered', 'done');
     return { answer: String(r.answer || '').trim().slice(-900) };
+  }
+
+  if (kind === 'cowork.plan') {
+    // Ahmad, 2026-08-12: "claude cowork to be use by axis for planning… I want Axis basically the
+    // visual and verbal extension of claude code and cowork."
+    //
+    // Same engine as cowork.ask and the same read-only guarantee (no --permission-mode, so no edits),
+    // but a different job: cowork.ask answers a question, this one PLANS WITH him. So the prompt asks
+    // for a short plan and one open question rather than a four-sentence answer, and it is told to
+    // ground the plan in the repo and the standing rules instead of proposing work that breaks them.
+    //
+    // Spoken-length discipline matters more here than anywhere: a plan read aloud end-to-end is
+    // unusable, so it comes back as a few steps and stops. splitForTurns() on the console side holds
+    // the remainder and releases it on "go on".
+    if (!arg) return { error: 'nothing to plan' };
+    const planPick = modelForRequest(arg, 'cowork');
+    await progress('planning with Claude Cowork on ' + planPick.model + ' (' + planPick.why + ')', 'start');
+    const r = await askClaudeIn(
+      `You are Claude Cowork for IIS/ARIA, following CLAUDE.md in this repo. You are planning WITH
+Ahmad, out loud, not writing him a document. He said, by voice:
+
+"${arg}"
+
+Ground the plan in what is actually in this repo and in the standing rules (spend cap, no fake proof,
+preview-before-push, ARIA and Aperture never break). If the request conflicts with a rule, say so in
+one line and plan the version that does not.
+
+Give at most three concrete next steps, shortest-path first and revenue-first where that applies.
+Then ask the ONE question you actually need answered to proceed. No preamble, no headers, no recap.
+This is being read aloud, so keep it under about six short sentences.`,
+      [], 900000, planPick.model);
+    if (r.error) return { error: 'planning failed: ' + String(r.error).slice(-200) };
+    await progress('Cowork planned it', 'done');
+    return { answer: String(r.answer || '').trim().slice(-1200) };
+  }
+
+  if (kind === 'code.build') {
+    // "claude code to execute any code." self.fix repairs what AXIS got wrong; this builds what
+    // Ahmad asked for. Both run Claude Code in the repo with edit permission, and both run on the
+    // execution floor (opus 5 unless he names a model) because a bad edit costs a debugging session
+    // — execution deliberately does NOT ride the cost ladder.
+    if (!arg) return { error: 'nothing to build' };
+    const buildPick = modelForRequest(arg, 'execute');
+    await progress('Claude Code building on ' + buildPick.model + ': ' + arg.slice(0, 70), 'start');
+    const r = await askClaudeIn(
+      `You are Claude Code working in the IIS/ARIA repo, following CLAUDE.md. Ahmad asked, by voice:
+
+"${arg}"
+
+Build the smallest thing that satisfies it. Follow the standing rules: do not publish or deploy, do
+not send anything externally, do not spend money, do not touch credentials, and never break ARIA,
+Aperture or Sentinel. Do not change look, theme or copy on iisupp.net without a preview.
+
+Add or update a test that would fail without your change, then run the relevant suites and make them
+pass. If the request is ambiguous enough that two readings give materially different code, stop and
+say which two rather than guessing.
+
+Reply with ONE short sentence saying what you built and which tests cover it.`,
+      ['--permission-mode', 'acceptEdits'], 1500000, buildPick.model);
+    if (r.error) return { error: 'build failed: ' + String(r.error).slice(-200) };
+    const said = String(r.answer || '').trim().slice(-600);
+    await progress('Built it: ' + said.slice(0, 160), 'done');
+    return { answer: said };
   }
 
   if (kind === 'machine.run') {
@@ -305,7 +494,8 @@ Reply in at most four sentences — this is going to be read aloud.`,
       await progress(`I stopped short of "${hit[0]}" — that one needs you to do it directly. Nothing was changed.`, 'attention');
       return { answer: `That involves ${hit[0]}, which I will not do off a voice command. Nothing was changed — tell me to do it in Claude Code and I will.` };
     }
-    await progress('running: ' + arg.slice(0, 80), 'start');
+    const runPick = modelForRequest(arg, 'execute');
+    await progress('running on ' + runPick.model + ': ' + arg.slice(0, 60), 'start');
     const r = await askClaudeIn(
       `Ahmad asked, by voice, for this to be done on his machine:
 
@@ -315,7 +505,7 @@ You are in the IIS/ARIA repo and must follow CLAUDE.md. Do the smallest thing th
 request. Do NOT delete anything, publish, deploy, send anything externally, spend money, or touch
 credentials — if the request needs any of those, stop and say so instead of doing it.
 Reply with ONE short sentence describing what you did, or why you did not.`,
-      ['--permission-mode', 'acceptEdits'], 1500000);
+      ['--permission-mode', 'acceptEdits'], 1500000, runPick.model);
     if (r.error) return { error: 'machine task failed: ' + String(r.error).slice(-200) };
     await progress('done: ' + arg.slice(0, 60), 'done');
     return { answer: String(r.answer || '').trim().slice(-600) };
@@ -349,12 +539,18 @@ async function drain() {
     if (Date.now() - (job.t || 0) > 20000) { try { await jobs.delete(b.key); } catch {} continue; }
 
     console.log(`[axis-brain-worker] ${job.id} → ${String(job.query).slice(0, 70)}`);
-    const res = await askClaude(job.query);
-    try { await jobs.setJSON(`done/${job.id}`, { ...res, t: Date.now() }); } catch {}
+    const res = await answerQuestion(job.query);
+    try { await jobs.setJSON(`done/${job.id}`, { answer: res.answer, error: res.error, t: Date.now() }); } catch {}
     try { await jobs.delete(b.key); } catch {}
     if (res.answer) {
-      const learned = await bank(job.query, res.answer);
-      console.log(`[axis-brain-worker] answered on the Max plan${learned ? ' · banked to ARIA brain' : ''}`);
+      // A vault answer never touches the plan, so it is never re-banked into Blobs either — it is
+      // already in the brain that produced it.
+      const banked = res.tier === 'vault' ? false : await bank(job.query, res.answer);
+      const how = res.tier === 'vault'
+        ? `from the vault (${res.source.replace('axis-vault:', '')}) in ${res.ms}ms · no model`
+        : `on the Max plan · ${res.model}${res.escalatedFrom ? ` (escalated from ${res.escalatedFrom})` : ''} · ${res.ms}ms`;
+      const saved = [res.learned ? 'vault' : null, banked ? 'ARIA brain' : null].filter(Boolean).join(' + ');
+      console.log(`[axis-brain-worker] answered ${how}${saved ? ` · saved to ${saved}` : ''}`);
     } else {
       console.warn('[axis-brain-worker] failed:', res.error);
     }
@@ -373,7 +569,83 @@ async function sweep() {
 }
 
 console.log('[axis-brain-worker] online — answering AXIS on the Claude Max plan ($0 API credits).');
+{
+  const v = vault.vaultStats();
+  console.log(v.available
+    ? `[axis-brain-worker] brain #1: Obsidian vault, ${v.notes} notes at ${v.root}`
+    : `[axis-brain-worker] brain #1: NO VAULT at ${v.root} — falling back to the plan for everything.`);
+  console.log(`[axis-brain-worker] system prompt: ${vault.loadSystemPrompt() ? 'vault (00_Index/AXIS-SYSTEM.md)' : 'built-in fallback'}`);
+}
+// Usage by tier, so "the plan ran out again" is answerable with numbers rather than a guess.
+setInterval(() => {
+  const u = usageReport();
+  if (u.total) console.log('[axis-brain-worker] model use today: '
+    + u.rows.map(r => `${r.tier}×${r.calls}${r.escalations ? ` (${r.escalations} esc)` : ''} avg ${r.avgMs}ms`).join(' · '));
+}, 600000);
 await beat();
 setInterval(beat, HEARTBEAT_MS);
 setInterval(sweep, 120000);
+
+// Queue steward. Runs here rather than as its own scheduled task because it is read-only, costs
+// milliseconds, and needs to be in the same process that answers Ahmad's questions — the whole
+// point is that "what is blocked?" is answerable from the vault instantly, with no model call.
+// Hourly is plenty: an approval queue does not change in seconds, and the failure it watches for
+// took two months to matter.
+async function stewardTick() {
+  try {
+    const { steward, spokenSummary } = await import('./lib/axis-queue-steward.mjs');
+    const p = path.join(REPO, 'senior-director-state', 'autonomy', 'approval-inbox.json');
+    let items = [];
+    try {
+      const j = JSON.parse(fs.readFileSync(p, 'utf8'));
+      items = Array.isArray(j) ? j : (j.items || j.approvals || []);
+    } catch { return; }                       // no inbox yet is not a problem to report
+    const logs = {};
+    for (const [name, rel] of [['ARIA KB pull', 'aria_brain_pack/pull.log'],
+                               ['AXIS brain worker', 'logs/axis-brain-worker.log']]) {
+      try { logs[name] = fs.readFileSync(path.join(REPO, rel), 'utf8').slice(-60000); } catch {}
+    }
+    const rep = steward({ items, logs });
+    // Into brain #1, so the answer is local and free the moment Ahmad asks.
+    vault.learn({
+      question: 'what is blocked, what is jammed, and what is failing quietly',
+      answer: spokenSummary(rep) + '\n\n'
+        + `${rep.collapsedFrom} open approvals are really ${rep.collapsedTo} decisions. `
+        + `Oldest ${rep.oldestDays} days, median ${rep.medianDays}. `
+        + `${rep.parkable} are 45+ days old.\n\n`
+        + rep.jammed.map((j) => `JAMMED ${j.category}: ${j.advice}`).join('\n')
+        + (rep.failures.length ? '\n\n' + rep.failures.map((f) =>
+            `FAILING ${f.source}: ${f.streakDays} days running, ${f.distinctDays} failing days since ${f.earliest}.`).join('\n') : ''),
+      source: 'axis-queue-steward', confidence: 'high',
+    });
+    if (rep.jammed.length || rep.failures.length) {
+      console.log('[axis-brain-worker] steward: ' + spokenSummary(rep));
+    }
+  } catch (e) { console.warn('[axis-brain-worker] steward failed:', e.message); }
+}
+await stewardTick();
+setInterval(stewardTick, 3600000);
+
+// Job watchdog. Same cadence and same reasoning as the steward: read-only, milliseconds, and the
+// answer belongs in the vault so "is anything broken?" is local and free. Spawned as a child rather
+// than imported because it shells out to PowerShell for Windows task exit codes and exits non-zero
+// on a real failure — neither of which belongs inside the worker's own process.
+function watchdogTick() {
+  try {
+    const c = spawn(process.execPath, [path.join(REPO, 'scripts', 'job-watchdog.mjs'), '--quiet'],
+      { cwd: REPO, env: PLAN_ENV });
+    let out = '';
+    c.stdout.on('data', (d) => { out += d; });
+    c.on('error', () => {});
+    c.on('close', () => {
+      const line = out.trim();
+      // Only speak up when something is wrong. A healthy fleet saying "all healthy" every hour is
+      // how people learn to stop reading the log.
+      if (line && !/healthy/i.test(line)) console.log('[axis-brain-worker] watchdog: ' + line);
+    });
+  } catch (e) { console.warn('[axis-brain-worker] watchdog failed:', e.message); }
+}
+watchdogTick();
+setInterval(watchdogTick, 3600000);
+
 for (;;) { await drain(); await drainTasks(); await new Promise((r) => setTimeout(r, POLL_MS)); }
