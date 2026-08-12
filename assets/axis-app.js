@@ -1562,7 +1562,12 @@ async function axisRunOp(op) {
     });
     const j = await r.json();
     if (!j || !j.ok) { const m = 'Could not queue that.'; dockLog.push({ role: 'axis', text: m }); renderDock(); axisSpeakTurn(m); return; }
+    // Say which hand is doing the work, because the wait is different. Cowork planning comes back in
+    // seconds and Ahmad should stay on the line; a Claude Code build takes minutes and he should not
+    // sit watching the globe. A generic "On it." for both is what made AXIS feel unresponsive.
     const ack = op.kind === 'self.fix' ? 'On it — Claude Code is working on that now. I will tell you when it lands.'
+      : op.kind === 'code.build' ? 'Claude Code is building that. It will take a few minutes — I will come back to you.'
+      : op.kind === 'cowork.plan' ? 'Let me think it through with Cowork. One moment.'
       : op.kind === 'video.upload' ? 'Uploading now. I will report back.'
       : 'On it.';
     dockLog.push({ role: 'axis', text: ack }); renderDock(); axisSpeakTurn(ack);
@@ -1823,6 +1828,13 @@ async function axisSend(inputId = 'axisInput') {
 // (Ahmad: "I want to talk, it's faster"); a manual voice override persists in localStorage and is the
 // SAME key the v1 console used, so a voice picked there carries over here.
 let axisVoiceOn = true, axisRec = null, axisListening = false;
+// Was the open mic asked for, or did AXIS open it on its own? axisTurnDone() re-opens it 350ms
+// after AXIS stops speaking so a reply can just be spoken. If Ahmad is not ready in that window the
+// recognizer fires 'no-speech', and reporting that produced the line he actually heard: "I did not
+// hear anything. Try again, a little closer to the mic." - scolding him for not answering a mic he
+// never opened, twice in one conversation. Silence after an auto-open is normal; only a mic Ahmad
+// deliberately opened is worth a note.
+let axisMicAutoOpen = false;
 
 // Rank the most HUMAN English voice the OS/browser offers: Neural/Natural (Edge online) > Google
 // (Chrome online) > Premium/Enhanced (macOS) > male-leaning names (AXIS persona) > any en-US/CA.
@@ -1996,6 +2008,54 @@ function axisReadTranscript(ev) {
   }
   return { interim: interim.trim(), final: final.trim() };
 }
+
+// ── End of a SENTENCE, not end of a breath ───────────────────────────────────
+// Ahmad, 2026-08-12: "its still not working well, cuts me off middle of sentence and does not hear
+// things properly."
+//
+// Both causes were in how a turn was ended. The Web Speech API marks a result `isFinal` whenever it
+// detects a pause — including the ordinary breath in the middle of a sentence — and the recognizers
+// sent the turn on the FIRST final they saw. Worse, axisReadTranscript() reads only from
+// ev.resultIndex onward, so that final carried just the newest segment: everything said before the
+// pause was thrown away. So one sentence with a comma in it became a truncated question built from
+// its own last few words, which is exactly "cuts me off" AND "does not hear properly".
+//
+// A turn now ends when the microphone goes QUIET, not when the engine feels like committing:
+//   · every final segment is appended to a buffer instead of replacing it
+//   · any new result (interim or final) restarts the quiet timer, because Ahmad is still talking
+//   · the turn is sent only after END_OF_TURN_MS of silence
+//   · if the recognizer closes with words still buffered, they are flushed rather than lost
+//
+// 1100ms is chosen to sit above a comma pause and below an awkward wait. A trailing conjunction
+// ("and", "but", "so"…) extends it, because someone who ends on "and" is mid-thought.
+const END_OF_TURN_MS = 1100;
+const END_OF_TURN_TRAILING_MS = 1900;
+const TRAILING_WORD = /\b(and|but|so|or|because|then|also|plus|with|for|to|the|a|of|that|which|if|when)$/i;
+
+function axisTurnBuffer(onComplete) {
+  let buf = '', timer = null;
+  const quietFor = (text) => (TRAILING_WORD.test(text.trim()) ? END_OF_TURN_TRAILING_MS : END_OF_TURN_MS);
+  const flush = () => {
+    timer = null;
+    const text = buf.trim();
+    buf = '';
+    if (text) onComplete(text);
+  };
+  return {
+    /** Feed one recognition event. Returns the running text for live display. */
+    push(t) {
+      if (t.final) buf = (buf ? buf + ' ' : '') + t.final;
+      const running = (buf + (t.interim ? ' ' + t.interim : '')).trim();
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(flush, quietFor(running || buf));
+      return running;
+    },
+    /** The recognizer closed. Don't lose a buffered sentence. */
+    close() { if (timer) { clearTimeout(timer); timer = null; } flush(); },
+    pending() { return !!buf.trim(); },
+    cancel() { if (timer) { clearTimeout(timer); timer = null; } buf = ''; },
+  };
+}
 function axisFill(inputId, t) {
   const box = $(inputId); if (box) box.value = t.final || t.interim;
   axisSetHear(t.interim || t.final, true);   // live proof AXIS is hearing you
@@ -2018,7 +2078,8 @@ function axisMicError(e) {
 }
 
 // Push-to-talk, shared by the dock and the public panel (one mic at a time).
-function axisMicToggle(micId = 'axisMic', inputId = 'axisInput', send = axisSend) {
+function axisMicToggle(micId = 'axisMic', inputId = 'axisInput', send = axisSend, auto = false) {
+  axisMicAutoOpen = !!auto;
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { axisMicNote('Voice input needs Chrome or Edge — this browser has no speech recognition.'); return; }
   if (axisListening) { try { axisRec && axisRec.stop(); } catch {} return; }
@@ -2026,11 +2087,18 @@ function axisMicToggle(micId = 'axisMic', inputId = 'axisInput', send = axisSend
   axisWakePause(); // one SpeechRecognition at a time — the wake listener yields to push-to-talk
   const mic = $(micId);
   let heard = '';
+  // A turn ends on SILENCE, not on the first isFinal — see axisTurnBuffer above. Declared before the
+  // handlers that close over it so the order reads plainly.
+  const turn = axisTurnBuffer((text) => { heard = text; axisSpokenTurn = true; send(); });
   const restMic = () => { axisListening = false; if (mic) { mic.style.color = ''; mic.style.borderColor = ''; mic.textContent = '🎙'; } if (document.documentElement.dataset.axisState === 'listening') setAxisState('idle'); if (!heard) axisSetHear('', false); axisWakeResume(); };
   axisRec = new SR(); axisRec.lang = 'en-CA'; axisRec.interimResults = true; axisRec.maxAlternatives = 1;
   axisRec.onstart = () => { axisListening = true; setAxisState('listening'); axisSetHear('Listening…', false); if (mic) { mic.style.color = 'var(--gold)'; mic.style.borderColor = 'var(--gold)'; mic.textContent = '⏺'; } };
   // A silent close is the single most confusing outcome — always say something.
   axisRec.onend = () => {
+    // Flush before restMic(): the recognizer can close with a complete sentence still sitting in the
+    // buffer waiting out its quiet window, and dropping it is the same lost-words bug from the
+    // other direction. close() is a no-op when the buffer is empty.
+    turn.close();
     restMic();
     // In hands-free the mic re-arms itself, so "press the mic" is advice for a button Ahmad is not
     // holding — and it was the FIRST thing in his 2026-08-12 transcript. Say nothing and listen again.
@@ -2038,8 +2106,22 @@ function axisMicToggle(micId = 'axisMic', inputId = 'axisInput', send = axisSend
     if (axisHandsFree) { axisOpenConvo(); axisWakeResume(); return; }
     axisMicNote('I did not catch that — press the mic and say it again.');
   };
-  axisRec.onerror = (e) => { restMic(); axisMicError(e); };
-  axisRec.onresult = (ev) => { const t = axisReadTranscript(ev); axisFill(inputId, t); if (t.final) { heard = t.final; axisSpokenTurn = true; send(); } };
+  // 'no-speech' on a mic AXIS opened itself is just Ahmad not having started yet. Close quietly and
+  // let the wake word re-arm (restMic calls axisWakeResume) instead of reporting a fault he did not
+  // cause. A mic he opened deliberately still gets the note.
+  axisRec.onerror = (e) => {
+    const auto = axisMicAutoOpen;
+    turn.cancel(); restMic();
+    if (auto && e && e.error === 'no-speech') return;
+    axisMicError(e);
+  };
+  axisRec.onresult = (ev) => {
+    const t = axisReadTranscript(ev);
+    const running = turn.push(t);
+    // Show the whole sentence so far, not just the newest fragment, so the box matches what AXIS
+    // will actually receive.
+    axisFill(inputId, { interim: t.interim, final: running });
+  };
   try { axisRec.start(); } catch { axisMicNote('Microphone is busy — another tab or app may be using it.'); restMic(); }
 }
 
@@ -2095,10 +2177,24 @@ function axisWakeStart() {
   try { axisWakeRec && axisWakeRec.abort(); } catch {}
   const rec = new SR();
   rec.lang = 'en-CA'; rec.continuous = true; rec.interimResults = true; rec.maxAlternatives = 1;
+  // Same silence-not-first-final rule as push-to-talk. In hands-free this mattered even more: the
+  // handler read ONLY ev.results[last], so a sentence split across two finals by a breath reached
+  // AXIS as its own tail — "and book the call" instead of the whole request.
+  const wakeTurn = axisTurnBuffer((said) => handleWakeUtterance(said));
   rec.onresult = (ev) => {
-    const r = ev.results[ev.results.length - 1];
-    if (!r || !r.isFinal) return;
-    const said = String(r[0] && r[0].transcript || '').trim();
+    const t = axisReadTranscript(ev);
+    // Stop and barge-in must act on the INTERIM, before the quiet window elapses: waiting a second
+    // to honour "AXIS stop" while it is still talking is exactly the unresponsiveness being fixed.
+    const live = ((t.final ? t.final + ' ' : '') + t.interim).trim();
+    if (live) {
+      if (isStop(live)) { wakeTurn.cancel(); axisStandDown(); return; }
+      if (document.documentElement.dataset.axisState === 'speaking' && !axisIsSelfEcho(live)) axisBargeIn();
+    }
+    const running = wakeTurn.push(t);
+    if (running) axisSetHear(running, true);                  // live proof AXIS is hearing you
+  };
+
+  function handleWakeUtterance(said) {
     if (!said) return;
     if (isStop(said)) { axisStandDown(); return; }           // stand-down wins over everything
     // AXIS is talking and the mic is deliberately still open (barge-in). Drop its own voice, and
@@ -2121,9 +2217,14 @@ function axisWakeStart() {
     if (s.inputId === 'axisInput' && $('axisDock') && $('axisDock').hidden) openDock();
     if (rest) { const i = $(s.inputId); if (i) { i.value = rest; axisSpokenTurn = true; axisSend(s.inputId); } }
     else axisMicToggle(s.micId, s.inputId, () => axisSend(s.inputId)); // bare "AXIS" → open the mic
-  };
+  }
   // Browsers stop a continuous recognizer on their own schedule; re-arm unless we deliberately paused.
-  rec.onend = () => { if (axisHandsFree && axisWakeArmed && !axisListening) { try { rec.start(); } catch {} } };
+  // Flush first: the browser closing the recognizer mid-quiet-window must not swallow a finished
+  // sentence, which is the same lost-words failure as truncating one.
+  rec.onend = () => {
+    wakeTurn.close();
+    if (axisHandsFree && axisWakeArmed && !axisListening) { try { rec.start(); } catch {} }
+  };
   // 'no-speech' is normal for a listener that sits open — never report it. Everything else gets the
   // same plain-language treatment as push-to-talk.
   rec.onerror = (e) => { if (e && e.error && e.error !== 'no-speech' && e.error !== 'aborted') axisMicError(e); };
@@ -2220,7 +2321,8 @@ function axisTurnDone() {
   setTimeout(() => {
     if (!axisHandsFree || axisListening) return;
     const s = axisSurface();
-    axisMicToggle(s.micId, s.inputId, () => axisSend(s.inputId));
+    // auto:true — AXIS opened this, Ahmad did not. Silence here is normal, not a mic fault.
+    axisMicToggle(s.micId, s.inputId, () => axisSend(s.inputId), true);
   }, 350);
 }
 

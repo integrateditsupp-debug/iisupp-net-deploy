@@ -53,7 +53,13 @@ assert.ok(/const attention = fresh\.filter\(\(e\) => e\.kind === 'attention'\)/.
 ok('an attention event auto-enters hands-free, speaks, and waits');
 
 // ---- 4. machine control rails ----
-assert.ok(/'cowork\.ask', 'machine\.run'/.test(queue), 'the new kinds are allowlisted server-side');
+// Enumerate the kinds rather than pinning their ADJACENCY in the source. The old
+// /'cowork\.ask', 'machine\.run'/ broke the moment cowork.plan and code.build were inserted between
+// them, which says nothing about whether the allow-list is correct — the guard was testing layout.
+for (const kind of ['video.make', 'video.short', 'video.upload', 'video.status',
+                    'self.fix', 'cowork.ask', 'cowork.plan', 'code.build', 'machine.run']) {
+  assert.ok(queue.includes(`'${kind}'`), `${kind} is not allowlisted server-side`);
+}
 const machine = worker.slice(worker.indexOf("kind === 'machine.run'"), worker.indexOf("kind === 'machine.run'") + 2600);
 assert.ok(/confirmed !== true/.test(machine), 'machine control requires an explicit confirm');
 const irreversible = machine.match(/const IRREVERSIBLE = \/([^/]+(?:\\\/[^/]*)*)\//);

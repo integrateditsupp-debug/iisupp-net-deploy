@@ -24,7 +24,13 @@ ok();
 
 // ---- 2. mic input: push-to-talk → transcript → auto-send to axis-director ----
 assert.ok(/window\.SpeechRecognition\s*\|\|\s*window\.webkitSpeechRecognition/.test(app), 'mic uses the browser Web Speech API (free, on-device trigger — no paid API)');
-assert.ok(/onresult[\s\S]{0,220}send\(\)/.test(app), 'mic transcript auto-sends');
+// Auto-send is still the behaviour, but it no longer happens inside onresult. A turn now ends on
+// SILENCE rather than on the first isFinal (axisTurnBuffer), because sending on the first final
+// truncated Ahmad mid-sentence. So assert the two halves of the path instead of their adjacency —
+// the old /onresult[\s\S]{0,220}send\(\)/ was an offset anchor and rotted the moment the send moved.
+assert.ok(/onresult[\s\S]{0,400}turn\.push\(/.test(app), 'onresult feeds the turn buffer');
+assert.ok(/axisTurnBuffer\(\([^)]*\)\s*=>\s*\{[^}]*send\(\)/.test(app),
+  'the turn buffer auto-sends once the utterance is complete');
 assert.ok(/send = axisSend/.test(app), 'dock mic default-binds to axisSend (public panel passes its own sender)');
 assert.ok(/axis-director/.test(app), 'dock send is wired to the axis-director function');
 ok();
