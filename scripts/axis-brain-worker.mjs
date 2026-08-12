@@ -263,8 +263,62 @@ netlify/functions/axis-*, scripts/axis-*). axis.html and aperture-learning.html 
 When done run: for t in tests/axis-*.test.mjs; do node "$t"; done — they must all pass.
 Reply with ONE short sentence saying what you changed, or why no change was needed.`;
     const r = await askClaudeIn(prompt, ['--permission-mode', 'acceptEdits'], 1500000);
-    return r.error ? { error: 'self-fix failed: ' + String(r.error).slice(-200) }
-                   : { answer: String(r.answer || '').trim().slice(-600) };
+    if (r.error) return { error: 'self-fix failed: ' + String(r.error).slice(-200) };
+    // "tell me once its done" — a self-fix finishing is exactly the kind of thing worth speaking up
+    // about unprompted, so it goes out on the progress channel as well as answering the caller.
+    const said = String(r.answer || '').trim().slice(-600);
+    await progress('Fixed it: ' + said.slice(0, 160), 'done');
+    return { answer: said };
+  }
+
+  if (kind === 'cowork.ask') {
+    // "Give it access to speak with claude cowork." Claude Cowork is the Claude CLI operating in
+    // this repo under CLAUDE.md. This is the READ side: ask it something, get an answer back. No
+    // edit permission, so a question can never quietly become a change.
+    if (!arg) return { error: 'nothing to ask' };
+    await progress('asking Claude Cowork: ' + arg.slice(0, 80), 'start');
+    const r = await askClaudeIn(
+      `You are Claude Cowork for IIS/ARIA, following CLAUDE.md in this repo. Ahmad asked, by voice:
+
+"${arg}"
+
+Answer from what is actually in the repo. If you do not know, say so plainly rather than guessing.
+Reply in at most four sentences — this is going to be read aloud.`,
+      [], 600000);
+    if (r.error) return { error: 'cowork failed: ' + String(r.error).slice(-200) };
+    await progress('Cowork answered', 'done');
+    return { answer: String(r.answer || '').trim().slice(-900) };
+  }
+
+  if (kind === 'machine.run') {
+    // "Take control of my machine as needed to perform any tasks required based on my request."
+    //
+    // Broad capability, but a spoken sentence is a weak gate for something that cannot be undone.
+    // Anything irreversible or outward-facing stops here and comes back to Ahmad as an attention
+    // event instead of being done on a voice command that a room full of noise could have produced.
+    // Everything else runs through Claude Code in the repo with edit permission.
+    if (!arg) return { error: 'nothing to run' };
+    if (confirmed !== true) return { error: 'that needs confirming out loud first' };
+    const IRREVERSIBLE = /\b(delete|rm\s+-rf|drop\s+(?:table|database)|wipe|format|uninstall|publish|deploy|go\s+live|push\s+to\s+prod|pay|purchase|buy|invoice|charge|refund|send\s+(?:the\s+)?(?:email|invoice|quote)|register|sign\s*up|create\s+(?:an\s+)?account|api\s*key|password|credential|secret|token)\b/i;
+    const hit = arg.match(IRREVERSIBLE);
+    if (hit) {
+      await progress(`I stopped short of "${hit[0]}" — that one needs you to do it directly. Nothing was changed.`, 'attention');
+      return { answer: `That involves ${hit[0]}, which I will not do off a voice command. Nothing was changed — tell me to do it in Claude Code and I will.` };
+    }
+    await progress('running: ' + arg.slice(0, 80), 'start');
+    const r = await askClaudeIn(
+      `Ahmad asked, by voice, for this to be done on his machine:
+
+"${arg}"
+
+You are in the IIS/ARIA repo and must follow CLAUDE.md. Do the smallest thing that satisfies the
+request. Do NOT delete anything, publish, deploy, send anything externally, spend money, or touch
+credentials — if the request needs any of those, stop and say so instead of doing it.
+Reply with ONE short sentence describing what you did, or why you did not.`,
+      ['--permission-mode', 'acceptEdits'], 1500000);
+    if (r.error) return { error: 'machine task failed: ' + String(r.error).slice(-200) };
+    await progress('done: ' + arg.slice(0, 60), 'done');
+    return { answer: String(r.answer || '').trim().slice(-600) };
   }
 
   return { error: 'unknown task kind: ' + kind };

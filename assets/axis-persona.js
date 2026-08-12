@@ -198,6 +198,19 @@ const OPS = [
     say: () => 'Upload the staged videos to the channel' },
   { kind: 'video.status', re: /\b(?:how many|what(?:'s| is) )?\b[^.?!]*\b(video|videos|shorts?|channel|youtube)\b[^.?!]*\b(status|staged|ready|queue|left|today)\b|\bchannel status\b/i,
     say: () => 'Check the channel status' },
+  // Talking to Claude Cowork. Read-only, so this only ever comes back as an answer.
+  { kind: 'cowork.ask',   re: /\b(?:ask|check with|talk to|speak (?:to|with)|get)\s+(?:claude\s+)?cowork(?:er)?\b|\bask claude\b/i,
+    // Anchor on "cowork" first — "ask claude cowork about X" would otherwise capture from "claude"
+    // and read back as "Ask Claude Cowork about cowork about X".
+    // The "ask claude" branch needs the lookahead: regex alternation takes the LEFTMOST match, so in
+    // "ask claude cowork about X" it would win at index 0 and capture "cowork about X" as the topic.
+    arg: /\bcowork(?:er)?\s+(?:about\s+|what\s+|why\s+|how\s+|if\s+|whether\s+)?(.+)$|\bask claude\s+(?!cowork)(?:about\s+)?(.+)$/i,
+    say: (a) => `Ask Claude Cowork${a ? ' about ' + a : ''}` },
+  // Machine control. Deliberately requires an explicit "on my machine" / "take control" phrasing —
+  // this must never be what a vague sentence falls through to.
+  { kind: 'machine.run',  re: /\b(?:take control|on my (?:machine|computer|pc)|run (?:this|that|it) locally)\b/i,
+    arg: /\b(?:and|to|:)\s+(.+)$/i,
+    say: (a) => `Run on your machine: ${a || 'the request'}` },
   { kind: 'self.fix',     re: /\b(?:fix|repair|sort out|correct|debug)\b(?!\s+(?:the )?printer)/i,
     arg: /\b(?:fix|repair|sort out|correct|debug)\s+(.+)$/i,
     say: (a) => `Have Claude Code fix: ${a || 'the reported issue'}` },
@@ -209,9 +222,14 @@ export function detectOp(text) {
   for (const op of OPS) {
     if (!op.re.test(t)) continue;
     let arg = '';
-    if (op.arg) { const m = t.match(op.arg); if (m) arg = m[1].trim().replace(/[.?!]+$/, ''); }
-    // self.fix without a description is useless — better to ask than to guess at what is broken.
-    if (op.kind === 'self.fix' && arg.length < 6) return null;
+    // Alternation patterns leave undefined groups — take the first that actually captured.
+    if (op.arg) {
+      const m = t.match(op.arg);
+      if (m) arg = String(m.slice(1).find(Boolean) || '').trim().replace(/[.?!]+$/, '');
+    }
+    // These are meaningless without a subject, and guessing at one is worse than asking. "fix it"
+    // with no antecedent must not become a repo edit.
+    if (['self.fix', 'machine.run', 'cowork.ask'].includes(op.kind) && arg.length < 6) return null;
     return { kind: op.kind, arg, confirm: op.say(arg) + '. Say confirm, or cancel.' };
   }
   return null;

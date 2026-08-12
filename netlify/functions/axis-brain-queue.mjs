@@ -137,7 +137,8 @@ export default async (request) => {
   // confused caller cannot ask it to run arbitrary shell.
   if (action === 'task') {
     const kind = String(body.kind || '');
-    const ALLOWED = ['video.make', 'video.short', 'video.upload', 'video.status', 'self.fix'];
+    const ALLOWED = ['video.make', 'video.short', 'video.upload', 'video.status', 'self.fix',
+      'cowork.ask', 'machine.run'];
     if (!ALLOWED.includes(kind)) return json(400, { error: 'unknown task kind' });
     const id = 't-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
     try {

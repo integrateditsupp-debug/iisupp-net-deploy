@@ -1730,7 +1730,7 @@ async function axisSend(inputId = 'axisInput') {
   // Say "stop" in between and it vanished silently, so "do the thing you just mentioned" had no
   // antecedent left to point at. A proposal now survives an interruption and an aside; it expires on
   // a timer instead, because a stale "go ahead" must never fire something offered ten minutes ago.
-  if (axisPendingOp && Date.now() - (axisPendingOp.t || 0) > 5 * 60 * 1000) axisPendingOp = null;
+  if (axisPendingOp && Date.now() - (axisPendingOp.t || 0) > OP_TTL_MS) axisPendingOp = null;
   if (axisPendingOp) {
     const op = axisPendingOp;
     if (isConfirm(text) || isReferential(text)) { axisPendingOp = null; await axisRunOp(op); return; }
@@ -1985,6 +1985,11 @@ let axisSpokenTurn = false;     // this turn came in by voice → answer with vo
 let axisPendingRoute = null;    // {intent, agent} awaiting a spoken confirm — routes only
 let axisHeldRest = '';          // the un-spoken tail of a chunked answer, released on "go on"
 let axisPendingOp = null;       // an operational task read back and awaiting a spoken confirm
+const OP_TTL_MS = 5 * 60 * 1000; // a confirm must answer a RECENT read-back, never a stale one
+let axisConvoUntil = 0;         // until this ms, speech counts as addressed without the wake word
+const CONVO_MS = 25000;         // long enough to think before replying, short enough not to eavesdrop
+const axisConvoOpen = () => Date.now() < axisConvoUntil;
+function axisOpenConvo(ms = CONVO_MS) { axisConvoUntil = Date.now() + ms; }
 
 // Which surface a hands-free turn belongs to. The Agent Director tab has its own command channel and
 // openDock() deliberately refuses to cover it, so a wake there must drive ITS input, not the hidden
@@ -2007,8 +2012,16 @@ function axisWakeStart() {
     const said = String(r[0] && r[0].transcript || '').trim();
     if (!said) return;
     if (isStop(said)) { axisStandDown(); return; }           // stand-down wins over everything
-    if (!isWake(said)) return;                                // not addressed to AXIS — ignore it
-    const rest = stripWake(said);
+    // Ahmad: "when its in hands free mode it listens to what I am saying." Saying "Axis" before
+    // every sentence is not a conversation. Once AXIS has spoken, the floor stays open for a short
+    // window and anything said in it counts as addressed — the wake word is only needed to START.
+    // The window is deliberately short and closes the moment the turn is handled, so a room with
+    // people talking in it cannot keep feeding the recognizer.
+    const addressed = isWake(said) || axisConvoOpen();
+    if (!addressed) return;                                   // not addressed to AXIS — ignore it
+    if (said.replace(/\s+/g, '').length < 3) return;           // grunts and noise are not a turn
+    axisConvoUntil = 0;                                        // this utterance consumes the window
+    const rest = isWake(said) ? stripWake(said) : said;
     const s = axisSurface();
     if (s.inputId === 'axisInput' && $('axisDock') && $('axisDock').hidden) openDock();
     if (rest) { const i = $(s.inputId); if (i) { i.value = rest; axisSpokenTurn = true; axisSend(s.inputId); } }
@@ -2038,9 +2051,75 @@ setInterval(() => {
   axisWakeStart();
 }, 4000);
 
+// ── Proactive updates ────────────────────────────────────────────────────────
+// Ahmad: "as long as its running and claude is running or agents it should give me any updates or
+// progress that is important and I need to know. If something needs my attention it should go
+// automatically in hands free mode and tell me whats going on then wait for me to reply."
+//
+// The worker writes progress events as it runs. This pulls them and decides which ones are worth
+// interrupting for. Being talkative is the failure mode here: every 'start'/'info' event goes to the
+// transcript silently, and only a finish, a failure, or an explicit request for Ahmad speaks.
+const axisSeenEvents = new Set();
+let axisEventsSeeded = false;
+window.__axisEvents = [];
+
+function axisEventKey(e) { return String(e.t || 0) + ':' + String(e.msg || '').slice(0, 60); }
+
+async function axisProgressPoll() {
+  if (document.hidden) return;
+  let j = null;
+  try {
+    const r = await fetch('/.netlify/functions/axis-brain-queue', {
+      method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ action: 'progress' }),
+    });
+    j = await r.json();
+  } catch { return; }
+  if (!j || !j.ok || !Array.isArray(j.events)) return;
+
+  const fresh = j.events.filter((e) => e && !axisSeenEvents.has(axisEventKey(e)));
+  for (const e of j.events) axisSeenEvents.add(axisEventKey(e));
+
+  // The first poll of a session must not narrate everything that happened before Ahmad opened the
+  // page. Seed silently, then speak only what happens from here.
+  if (!axisEventsSeeded) { axisEventsSeeded = true; window.__axisEvents = j.events.slice(0, 12); return; }
+  if (!fresh.length) return;
+
+  window.__axisEvents = j.events.slice(0, 12);
+  try { renderAxisPri && renderAxisPri(); } catch {}
+
+  const attention = fresh.filter((e) => e.kind === 'attention');
+  const notable = fresh.filter((e) => e.kind === 'done' || e.kind === 'error');
+  for (const e of fresh.slice().reverse()) { dockLog.push({ role: 'axis', text: e.msg }); }
+  renderDock();
+
+  if (attention.length) { axisRaiseAttention(attention[0].msg); return; }
+  if (!notable.length) return;                       // logged, not worth speaking over
+  if (axisPendingOp || axisListening) return;         // never talk across a pending confirm
+  if (document.documentElement.dataset.axisState === 'speaking') return;
+  const line = notable.length === 1 ? notable[0].msg
+    : notable.length + ' updates. ' + notable[0].msg;
+  axisSpeakTurn(line);
+}
+
+// Something needs Ahmad. Turn hands-free ON by itself, say what is going on, and hold the floor open
+// for the reply — he should not have to notice a badge and press a button to be told.
+function axisRaiseAttention(msg) {
+  try { if ($('axisDock') && $('axisDock').hidden) openDock(); } catch {}
+  if (!axisHandsFree) { axisHandsFree = true; try { axisSyncWakeBtn(); } catch {} axisWakeResume(); }
+  axisOpenConvo(45000);                              // a question deserves longer than a reply window
+  try { toast('AXIS needs you'); } catch {}
+  axisSpeakTurn(msg);
+}
+
+setInterval(axisProgressPoll, 20000);
+setTimeout(axisProgressPoll, 3000);
+
 // End of an AXIS turn: hand the floor back so Ahmad can just keep talking.
 function axisTurnDone() {
   axisSpokenTurn = false;
+  // AXIS just finished speaking, so a reply is the expected next thing. Hold the floor open for it.
+  if (axisHandsFree) axisOpenConvo();
   if (!axisHandsFree || axisListening) return;
   if ($('axisDock') && $('axisDock').hidden && state.module !== 'axis-agent-director') return;
   setTimeout(() => {
@@ -2055,6 +2134,10 @@ function axisStandDown() {
   try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch {}
   try { axisRec && axisRec.abort(); } catch {}
   __turnDone = null; axisPendingRoute = null; axisSpokenTurn = false;
+  // Closes the floor, but deliberately does NOT drop axisPendingOp: "stop" means stop talking, not
+  // forget where we were, so "do what you just said" still resolves afterwards. The task cannot run
+  // without a confirm, and it expires on its own (see OP_TTL_MS) so a late "yes" cannot fire it.
+  axisConvoUntil = 0;
   if (document.documentElement.dataset.axisState !== 'idle') setAxisState('idle');
   toast('AXIS stood down');
 }

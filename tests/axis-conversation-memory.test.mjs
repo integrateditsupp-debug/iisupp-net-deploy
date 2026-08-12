@@ -61,12 +61,40 @@ const stopBlock = app.slice(app.indexOf('if (isStop(raw))'), app.indexOf('if (is
 assert.ok(!/axisPendingOp = null/.test(stopBlock), 'stop must not discard the parked proposal');
 assert.ok(!/axisHeldRest = ''/.test(stopBlock), 'stop must not discard the un-spoken tail');
 assert.ok(/Still holding/.test(stopBlock), 'stop reports what it is still holding');
-const sd = app.slice(app.indexOf('function axisStandDown'), app.indexOf('function axisStandDown') + 500);
-assert.ok(!/axisPendingOp|axisHeldRest/.test(sd), 'stand-down clears voice state only, never conversational place');
+// Take the WHOLE function, not a fixed character window. A 500-char slice silently stopped covering
+// the end of axisStandDown as soon as a comment was added to it, which left this guard blind to
+// exactly the regression it exists to catch (verified by mutation: injecting `axisPendingOp = null`
+// into the function did not trip it).
+function fnBody(src, decl) {
+  const start = src.indexOf(decl);
+  assert.notEqual(start, -1, `${decl} not found`);
+  const open = src.indexOf('{', start);
+  let depth = 0;
+  for (let i = open; i < src.length; i++) {
+    if (src[i] === '{') depth++;
+    else if (src[i] === '}' && --depth === 0) return src.slice(start, i + 1);
+  }
+  throw new Error(`unbalanced braces in ${decl}`);
+}
+const sd = fnBody(app, 'function axisStandDown');
+// Match the ASSIGNMENT, not the mention: the invariant is that stand-down never *clears* the parked
+// proposal or the un-spoken tail. A comment in the function explaining that it deliberately leaves
+// them alone is the guard working as intended, and must not read as a violation.
+assert.ok(!/\baxisPendingOp\s*=|\baxisHeldRest\s*=/.test(sd),
+  'stand-down clears voice state only, never conversational place');
 ok('stop halts speech and keeps its place');
 
 // ---- 6. a parked proposal expires rather than lingering forever ----
-assert.ok(/axisPendingOp\.t \|\| 0\) > 5 \* 60 \* 1000/.test(app), 'a parked proposal expires after five minutes');
+// Assert the behaviour and the value, not the spelling: the window may be written inline or as a
+// named constant, but a parked proposal must be compared against a real age limit, and that limit
+// must actually be five minutes.
+assert.ok(/axisPendingOp\.t \|\| 0\) > (?:5 \* 60 \* 1000|OP_TTL_MS)/.test(app),
+  'a parked proposal is checked against an expiry');
+const ttl = app.match(/OP_TTL_MS\s*=\s*([^;]+);/);
+if (ttl) {
+  // eslint-disable-next-line no-eval
+  assert.equal(eval(ttl[1]), 5 * 60 * 1000, 'OP_TTL_MS must be five minutes');
+}
 assert.ok(/axisPendingOp = \{ \.\.\.op, t: Date\.now\(\) \}/.test(app), 'the proposal is stamped when parked');
 assert.ok(/isConfirm\(text\) \|\| isReferential\(text\)/.test(app), 'a pronoun can run the parked proposal');
 ok('a stale proposal expires instead of firing on a later "go ahead"');
