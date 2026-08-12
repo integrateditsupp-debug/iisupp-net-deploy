@@ -1,12 +1,12 @@
 {
- "status": "active build — a suite is red",
- "milestone": "The console you talk to and the console this site serves are the same build again. Five changes to how AXIS looks and sounds had been made and were sitting unmerged; they are merged, and every check that covers them was run against the merged result rather than against either side.",
- "readiness": "Built and tested. Two checks reported as open for several cycles are closed rather than reported again: each was a file present on the build machine and in no copy of the project. One check stays held open by work in progress on that machine, and is reported as held open, not as passing. Publishing to the live site stays a deliberate manual step, and pricing stays under review before publication.",
+ "status": "active build — one test reading was not taken",
+ "milestone": "The plan a customer can ask us to quote now has a name, and the agreement uses that same name on both the page that prices it and the page that sets its service levels. A check was added that fails the moment those three stop agreeing, so the name cannot drift back apart quietly.",
+ "readiness": "Built and tested. The quote path names the plan it is quoting and the agreement's two schedules were reconciled to one set of plan names. One of this cycle's two test readings could not be taken on the build machine and is reported as not taken rather than as a pass or a failure. Publishing to the live site stays a deliberate manual step, and pricing stays under review before publication.",
  "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build and is voice-operable: the spoken status answer reads this feed, and this feed is regenerated from measurements taken this cycle. Sent: 0. Meetings 0, revenue none. Tests: 1074 pass, 0 fail (registry exit 1 — a suite is held open and is not counted as green); site suite 111/111.",
+ "headline": "ARIA / AXIS is in active build and is voice-operable. Sent: 0. Meetings 0, revenue none. Tests: NOT TAKEN this cycle — the build machine's scratch volume was full, and a suite run there fails on the disk rather than on the code. Neither reading is reported as a pass and neither is reported as a failure.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
  "schema": "axis-status/1",
- "generatedAt": "2026-08-12T19:12:21.216Z",
+ "generatedAt": "2026-08-12T20:13:57.267Z",
  "public": true,
  "honest": true
 }
