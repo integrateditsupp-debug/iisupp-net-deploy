@@ -1928,11 +1928,47 @@ let __speakGen = 0; // generation guard: a stale utterance's onend must never cl
 // point for hands-free turn-taking. Kept as a module flag (not a axisSpeak argument) so every
 // existing axisSpeak(...) call site stays byte-identical.
 let __turnDone = null;
+// THE VOICE CHANGE THAT "DID NOT HAPPEN" (Ahmad, 2026-08-12: "the voice was not changed as well to
+// a english speaking woman").
+//
+// speechSynthesis.getVoices() is populated ASYNCHRONOUSLY in Chrome — the first call after page load
+// returns an EMPTY array. axisPickVoice() therefore returned null, and `if (v)` left both u.voice and
+// u.lang unset, so the browser spoke with its own default. On this machine the only installed SAPI
+// voices are "Microsoft David Desktop" (male) and "Microsoft Zira Desktop" (female), and the default
+// is David — so the first reply after every page load came out as a MAN, with none of the persona's
+// accent, rate or pitch applied. No amount of editing axis-persona.js could fix that, because the
+// ranker was never consulted.
+//
+// So a reply now WAITS for the voice list rather than speaking without one. The picker already
+// listens for onvoiceschanged for its dropdown; this is the same signal applied to the thing that
+// actually matters. Bounded, because a browser that never fires the event must not mute AXIS
+// permanently — after VOICE_WAIT_MS it speaks with whatever it has.
+const VOICE_WAIT_MS = 1500;
+function axisVoicesReady() {
+  try {
+    if (!window.speechSynthesis) return Promise.resolve();
+    if ((speechSynthesis.getVoices() || []).length) return Promise.resolve();
+    return new Promise((resolve) => {
+      let done = false;
+      const finish = () => { if (!done) { done = true; resolve(); } };
+      try { speechSynthesis.addEventListener('voiceschanged', finish, { once: true }); } catch { finish(); }
+      setTimeout(finish, VOICE_WAIT_MS);
+    });
+  } catch { return Promise.resolve(); }
+}
+
 function axisSpeak(text) {
   try {
     if (!axisVoiceOn || !window.speechSynthesis) return false;
     const clean = axisHumanizeForSpeech(text);
     if (!clean) return false;
+    // First reply after a page load, before Chrome has published its voices: hold this turn, let the
+    // list arrive, then speak it properly. Re-entry is safe — the guard above is idempotent and
+    // speechSynthesis.cancel() below still gives barge-in the last word.
+    if (!(speechSynthesis.getVoices() || []).length) {
+      axisVoicesReady().then(() => { try { axisSpeak(text); } catch {} });
+      return true;
+    }
     speechSynthesis.cancel(); // barge-in: a new reply always interrupts the old one
     const gen = ++__speakGen;
     const v = axisPickVoice();
@@ -1958,6 +1994,10 @@ function axisSpeak(text) {
     queue.forEach((part, qi) => {
       const u = new SpeechSynthesisUtterance(part);
       if (v) { u.voice = v; u.lang = v.lang; }
+      // No rankable voice even after waiting (a browser that exposes none). Pin the LANGUAGE at
+      // least, so the engine resolves an American voice rather than whatever the system locale
+      // happens to be — an unset lang is how a British default got through.
+      else u.lang = 'en-US';
       // Cross-engine parity: each voice family is rate/pitch-corrected toward Edge's Sonia, so AXIS
       // sounds like the same character in Chrome and Edge even though the two ship different voices.
       // Still deliberately apart from ARIA's en-US .95/1.05.
