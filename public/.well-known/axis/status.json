@@ -1,12 +1,12 @@
 {
  "status": "active build",
- "milestone": "The command centre answers out loud. Ask it how everything stands and it speaks from this feed, which is rewritten from a fresh reading of the test suites every cycle rather than from the previous cycle's wording.",
- "readiness": "Built and tested, both suites green on the working tree this cycle. Publishing to the live site stays a deliberate manual step by the operator, never automatic. The remedy that kept the suites green last cycle depended on one fixed scratch location; that location stopped accepting writes, so the measurement now makes its own and still refuses to report a number it could not take.",
+ "milestone": "The command centre answers out loud, and this cycle it can answer a harder question honestly: what this company has committed to in writing versus what a customer can actually read before they commit. Every response-time obligation in the signable agreement is now checked against the page people choose from, and the check refuses to report agreement where none exists.",
+ "readiness": "Built and tested, both suites green on the working tree this cycle. Publishing to the live site stays a deliberate manual step by the operator, never automatic. The service-level commitments are under review before they are published rather than after, so that what is promised on the page and what is signed in the agreement say the same thing on the day the first one is signed.",
  "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build and is voice-operable: the spoken status answer reads this feed, and this feed is regenerated from measurements taken this cycle. Sent: 0. Meetings 0, revenue none. Tests: 1074 pass, 0 fail, 372/372 suites; site suite 81/81.",
+ "headline": "ARIA / AXIS is in active build and is voice-operable: the spoken status answer reads this feed, and this feed is regenerated from measurements taken this cycle. Sent: 0. Meetings 0, revenue none. Tests: 1074 pass, 0 fail, 372/372 suites; site suite 82/82.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
  "schema": "axis-status/1",
- "generatedAt": "2026-08-11T23:58:38.385Z",
+ "generatedAt": "2026-08-12T00:52:54.482Z",
  "public": true,
  "honest": true
 }
