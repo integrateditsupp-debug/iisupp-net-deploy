@@ -193,8 +193,22 @@ export function greetLine(kpis, hour = new Date().getHours(), name = AXIS_ADDRES
 // Short forms are deliberately included: "ax" and "axie" are easier for STT to get right than the
 // full word, which Chrome and Edge both mangle into "access" more often than not. `ax` is bounded
 // by \b at the call site so it cannot fire inside "axle", "fax" or "axes-of-rotation".
-const WAKE_WORD = '(?:axis|axis\'s|axie|axi|ax|access|axes|acces|actus|acts|exes|ax\\s?is|a\\s?xis|axel|axys|axys)';
-export const WAKE_RE = new RegExp('(?:^|\\b)(?:hey\\s+|ok(?:ay)?\\s+|hi\\s+)?' + WAKE_WORD + '\\b', 'i');
+// Two tiers, because the homophones are not all equally safe.
+//
+// STRICT forms are unambiguous — nobody says "axie" mid-sentence — so they wake from anywhere.
+// LOOSE forms exist only because speech recognition mishears "Axis" as them ("it hears access"), but
+// they are also ordinary English words, and allowing them anywhere made AXIS wake on "he acts
+// strangely" and "can you access it" (measured 2026-08-12). They now only count at the START of an
+// utterance, which is where a person actually puts a name when addressing someone. That keeps the
+// mishear coverage Ahmad needs without the console answering its own name in the middle of a
+// sentence about something else.
+const WAKE_STRICT = '(?:axis(?:\'s)?|axie|axi|ax|ax\\s?is|a\\s?xis|axys|axel)';
+const WAKE_LOOSE = '(?:access|acces|axes|acts|actus|exes)';
+const GREET = '(?:hey\\s+|ok(?:ay)?\\s+|hi\\s+)?';
+const WAKE_WORD = '(?:' + WAKE_STRICT + '|' + WAKE_LOOSE + ')';
+export const WAKE_RE = new RegExp(
+  '^\\s*' + GREET + WAKE_WORD + '\\b' +               // addressed by name, at the front
+  '|\\b' + GREET + WAKE_STRICT + '\\b', 'i');         // or an unambiguous form, anywhere
 // Stand-down: the spoken kill-switch from the spec ("AXIS stop"). Checked BEFORE everything else.
 // Same homophone treatment, plus a bare "stop"/"cancel" so panic-stopping always works.
 export const STOP_RE = new RegExp(
