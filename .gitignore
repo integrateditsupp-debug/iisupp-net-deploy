@@ -142,3 +142,9 @@ outputs/
 #   node scripts/emit-axis-status-run-ar.mjs      (or) node -e "import('./scripts/lib/range-bundle.mjs').then(m=>m.createRangeBundle({}))"
 # Verify a received pair with: node scripts/verify-range-bundle.mjs
 senior-director-state/delivery/*.bundle
+
+# Staged YouTube media — large binaries, and publish="." would upload them to the public site.
+# Scripts/metadata are cheap to regenerate from the KB; the mp4/wav/png are not worth versioning.
+content/youtube/staged/
+content/youtube/made.json
+content/youtube/published.json
