@@ -120,13 +120,13 @@ const PLAN_ENV = (() => {
 // stdin. Model ids and bare switches are safe because they contain neither spaces nor quotes.
 const FAST_FLAGS = ['--strict-mcp-config', '--no-session-persistence', '--exclude-dynamic-system-prompt-sections'];
 
-function askClaude(prompt, { model = null, system = null } = {}) {
+function askClaude(prompt, { model = null, system = null, timeoutMs = CLI_TIMEOUT_MS } = {}) {
   return new Promise((resolve) => {
     let out = '', err = '', settled = false;
     const args = ['--print', ...FAST_FLAGS];
     if (model) args.push('--model', model);            // safe: ids are [a-z0-9-] only
     const child = spawn(CLAUDE_BIN, args, { shell: process.platform === 'win32', env: PLAN_ENV });
-    const timer = setTimeout(() => { if (!settled) { settled = true; try { child.kill(); } catch {} resolve({ error: 'timeout' }); } }, CLI_TIMEOUT_MS);
+    const timer = setTimeout(() => { if (!settled) { settled = true; try { child.kill(); } catch {} resolve({ error: 'timeout' }); } }, timeoutMs);
     child.stdout.on('data', (d) => { out += d; });
     child.stderr.on('data', (d) => { err += d; });
     child.on('error', (e) => { if (!settled) { settled = true; clearTimeout(timer); resolve({ error: 'spawn: ' + e.message }); } });
@@ -202,7 +202,9 @@ async function answerQuestion(query, { turns = [], board = '' } = {}) {
   for (let hop = 0; hop < 3; hop++) {
     const tier = TIER_BY_NAME[tierName];
     const started = Date.now();
-    res = await askClaude(prompt, { model: tier.model });
+    // Each rung gets its own clock (see TIERS): the deep model being slower than 55s is expected,
+    // not a failure — capping opus at haiku's budget made every escalated answer end in silence.
+    res = await askClaude(prompt, { model: tier.model, timeoutMs: tier.timeoutMs || CLI_TIMEOUT_MS });
     const ms = Date.now() - started;
     recordUse(tierName, tier.model, { escalatedFrom, ms });
 

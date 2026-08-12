@@ -76,7 +76,9 @@ function filesIn(scope) {
   if (!fs.existsSync(abs)) return [];
   return fs.readdirSync(abs, { withFileTypes: true })
     .filter(e => e.isFile() && scope.ext.includes(path.extname(e.name)))
-    .map(e => path.join(scope.dir, e.name))
+    // Forward slashes always: these rels are compared against literals like 'assets/axis-app.js'
+    // in group 3, and path.join would produce backslashes on Windows and miss every one of them.
+    .map(e => `${scope.dir}/${e.name}`)
     .sort();
 }
 

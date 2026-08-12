@@ -363,10 +363,31 @@ const OPS = [
   // system already has — auto_cancelled), while approvals and client messages stay Ahmad's to
   // click, and the confirm line says so before anything moves. FIRST in the list on purpose:
   // "work with cowork to remove the priority items" must land here, not on cowork.ask.
+  // Three shapes, because the 2026-08-12 evening transcript produced all three and only the first
+  // had anywhere to land: (1) verb + board noun in one clause; (2) "take … off/down/out" with the
+  // verb and particle split around the object ("take the first one off the list" — the old adjacent
+  // `take off` never matched real speech); (3) bare anaphora with no board noun at all ("remove it",
+  // "delete those", "clear all") — those went to the LLM queue and timed out into total silence.
+  // The verbs cancel/archive/wipe/purge are lifted from the board's own COMMAND_ANYWHERE decline
+  // list (axis-priorities.js): every verb the board refuses to answer must have a rail to land on,
+  // or the refusal just re-routes the command into chat. Anaphora is confirm-gated like everything
+  // else, so a false positive costs one "cancel", never a cancelled follow-up.
   { kind: 'board.remove',
-    re: /\b(?:remove|delete|clear|dismiss|drop|get rid of|take (?:off|out|down))\b[^.?!]*\b(?:priorit(?:y|ies|i[sz]ed)\w*|to.?do|follow.?ups?|overdue|items?|list|board|queue)\b/i,
-    notAsk: /^\s*(?:how|what|why|when|where|who|which|should|could|would)\b/i,
-    say: () => 'Clear the scheduled follow-ups off the priority board — approvals stay yours to click' },
+    re: new RegExp(
+      '\\b(?:remove|delete|clear|dismiss|drop|get rid of|cancel|archive|wipe|purge)\\b[^.?!]*\\b(?:priorit(?:y|ies|i[sz]ed)\\w*|to.?do|follow.?ups?|overdue|items?|list|board|queued?|tasks?)\\b'
+      + '|\\btake\\s+(?:(?:the|that|this|those|these|it|them|all|everything|first|second|third|last|top)\\b[^.?!]{0,40}?)\\b(?:off|out|down)\\b'
+      + '|^\\s*(?:(?:ok(?:ay)?|all right|alright|please|now|just|yes|yeah|and|then|so)[,\\s]+)*(?:(?:you can|can you|could you|would you|go ahead(?: and)?)\\s+)?(?:remove|delete|clear|drop|dismiss|cancel|archive|wipe|purge|get rid of)\\s+(?:it|that|this|them|those|these|all|everything)\\b[^.?!]{0,20}$',
+      'i'),
+    // Questions stay questions — but "could you remove…" / "can you clear…" is a polite order, not
+    // a question, so the modal is only a question-marker when it is NOT aimed at AXIS ("could we…").
+    notAsk: /^\s*(?:how|what|why|when|where|who|which|should|did|do(?:es)?|is|are|was|were|ha(?:ve|s|d))\b|^\s*(?:can|could|would|will)\b(?!\s+(?:you|we)\b)/i,
+    // What to remove, so ONE named item stops meaning "everything". The tail preposition + board
+    // noun is stripped ("Acme Dental ~from my to-do list~"); resolution against the live rows
+    // happens client-side in axisRunOp via resolveRemovalTargets.
+    arg: /\b(?:remove|delete|clear|dismiss|drop|cancel|archive|wipe|purge|get rid of|take)\s+(.+?)(?:\s+(?:from|off(?:\s+of)?|out of|on|in)\s+(?:my|our|the|this|that)\b[^.?!]*)?\s*[.?!]?$/i,
+    say: (a) => (a && !/^(?:it|that|this|them|those|these|all|everything)$/i.test(a.trim()))
+      ? `Take ${a} off the board — scheduled follow-ups only; approvals stay yours to click`
+      : 'Clear the scheduled follow-ups off the priority board — approvals stay yours to click' },
 
   // ── Fleet management, by voice ─────────────────────────────────────────────
   // Ahmad, 2026-08-12: "have all the agents report to axis and give axis full access to manage

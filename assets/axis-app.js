@@ -12,7 +12,7 @@ import { openComposer } from './axis-composer.js';
 import { renderFleet } from './axis-fleet.js';
 import { renderReports } from './axis-reports.js';
 import { renderDirector } from './axis-director-screen.js';
-import { renderPriorities, collectPriorities, dueLabel, localAnswer } from './axis-priorities.js';
+import { renderPriorities, collectPriorities, dueLabel, localAnswer, resolveRemovalTargets, unsupportedBoardCommand } from './axis-priorities.js';
 import { mountGlobes } from './axis-globe.js';
 import { toggleHologram } from './axis-hologram.js';
 // AXIS persona + turn grammar (the JARVIS flow). Additive: the voice machinery below is unchanged;
@@ -1530,7 +1530,10 @@ function renderDock() {
 // Poll the tier-3 queue until the answer lands, then swap it into the message that is
 // already on screen. Bounded so a dead worker can never leave the console polling forever.
 async function axisCollect(jobId, msg, tries = 0) {
-  if (tries > 30) {                                   // ~60s ceiling
+  if (tries > 90) {                                   // ~180s ceiling — covers the worker's full
+    // escalation ladder (45s fast + 75s standard + 150s deep is the worst case; an answer that
+    // escalates twice usually lands inside three minutes). The old 60s ceiling stopped polling
+    // before an escalated answer could possibly arrive, so the worker's work was thrown away.
     msg.text = 'That took longer than it should have. Ask again — it may already be banked.';
     renderDock(); return;
   }
@@ -1563,20 +1566,53 @@ async function axisRunOp(op) {
   // cancellable by voice; approvals and client messages are decisions and stay Ahmad's to click —
   // the reply says which is which instead of pretending everything vanished.
   if (op.kind === 'board.remove') {
-    const rows = collectPriorities(state.snap).filter((i) => i.source === 'Follow-up' && i.fid);
-    const kept = collectPriorities(state.snap).filter((i) => i.source !== 'Follow-up').length;
+    const all = collectPriorities(state.snap);
+    const rows = all.filter((i) => i.source === 'Follow-up' && i.fid);
+    const kept = all.length - rows.length;
+    // The utterance decides WHICH rows go, not whether they all go. Removing one named company
+    // used to cancel every follow-up on the board — the arg was captured and then never read.
+    const { mode, targets } = resolveRemovalTargets(op.arg, rows);
     let line;
     if (!rows.length) {
       line = kept
         ? 'Nothing on the board is a scheduled follow-up. The rest are approvals and client messages — those need your click, I do not decide them.'
         : 'The board is already clear.';
+    } else if (mode === 'none') {
+      // The name exists but points at a row voice cannot remove, or at nothing. Say which — a
+      // wrong guess here is a cancelled follow-up nobody asked for.
+      const named = resolveRemovalTargets(op.arg, all).targets;
+      line = named.length
+        ? `${named[0].title} is ${named[0].source === 'Approval' ? 'an approval' : named[0].source === 'Inbox' ? 'a client message' : 'not a scheduled follow-up'} — that one stays your click. Voice removal covers scheduled follow-ups only.`
+        : `Nothing on the board matches “${op.arg}”. The follow-ups I can cancel: ${rows.slice(0, 3).map((r) => r.title).join(', ')}${rows.length > 3 ? `, and ${rows.length - 3} more` : ''}.`;
+    } else if (!targets.length) {
+      line = 'That points past the end of the list — the board holds ' + rows.length + ` scheduled follow-up${rows.length === 1 ? '' : 's'}.`;
     } else {
-      let n = 0;
-      for (const it of rows) {
-        try { postIntent('cancel_followup', { follow_up_id: it.fid, business_id: it.bid }); n++; } catch {}
+      // One cancellation per COMPANY, by business_id, not per visible row by follow_up_id: a chase
+      // is several scheduled touches and the board shows only the next one. Cancelling the visible
+      // touch alone leaves the rest scheduled, and the "removed" item resurfaces days later —
+      // worse than not removing it, because it looks like AXIS lied. The business-level payload
+      // cancels the whole chase (applyCancelFollowup's business branch); fid is the fallback for a
+      // row that predates business ids.
+      const seen = new Set(); const chases = [];
+      for (const it of targets) {
+        const key = it.bid ? 'b' + it.bid : 'f' + it.fid;
+        if (!seen.has(key)) { seen.add(key); chases.push(it); }
       }
-      line = `Queued ${n} follow-up ${n === 1 ? 'cancellation' : 'cancellations'} — the worker applies them on its next pass and the rows drop off at the next sync.`
-        + (kept ? ` ${kept} ${kept === 1 ? 'item stays' : 'items stay'}: approvals and client messages are yours to click.` : '');
+      // Awaited on purpose: postIntent resolves false on 401/network instead of throwing, and the
+      // old fire-and-forget counted every row as queued — "Queued 3 cancellations" with the inbox
+      // unreachable was a success message about nothing.
+      let n = 0, failed = 0;
+      for (const it of chases) {
+        try {
+          (await postIntent('cancel_followup', it.bid ? { business_id: it.bid } : { follow_up_id: it.fid })) ? n++ : failed++;
+        } catch { failed++; }
+      }
+      const names = chases.slice(0, 3).map((t) => t.title).join(', ') + (chases.length > 3 ? `, and ${chases.length - 3} more` : '');
+      line = n
+        ? `Queued ${n} follow-up ${n === 1 ? 'cancellation' : 'cancellations'} — ${names}. The worker applies them on its next pass and the rows drop off at the next sync.`
+          + (mode === 'all' && kept ? ` ${kept} ${kept === 1 ? 'item stays' : 'items stay'}: approvals and client messages are yours to click.` : '')
+        : 'None of those reached the queue — the intent endpoint refused. Worth another try in a moment.';
+      if (n && failed) line += ` ${failed} did not queue — say it again for ${failed === 1 ? 'that one' : 'those'}.`;
     }
     dockLog.push({ role: 'axis', text: line }); renderDock(); axisSpeakTurn(line);
     return;
@@ -1818,6 +1854,24 @@ async function axisSend(inputId = 'axisInput') {
   if (instant) {
     const line = markRepeat(instant, axisLastAnswer);
     axisLastAnswer = instant;
+    dockLog.push({ role: 'axis', text: line }); renderDock();
+    axisSpeakTurn(line);
+    return;
+  }
+
+  // A board command with no voice rail ends HERE, honestly, not in the model queue. "Mark that one
+  // done", "snooze this", "approve the first one", "open up the items so we can action them" — the
+  // board declines them (correctly) and detectOp has no op for them, so they used to fall through
+  // to the LLM: 19-69 seconds of model time to talk about an action nothing performed, or a timeout
+  // and dead silence (2026-08-12 worker log). The model cannot click an approval either — routing
+  // it there was spend with no possible outcome. One sentence that says what works costs 0ms.
+  if (unsupportedBoardCommand(text)) {
+    let top = '';
+    try {
+      const items = collectPriorities(state.snap).slice(0, 3);
+      if (items.length) top = ' On the board now: ' + items.map((i) => `${i.title} (${dueLabel(i.dueAt).text})`).join(', ') + '.';
+    } catch {}
+    const line = 'I can\'t do that one by voice yet. I can remove or cancel scheduled follow-ups; approvals and client replies stay your click — on screen or here in the dock.' + top;
     dockLog.push({ role: 'axis', text: line }); renderDock();
     axisSpeakTurn(line);
     return;

@@ -23,10 +23,15 @@
 // behaviour and cost profile under Ahmad without a commit. Override per-tier with env vars.
 // (Claude Sonnet 5 is available and is the stronger model at this rung; Ahmad specified 4.6, so 4.6
 // is the default and AXIS_MODEL_STANDARD=claude-sonnet-5 switches it without a code change.)
+// timeoutMs is per-tier because the flat 55s cap was measured killing exactly the answers that
+// mattered most: on 2026-08-12 "remove all those from our to-do list" escalated fast→standard→deep
+// and BOTH upper rungs died at 55s — total silence — while a deep answer that did land took 69s.
+// The heavy model being slower is the point of escalating to it; capping it at the fast tier's
+// budget makes the ladder's top rung unreachable exactly when it is needed.
 export const TIERS = [
-  { name: 'fast',     model: process.env.AXIS_MODEL_FAST     || 'claude-haiku-4-5',  maxTokensHint: 400 },
-  { name: 'standard', model: process.env.AXIS_MODEL_STANDARD || 'claude-sonnet-4-6', maxTokensHint: 1200 },
-  { name: 'deep',     model: process.env.AXIS_MODEL_DEEP     || 'claude-opus-5',     maxTokensHint: 3000 },
+  { name: 'fast',     model: process.env.AXIS_MODEL_FAST     || 'claude-haiku-4-5',  maxTokensHint: 400,  timeoutMs: 45000 },
+  { name: 'standard', model: process.env.AXIS_MODEL_STANDARD || 'claude-sonnet-4-6', maxTokensHint: 1200, timeoutMs: 75000 },
+  { name: 'deep',     model: process.env.AXIS_MODEL_DEEP     || 'claude-opus-5',     maxTokensHint: 3000, timeoutMs: 150000 },
 ];
 export const TIER_BY_NAME = Object.fromEntries(TIERS.map(t => [t.name, t]));
 

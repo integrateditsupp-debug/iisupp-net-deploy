@@ -107,11 +107,66 @@ const OFF_BOARD = /\b(youtube|videos?|vids?|shorts?|channel|clips?|thumbnail|sub
 // answered with a status line, twice in a row. The verbs here are unambiguous: none of them ever
 // opens a question the board can answer, so declining costs nothing and sends the utterance on to
 // the layers that can actually act (the intent ops, then the brain — which sees the conversation).
-const COMMAND_ANYWHERE = /\b(remove|delete|clear|drop|dismiss|archive|get rid of|wipe|purge|cancel|resched(?:ule)?|reprioriti[sz]e|action (?:it|them|these|those)|open(?:ing)? up)\b/i;
+const COMMAND_ANYWHERE = /\b(remove|delete|clear|drop|dismiss|archive|get rid of|wipe|purge|cancel|resched(?:ule)?|reprioriti[sz]e|action (?:it|them|these|those)|open(?:ing)? up|take\s+(?:the|that|this|those|these|it|them|all|everything|first|second|third|last|top)\b[^.?!]{0,40}?\b(?:off|out|down))\b/i;
 // Verbs that are commands only when they LEAD the sentence — embedded, they appear in genuine
 // board questions ("what is waiting on me to approve") that the branches below exist to answer.
 const COMMAND_LEADING = /^(?:(?:ok(?:ay)?|all right|alright|please|now|just|yes|yeah|and|then|so)[,\s]+)*(?:go ahead(?: and)?\s+)?(approve|reject|snooze|skip|park|mark|close|complete|finish|handle|move|open|do|work with|talk to|ask)\b/i;
 const isCommand = (q) => COMMAND_ANYWHERE.test(q) || COMMAND_LEADING.test(q);
+
+// ── Removal targeting ────────────────────────────────────────────────────────
+// "Remove Acme Dental from my to-do list" must never mean "cancel every follow-up on the board."
+// The op's arg arrives as free speech; this resolves it against the live rows. Pure function, so
+// the targeting rules are testable without a browser. Precedence: a NAME beats an ordinal beats a
+// count beats "all" — naming something is the most specific thing a speaker can do, and an
+// unmatched name returns mode 'none' rather than falling back to everything, because guessing
+// bigger than what was said is the one wrong answer a removal can't walk back.
+const ORDINAL_WORD = { first: 1, '1st': 1, second: 2, '2nd': 2, third: 3, '3rd': 3, fourth: 4, '4th': 4, fifth: 5, '5th': 5 };
+// "one" is deliberately absent: in speech it is almost always the pronoun ("the first one",
+// "the last one", "that one"), and reading it as a count turned ordinals into counts.
+const NUMBER_WORD = { two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };
+// Words that describe the board or the act of removal rather than naming an item on it.
+const REMOVAL_FILLER = new RegExp('^(?:the|a|an|my|our|your|this|that|these|those|it|them|all|every|everything|both'
+  + '|of|for|from|off|out|on|in|and|to|too|do|please|now|just|again'
+  + '|items?|tasks?|queued?|queues?|lists?|board|entry|entries|things?|ones?|stuff'
+  + '|priorit(?:y|ies|i[sz]ed)\\w*|to-?dos?|follow-?ups?|overdue|scheduled|remaining|open|last|top|next'
+  + '|mentioned|said|spoke|spoken|earlier|prior)$', 'i');
+
+export function resolveRemovalTargets(arg, rows) {
+  const a = String(arg || '').trim().toLowerCase().replace(/[.?!]+$/, '');
+  const words = a.split(/[\s,]+/).filter(Boolean);
+  let ordinal = null, count = null, last = false;
+  for (const w of words) {
+    if (ORDINAL_WORD[w]) ordinal = ORDINAL_WORD[w];
+    else if (/^\d+$/.test(w)) count = parseInt(w, 10);
+    else if (NUMBER_WORD[w]) count = NUMBER_WORD[w];
+    else if (w === 'last') last = true;
+  }
+  const nameTokens = words.filter((w) => !REMOVAL_FILLER.test(w) && !ORDINAL_WORD[w] && !NUMBER_WORD[w] && !/^\d+$/.test(w));
+  if (nameTokens.length) {
+    const targets = rows.filter((r) => {
+      const t = String(r.title || '').toLowerCase();
+      return nameTokens.some((w) => t.includes(w));
+    });
+    return targets.length ? { mode: 'named', targets } : { mode: 'none', targets: [] };
+  }
+  if (ordinal) return { mode: 'ordinal', targets: rows[ordinal - 1] ? [rows[ordinal - 1]] : [] };
+  if (last && !count) return { mode: 'ordinal', targets: rows.length ? [rows[rows.length - 1]] : [] };
+  if (count) return { mode: 'count', targets: last ? rows.slice(-count) : rows.slice(0, count) };
+  return { mode: 'all', targets: rows.slice() };
+}
+
+// Commands the board recognises as commands but that have NO voice rail: approve, snooze, mark
+// done, reschedule, "open up the items"… Declining to answer used to be the end of it, and the
+// utterance fell through to the LLM queue — 19 to 69 seconds of model time to produce talk about
+// an action nothing performed, or a timeout and total silence (2026-08-12 worker log). Detecting
+// them lets the console say what it can and cannot do in one honest sentence instead. Narrower
+// than COMMAND_LEADING on purpose: "do", "open", "ask", "move" alone open genuine questions
+// ("do we have anything overdue?"), so each verb here needs a board-shaped object in the clause.
+const UNSUPPORTED_BOARD_COMMAND = new RegExp(
+  '^\\s*(?:(?:ok(?:ay)?|all right|alright|please|now|just|yes|yeah|and|then|so)[,\\s]+)*(?:go ahead(?: and)?\\s+)?(?:(?:can|could|would) you\\s+|you can\\s+)?'
+  + '(?:approve|reject|snooze|park|mark|close|complete|finish|handle|move|bump|defer|postpone|reprioriti[sz]e|resched(?:ule)?|prioriti[sz]e|action|open(?:ing)?\\s+up)\\b'
+  + '[^.?!]*\\b(?:it|that|this|them|those|these|ones?|items?|approvals?|messages?|repl(?:y|ies)|follow.?ups?|first|second|third|last|top|list|board|queued?|priorit\\w*|everything|all|done|complete)\\b', 'i');
+export const unsupportedBoardCommand = (q) => UNSUPPORTED_BOARD_COMMAND.test(String(q || ''));
 
 export function localAnswer(question, snap, now = new Date()) {
   const q = String(question || '').toLowerCase();
