@@ -1,12 +1,12 @@
 {
  "status": "active build — a suite is red",
- "milestone": "The build now states which of its own test results anybody else could reproduce. A fresh copy of the code reads dozens of failures that the build machine does not, because those checks read private operating records that are deliberately never published. Naming them separates a real defect from a check a stranger was never given the inputs for.",
- "readiness": "Built and tested. Both suites are reported exactly as they read, on a fresh copy of the code rather than on the machine that wrote it, and the gap between the two readings is now measured instead of described. Publishing to the live site stays a deliberate manual step by the operator. Plan names, pricing, deposit amounts and how a custom quote is priced stay under review before publication.",
+ "milestone": "The four facts a visitor is asked for when they request a custom quote now land in a defined record instead of loose prose in an inbox, and the questions in that record are read from the page itself so the two can never drift. An answer a visitor did not give is recorded as not given — never filled in with a default.",
+ "readiness": "Built and tested. Both suites are reported as they read rather than rounded up: the checks held open are work in progress on the build machine, not on the published line. Publishing to the live site stays a deliberate manual step. Plan names, pricing, deposit amounts and how a custom quote is priced stay under review before publication, not after.",
  "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build and voice-operable. This feed is regenerated from measurements taken this cycle. Sent: 0. Meetings 0, revenue none. Tests, read on a FRESH COPY of the code: 1027 pass, 56 fail (exit 1 — held-open suites are never counted green); site 96/99. Each failure is a check whose private input a fresh copy is not given; the same checks read clean on the build machine.",
+ "headline": "ARIA / AXIS is in active build and is voice-operable: the spoken status answer reads this feed, and this feed is regenerated from measurements taken this cycle. Sent: 0. Meetings 0, revenue none. Tests: 1073 pass, 1 fail (registry exit 1 — a suite is held open and is not counted as green); site suite 104/105.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
  "schema": "axis-status/1",
- "generatedAt": "2026-08-12T15:56:15.460Z",
+ "generatedAt": "2026-08-12T16:53:38.195Z",
  "public": true,
  "honest": true
 }

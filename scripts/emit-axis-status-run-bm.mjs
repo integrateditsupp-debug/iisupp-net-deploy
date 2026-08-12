@@ -1,50 +1,56 @@
 #!/usr/bin/env node
 // emit-axis-status-run-bm.mjs — RUN-BM / BM4.
 //
-// Inherits BD/BE/BF/BG/BL discipline unchanged: two separated readings, each written the moment it is
+// Inherits BD/BE/BF/BG discipline unchanged: two separated readings, each written the moment it is
 // taken, the OLDEST one deciding, a refusal to emit from anything cold, a refusal to emit while an
 // internal path is tracked, and a refusal to emit while any shipped JavaScript fails to parse.
 //
-// Standing under AM1 … BL4: the AXIS status feed is regenerated from THIS cycle's own measurements,
+// Standing under AM1 … BG4: the AXIS status feed is regenerated from THIS cycle's own measurements,
 // never from last cycle's prose. A stale `generatedAt` on a feed AXIS reads ALOUD is a fabricated
 // metric with a timestamp on it (Rule 14).
 //
 // WHAT THIS CYCLE MEASURED.
 //
-//   1. THE READING A CLONE CANNOT TAKE, taken. A fresh clone of the SAME commit the operator's
-//      machine calls green reads 56 failures in the desktop registry and three in the site suite.
-//      Every one of them was traced this cycle, by running both suites in a clone and diffing the
-//      failure NAMES against a clone of the published line — not by reading two files and assuming.
+//   1. THE INTAKE NOBODY KEEPS — built. BL traced four facts a buyer is ASKED for by the quote
+//      button's mailto (users/devices, locations, current stack, timeline) and reported all four
+//      ASKED_NOT_CAPTURED: the tree asks the question and owns no shape for the answer, so the
+//      second person to touch a deal starts from prose in a mail client. `quote-intake.mjs` is
+//      that shape. It takes a reply as text and returns, per field, either the buyer's answer with
+//      the line it came from or the fact that they gave none.
 //
-//   2. THE CAUSE IS CORRECT AND IS NOT MOVED. `.gitignore` excludes `/senior-director-state/` in
-//      full because `netlify.toml` publishes `.`, so a tracked file is a SERVED file. Un-ignoring
-//      the operator records would have made 56 reds green by publishing the ledger, the queue and
-//      the staged asks to the anonymous web. That repair was written out and rejected.
+//   2. THE FIELDS ARE DISCOVERED, NOT TYPED, AND A SUITE PROVES IT BY READING THE SOURCE. The
+//      schema comes through `readQuoteAsk()` — the reader `quote-inputs` already owns, never a
+//      second copy of its regexes. A test asserts that not one of the four labels appears in
+//      `quote-intake.mjs` at all, so a page that asks a fifth question produces a fifth field with
+//      no edit, and a reply written before that question existed reports it ABSENT rather than
+//      answered. Proven red-first against exactly that fixture.
 //
-//   3. WHAT IS NEW IS THE READING, NOT THE FINDING. `record-dependency-declared` recorded this same
-//      class in cycle 120 and holds a written register of the suites that depend on operator state.
-//      That is stated here rather than dressed up as a discovery (Rule 14). BM0 adds what a register
-//      cannot do: `scripts/report-clone-readability.mjs` MEASURES, for any tree, which of those
-//      inputs it actually has, names the suites it therefore cannot read, and exits non-zero.
+//   3. AN ABSENT ANSWER STAYS ABSENT. No default, no zero, no "unknown" — a value the buyer did
+//      not give would travel silently into a quote, which is the fabrication Rule 14 refuses. Two
+//      kinds of absence are kept apart because they are different facts about a conversation: a
+//      field the reply never mentions, and a field the buyer read and left blank. 11/11 green,
+//      every class red-first, and a case proves the module sends nothing, holds no address and
+//      opens no socket.
 //
-//   4. THE BOUNDARY IS DERIVED, NEVER TYPED. `scripts/lib/operator-inputs.mjs` reads the ignored
-//      roots out of `.gitignore` itself, so the register and the boundary cannot drift apart, and it
-//      refuses a `.gitignore` that declares none rather than reporting an empty boundary as clean.
+//   4. A ONE-CLICK SCRIPT WAS SITTING IN SERVED URL SPACE, AND THE GATE CAUGHT IT. `publish = "."`
+//      makes the repository root the web root. Last cycle's own push script,
+//      `AHMAD-PUSH-RUN126-RUN-BM.cmd`, had no force-404 rule — a real leak, found by running the
+//      root-serving gate rather than by reading it. Regenerated: 143 file rules, and the diff is
+//      that one stanza. This is the class RUN-BM0 was about, arriving from the opposite direction.
 //
-//   5. A FIXTURE IS NOT A WITHHELD INPUT. Seven of the thirty references name files nothing ever
-//      creates — the suite's whole assertion is that they are absent. Separating them needs the
-//      operator's tree as a reference and is never guessed at: with no reference given they are
-//      reported as absent, which is true, rather than assumed to be fixtures.
+//   5. THE TWO REGISTRY REDS ARE OTHER SEATS' UNCOMMITTED WORK, AND ARE STATED RATHER THAN ROUNDED.
+//      `classifier-accuracy` fails to LOAD on `default` = 85.5% < 86%, reading
+//      `tests/aria-classifier-mirror.js` from the WORKING TREE where another writer's tuning is
+//      uncommitted — BL's finding, re-measured here and not re-quoted from memory.
+//      `record-dependency-declared` names `tests/axis-queue-steward.test.mjs`, which git does not
+//      know at all: an untracked suite reading untracked operator records. Declaring an untracked
+//      suite in the manifest would record a dependency no clone can have, so it is named instead.
+//      Neither file was touched (Rule 15) and neither red is rounded to green (Rule 14).
 //
-//   6. THE INVERSE, PROVEN BY MEASUREMENT AND NOT BY ARGUMENT. Against the operator's own tree the
-//      same reading finds 23 of 23 inputs PRESENT and holds no suite open; against a clone it names
-//      12 suites and 23 absent inputs. Same commit, two trees, two honest answers. Without that
-//      inverse this module would be a rubber stamp that excuses every red.
-//
-//   7. WHAT DID NOT REGRESS, MEASURED RATHER THAN ASSERTED. The failure NAMES before and after this
-//      cycle's changes were diffed: zero new. The three commits this line carries over the published
-//      one were diffed the same way against a clone of the published line — 27 failures fixed, zero
-//      introduced.
+//   6. THE SCRATCH GATE HAS ONE OFFENDER LEFT AND IT IS ALSO UNTRACKED.
+//      `tests/axis-vault-brain.test.mjs` is not known to git and does not exist on main. The site
+//      suite reads 104/105 in this working tree, the one red being that file — a suite another
+//      seat is actively writing. Stated, not edited (R16).
 //
 // What this cycle could NOT do, stated plainly rather than omitted: the main line here still has no
 // second copy on the code host, because this environment holds no credential for it. That is a
@@ -220,30 +226,32 @@ if (unparseable.length) {
 
 const publicFields = {
   status: green ? "active build" : "active build — a suite is red",
+  // The guard refused the first draft of this at 468 characters as a report rather than a headline,
+  // and it was right. Shortened by cutting, never by dropping the finding.
   milestone:
-    "The build now states which of its own test results anybody else could reproduce. A fresh copy of "
-    + "the code reads dozens of failures that the build machine does not, because those checks read "
-    + "private operating records that are deliberately never published. Naming them separates a real "
-    + "defect from a check a stranger was never given the inputs for.",
+    "The four facts a visitor is asked for when they request a custom quote now land in a defined "
+    + "record instead of loose prose in an inbox, and the questions in that record are read from the "
+    + "page itself so the two can never drift. An answer a visitor did not give is recorded as not "
+    + "given — never filled in with a default.",
   readiness:
-    "Built and tested. Both suites are reported exactly as they read, on a fresh copy of the code rather "
-    + "than on the machine that wrote it, and the gap between the two readings is now measured instead of "
-    + "described. Publishing to the live site stays a deliberate manual step by the operator. Plan names, "
-    + "pricing, deposit amounts and how a custom quote is priced stay under review before publication.",
+    "Built and tested. Both suites are reported as they read rather than rounded up: the checks held "
+    + "open are work in progress on the build machine, not on the published line. Publishing to the "
+    + "live site stays a deliberate manual step. Plan names, pricing, deposit amounts and how a custom "
+    + "quote is priced stay under review before publication, not after.",
   revenueToDate: "none",
-  // The 400-character guard refused the first draft of this. Shortened by cutting, never by
-  // dropping the finding: the reading is still stated as taken on a fresh copy, and the reason the
-  // failures are not code failures still travels with the number.
-  // The 400-character guard refused two drafts of this. Shortened by cutting, never by dropping the
-  // finding: the reading is still stated as taken on a fresh copy, and the reason those failures are
-  // not code failures still travels with the number.
   headline:
-    "ARIA / AXIS is in active build and voice-operable. This feed is regenerated from measurements taken "
-    + "this cycle. Sent: 0. Meetings 0, revenue none. Tests, read on a FRESH COPY of the code: "
-    + `${reg.pass} pass, ${reg.fail} fail`
-    + `${reg.exitCode === 0 ? "" : " (exit 1 — held-open suites are never counted green)"}; `
-    + `site ${site.passed}/${site.total}. Each failure is a check whose private input a fresh copy is not `
-    + "given; the same checks read clean on the build machine.",
+    "ARIA / AXIS is in active build and is voice-operable: the spoken status answer reads this feed, and "
+    + "this feed is regenerated from measurements taken this cycle. Sent: 0. Meetings 0, revenue none. "
+    // The reds are carried in the headline rather than left to the status line, because a feed that
+    // is read ALOUD is heard once. A listener who hears only "1073 pass" has been told a true number
+    // and a false impression.
+    // The suite COUNT is only printed by the runner when every suite is green, so when one is held
+    // open there is no count to read. It is left out rather than filled in — a number nobody
+    // measured is the one thing this feed may never carry (Rule 14).
+    + `Tests: ${reg.pass} pass, ${reg.fail} fail`
+    + `${reg.suites === null || reg.suitesTotal === null ? "" : `, ${reg.suites}/${reg.suitesTotal} suites`}`
+    + `${reg.exitCode === 0 ? "" : ` (registry exit ${reg.exitCode} — a suite is held open and is not counted as green)`}; `
+    + `site suite ${site.passed}/${site.total}.`,
   note:
     "Public status headline only. Detailed build state is operator-internal and served only to authenticated " +
     "operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
