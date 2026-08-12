@@ -1,9 +1,12 @@
-// tests/axis-overview-clearance.test.mjs — the page order: topbar, director field, globe, then the
-// deck. Nothing sits on top of anything (2026-08-12).
+// tests/axis-overview-clearance.test.mjs — the page order: topbar, globe, then the deck. Nothing
+// sits on top of anything, and there is ONE AXIS surface (2026-08-12).
 //
 // Ahmad: "move overview section lower so its not over the other content on the page", then
 // "no you moved it above axis-director. Leave axis-director field where it was, place axis below that
-// and make axis larger."
+// and make axis larger.", then finally: "Remove the one above the globe and ensure all its existing
+// data, knowledge and knows is added to the Axis (globe) one." The director field was a second door
+// into the same room — same dock transcript, same brain queue — so removing it lost nothing; its
+// honest-counts line and quick chips moved onto the orbit.
 //
 // The first attempt kept the orbit position:fixed and reserved a margin-top band on .content. That
 // cleared the globe, but a fixed box reserves no space of its own, so the clearance had to be
@@ -42,19 +45,20 @@ let n = 0; const ok = (m) => { n++; console.log('  ok —', m); };
   ok('topbar → head band → content, in that order');
 }
 
-// ---- 2. inside the band: the director field first, the globe under it ----
-// This is the literal ask. Reversing these two is the regression.
+// ---- 2. inside the band: ONE surface — the globe, with the strip's inheritance on it ----
+// This is the literal ask. A second input field mounted above the globe is the regression.
 {
   const head = html.slice(html.indexOf('class="axis-head"'));
   const band = head.slice(0, head.indexOf('class="content"'));
-  const iSlot = band.indexOf('id="axisStripSlot"');
+  assert.equal(band.indexOf('id="axisStripSlot"'), -1,
+    'the director-field slot must be gone — "Remove the one above the globe"');
   const iOrbit = band.indexOf('class="axis-orbit"');
-  assert.ok(iSlot >= 0, 'the director field has a mount slot in the head band');
   assert.ok(iOrbit >= 0, 'the orbit lives in the head band');
-  assert.ok(iSlot < iOrbit, 'the director field must come BEFORE the globe — "place axis below that"');
+  assert.ok(band.indexOf('id="axisOrbStatus"') >= 0, 'the honest-counts line lives ON the orbit now');
+  assert.ok(band.indexOf('data-orb-q=') >= 0, 'the quick chips live ON the orbit now');
   // And it must not ALSO exist as a floating overlay outside .main, or AXIS appears twice.
   assert.equal((html.match(/class="axis-orbit"/g) || []).length, 1, 'exactly one orbit in the document');
-  ok('director field above, globe below it, one orbit only');
+  ok('one surface: the globe carries the counts line and the chips');
 }
 
 // ---- 3. the orbit is in the flow — that is what makes the ordering real ----
@@ -97,18 +101,20 @@ let n = 0; const ok = (m) => { n++; console.log('  ok —', m); };
   ok('no reserved-pixel band left to keep in step');
 }
 
-// ---- 6. the field mounts into the band, and every screen starts with it empty ----
-// It used to be appended to the content pane. If that comes back it scrolls under the globe again.
+// ---- 6. the strip is gone from the code, and its knowledge lives on the orbit ----
+// axisStrip built a SECOND input above the globe. If it comes back, AXIS has two doors again.
 {
-  assert.ok(/mountAxisHead\(axisStrip\(k\)\)/.test(js), 'Overview mounts the director field into the head band');
-  assert.ok(!/c\.append\(axisStrip/.test(js), 'the field must not be appended into the scroll pane any more');
+  assert.ok(!/function axisStrip\(/.test(js), 'axisStrip must not exist — no second input above the globe');
+  assert.ok(!/mountAxisHead/.test(js), 'nothing mounts into a band above the globe any more');
   const render = js.slice(js.indexOf('function renderModule()'), js.indexOf('function clearOverlays()'));
-  assert.ok(/mountAxisHead\(null\)/.test(render),
-    'renderModule must clear the band, or a screen with no director field inherits the last one');
-  // …and the empty band must not leave a gap on those screens.
-  assert.ok(/\.axis-head-strip:empty \{ display:none/.test(css),
-    'an empty slot collapses, so non-Overview screens carry no stray gap');
-  ok('mounted in the band, cleared per render, collapses when unused');
+  assert.ok(/renderOrbStatus\(\)/.test(render),
+    'renderModule refreshes the orbit counts line on every render, every screen');
+  assert.ok(/All quiet\. AXIS is watching\./.test(js), 'the honest-counts line survived the move');
+  assert.ok(/data-orb-q/.test(js), 'the quick chips are wired to askAxis');
+  // …and the counts line collapses when empty, so the pre-snapshot paint carries no stray gap.
+  assert.ok(/\.axis-orb-status:empty \{ display:none/.test(css),
+    'an empty counts line collapses instead of leaving a gap under the globe');
+  ok('strip gone; counts line and chips live on the orbit');
 }
 
 // ---- 7. the dock must not sit on top of the globe ----

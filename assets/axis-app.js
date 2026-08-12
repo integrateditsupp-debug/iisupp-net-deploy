@@ -781,11 +781,9 @@ function globalSection() {
 
 SCREENS.overview = (c) => {
   const d = data('overview'); const k = d.kpis || {};
-  // The director field mounts in the head band, not here. Ahmad, 2026-08-12: "Leave axis-director
-  // field where it was, place axis below that." It reads in the same place it always did — first
-  // thing under the topbar — but it is now above the globe and outside the scroll pane, so it stays
-  // put instead of sliding under the globe on the first scroll.
-  mountAxisHead(axisStrip(k));
+  // The director field is gone. Ahmad, 2026-08-12: "Remove the one above the globe" — its counts
+  // line and chips live on the orbit now (renderOrbStatus, called from renderModule for every
+  // screen, not just Overview).
   c.append(head('Overview', 'command deck'));
   const kpis = [['Pipeline value', fmtMoney(k.pipeline_value)], ['Awaiting approval', k.awaiting_approval ?? 0],
     ['Client messages waiting', k.messages_waiting ?? 0], ['Follow-ups due', k.followups_due ?? 0],
@@ -1459,17 +1457,9 @@ function placeholder(label) {
       el('pre', { class: 'mono', style: 'font-size:11px;white-space:pre-wrap;color:var(--txt-2);margin:0;max-height:340px;overflow:auto' }, d ? JSON.stringify(d, null, 2) : '(empty)')]));
   };
 }
-// The head band sits above the globe and outside the scroll pane. Cleared on every render so a screen
-// that has no director field does not inherit the last one's — the band collapses to nothing instead
-// (.axis-head-strip:empty).
-function mountAxisHead(node) {
-  const slot = $('axisStripSlot'); if (!slot) return;
-  slot.innerHTML = '';
-  if (node) slot.append(node);
-}
 function renderModule() {
   clearOverlays();
-  mountAxisHead(null);
+  renderOrbStatus();   // the orbit's honest-counts line tracks the snapshot on every screen
   const c = $('content'); c.innerHTML = '';
   const screen = el('div', { class: 'screen' }); c.append(screen);
   (SCREENS[state.module] || placeholder(navItem(state.module)?.label || state.module))(screen);
@@ -2521,36 +2511,28 @@ function setAxisState(s) {
   const p = $('axisPubState'); if (p) p.textContent = s;
 }
 
-// ── AXIS command strip (R3) — Overview, above everything ──
+// ── AXIS orbit status — what survived the director strip (removed 2026-08-12) ──
+// Ahmad: "Remove the one above the globe and ensure all its existing data, knowledge and knows is
+// added to the Axis (globe) one." The strip's input was a second door into the same room — it fed
+// the same dock transcript and the same brain queue the orbit bar does, so no knowledge moved with
+// it. What it uniquely SHOWED comes here: the honest-counts line (on the orbit, under the globe)
+// and the four quick chips (static HTML, wired below). The strip's draft-preservation machinery
+// (state.ui.stripDraft) is gone with it: #axisQuick is static DOM, never re-rendered, so a
+// mid-sentence draft survives the snapshot tick natively.
 function askAxis(text) {
   if ($('axisDock').hidden) openDock();
   const inp = $('axisInput'); inp.value = text; axisSend();
 }
-function axisStrip(k) {
-  // Honest counts only — straight from the snapshot KPIs the cards below already show.
+function renderOrbStatus() {
+  const box = $('axisOrbStatus'); if (!box) return;
+  // Honest counts only — straight from the snapshot KPIs the Overview cards show.
+  const k = data('overview').kpis || {};
   const n1 = k.awaiting_approval ?? 0, n2 = k.messages_waiting ?? 0, n3 = k.followups_due ?? 0;
   const bits = [];
   if (n1) bits.push(n1 + (n1 === 1 ? ' approval' : ' approvals') + ' waiting');
   if (n2) bits.push(n2 + (n2 === 1 ? ' client reply' : ' client replies') + ' waiting');
   if (n3) bits.push(n3 + (n3 === 1 ? ' follow-up' : ' follow-ups') + ' due');
-  const line = bits.length ? bits.join(' · ') : 'All quiet. AXIS is watching.';
-  const input = el('input', { placeholder: 'Tell AXIS…', 'aria-label': 'Tell AXIS', autocomplete: 'off' });
-  // The 15s snapshot tick re-renders Overview; a draft mid-sentence must survive it (gate-review finding).
-  input.value = state.ui.stripDraft || '';
-  input.addEventListener('input', () => { state.ui.stripDraft = input.value; });
-  input.addEventListener('focus', () => { state.ui.stripFocus = true; });
-  input.addEventListener('blur', () => { state.ui.stripFocus = false; });
-  if (state.ui.stripFocus) requestAnimationFrame(() => { input.focus(); const n = input.value.length; try { input.setSelectionRange(n, n); } catch {} });
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && input.value.trim()) { const t = input.value.trim(); input.value = ''; state.ui.stripDraft = ''; askAxis(t); } });
-  const chips = [['Status', 'status'], ['Needs me', 'what needs me now'], ['Next', 'what is next'], ['Approvals', 'approvals']]
-    .map(([lbl, q]) => el('button', { class: 'chip', onclick: () => askAxis(q) }, lbl));
-  const s = el('section', { class: 'axis-strip', 'aria-label': 'AXIS command strip' }, [
-    el('span', { class: 'axis-orb', 'data-orb': '' }),
-    el('div', {}, [el('div', { class: 'eyebrow', style: 'color:var(--gold)' }, 'AXIS · Director'),
-      el('div', { class: 'axis-strip-status' }, line)]),
-    input, ...chips]);
-  mountOrbs(s);
-  return s;
+  box.textContent = bits.length ? bits.join(' · ') : 'All quiet. AXIS is watching.';
 }
 
 // ── Public AXIS (R4, pre-auth) ────────────────────────────────────────────────
@@ -2706,6 +2688,9 @@ $('axisQuick')?.addEventListener('keydown', (e) => {
   axisOpenConsole();
   const box = $('axisInput'); if (box) { box.value = v; axisSend(); }
 });
+// Quick chips — inherited from the removed director strip; same questions, same pipeline.
+document.querySelectorAll('[data-orb-q]').forEach((b) =>
+  b.addEventListener('click', () => askAxis(b.getAttribute('data-orb-q'))));
 // The wake button exists in two places now; keep both lit in step.
 const __syncWake = axisSyncWakeBtn;
 axisSyncWakeBtn = function () {

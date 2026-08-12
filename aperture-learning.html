@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/axis-tokens.css?v=20260812e">
+<link rel="stylesheet" href="/assets/axis-tokens.css?v=20260812g">
   <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 </head>
 <body>
@@ -84,26 +84,31 @@
         <button class="iconbtn" id="logoutBtn" title="sign out">⎋</button>
       </div>
     </header>
-    <!-- The AXIS head band. Ahmad, 2026-08-12: "Leave axis-director field where it was, place axis
-         below that and make axis larger."
-         Both the director field and the globe live HERE rather than inside .content, and that is the
-         whole trick. .content is the scroll container, so anything inside it scrolls — a globe pinned
-         over a scrolling pane will always end up with content sliding under it, and a director field
-         inside the pane will always scroll away from the globe it belongs to. Lifting both out into a
-         flex:none band makes the order structural: topbar, director field, globe, then the page. The
-         browser does the height arithmetic, so no clearance is reserved by hand and none of it can
-         drift out of step with the globe's size. #axisStripSlot is filled by SCREENS.overview. -->
+    <!-- The AXIS head band — ONE surface. Ahmad, 2026-08-12: "Remove the one above the globe and
+         ensure all its existing data, knowledge and knows is added to the Axis (globe) one."
+         The director field that used to sit here was a second door into the same room: its input fed
+         the same dock transcript and the same brain queue as the globe's own bar. What it uniquely
+         SHOWED — the honest-counts line and the quick chips — now lives on the orbit itself, so
+         nothing was lost by deleting it. The band still lives HERE rather than inside .content
+         because .content is the scroll container: a globe pinned over a scrolling pane always ends up
+         with content sliding under it. flex:none band, browser does the height arithmetic. -->
     <div class="axis-head" id="axisHead">
-      <div class="axis-head-strip" id="axisStripSlot"></div>
-      <!-- AXIS orbit — the resting presence: the globe with a small type box and two controls under
-           it. No transcript until asked for. Clicking the globe (or Expand) opens the dock. -->
+      <!-- AXIS orbit — the resting presence: the globe, the honest-counts line, a small type box and
+           the quick chips. No transcript until asked for. Clicking the globe opens the dock. -->
       <div class="axis-orbit" id="axisOrbit">
         <span class="axis-globe" data-globe id="axisOrbGlobe" role="button" tabindex="0"
               aria-label="Open AXIS conversation" title="AXIS — click to open the conversation"></span>
+        <div class="axis-orb-status" id="axisOrbStatus" aria-live="polite"></div>
         <div class="axis-bar">
           <input id="axisQuick" placeholder="Ask AXIS…" autocomplete="off" aria-label="Ask AXIS">
           <button class="chip" id="axisQuickWake" title="Hands-free: wake word &ldquo;AXIS&rdquo;" aria-pressed="false" aria-label="Toggle hands-free">&#9101;</button>
           <button class="chip" id="axisQuickHolo" title="Full-screen AXIS presence (Ctrl+Alt+A)" aria-label="Open AXIS presence">&#9906;</button><button class="chip" id="axisQuickOpen" title="Open the full conversation" aria-label="Open conversation">&#9711;</button>
+        </div>
+        <div class="axis-orb-chips" role="group" aria-label="AXIS quick questions">
+          <button class="chip" data-orb-q="status">Status</button>
+          <button class="chip" data-orb-q="what needs me now">Needs me</button>
+          <button class="chip" data-orb-q="what is next">Next</button>
+          <button class="chip" data-orb-q="approvals">Approvals</button>
         </div>
       </div>
     </div>
@@ -166,7 +171,7 @@
   </div>
 </div>
 
-<script type="module" src="/assets/axis-app.js?v=20260812f"></script>
+<script type="module" src="/assets/axis-app.js?v=20260812g"></script>
 <!-- iis-fineprint:start -->
 <div class="iis-fineprint" role="note" aria-label="Site content disclaimer">
   <div class="iis-fineprint__inner">
