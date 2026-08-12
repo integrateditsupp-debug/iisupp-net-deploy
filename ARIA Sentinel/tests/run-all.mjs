@@ -83,6 +83,10 @@ const TESTS = [
   // across the filesystem boundary: the real file, the truth artefact it was generated from, and
   // the served feed must agree, and the history below the END marker is asserted byte-identical.
   "../../tests/ledger-head-on-disk.test.mjs",
+  // RUN-BM / BM0 — which operator-internal inputs a given tree actually has. Registered directly
+  // above the ledger-head suite because it is the reading that says whether THAT suite's red means
+  // broken code or an input a clone was never allowed to receive. Green in both trees by design.
+  "../../tests/operator-input-boundary.test.mjs",
   // UNPUBLISHED RANGE 2026-08-06 (RUN-AR / AR1) — twenty-three cycles closed with "N commits ahead
   // of the shared line" and never once priced it. A count is not a finding: the range is now read
   // out of the repository and classified BY PATH (never by the commit message), overlapping classes
