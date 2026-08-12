@@ -19,7 +19,7 @@ import { toggleHologram } from './axis-hologram.js';
 // this only decides who AXIS sounds like and how a spoken turn is shaped.
 import { axisPersonaBonus, AXIS_PROSODY, VOICE_POLICY_REV, ackLine, greetLine, routeTail,
   isWake, isStop, isConfirm, isDeny, stripWake,
-  voiceProfile, voiceFamily, polishForSpeech, phraseChunks,
+  voiceProfile, voiceFamily, polishForSpeech, speechify, phraseChunks,
   splitForTurns, isContinue, isReferential, detectOp } from './axis-persona.js';
 
 const TOKEN_KEY = 'aperture_jwt';
@@ -1909,7 +1909,7 @@ function axisSpeak(text) {
     // Clause-aware chunking so delivery breathes at commas, not only full stops — and still caps at
     // 180 chars to avoid Chrome's long-utterance cutoff. polishForSpeech says jargon like a person
     // ("KB" → "knowledge base") instead of spelling it out.
-    const queue = phraseChunks(polishForSpeech(clean), 180);
+    const queue = phraseChunks(polishForSpeech(speechify(clean)), 180);
     setAxisState('speaking');
     // BARGE-IN (Ahmad, 2026-08-12: "when its talking and I interrupt or stop it to talk about
     // something it mentioned it should listen to me then respond and act accordingly").
@@ -1937,7 +1937,13 @@ function axisSpeak(text) {
       u.volume = typeof prof.volume === 'number' ? prof.volume : 1;
       // cancel() fires 'error' (interrupted/canceled), not 'end' — without onerror the machine
       // would stick on 'speaking' forever (gate-review finding). Every chunk resets, gen-guarded.
-      const settle = () => { if (gen === __speakGen && document.documentElement.dataset.axisState === 'speaking') setAxisState('idle'); axisWakeResume(); };
+      // Clearing axisSpokenNow matters as much as the state reset: while it is set, the echo filter
+      // is active, and a stale value would go on swallowing Ahmad's words after AXIS had stopped.
+      const settle = () => {
+        if (gen === __speakGen && document.documentElement.dataset.axisState === 'speaking') setAxisState('idle');
+        if (qi === queue.length - 1) axisSpokenNow = '';
+        axisWakeResume();
+      };
       // A natural finish on the last chunk ends AXIS's turn and hands the floor back (hands-free).
       // onerror must NOT: that is a barge-in, and the mic is already opening on its own.
       if (qi === queue.length - 1) u.onend = () => { settle(); const done = __turnDone; __turnDone = null; if (gen === __speakGen && done) { try { done(); } catch {} } };
@@ -2191,16 +2197,37 @@ function axisTurnDone() {
   }, 350);
 }
 
+// Ahmad cut in mid-sentence. Stop talking at once and let his words become the next turn — but keep
+// every bit of conversational place, because interrupting is nearly always ABOUT what was just said
+// ("to talk about something it mentioned"). The parked task, the un-spoken tail and the transcript
+// all survive, so "do what you just mentioned" still resolves afterwards.
+//
+// Deliberately NOT axisStandDown(): standing down is a kill-switch that ends the exchange. This is
+// the opposite — it hands the floor over without closing anything.
+function axisBargeIn() {
+  try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch {}
+  __turnDone = null;
+  axisSpokenNow = '';
+  if (document.documentElement.dataset.axisState === 'speaking') setAxisState('idle');
+  axisOpenConvo();   // whatever he says next counts as addressed, no wake word needed
+}
+
 // Spoken + keyboard kill-switch. Aborts speech, the mic, the pending turn, and any unconfirmed route.
 function axisStandDown() {
   try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch {}
   try { axisRec && axisRec.abort(); } catch {}
   __turnDone = null; axisPendingRoute = null; axisSpokenTurn = false;
-  // Closes the floor, but deliberately does NOT drop axisPendingOp: "stop" means stop talking, not
-  // forget where we were, so "do what you just said" still resolves afterwards. The task cannot run
-  // without a confirm, and it expires on its own (see OP_TTL_MS) so a late "yes" cannot fire it.
-  axisConvoUntil = 0;
+  // Deliberately does NOT drop axisPendingOp: "stop" means stop talking, not forget where we were,
+  // so "do what you just said" still resolves afterwards. The task cannot run without a confirm, and
+  // it expires on its own (see OP_TTL_MS) so a late "yes" cannot fire it.
+  axisSpokenNow = '';
   if (document.documentElement.dataset.axisState !== 'idle') setAxisState('idle');
+  // Ahmad, 2026-08-12: "when its talking and I interrupt or stop it ... it should listen to me then
+  // respond and act accordingly." Stopping used to close the floor (axisConvoUntil = 0) and go
+  // quiet, which meant saying "stop" cost you the wake word again before you could say what you
+  // actually stopped it FOR. In hands-free the floor now stays open and the listener re-arms, so the
+  // sentence after the interruption is simply the next turn.
+  if (axisHandsFree) { axisOpenConvo(); axisWakeResume(); } else { axisConvoUntil = 0; }
   toast('AXIS stood down');
 }
 // Mirrors axisSyncVoiceBtn: the dock and the Agent Director tab each carry their own control, and

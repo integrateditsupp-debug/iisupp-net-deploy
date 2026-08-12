@@ -124,7 +124,12 @@ export function localAnswer(question, snap, now = new Date()) {
   if (/\b(next|most urgent|first|priority|priorities)\b/.test(q)) {
     if (!items.length) return 'Nothing open. Every queue is clear.';
     const top = items[0];
-    return `Next: ${top.title} — ${dueLabel(top.dueAt, now).text}. ${top.detail}.`;
+    // Written as a sentence, not a row. The old form was "Next: <title> — <due>. <detail>." which
+    // is three fields with punctuation between them; spoken aloud it sounded like a database.
+    const due = dueLabel(top.dueAt, now);
+    const when = due.tone === 'none' ? '' : due.tone === 'over' ? `, ${due.text}` : `, due ${due.text}`;
+    const what = top.detail ? ` It is ${top.detail}.` : '';
+    return `Next up is ${top.title}${when}.${what}`;
   }
   if (/\b(overdue|late|behind)\b/.test(q))
     return overdue.length ? `${overdue.length} overdue: ${listBits(overdue)}.` : 'Nothing is overdue.';
