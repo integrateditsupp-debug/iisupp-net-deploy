@@ -781,7 +781,11 @@ function globalSection() {
 
 SCREENS.overview = (c) => {
   const d = data('overview'); const k = d.kpis || {};
-  c.append(axisStrip(k)); // AXIS front-and-center: command strip above everything (R3)
+  // The director field mounts in the head band, not here. Ahmad, 2026-08-12: "Leave axis-director
+  // field where it was, place axis below that." It reads in the same place it always did — first
+  // thing under the topbar — but it is now above the globe and outside the scroll pane, so it stays
+  // put instead of sliding under the globe on the first scroll.
+  mountAxisHead(axisStrip(k));
   c.append(head('Overview', 'command deck'));
   const kpis = [['Pipeline value', fmtMoney(k.pipeline_value)], ['Awaiting approval', k.awaiting_approval ?? 0],
     ['Client messages waiting', k.messages_waiting ?? 0], ['Follow-ups due', k.followups_due ?? 0],
@@ -1455,8 +1459,17 @@ function placeholder(label) {
       el('pre', { class: 'mono', style: 'font-size:11px;white-space:pre-wrap;color:var(--txt-2);margin:0;max-height:340px;overflow:auto' }, d ? JSON.stringify(d, null, 2) : '(empty)')]));
   };
 }
+// The head band sits above the globe and outside the scroll pane. Cleared on every render so a screen
+// that has no director field does not inherit the last one's — the band collapses to nothing instead
+// (.axis-head-strip:empty).
+function mountAxisHead(node) {
+  const slot = $('axisStripSlot'); if (!slot) return;
+  slot.innerHTML = '';
+  if (node) slot.append(node);
+}
 function renderModule() {
   clearOverlays();
+  mountAxisHead(null);
   const c = $('content'); c.innerHTML = '';
   const screen = el('div', { class: 'screen' }); c.append(screen);
   (SCREENS[state.module] || placeholder(navItem(state.module)?.label || state.module))(screen);

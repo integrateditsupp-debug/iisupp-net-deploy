@@ -43,38 +43,64 @@ assert.ok(/const R = Math\.min\(W, H\) \* 0\.36 \* \(1 \+ env \* 0\.06\)/.test(g
   'the sphere itself swells with the voice');
 ok('speaking is visibly alive — enveloped swell plus a syllable halo');
 
-// ---- 3. ONE resting size, 30% up from the original 104px ----
-// Ahmad, 2026-08-12 (third pass): "make the size 30% instead of the 15% it is right now."
-// The 104px baseline is unchanged — the percentage is the knob. The grow-to-25vh behaviour is still
-// gone; any return of it would reintroduce the "big then suddenly small" complaint.
+// ---- 3. ONE resting size, larger again on the fourth pass ----
+// Ahmad, 2026-08-12 (fourth pass): "make axis larger." 104px baseline × 1.30 (third pass) × 1.30.
+// The grow-to-25vh behaviour is still gone; any return of it would reintroduce the "big then suddenly
+// small" complaint.
 const orbit = css.match(/\.axis-orbit \.axis-globe \{ width:(\d+)px; height:(\d+)px;/);
 assert.ok(orbit, 'the orbit globe has a fixed resting size');
 assert.equal(Number(orbit[1]), Number(orbit[2]), 'the globe is square');
-assert.equal(Number(orbit[1]), Math.round(104 * 1.30), '30% up from the original 104px');
-// The two derived sizes scale off their own baselines, so the whole set stays proportional.
+assert.equal(Number(orbit[1]), Math.round(104 * 1.30 * 1.30), 'two 30% passes up from the original 104px');
 const docked = css.match(/:root\[data-axis-open="1"\] \.axis-orbit \.axis-globe \{ width:(\d+)px/);
-assert.ok(docked && Number(docked[1]) === Math.round(74 * 1.30), 'docked globe is 30% up from 74px');
-const small = css.match(/@media \(max-width:720px\) \{\s*\.axis-orbit \.axis-globe \{ width:(\d+)px/);
-assert.ok(small && Number(small[1]) === Math.round(78 * 1.30), 'the <=720px globe is 30% up from 78px');
-// No state may resize it — that is what "take it back" means.
+assert.ok(docked && Number(docked[1]) === Math.round(96 * 1.30), 'docked globe is 30% up from 96px');
+// The phone size is deliberately NOT taken up the full way: the orbit is in the normal flow now, so
+// its height is subtracted from the readable area, and a 176px band would eat a phone's viewport.
+// Assert the RELATIONSHIP rather than the number, so the phone can be tuned without a test edit.
+// Search INSIDE the right media block. There are three `@media (max-width:720px)` blocks (the topbar
+// and the strip have their own), so a lazy scan from the first one runs straight past it and matches
+// the DESKTOP globe rule — it reported "the phone globe is 176px" and failed for the wrong reason.
+// BRACE-MATCH the block rather than splitting on a guessed delimiter: `\n}` looked like a block end
+// but these blocks close with an indented brace, so the split silently swallowed the rest of the file.
+function mediaBlocks(src, at) {
+  const out = [];
+  for (let i = src.indexOf(at); i !== -1; i = src.indexOf(at, i + 1)) {
+    const open = src.indexOf('{', i);
+    let depth = 0;
+    for (let j = open; j < src.length; j++) {
+      if (src[j] === '{') depth++;
+      else if (src[j] === '}' && --depth === 0) { out.push(src.slice(open + 1, j)); break; }
+    }
+  }
+  return out;
+}
+const smallBlocks = mediaBlocks(css, '@media (max-width:720px)');
+assert.ok(smallBlocks.length >= 1, 'there is a <=720px media block');
+const smallBlock = smallBlocks.find((b) => /\.axis-orbit \.axis-globe \{ width:\d+px/.test(b));
+assert.ok(smallBlock, 'the <=720px block sizes the orbit globe');
+const small = smallBlock.match(/\.axis-orbit \.axis-globe \{ width:(\d+)px/);
+assert.ok(Number(small[1]) < Number(orbit[1]),
+  `a phone must get a smaller globe than the desktop (${small[1]}px vs ${orbit[1]}px) — the band is real layout now`);
+assert.ok(Number(small[1]) >= 104, 'but not smaller than the original baseline — "larger" still has to mean larger');
+// No state may resize it — doubly true now that a width change here reflows the page.
 for (const state of ['listening', 'speaking', 'thinking']) {
   const rule = new RegExp(':root\\[data-axis-state="' + state + '"\\] \\.axis-orbit \\.axis-globe \\{[^}]*(?:width|height):');
   assert.ok(!rule.test(css), `${state} must not resize the globe`);
 }
 assert.ok(!/\.axis-orbit \.axis-globe[^}]*clamp\([^)]*vh/.test(css), 'no viewport-relative growth remains');
-ok(`one resting size at ${orbit[1]}px (104 + 30%), and no state resizes it`);
+ok(`one resting size at ${orbit[1]}px (104 + 30% + 30%), and no state resizes it`);
 
-// ---- 4. it sits ABOVE the Overview, not under it ----
-// Ahmad, 2026-08-12: "move the axis globe above the overview." It was bottom:22px, which put AXIS
-// underneath the deck it fronts. Top-anchored now, clearing the 57px topbar.
-assert.ok(/\.axis-orbit \{ position:fixed; left:50%; top:(\d+)px; transform:translateX\(-50%\)/.test(css),
-  'the orbit is top-anchored so it sits above the Overview');
+// ---- 4. it sits ABOVE the Overview deck and BELOW the director field ----
+// Ahmad, 2026-08-12: "move the axis globe above the overview", then "Leave axis-director field where
+// it was, place axis below that". Ordering is structural now — the orbit is an in-flow child of the
+// .axis-head band — so this checks the flow, not a pin. See axis-overview-clearance.test.mjs.
+assert.ok(!/\.axis-orbit \{[^}]*position:fixed/.test(css),
+  'the orbit must stay in the flow — a fixed orbit is what let content slide under it');
 assert.ok(!/\.axis-orbit \{[^}]*bottom:22px/.test(css), 'the old bottom-centre pin is gone');
 // The transcript has to follow the globe; opening it at the far end of the screen from the thing
 // that opened it is the bug this guards.
 assert.ok(/\.axis-dock \{ position:fixed; left:50%; right:auto; top:(\d+)px/.test(css),
   'the dock follows the orbit to the top instead of staying at the bottom');
-ok('top-anchored above the Overview, with the dock following it');
+ok('in the flow under the director field, with the dock following it');
 
 // ---- 5. the voice: American, classy, upscale — and still never ARIA ----
 // Ahmad 2026-08-12: "change the voice to a english USA accent but classy and up scale style."
