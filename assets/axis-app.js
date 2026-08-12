@@ -14,6 +14,7 @@ import { renderReports } from './axis-reports.js';
 import { renderDirector } from './axis-director-screen.js';
 import { renderPriorities, collectPriorities, dueLabel, localAnswer } from './axis-priorities.js';
 import { mountGlobes } from './axis-globe.js';
+import { toggleHologram } from './axis-hologram.js';
 // AXIS persona + turn grammar (the JARVIS flow). Additive: the voice machinery below is unchanged;
 // this only decides who AXIS sounds like and how a spoken turn is shaped.
 import { axisPersonaBonus, AXIS_PROSODY, ackLine, greetLine, routeTail,
@@ -2163,6 +2164,8 @@ $('axisOrbGlobe')?.addEventListener('click', axisOpenConsole);
 $('axisOrbGlobe')?.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); axisOpenConsole(); } });
 $('axisQuickOpen')?.addEventListener('click', axisOpenConsole);
 $('axisQuickWake')?.addEventListener('click', axisHandsFreeToggle);
+// Full-screen AXIS presence. Ctrl+Alt+A anywhere, or the ⛶ control on the orbit bar.
+$('axisQuickHolo')?.addEventListener('click', () => toggleHologram());
 $('axisQuick')?.addEventListener('keydown', (e) => {
   if (e.key !== 'Enter') return;
   const v = e.target.value.trim(); if (!v) return;
@@ -2224,6 +2227,7 @@ document.addEventListener('keydown', (e) => {
     if (axisHandsFree) { axisHandsFree = false; axisWakePause(); axisSyncWakeBtn(); }
     return axisStandDown();
   }
+  if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'a') { e.preventDefault(); return void toggleHologram(); }
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); return openPalette(); }
   if (e.key === 'Escape') { $('palette').hidden = true; if (!$('axisDock').hidden) closeDock(); if (state.ui.thread) { state.ui.thread = null; renderModule(); } if (state.ui.crmDrawer) { state.ui.crmDrawer = null; renderModule(); } return; }
   if (!$('palette').hidden) {

@@ -124,6 +124,12 @@
   status = 404
   force = true
 [[redirects]]
+  # Staged video media. publish="." would otherwise serve every mp4/wav from the site root.
+  from = "/content/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
   from = "/outputs/*"
   to = "/index.html"
   status = 404

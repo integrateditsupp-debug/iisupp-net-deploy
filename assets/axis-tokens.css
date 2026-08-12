@@ -538,3 +538,49 @@ a { color:var(--gold); text-decoration:none; }
    The JS still toggles .hidden on the FAB; that is harmless, this rule wins either way. The orbit
    globe is the opener now, so nothing is lost by hiding it. */
 .axis-fab { display:none !important; }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   AXIS HOLOGRAM — the full-screen presence (assets/axis-hologram.js).
+   Ahmad: "not a globe or jarvis look… ensure the hologram feature is available."
+   The orbit globe is the resting state; this is AXIS at full size. Everything that
+   moves lives on the canvas — the CSS here is the room it sits in.
+   ══════════════════════════════════════════════════════════════════════════════ */
+.axis-holo { position:fixed; inset:0; z-index:120; background:
+    radial-gradient(120% 100% at 50% 50%, rgba(8,8,11,.90), rgba(3,3,5,.985) 70%);
+  backdrop-filter:blur(26px) saturate(130%); -webkit-backdrop-filter:blur(26px) saturate(130%);
+  animation:holo-in .42s cubic-bezier(.22,1,.36,1); overflow:hidden; }
+@keyframes holo-in { from{opacity:0; transform:scale(1.03)} to{opacity:1; transform:none} }
+.axis-holo-c { position:absolute; inset:0; width:100%; height:100%; display:block; }
+
+/* Scanlines + a slow sweep. Subtle on purpose: at full strength it reads as a broken monitor. */
+.axis-holo-scan { position:absolute; inset:0; pointer-events:none; opacity:.30;
+  background:repeating-linear-gradient(180deg,
+    rgba(210,169,78,.055) 0px, rgba(210,169,78,.055) 1px, transparent 1px, transparent 3px); }
+.axis-holo-scan::after { content:''; position:absolute; left:0; right:0; height:26vh;
+  background:linear-gradient(180deg, transparent, rgba(210,169,78,.075), transparent);
+  animation:holo-sweep 7s linear infinite; }
+@keyframes holo-sweep { from{transform:translateY(-30vh)} to{transform:translateY(110vh)} }
+
+.axis-holo-ui { position:absolute; left:0; right:0; bottom:9vh; text-align:center; pointer-events:none; }
+.axis-holo-name { font-family:var(--mono); font-size:clamp(20px,2.6vw,34px); letter-spacing:.62em;
+  color:var(--gold); text-indent:.62em;
+  text-shadow:0 0 26px color-mix(in srgb, var(--gold) 62%, transparent); }
+.axis-holo-state { font-family:var(--mono); font-size:11px; letter-spacing:.34em; text-transform:uppercase;
+  color:var(--txt-3); margin-top:14px; }
+.axis-holo-hear { margin:16px auto 0; max-width:min(760px,84vw); min-height:24px;
+  font-size:clamp(14px,1.5vw,19px); color:var(--txt); font-style:italic;
+  text-shadow:0 2px 20px rgba(0,0,0,.85); }
+
+.axis-holo-close { position:absolute; top:26px; right:28px; background:transparent;
+  border:1px solid color-mix(in srgb, var(--gold) 34%, transparent); color:var(--gold);
+  font-family:var(--mono); font-size:10px; letter-spacing:.22em; text-transform:uppercase;
+  padding:8px 14px; border-radius:999px; cursor:pointer; }
+.axis-holo-close:hover { background:color-mix(in srgb, var(--gold) 15%, transparent); }
+
+/* The orbit stays reachable underneath, but the dock would sit on top of the presence. */
+:root[data-axis-holo="1"] .axis-dock { display:none !important; }
+
+@media (prefers-reduced-motion:reduce) {
+  .axis-holo { animation:none; }
+  .axis-holo-scan::after { animation:none; }
+}
