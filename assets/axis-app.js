@@ -2265,6 +2265,10 @@ async function pubAsk(q) {
   q = String(q || '').trim(); if (!q) return;
   const log = $('axisPubLog'); if (!log) return;
   log.hidden = false;
+  // The public panel shows the CURRENT exchange only. It used to append forever, so every question
+  // asked pre-auth stacked up and the oldest one led the panel — "the axis old prompt shows prior to
+  // logging in". One question, one answer, replaced each time.
+  log.innerHTML = '';
   log.append(el('div', { class: 'axis-msg user' }, q));
   setAxisState('thinking');
   const a = await pubAnswer(q);
@@ -2317,7 +2321,19 @@ function axisBootBriefing() {
     if (axisSpeak(line)) __turnDone = axisTurnDone;
   }, 500);
 }
-function logout() { localStorage.removeItem(TOKEN_KEY); state.token = ''; $('app').style.display = 'none'; $('login').style.display = 'grid'; clearInterval(window.__axisPoll); }
+// Returning to the login screen must not leave the last session on it. logout() used to clear only
+// the token, so the public panel still showed the previous exchange and the authed transcript was
+// still sitting in the DOM behind a display:none — visible to anyone who opened the page next, and
+// the authed half can name clients. Signing out ends the conversation as well as the session.
+function axisResetTranscripts() {
+  dockLog.length = 0;
+  for (const id of ['axisLog', 'axisDirectorLog']) { const n = $(id); if (n) n.innerHTML = ''; }
+  const pub = $('axisPubLog'); if (pub) { pub.innerHTML = ''; pub.hidden = true; }
+  axisHeldRest = ''; axisPendingOp = null; axisPendingRoute = null; axisConvoUntil = 0;
+  try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch {}
+  setAxisState('idle');
+}
+function logout() { localStorage.removeItem(TOKEN_KEY); state.token = ''; $('app').style.display = 'none'; $('login').style.display = 'grid'; clearInterval(window.__axisPoll); axisResetTranscripts(); }
 async function doLogin() {
   $('loginErr').textContent = '';
   try {

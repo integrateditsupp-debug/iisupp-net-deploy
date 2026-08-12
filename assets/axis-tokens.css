@@ -532,6 +532,43 @@ a { color:var(--gold); text-decoration:none; }
 }
 @media (prefers-reduced-motion:reduce) { .axis-orbit .axis-globe { animation:none; } }
 
+/* ── Presence: the globe grows while the conversation is live ──────────────────
+   Ahmad, 2026-08-11: "make the globe at the bottom automatically expand when it
+   starts talking or when I talk to it to about 25% of the page and gets back to
+   original size when I or it stops talking."
+
+   Driven entirely by :root[data-axis-state] — the same machine the orb, the globe
+   canvas and the hologram already read — so it behaves identically whether the
+   turn came from Ahmad's voice or from AXIS speaking. No JS.
+
+   Sizing the box (not transform:scale) is deliberate here: .axis-orbit already
+   uses transform for its translateX(-50%) centring and the globe carries the
+   axis-float keyframes, so a scale would fight both. axis-globe.js observes its
+   host with a ResizeObserver, so the canvas re-renders crisply at the new size
+   instead of stretching a stale bitmap. .axis-orbit is position:fixed, so the
+   growth reflows nothing — anchored at the bottom, it simply extends upward.
+
+   These rules sit AFTER [data-axis-open] on purpose: identical specificity, so
+   source order decides, and a live turn should outrank the docked-down size. */
+.axis-orbit .axis-globe {
+  transition:width .45s cubic-bezier(.22,1,.36,1), height .45s cubic-bezier(.22,1,.36,1); }
+:root[data-axis-state="listening"] .axis-orbit .axis-globe,
+:root[data-axis-state="speaking"] .axis-orbit .axis-globe {
+  width:clamp(120px, 25vh, 38vw); height:clamp(120px, 25vh, 38vw); animation:none; }
+/* Thinking is a half-step. The hologram already treats it as mid-energy (0.62 against 1.0 for
+   speaking), and a pause that may last half a second should not claim a quarter of the page. */
+:root[data-axis-state="thinking"] .axis-orbit .axis-globe {
+  width:clamp(112px, 15vh, 24vw); height:clamp(112px, 15vh, 24vw); }
+
+/* A quarter of the viewport arriving in under half a second is exactly what this setting exists to
+   prevent. Keep the size signal — it is feedback, not decoration — but make it small and instant. */
+@media (prefers-reduced-motion:reduce) {
+  .axis-orbit .axis-globe { transition:none; }
+  :root[data-axis-state="listening"] .axis-orbit .axis-globe,
+  :root[data-axis-state="speaking"] .axis-orbit .axis-globe { width:132px; height:132px; }
+  :root[data-axis-state="thinking"] .axis-orbit .axis-globe { width:118px; height:118px; }
+}
+
 /* The orbit REPLACES the old floating "Ask AXIS" button. Without this the two coexist: the orbit is
    always present, and syncDockVisibility() re-shows the FAB every time the dock is closed, so AXIS
    appeared twice — the orbit bottom-centre plus the FAB in a corner (reported 2026-08-11).
