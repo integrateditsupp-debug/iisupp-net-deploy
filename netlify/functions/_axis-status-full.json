@@ -1,9 +1,3437 @@
 {
  "_internal": true,
  "_emitRule": "INTERNAL ONLY — force-404 live, served via authenticated /api/axis-status. NEVER copy this content into .well-known: regenerate the public mirrors with scripts/lib/axis-status-emit.mjs (headline-only, leak-scanned).",
- "cycle": "RUN-BN / BN0",
- "merged": "cc/run-bh-2026-08-11 into local main",
- "verification": "merge tree computed and materialised; tests/axis-globe-voice.test.mjs and tests/axis-presence-privacy.test.mjs both green on the merged result",
- "notMeasured": "full registry + site suite — this build environment had no disk to check the whole tree out; no cold reading was reused",
- "unpushed": "local main is ahead of origin/main; this environment holds no code-host credential"
+ "schema": "axis-status-full/1",
+ "generatedAt": "2026-08-11T18:17:16.832Z",
+ "honest": true,
+ "claims": {
+  "clientFacingDocumentsAudited": {
+   "value": 27,
+   "measuredAt": "2026-08-11T18:19:46.272Z",
+   "source": "every .md under the client-facing directories, read during this emit",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditClientFacing()",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "clientFacingDocumentsRefused": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.272Z",
+   "source": "documents carrying operator-internal content; the emit refuses to write if this is not zero",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditClientFacing()",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "clientFacingUnpublishedFigures": {
+   "value": 44,
+   "measuredAt": "2026-08-11T18:19:46.272Z",
+   "source": "money figures quoted in a client-facing contract that appear nowhere the company publishes",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditClientFacing()",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "agreementCarriedByTheSharedLine": {
+   "value": true,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the yes-path walk: whether the agreement a client signs is in the tree a clone receives",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "resolveYesPath() — the agreement step's class, where UNTRACKED means it exists on one machine only",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "invoiceWalkedToARenderedDraft": {
+   "value": true,
+   "measuredAt": "2026-08-11T18:19:46.272Z",
+   "source": "a rehearsal in a throwaway directory: no live API call, no key read, no money moved",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "rehearseInvoice()",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "invoiceStepsBroken": {
+   "value": 1,
+   "measuredAt": "2026-08-11T18:19:46.272Z",
+   "source": "steps on the path from an agreed proposal to a collected invoice that are broken today",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "rehearseInvoice()",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "invoiceStepsUnrun": {
+   "value": 1,
+   "measuredAt": "2026-08-11T18:19:46.272Z",
+   "source": "steps this environment cannot rehearse — reported unrun with a reason, never as a pass",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "rehearseInvoice()",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "testsPassedAfterWrites": {
+   "value": 1063,
+   "measuredAt": "2026-08-11T18:19:46.272Z",
+   "source": "the full registry run performed by this emit script, parsed from the runner's own output (# pass)",
+   "kind": "test",
+   "provenance": "measured",
+   "read": {
+    "command": "npm test --silent",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "testsFailedAfterWrites": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.272Z",
+   "source": "the full registry run performed by this emit script, parsed from the runner's own output (# fail)",
+   "kind": "test",
+   "provenance": "measured",
+   "read": {
+    "command": "npm test --silent",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "suitesGreenAfterWrites": {
+   "value": 371,
+   "measuredAt": "2026-08-11T18:19:46.272Z",
+   "source": "the full registry run performed by this emit script, parsed from the runner's own output (N/N suites green)",
+   "kind": "test",
+   "provenance": "measured",
+   "read": {
+    "command": "npm test --silent",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "suitesTotalAfterWrites": {
+   "value": 371,
+   "measuredAt": "2026-08-11T18:19:46.272Z",
+   "source": "the full registry run performed by this emit script, parsed from the runner's own output (N/N suites green)",
+   "kind": "test",
+   "provenance": "measured",
+   "read": {
+    "command": "npm test --silent",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "registryExitCode": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.272Z",
+   "source": "the exit code of the registry run this script performed",
+   "kind": "test",
+   "provenance": "measured",
+   "read": {
+    "command": "npm test --silent",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "testsPassedBeforeAnyWrite": {
+   "value": 766,
+   "measuredAt": "2026-08-11T18:19:46.272Z",
+   "source": "not measurable in this environment: the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
+   "kind": "test",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
+   "note": "last known value, carried forward and labelled — NOT measured this cycle",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "suitesGreenBeforeAnyWrite": {
+   "value": 350,
+   "measuredAt": "2026-08-11T18:19:46.272Z",
+   "source": "not measurable in this environment: the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
+   "kind": "test",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
+   "note": "last known value, carried forward and labelled — NOT measured this cycle",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "commitsAheadOfSharedLine": {
+   "value": 26,
+   "measuredAt": "2026-08-11T18:19:46.403Z",
+   "source": "a revision count taken against the last known shared reference during this cycle",
+   "kind": "count",
+   "provenance": "measured",
+   "read": {
+    "command": "git rev-list --count origin/main..HEAD",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "sharedLineAdvancedByPush": {
+   "value": true,
+   "measuredAt": "2026-08-11T18:19:46.458Z",
+   "source": "the local reflog for the remote-tracking ref, read during this emit",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "git reflog show origin/main -n 1 --format=%gs",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "sharedLineConfirmedOnRemote": {
+   "value": null,
+   "measuredAt": "2026-08-11T18:19:46.458Z",
+   "source": "git ls-remote origin main, run during this emit and refused",
+   "kind": "blocker",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "the remote probe is refused in this environment (no credential), so the push is known from the local reflog and the ref equality only — never from reading github",
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "pushCredentialRefused": {
+   "value": true,
+   "measuredAt": "2026-08-11T18:19:46.703Z",
+   "source": "a remote probe run with prompts disabled during this emit; the refusal is the measurement",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "git ls-remote origin main",
+    "exitCode": 128
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "secondMessagesDrafted": {
+   "value": 12,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "a read of senior-director-state/outbound/SEND-SHEET-2026-08-05.md on disk during this cycle, counting its entries",
+   "kind": "count",
+   "provenance": "measured",
+   "read": {
+    "command": "read senior-director-state/outbound/SEND-SHEET-2026-08-05.md",
+    "exitCode": 0,
+    "bytes": 6510
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "customerRoutesResolved": {
+   "value": 762,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the customer link-graph walk performed during this emit, over the declared customer entry points",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "walkCustomerGraph() — every literal href resolved against the files on disk",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "customerRoutesBroken": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same walk; a broken route resolves to no file, an empty file, a force-404 rule, or a login-only body",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "walkCustomerGraph().broken",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "customerRoutesUnchecked": {
+   "value": 134,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same walk; external hosts, mail/tel schemes, fragments, runtime hrefs and function routes — undecidable from disk, never counted as passing",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "walkCustomerGraph().unchecked",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "firstScreensWithAValueClaim": {
+   "value": 12,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the first-screen audit run during this emit over the declared customer entry points",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditEntryPoints() — chrome stripped, above-the-fold prose held to Rule 17 and Rule 14",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "firstScreensWithFindings": {
+   "value": 2,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same audit; a finding is a named violation carrying its file and, where the string exists in source, its line",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditEntryPoints().broken",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "firstScreensUnchecked": {
+   "value": 1,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same audit; an entry point mounted at runtime or absent from disk — never counted as passing",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditEntryPoints().unchecked",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "firstScreenRule14Violations": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same audit, filtered to the honesty classes: guarantee language, experience overclaim, forbidden name, fabricated proof, uncarried metric",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditEntryPoints() findings filtered to the Rule 14 class set",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "salesSurfacesMakingAClaim": {
+   "value": 12,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the surface-class audit run during this emit; SALES surfaces only — exempt and unchecked are never folded in",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditSalesSurfaces() — obligation surfaces declared with a written reason, exempt from Rule 17 and nothing else",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "salesSurfacesStillSilent": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same audit; a sales surface that names things and promises nothing a reader can feel",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditSalesSurfaces().broken",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "obligationSurfacesExempt": {
+   "value": 2,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same audit; each exempt surface carries the written argument for its exemption in code",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditSalesSurfaces().exempt — declared: terms.html, security.html",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "entryPointsReachingAConversation": {
+   "value": 15,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the conversation-path walk run during this emit, from each entry point out to the action that starts a conversation",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "walkAllConversationPaths() — breadth-first to 2 clicks, delivery target required on disk",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "entryPointsWithNoConversation": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same walk; no path, a path past the click budget, or a path ending in a form that declares no delivery target",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "walkAllConversationPaths().broken",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "entryPointsConversationUnchecked": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same walk; an entry point not on disk in this checkout — never counted as reachable",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "walkAllConversationPaths().unchecked",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "outboundLinksResolved": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the audit of every site link in the send sheet, run during this emit",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditOutboundLinks(SEND-SHEET-2026-08-05.md)",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "unpublishedCommitsTouchingPublicPages": {
+   "value": 4,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the commit range origin/main..HEAD read during this emit and classified BY PATH, never by commit message",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "readUnpublishedRange() — a commit touching a public page and the ledger is counted in both classes",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "unpublishedPublicFilesChanged": {
+   "value": 7,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same range read; the distinct set of files in it the open internet can load",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "readUnpublishedRange().report.publicFilesChanged.length",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "unpublishedMergeCommitsExcluded": {
+   "value": 2,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "rev-list --count --merges over the same range, so the 49-vs-37 gap is reconciled rather than left to drift",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "readUnpublishedRange().report.reconciliation",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "deliveryBundleBytes": {
+   "value": 407271,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the git bundle written and re-verified during this emit; the byte count is stat(), not an estimate",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "createRangeBundle() -> verifyRangeBundle(): git bundle verify + SHA-256 of the bytes + tip + tree",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "deliveryBundleVerified": {
+   "value": true,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the verification this emit performed on the bundle it just wrote; a bundle that will not verify aborts the emit",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "verifyRangeBundle() — header, byte digest, tip SHA and tree hash, each with its own failure class",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "gitPorcelainWritesBlocked": {
+   "value": true,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "a real write/overwrite/unlink probe inside .git performed during this emit, confirmed against git's own refusal",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "probeGitBoundary() -> the-git-directory-refuses-unlink-so-porcelain-writes-are-permanently-blocked; git said: fatal: Unable to create '/sessions/optimistic-adoring-ride/mnt/iisupp-net-deploy/.git/index.lock': File exists. Another ",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "gitStaleLocksPermanent": {
+   "value": 2,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same probe; these lock files exist and this environment cannot unlink them",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "probeGitBoundary().staleLocks — [index.lock, HEAD.lock]",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "stagedItemsAudited": {
+   "value": 6,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the staged-action guard run over the tracked staged-actions module during this emit",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditStagedActions(needsAhmadStaged) — each artefact opened on disk",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "stagedItemsRanked": {
+   "value": 6,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the staged list read during this emit; AN2 requires a rank and an unblocks statement per item",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "needsAhmadStaged.filter(i => Number.isInteger(i.rank))",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "secondMessagesSent": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "not measurable in this environment: no send path exists in this environment and none was attempted; the outbound record shows none",
+   "kind": "count",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "no send path exists in this environment and none was attempted; the outbound record shows none",
+   "note": "last known value, carried forward and labelled — NOT measured this cycle",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "meetingsHeld": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "not measurable in this environment: replies and meetings live in a mailbox and a calendar this environment cannot read",
+   "kind": "count",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "replies and meetings live in a mailbox and a calendar this environment cannot read",
+   "note": "last known value, carried forward and labelled — NOT measured this cycle",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "daysDraftedUnsent": {
+   "value": 21,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the date the twelve were first drafted (2026-07-21), differenced against this emit's clock",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "floor((now - 2026-07-21) / 86400000) — computed here, not typed. Cycles 129-132 carried a hand-stamped 17 against the same stated source, which the arithmetic never supported: it read 15 on 2026-08-05. Corrected in public rather than adjusted silently (Rule 14).",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "yesPathStepsCarried": {
+   "value": 6,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the yes-path walk performed during this emit — reply, booking, scope, agreement, invoice, payment",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "resolveYesPath() — each step resolved against a real file on disk",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "yesPathStepsTotal": {
+   "value": 6,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same walk",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "resolveYesPath().summary.total",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "yesPathStepsMissing": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same walk; a step nobody can point at is missing, never 'handled manually'",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "resolveYesPath() — missing + unusable",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "manualStepsToFirstDollar": {
+   "value": 2,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the yes-path priced during this emit; manual BY DESIGN and manual for want of an artefact counted apart",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "countTimeToFirstDollar().summary.manualSteps",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "manualStepsByDesign": {
+   "value": 2,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same count — the signature and the payment authorisation are human on purpose and are not defects",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "countTimeToFirstDollar().summary.manualByDesign",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "handInputsToFirstDollar": {
+   "value": 14,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "blanks counted out of the artefacts themselves — form fields, underscores, empty signature cells",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "countTimeToFirstDollar().summary.handInputsCounted",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "hoursToFirstDollar": {
+   "value": null,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "not measurable in this environment: nobody in this repository has ever timed one of these steps; an invented duration would be a fabricated metric, so the distance is reported in acts and blanks, which can be counted",
+   "kind": "measurement",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "nobody in this repository has ever timed one of these steps; an invented duration would be a fabricated metric, so the distance is reported in acts and blanks, which can be counted",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "retainerProposalGenerates": {
+   "value": true,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "a proposal generated during this emit from the published plan table, then re-checked token by token",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "generateRetainerProposal() — every figure traced to plans/index.html or the write is refused",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "currencySurfacesDeclaring": {
+   "value": 7,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the money-path walk performed during this emit; each currency read out of the file that declares it",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditCurrency() — plan page, charge paths, customer messages, operator report, sales generator",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "currenciesInUseOnTheMoneyPath": {
+   "value": 2,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same walk; more than one is a divergence that software may not resolve on its own",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditCurrency().currencies — [CAD, USD]",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "currencySurfacesOffDirection": {
+   "value": 2,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same walk; each carries its file and line so the correction is one pass, not a search",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditCurrency().divergent",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "currencyDirectionDeclared": {
+   "value": false,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "a read of the decision file in the tree; absent means nobody has decided, and that is reported as such",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "readDirection() — senior-director-state/decisions/currency.json",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "currencyInsideStripeUnrun": {
+   "value": null,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "not measurable in this environment: they charge through Stripe price IDs; the currency of a price ID is stored inside Stripe and is not present in this repository, so it can be neither confirmed nor contradicted from here",
+   "kind": "measurement",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "they charge through Stripe price IDs; the currency of a price ID is stored inside Stripe and is not present in this repository, so it can be neither confirmed nor contradicted from here",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "clientFacingFiguresRead": {
+   "value": 65,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "every money token in every .md under 27 client-facing documents, read during this emit",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "reconcileQuotedFigures() — contracts, security documents, sales sheet",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "clientFacingFiguresPublished": {
+   "value": 21,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same read; a figure a client can check on the published plan page",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "reconcileQuotedFigures() — matched against publishedMoney()",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "clientFacingFiguresDeclared": {
+   "value": 37,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same read; a figure deliberately quoted outside the table, with a written reason in docs/QUOTED-FIGURES.md",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "reconcileQuotedFigures() — an empty or self-restating reason is REFUSED, never counted",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "clientFacingFiguresSilent": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same read; a figure quoted to somebody and accounted for by nobody. The emit refuses to write if this is not zero",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "reconcileQuotedFigures().silent",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "clientFacingSecondPrices": {
+   "value": 7,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same read; a plan the company publishes, quoted at a different amount in a document a prospect is handed",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "reconcileQuotedFigures().contradictions — both citations carried; never declarable in the register",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "staleFigureDeclarations": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same read; a declaration matching no figure in the tree, so the register cannot rot",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "reconcileQuotedFigures().stale",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "sendSheetMessagesChecked": {
+   "value": 12,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the send sheet parsed and checked during this emit, message by message",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditSendSheet() — it has no transport and sends nothing",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "sendSheetMessagesRefused": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same check; rule-7 language, an experience overclaim, the forbidden name, an unpublished figure, a dead link or a Rule-11 contact detail",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditSendSheet().summary.refusals",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "judgementCallsBeforeSending": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the same check; the number of decisions the sender would otherwise have to make by eye, message by message",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditSendSheet() — refusals plus uncheckables; an external link is still work for a person",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "sendSheetCarriedByTheSharedLine": {
+   "value": true,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "whether the twelve messages are in the tree a clone receives; they are not, by deploy-safety design",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditSendSheet().readable — the repository root is served, so outreach copy stays out of it",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "clientFacingDocumentsAuditedWidened": {
+   "value": 27,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "every markdown document under the contracts, the compliance pack and the sales sheets, walked recursively during this emit",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditClientFacing().summary.documents — four before this cycle",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "clientFacingCheckExemptionsApplied": {
+   "value": 6,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "occurrences a declared, directory-scoped exemption moved out of the refusals; each is reported with file, line and the argument for it",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditClientFacing().summary.exempted — an exemption is never silent",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "clientFacingCheckExemptionsDeclared": {
+   "value": 1,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "exemptions declared in code with a written argument; the only way a check may be narrowed",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "EXEMPTIONS.length in scripts/lib/client-facing-leak.mjs",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "factualClaimsInClientFacingDocuments": {
+   "value": 35,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "assertions about certification, audit status, insurance, retention, uptime and experience, extracted from the documents during this emit",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "reconcileClaims().summary.claims",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "factualClaimsSilent": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "claims asserted to a reviewer, absent from every published page and absent from the register — evidenced by nobody",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "reconcileClaims().summary.silent — the emit refuses above zero",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "factualClaimsDeclaredWithCondition": {
+   "value": 30,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "claims accounted for in docs/CLAIM-REGISTER.md with a reason a person wrote and a condition or a piece of evidence",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "reconcileClaims().summary.declared",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "reviewerQuestionsReadAcrossTheWholePack": {
+   "value": 12,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "questions a security reviewer asks that MORE THAN ONE document in the pack tries to answer, read as one body during this emit",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditPack().summary.questions",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "reviewerQuestionsAnsweredTheSameWayEverywhere": {
+   "value": 11,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "questions where every document that answers normalises to the same value; no code path can produce this from two different values",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditPack().summary.agreed",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "reviewerQuestionsAnsweredTwoWaysInSilence": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "two client-facing documents disagreeing about the same fact with nobody having written it down; the emit refuses above zero",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditPack().summary.undeclared",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "reviewerQuestionsWithADisagreementDeclaredOpen": {
+   "value": 1,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "disagreements recorded in docs/PACK-ANSWER-CONFLICTS.md with a reason a person wrote and a named decider — reported every run, never resolved by software",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditPack().summary.declaredOpen",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "citationsMadeByTheClientFacingPack": {
+   "value": 87,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "places where an answer POINTS at an artefact rather than stating a fact, across the documents a stranger can receive",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditCitations().summary.total",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "citationsThatResolveAgainstHeadsTree": {
+   "value": 78,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "citations a clone of this repository can follow; resolved against HEAD's TREE, never the working copy and never the frozen index",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditCitations().summary.resolved",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "citationsPointingAtAPathThatDoesNotCarryTheArtefact": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the artefact is in the shared line under a path the answer does not name; a reviewer following it finds nothing. Software may repair this, so the emit refuses above zero",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditCitations().summary.misdirected",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "citationsPromisingAnArtefactNobodyHasWritten": {
+   "value": 7,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "answers promising an artefact HEAD's tree carries under no path — declared in docs/CITATION-GAPS.md with a reason and a decider rather than deleted (which would make the count green and the pack less honest) or invented (which would be a fabricated control)",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditCitations().summary.broken",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "citationsPromisingSomethingNobodyHasAcknowledged": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "a broken promise nobody has written down; the emit refuses above zero",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditCitations().summary.brokenUndeclared",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "citationsDeliberatelyOutsideTheSharedLine": {
+   "value": 2,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "citations into directories the security lockdown excludes; counted as neither resolved nor broken, so the lockdown is never weakened to make a number green",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditCitations().summary.excluded",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "reviewerFollowUpQuestionsPriced": {
+   "value": 33,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the questions a reviewer sends AFTER the questionnaire comes back",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "priceFollowUp().summary.total",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "reviewerQuestionsAnsweredByPointingAtSomethingThatExists": {
+   "value": 24,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "questions answered by attaching an artefact a clone receives; the unit is acts, never hours, because nobody here has timed one",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "priceFollowUp().summary.pointable",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "reviewerQuestionsAPersonMustAnswerByDesign": {
+   "value": 4,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "key-person risk, why a self-assessment is enough, liability terms, insurance status — a founder answers these and always should; counting them as defects would automate the part of the sale that is the sale",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "priceFollowUp().summary.composedByDesign",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "reviewerQuestionsAPersonMustAnswerOnlyBecauseAnArtefactIsMissing": {
+   "value": 5,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "compositions forced by a missing artefact, each traced BY NAME to a declared AX2 gap so closing the gap and moving this number are the same act",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "priceFollowUp().summary.composedForWant",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "reviewerQuestionsWhoseCostCouldNotBeRead": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "a cost silently assigned is a cost nobody will check; the emit refuses above zero",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "priceFollowUp().summary.uncounted",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "factualClaimsDisclaimedByTheirOwnSentence": {
+   "value": 4,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "occurrences where the document explicitly denies the claim — a disclaimer is neither an assertion nor a gap",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "reconcileClaims().summary.disclaimed",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "packetDocumentsPromised": {
+   "value": 27,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the documents a prospect is promised after a yes, expanded from HEAD's tree — never the working copy",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "assemblePacket().summary.promised",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "packetDocumentsAClonveCanProduce": {
+   "value": 27,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "of those, the ones whose bytes HEAD actually carries",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "assemblePacket().summary.arrived",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "packetDocumentsUntracked": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "promised to a prospect and outside the shared line — sendable from one machine only",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "assemblePacket().summary.untracked",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "packetWasSent": {
+   "value": false,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "this module answers a question about delivery and delivers nothing; asserted in code, not promised in prose",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "assemblePacket().sent — always false; no transport exists in the module",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "customerPacketDocumentsPromised": {
+   "value": 6,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the documents a customer is promised AFTER money moves — onboarding, admin and integration guides, the support route, a data export, a way to leave — expanded from HEAD's tree, never the working copy",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "assembleCustomerPacket().summary.promised",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "customerPacketDocumentsACloneCanProduce": {
+   "value": 6,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "of those, the ones whose bytes HEAD actually carries AND which mention the thing their section promises",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "assembleCustomerPacket().summary.arrived",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "customerPacketSectionsEmpty": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "promising a customer nothing is not the same as delivering everything; the emit refuses above zero",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "assembleCustomerPacket().summary.sectionsEmpty",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "customerPacketWasSent": {
+   "value": false,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "this module answers a question about delivery and delivers nothing; asserted in code, not promised in prose",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "assembleCustomerPacket().sent — always false; no transport exists in the module",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "supportCommitmentsRead": {
+   "value": 10,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "response times, uptime, escalation, support hours and incident timings read off every surface that states one",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditSupportCommitments().summary.commitments",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "supportCommitmentsAgreeingAcrossEverySurface": {
+   "value": 3,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "commitments stated the same way by every surface that states them",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditSupportCommitments().summary.agreed",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "supportCommitmentsStatedInOnePlaceOnly": {
+   "value": 5,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "its own class — one voice is not a consensus and one voice is not a contradiction",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditSupportCommitments().summary.singleSource",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "supportCommitmentDisagreementsDeclaredOpen": {
+   "value": 2,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "disagreements recorded with a written reason and a named decider; software may not pick which promise this company makes",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditSupportCommitments().summary.declaredOpen",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "supportCommitmentDisagreementsNobodyWroteDown": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "a missed response time is breached silently, by nobody doing anything; the emit refuses above zero",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditSupportCommitments().summary.undeclared",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "supportCommitmentsWhereATierTableContradictsAnUnqualifiedPromise": {
+   "value": 2,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "a tiered promise and an unqualified one disagreeing is not a typo — it is two audiences being told different things",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditSupportCommitments().summary.tierMismatches",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "firstWeekStepsCounted": {
+   "value": 12,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the five working days after the first invoice clears — the week that decides whether there is a second one",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "priceFirstWeek().summary.total",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "firstWeekStepsCarriedByAnArtefactACloneReceives": {
+   "value": 9,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the unit is acts and artefacts, never hours, because nobody here has timed one",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "priceFirstWeek().summary.artefactBacked",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "firstWeekStepsAPersonMustDoByDesign": {
+   "value": 3,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the welcome, the week-one review and the decision about what to build next — a founder does these and always should; counting them as defects would automate the reason a customer bought from a founder",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "priceFirstWeek().summary.personByDesign",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "firstWeekStepsAPersonMustDoOnlyBecauseAnArtefactIsMissing": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "each names the missing artefact, so closing the gap and moving this number are the same act",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "priceFirstWeek().summary.personForWant",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "firstWeekStepsWhoseCostCouldNotBeRead": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "a cost silently assigned is a cost nobody will check; the emit refuses above zero",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "priceFirstWeek().summary.uncounted",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "churnSignalsAsked": {
+   "value": 7,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the questions somebody would have to answer to know a paying customer is in trouble",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditChurnSignals().summary.total",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "churnSignalsObservableEndToEnd": {
+   "value": 4,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "retained by something in the shared line AND read back by something in the shared line — both halves, or the question cannot be asked",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditChurnSignals().summary.observable",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "churnSignalsStoredButNeverRead": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the data exists and nobody asks — the cheapest class in the list to close, which is why it is never rounded up to observable",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditChurnSignals().summary.retainedUnread",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "churnSignalsReceivedAndRetainedByNothing": {
+   "value": 1,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "an event that was handled is not an event that was recorded; three weeks later it cannot be counted",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditChurnSignals().summary.transient",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "churnSignalsWithNoSourceAtAll": {
+   "value": 2,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "a legitimate terminal state — closing it by inventing a dashboard is the fabrication Rule 14 forbids",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditChurnSignals().summary.unsourced",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "supportCommitmentsNoSignalCanObserveDeclared": {
+   "value": 7,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "declared in docs/OBSERVABILITY-GAPS.md with a written reason and a named decider; undeclared is the only state that goes red",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditChurnSignals().coverage.declaredUnobservable.length",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "supportCommitmentsUnwatchedAndUndeclared": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "a promise with no way of knowing it was kept, and nobody has written that down; the emit refuses above zero",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditChurnSignals().coverage.unclaimedCommitments.length",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "exitStagesWalked": {
+   "value": 7,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "leaving, as a customer experiences it — the term ending, the notice, the renewal, the export, the destruction",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditTermAndExit().summary.stagesTotal",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "exitStagesCarriedByADocumentThatSpeaksToThem": {
+   "value": 6,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "present in HEAD's tree AND saying something about the stage — a packet that counts filenames has not been read",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditTermAndExit().summary.delivered",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "exitStagesPresentButSilent": {
+   "value": 1,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the document arrives and never mentions what its stage promises; AY1's third state applied to leaving",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditTermAndExit().summary.silent",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "termWindowsReadAcrossEveryDocumentStatingOne": {
+   "value": 3,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "the notice period, the export window and the destruction window, normalised to days rather than compared as text",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditTermAndExit().summary.topicsTotal",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "termWindowsThatAgree": {
+   "value": 3,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "no code path returns agreed while surfaces disagree, and none picks which answer is right",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditTermAndExit().summary.agreed",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "termWindowsThatDisagreeAndAreUndeclared": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "a disagreement nobody has written down; the emit refuses above zero",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditTermAndExit().summary.undeclaredConflicts.length",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "secondSaleStepsCounted": {
+   "value": 10,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "what would have to be true for a happy customer at month six to be sold anything at all",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "priceSecondSale().summary.total",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "secondSaleStepsAlreadyCarried": {
+   "value": 5,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "backed by an artefact a clone receives, or by a signal AZ1 reads end to end",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "priceSecondSale().summary.artefactBacked",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "secondSaleStepsAPersonMustDoByDesign": {
+   "value": 2,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "asking for the money and hearing the no — the two acts that make this a founder-led company rather than a billing system",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "priceSecondSale().summary.personByDesign",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "secondSaleStepsBlockedOnlyByAMissingArtefactSignalOrStage": {
+   "value": 3,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "each traces BY NAME to a missing artefact, an AZ1 signal this company cannot observe, or an AZ2 stage found silent",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "priceSecondSale().summary.personForWant",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "secondSaleRevenueFiguresProduced": {
+   "value": 0,
+   "measuredAt": "2026-08-11T18:19:46.705Z",
+   "source": "a figure about a sale that has not happened is a forecast wearing a measurement's clothes; the module scans its own output and the emit refuses above zero",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "priceSecondSale().fabricatedNumbers.length",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "revenueToDate": {
+   "value": "none",
+   "measuredAt": "2026-08-11T18:17:16.832Z",
+   "source": "no invoice has been issued",
+   "kind": "fact",
+   "ageHours": 0,
+   "maxAgeHours": 8760,
+   "stale": false
+  },
+  "feedMaxAgeHours": {
+   "value": 24,
+   "measuredAt": "2026-08-11T18:17:16.832Z",
+   "source": "the freshness policy wired into the served-feed read path",
+   "kind": "fact",
+   "ageHours": 0,
+   "maxAgeHours": 8760,
+   "stale": false
+  }
+ },
+ "claimsPolicy": "Every figure above is { value, measuredAt, source, kind } AND declares who authored the stamp. A figure this environment can read must carry `provenance: measured` plus the command and exit code that produced it — the emit script types none of those numbers, and the emitter refuses the whole write if one arrives hand-typed. A figure that cannot be read here is `declared-unmeasurable` with a reason and, where useful, a value explicitly labelled last known. Only figures with nothing to read may be attested by hand.",
+ "program": {
+  "series": "flywheel",
+  "sequence": "RUN-AZ / flywheel cycle 143 — THE CUSTOMER WHO STOPS ANSWERING (AZ1 what this company could notice and what it cannot: every churn signal resolved against what the shared line actually does with the event, in four states because an event a function receives and retains nothing is not an event anybody can count · AZ2 the first walk OUT of a contract, whether the customer is TOLD kept apart from whether the windows AGREE · AZ3 the second sale priced in acts a person must perform and artefacts that must exist, never in money, because a figure about a sale that has not happened is a forecast wearing a measurement's clothes · AZ4 feed, truth artefact and ledger head in one transaction, by measurement). Found by running it: sign-ins are received by three functions and retained by none, so neither a customer growing out of a tier nor one drifting out of the product can be seen; and the documents that would tell a customer what a renewal changes are present, correct, and silent about it. SUPERSEDED — RUN-AY / flywheel cycle 142 — THE SECOND CONVERSATION (AY1 the packet a PAYING customer receives, resolved against HEAD's tree, with SILENT as a state AW3 did not have: a document that arrives and never mentions what its section promises is not delivered · AY2 every support and availability commitment read as ONE body, because unlike a currency a missed response time is breached silently by nobody doing anything · AY3 the week after the first invoice clears, priced in acts and artefacts and never in hours nobody has timed · AY4 feed, truth artefact and ledger head in one transaction, by measurement). Found by running it: Schedule B of the MSA commits an Enterprise customer to a fifteen-minute P1 while the SIG-Lite their own reviewer works through states P1 within 1 hour with no tier written beside it — declared OPEN with a written reason and a named decider, never resolved by software.",
+  "previousSequence": "RUN-AY / flywheel cycle 142 — the second conversation, 4/4 (the packet a paying customer receives, every support commitment read as one body, the first week priced in acts)",
+  "tasksBuiltAndGreen": 4,
+  "tasksTotal": 4,
+  "tasksMerged": 4,
+  "pct": 100,
+  "tasksStillOpen": [],
+  "carriedFrom": "RUN-AY closed 4/4: the customer packet at 6/6 across 5/5 sections with SILENT as a state a filename count cannot see, every support and availability commitment read as one body — which found Schedule B of the MSA committing an Enterprise customer to a fifteen-minute P1 while the SIG-Lite states one hour with no tier beside it, declared open and never resolved by software — and the first week of a paying customer priced at 9 of 12 artefact-backed with 3 person-by-design. This cycle also repaired the index rather than working around it: eight RUN-AY files were staged as DELETED while byte-identical copies sat on disk untracked, the residue of committing through a temporary index. Restored from HEAD, not re-added from disk, after confirming every blob matched. EARLIER — Cycle 141 closed a lane that had been finished and invisible: the AXIS JARVIS turn flow, the woman's voice and the Agent Director wake control were built, tested and sitting on a branch. Verified against the real tree — 968/968 · 364/364 · exit 0 on arrival, axis-jarvis-flow 7/7 in isolation — then merged. The merge is a merge; the publish is still the operator's. Carried: RUN-AW closed 4/4 by reading each of the twenty-seven client-facing documents on its own and asking two things of each: does it carry what it should not, and is what it carries true. Both green. RUN-AX asked the question neither of those can reach — a security reviewer never reads a document, they read an ANSWER assembled from several at once — and reading the pack together found two client-facing policies telling the same reviewer different things about how long backups are kept, and nine citations in the documents an auditor opens first that point at paths carrying nothing.",
+  "testsGreen": true,
+  "verificationCycleNote": "RUN-AZ: the registry arrived RED on its first read — 1012/1 — and it is stated as red. The failure was the AR3 git-boundary suite with a stale index lock on disk; the lock was moved aside and every run after it read 1013/1013 · 368/368 · exit 0 with no other change. After every write of this cycle the registry reads 1063/1063 · 371/371 · exit 0, and the rise of 50 is exactly churn-signals 18 + term-and-exit 15 + second-sale-cost 17 and nothing else. All three suites were registered in the manifest BY HAND: RUN-AW recorded that this registry does not pick up new files, and a suite running green outside the count is the same lie in a nicer shirt. One repair was made rather than worked around: eight RUN-AY files were staged as DELETED in the index while byte-identical copies sat on disk untracked — the residue of committing through a temporary index — and every blob was compared against HEAD before the index was restored from HEAD rather than re-added from disk. CARRIED — the registry arrived GREEN on the real tree — 968/968 · 364/364 · exit 0 — read before any cycle-141 write, and read again after them at 968/968 · 365/365 · exit 0. The rise of ONE SUITE and ZERO TESTS is exactly right and is stated rather than smoothed: axis-jarvis-flow asserts in groups rather than through node:test, so it adds a suite to the registry and nothing to the test count. Reporting a test-count rise here would have been a fabricated metric under Rule 14 for the sake of a nicer-looking delta. The suite was run in isolation first — 7/7 groups — and the seventh group is the one that matters: it asserts that every voice behaviour the v1 console shipped is still present in axis-app.js, so a future edit that deletes the mic, the humanizer, the persisted voice key or the hard-stop gate goes red. Rule 15 enforced by a test rather than by a promise. The merge was performed by the plumbing path with HEAD re-read immediately before the ref write: a concurrent process on this machine holds and re-creates the index lock within seconds, and racing another writer for the index is the wrong move. THE FINDING OF THIS CYCLE came from the branch sweep and it is a real one: of the seventy-nine remote branches, thirty-seven read as 44-352 commits AHEAD of the line and contribute ZERO FILES — their content is already merged and the ancestry differs only because this line is built by plumbing commits rather than by merges. Ahead-count had been standing in for unmerged work and it does not mean that here. Of the branches that DO carry a file delta, the ones checked this cycle carry a STALE one: the registry-green branch's two test files are BYTE-IDENTICAL to the line's, and the flywheel-116 emitter is 500 lines dated 2026-08-04 against a 272-line successor dated 2026-08-05 — merging it would revert the emitter and stamp a four-day-old generatedAt over a fresh one. Nothing was merged on the strength of a commit count. Carried from AX: two defects caught against those modules' own logic and fixed before shipping, and one red seen and stated — the git-boundary suite failing while a concurrent process held the index lock, passing on the run after it once the lock cleared.",
+  "note": "This cycle asked the question the previous nine were standing next to and never turned toward. Every one of them was about getting somebody to say yes, and then about the hour, the week and the reviewer that follow. None had ever asked what happens at month four, when a customer who was happy simply stops answering. The answer, read rather than guessed: sign-ins are received by three functions and retained by none, so a customer drifting out of the product and a customer growing out of their tier are the same invisible event seen from opposite ends. Nothing in the shared line knows when a term ends. And the documents that would tell a customer what a renewal can change are present, correct and silent about it — which is why the second sale prices at 5 of 10 carried, with every gap traced by name to a signal nothing retains or a stage nothing states. Seven support commitments have no signal that could observe them at all; rather than build seven dashboards or delete seven promises, each is declared with a written reason and a named decider, because several of them — the post-incident review, the 3am phone call — are kept by a person doing something a person should do, and instrumenting those would automate the apology and the relationship. Second messages sent: still zero. Twenty-one days and counting, and no software written this cycle or any other can move that number. CARRIED — Nine cycles of this program have audited the documents, the money path and the answers. This one did something smaller and different: it looked at what was BUILT and not on the line. The AXIS command centre had gained a JARVIS turn flow and a distinct woman's voice — wake word, spoken acknowledgement, spoken answer, mic reopened for the next turn, on both the dock and the Agent Director tab — and all of it was sitting on a branch. It is additive by construction: the persona bonus applies LAST inside the existing voice ranking rather than replacing it, the old male-name preference line is left in place and superseded rather than deleted, and the customer orb's own voices are DEMOTED rather than banned so a bare browser still lands on a female voice instead of falling back to a male or legacy one. The hard-stops stay hard-stops and are now spoken aloud: a route is voice-confirmable, anything needing approval is click-only and AXIS says so. Voice never self-authorises. Verified, then merged. What the branch sweep found is worth more than the merge: thirty-seven branches have been reading as dozens-to-hundreds of commits ahead of the line while contributing zero files, because this line is built by plumbing commits and ancestry diverges even when content does not. Any cycle that had merged on the strength of an ahead-count would have reverted work. Second messages sent: still zero. That number has not moved in twenty-one days and no software written this cycle or any other can move it."
+ },
+ "tests": {
+  "afterEveryWrite": {
+   "pass": 1063,
+   "fail": 0,
+   "suites": "371/371",
+   "exit": 0
+  },
+  "beforeAnyWriteLastKnown": {
+   "pass": 1013,
+   "fail": 0,
+   "suites": "368/368",
+   "exit": 0,
+   "note": "the opening read of this cycle, on the real tree, before any RUN-AZ write — GREEN on the second run, and the first run is reported below rather than hidden"
+  },
+  "arrivalState": {
+   "red": true,
+   "detail": "The FIRST arrival run read 1012/1 and it is reported as red rather than as a flake. The failure was the AR3 git-boundary suite, and it failed for the reason AR3 recorded: a stale `.git/index.lock` was on disk. It was moved to `.git/_stale-locks/` rather than deleted — this mount refuses unlink and permits rename — and the next run and every run after it read 1013/1013 · 368/368 · exit 0. The lock was the cause and not a guess: the same suite passed immediately once it was gone, with no other change to the tree."
+  },
+  "riseExplained": "churn-signals 18 + term-and-exit 15 + second-sale-cost 17 = 50, and nothing else",
+  "newThisCycle": [
+   {
+    "suite": "churn-signals",
+    "redThenGreen": true,
+    "note": "red-first against fixtures built to fail the exact class claimed: a function that emails and stores nothing reported as TRANSIENT rather than observable, a store written with nothing reading it back kept in its own class, a reader of a DIFFERENT store proven not to be a read of this event, a `.set(` on a Map proven not to be persistence, and a receiver present only in the working copy proven not to count. The output is asserted to contain no health score, churn risk or engagement percentage — not even as a field name"
+   },
+   {
+    "suite": "term-and-exit",
+    "redThenGreen": true,
+    "note": "a document present, correct and SILENT about its stage proven not to be delivered; a stage whose document exists only in the working copy proven ABSENT; two documents stating different windows proven a conflict naming both citations, with `resolvedHere: false` asserted so no code path can ever pick which is right; and 60 days proven equal to 2 months, because comparing raw strings would report a conflict that does not exist and teach a reader to ignore the register"
+   },
+   {
+    "suite": "second-sale-cost",
+    "redThenGreen": true,
+    "note": "the module scans its own output for money and forecast tokens and the suite plants them: a currency figure in a step and a projection in the summary are each caught BY PATH, and the three prose exemptions are asserted never to cover a findings field. A step naming a signal AZ1 does not carry, or a stage AZ2 does not walk, is UNCOUNTED rather than rounded into a bucket. No hour appears anywhere in the output"
+   }
+  ]
+ },
+ "workingTree": {
+  "filesModified": 5,
+  "filesUntracked": 3,
+  "indexStalenessCleared": "No new lock work was needed this cycle. The standing finding holds and is not re-derived: the mount refuses unlink ('Operation not permitted', exit 1) and permits rename (exit 0), so the graveyard rename is the filesystem's permitted write shape rather than a workaround.",
+  "composition": "This cycle's changes are the staged-action guard and its data module, two new test suites, their registration in the runner and the tracked record-dependency manifest, the emitter payload, and the regenerated status feed. Scanned for credentials, keys, environment files and dependency directories: 0 hits. The off-limits personal folder was never read, listed or referenced.",
+  "committed": true,
+  "howItWasUnblocked": "The full registry ran against the operator's real repository as the first action of the cycle and again after every write, each result read from its own exit code.",
+  "branch": "main",
+  "stillBlocked": "The commits exist locally and cannot be pushed. The credential refusal was reproduced against the real remote this cycle. Committed is strictly better than uncommitted, and is not the same as landed."
+ },
+ "lanes": [
+  {
+   "lane": "The twelve follow-ups",
+   "state": "readable, audited, still unsent",
+   "detail": "Drafted for fourteen days, readable on disk for less than one. This cycle asserted the send sheet against the module's real output in both directions — every drafted handle is in the file, and the file names no handle the module never drafted — so the artefact is proven, not asserted. Sent: zero. That number is a human action away and is reported as such without softening."
+  },
+  {
+   "lane": "Staged one-click claims",
+   "state": "self-auditing as of this cycle",
+   "detail": "A staged action must name a readable artefact or state plainly that it has none and why. Neither declaration, both declarations, a named file that is absent or empty, or prose claiming a drafted thing while declaring no artefact — each fails by its own name. The status emitter refuses to write a feed that carries one."
+  },
+  {
+   "lane": "The second-touch path",
+   "state": "walked end to end for the first time",
+   "detail": "Record → queue → drafts → artefact parity → ladder → reply capture, exercised against the real records rather than fixtures. Zero sends stops at `drafted`; twelve sends reach `sent` and no further; a decline is a reply and is never rendered as interest."
+  },
+  {
+   "lane": "The test line",
+   "state": "green, measured before and after",
+   "detail": "516 pass, 0 fail, 330/330, exit 0 before any write. 532 pass, 0 fail, 332/332, exit 0 after every write. The chat suite covering the spoken status path was run standalone by name: 20 pass, 0 fail."
+  },
+  {
+   "lane": "AXIS voice and the spoken status answer",
+   "state": "on the shared line, re-confirmed by name",
+   "detail": "Push-to-talk mic control and the spoken reply path are present on the shared branch and their suite is green standalone. Nothing was merged for it this cycle because nothing needed to be."
+  },
+  {
+   "lane": "Reaching the code host",
+   "state": "still refused",
+   "detail": "No credential in this environment; re-tested against the real remote this cycle rather than inherited. The shared branch sits 42 commits ahead of the last known remote reference, 43 once this feed is committed: all verified, none landed."
+  },
+  {
+   "lane": "The hour in front of prospects",
+   "state": "prepared, proven, not spent",
+   "detail": "Twelve message bodies keyed to prospect-supplied routes, now verified against the module that produced them. Six stated return dates have passed and one redirect window expired unreached. Follow-ups sent: zero. Meetings: zero. Revenue: none."
+  }
+ ],
+ "blockers": [
+  {
+   "blocker": "RETIRED THIS CYCLE — 'a staged claim can be written with nothing behind it'",
+   "price": "was: fourteen days in which the program named an operator decision as the blocker while the thing to be decided on did not exist; six prospect-stated return dates passed inside that window and one redirect route expired unreached",
+   "isSoftwareTask": true,
+   "fix": "A guard that refuses the claim rather than reporting it. Red against the exact wording that rode for two weeks, green against the fix, and wired into the emitter so the feed cannot carry one."
+  },
+  {
+   "blocker": "STANDING — the mount refuses unlink",
+   "price": "git cannot check out a merge, and locks cannot be deleted; a session that does not know this concludes the environment is broken",
+   "isSoftwareTask": true,
+   "fix": "Rename for locks; an explicit two-parent commit with contents written in place for merges. No operator click required."
+  },
+  {
+   "blocker": "No code-hosting credential in the build sandbox",
+   "price": "42-plus commits of verified work cannot reach the shared line under their own power",
+   "isSoftwareTask": false,
+   "fix": "A credential or a code-host connector. Correctly outside the agent boundary rather than a defect; refused again this cycle against the real remote."
+  },
+  {
+   "blocker": "The twelve are ready and have not been sent",
+   "price": "zero conversations held against twelve readable, module-verified messages and thirteen prospect-supplied routes; the warm routes decay whether or not anyone acts, and one has already expired unreached",
+   "isSoftwareTask": false
+  }
+ ],
+ "onTrack": {
+  "landing": false,
+  "conversion": false,
+  "honestNote": "Nothing published. No customer-visible change and none claimed. The verified work still sits on the local line (26 commits ahead of the last known shared reference) because the environment holds no credential for the shared host — probed again this cycle and refused again."
+ },
+ "needsAhmad": [
+  {
+   "item": "Send the twelve second messages",
+   "what": "Ten emails and two call scripts, keyed by opaque handle to routes the prospects supplied themselves. Roughly twenty minutes of copy and paste.",
+   "why": "The only item on this list that can move a business number. Until these go out the offer stays untested: 124 cycles of build have never produced a second touch, and a cold sequence produces most of its replies on touches two through four.",
+   "artefact": "senior-director-state/outbound/SEND-SHEET-2026-08-05.md",
+   "rank": 1,
+   "unblocks": "The only thing on this list that can produce a reply, a meeting, or a first dollar. Every other item moves code or infrastructure; this one moves the business.",
+   "blockedWithout": "The offer stays untested indefinitely. Revenue, meetings and replies all stay at zero no matter how many cycles run, because nothing else here can move them."
+  },
+  {
+   "item": "Decide which price list the Sentinel sales one-pager carries",
+   "what": "Five rows. The one-pager quotes Personal $599/mo, Pro $1,500/mo, Small Business $156K/yr, Mid-Size $312K/yr and Enterprise $625K/yr. The published plan page quotes $899, $2,250, $19,500/mo, $39,000/mo and $78,125/mo for plans with the SAME NAMES. Either the desktop product has its own price list and the plan names must stop colliding, or the sheet is stale.",
+   "why": "This is the document a prospect is handed during the exact conversation the twelve messages above are trying to start. A prospect who reads $599 and is later quoted $899 has caught this company changing its price mid-conversation, and no amount of honest engineering elsewhere recovers that. Software may not pick: a second price for a same-named plan is a decision.",
+   "artefact": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+   "rank": 2,
+   "unblocks": "Makes the sales conversation the twelve messages are meant to create survive contact with the plan page. Once decided, `tests/quoted-figures.test.mjs` holds both surfaces to it.",
+   "blockedWithout": "Every reply the twelve messages produce walks into a document that contradicts the website on all five plans."
+  },
+  {
+   "item": "Name the currency this company charges in",
+   "what": "One word: CAD or USD. Seven surfaces on the money path declare a currency and two of them say CAD while five say USD — including the renewal email a paying customer receives (USD) and the inline charge path that would bill their card (CAD).",
+   "why": "Telling a customer an amount in one currency and charging their card in another is a chargeback and a credibility problem in the same message. Nobody has been charged yet, which is exactly why this is cheap to fix today and expensive to fix after the first invoice.",
+   "noArtefact": "A currency is a decision, not a document. There is nothing to prepare on disk: naming one writes `senior-director-state/decisions/currency.json`, and from that moment `tests/currency-consistency.test.mjs` enforces it on every surface and goes red on any drift. Writing that file with a guessed currency would be software making a decision about money.",
+   "rank": 3,
+   "unblocks": "Turns the currency audit from a report into an enforced invariant, and lets the two off-direction surfaces be corrected in one pass.",
+   "blockedWithout": "The split stays reported and unresolved, and the first real charge decides it by accident."
+  },
+  {
+   "item": "A code-hosting credential for the build sandbox",
+   "what": "A credential or a code-host connector attached to this environment.",
+   "why": "It would retire the push above permanently instead of re-staging it every cycle. Highest leverage item here that is not a conversation.",
+   "noArtefact": "Nothing can be prepared on disk for this. It is a credential granted in someone else's account settings, and an agent must never hold or create one.",
+   "rank": 4,
+   "unblocks": "Retires the push above permanently instead of re-staging it every cycle. It is the only item here that removes another item from this list rather than adding a click to it.",
+   "blockedWithout": "The push stays a manual step, re-staged and re-explained every single cycle, forever. Nineteen cycles of that have already happened."
+  },
+  {
+   "item": "Push the shared line to the code host",
+   "what": "One push of the shared branch, every commit on it verified against a green full registry.",
+   "why": "The build sandbox holds no code-host credential and that refusal was reproduced against the real remote again this cycle. This is the only thing between verified work and the shared host.",
+   "artefact": "AHMAD-ONE-CLICK.cmd",
+   "rank": 5,
+   "unblocks": "Moves every verified commit onto the shared host, where it can be deployed and where a second machine can see it. Prerequisite for publishing.",
+   "blockedWithout": "The verified line keeps growing on one machine only — a single-disk failure loses it, and the publish below cannot happen at all."
+  },
+  {
+   "item": "Publish the site",
+   "what": "One deliberate operator action in the hosting dashboard.",
+   "why": "Landing a branch never deploys. This stays a separate human decision, and it is the action that starts the visit log recording — until it happens the passive signal reads not-yet-collecting rather than zero.",
+   "noArtefact": "A publish is a button in the hosting provider's own interface. There is no local object for it, and staging one would be theatre.",
+   "rank": 6,
+   "unblocks": "Starts the visit log recording, which is the only path to a passive signal that does not depend on anyone answering a message.",
+   "blockedWithout": "The passive signal reads not-yet-collecting rather than zero — honest, and worth nothing. No prospect can reach the site at all."
+  }
+ ],
+ "needsAhmadPolicy": "Served in RANK order, not in the order the list is typed. Each item declares what its click unblocks and what stays blocked without it; the guard refuses an item that declares neither.",
+ "customerPath": {
+  "entryPoints": 15,
+  "links": 896,
+  "resolved": 762,
+  "broken": 0,
+  "uncheckedWithReason": 134,
+  "outboundSiteLinks": 0,
+  "firstScreen": {
+   "withAValueClaim": 12,
+   "withFindings": 2,
+   "unchecked": 1,
+   "rule14Violations": [],
+   "findings": [
+    {
+     "file": "security.html",
+     "line": null,
+     "class": "no-claim-above-the-fold",
+     "detail": "the first screen names things but promises nothing a reader can feel (Rule 17)"
+    },
+    {
+     "file": "terms.html",
+     "line": null,
+     "class": "no-claim-above-the-fold",
+     "detail": "the first screen names things but promises nothing a reader can feel (Rule 17)"
+    }
+   ]
+  },
+  "conversation": {
+   "maxClicks": 2,
+   "reachable": 15,
+   "noReachablePath": 0,
+   "unchecked": 0,
+   "findings": []
+  },
+  "note": "Walked from disk, no network call, no deploy. Unchecked is a third verdict with a stated reason and is never counted as passing or as reachable.",
+  "surfaceClass": {
+   "salesSurfaces": 13,
+   "obligationSurfaces": 2,
+   "salesMakingAClaim": 12,
+   "salesStillSilent": 0,
+   "exempt": [
+    {
+     "file": "security.html",
+     "reason": "A coordinated vulnerability-disclosure page is addressed to security researchers, not to buyers. Its obligations are to state scope, a reporting channel and response commitments accurately and to stay reachable. A researcher reading it needs a mailbox and a timeline, not a benefit statement, and dressing a disclosure policy in marketing language would make the one page whose whole value is being taken literally read as though it were selling something. NOTE THE LIMIT: trust.html is NOT exempt on this argument — it is addressed to buyers evaluating whether to let us touch their systems, which is a sale, so it must earn its reader like any other sales surface."
+    },
+    {
+     "file": "terms.html",
+     "reason": "A terms-of-service page is a contract surface. Its job is to state the terms accurately and be reachable from every page; a reader arriving here is already a customer or is checking what they would be agreeing to. Requiring it to open with a value claim would push sales language into the one document a reader must be able to trust as plain, unpersuasive fact."
+    }
+   ],
+   "unchecked": [
+    {
+     "file": "product.html",
+     "reason": "the page's only content container is empty on disk and is filled by script at runtime — there is no copy here to hold to Rule 14 or Rule 17, so this is UNCHECKED and is never counted as a pass"
+    }
+   ],
+   "policy": "An obligation surface is exempt from Rule 17 and from nothing else — every Rule 14 class still fails red on it. Exempt and unchecked are separate verdicts and are never folded into passed."
+  },
+  "crossSurface": {
+   "verdict": "ok",
+   "statement": "The 8 prose surfaces of the published set agree with each other; 6 more are in the set but are not prose and were not checked.",
+   "surfacesChecked": 8,
+   "surfacesUnchecked": 6,
+   "contradictions": 0,
+   "byClass": {},
+   "findings": [],
+   "unchecked": [
+    {
+     "file": "sitemap.xml",
+     "class": "surface-is-not-prose-a-reader-consumes",
+     "reason": "part of the published set but not prose a reader consumes"
+    },
+    {
+     "file": "robots.txt",
+     "class": "surface-is-not-prose-a-reader-consumes",
+     "reason": "part of the published set but not prose a reader consumes"
+    },
+    {
+     "file": "assets/axis-app.js",
+     "class": "surface-is-not-prose-a-reader-consumes",
+     "reason": "part of the published set but not prose a reader consumes"
+    },
+    {
+     "file": "assets/axis-tokens.css",
+     "class": "surface-is-not-prose-a-reader-consumes",
+     "reason": "part of the published set but not prose a reader consumes"
+    },
+    {
+     "file": "assets/axis-state.json",
+     "class": "surface-is-not-prose-a-reader-consumes",
+     "reason": "part of the published set but not prose a reader consumes"
+    },
+    {
+     "file": "assets/aperture-learning.js",
+     "class": "surface-is-not-prose-a-reader-consumes",
+     "reason": "part of the published set but not prose a reader consumes"
+    }
+   ],
+   "policy": "Agreement BETWEEN published surfaces, measured rather than asserted. Silence is allowed — a page that never raises a topic is not a finding. Disagreement is not: a plan priced two ways, a framework certified on one screen and only in readiness on another, or an invitation pointing where a sibling says the door is shut, each names both files and both lines. A dollar figure with no recurring unit is ambiguous and is declined rather than guessed."
+  }
+ },
+ "stagedAudit": {
+  "audited": 6,
+  "failed": 0,
+  "guard": "staged-action-guard.v1 + rank"
+ },
+ "unpublishedLine": {
+  "ref": "origin/main",
+  "statement": "24 commit(s) are built and tested but unpublished. 4 of them touch 7 file(s) a visitor can load — that share, and only that share, is what publishing would change on screen.",
+  "reconciliation": {
+   "countedHere": 24,
+   "mergeCommitsExcluded": 2,
+   "totalIncludingMerges": 26,
+   "why": "a merge commit introduces no file changes of its own; counting it would attribute every file it carries twice. The ledger's headline figure has always been the total including merges.",
+   "consistent": true
+  },
+  "byClass": [
+   {
+    "class": "public-page",
+    "why": "a file the open internet loads directly — this is the only class a stranger can see",
+    "commits": 4,
+    "exclusiveCommits": 0,
+    "files": 7
+   },
+   {
+    "class": "sentinel-app",
+    "why": "the Windows agent itself — changes here reach a customer only after they install a build",
+    "commits": 7,
+    "exclusiveCommits": 0,
+    "files": 2
+   },
+   {
+    "class": "serving-layer",
+    "why": "site behaviour rather than site content — a visitor feels it without seeing a diff",
+    "commits": 1,
+    "exclusiveCommits": 0,
+    "files": 2
+   },
+   {
+    "class": "tooling-and-tests",
+    "why": "how we prove things to ourselves; nothing outside this machine changes when it changes",
+    "commits": 15,
+    "exclusiveCommits": 2,
+    "files": 54
+   },
+   {
+    "class": "record-only",
+    "why": "the operator's own record of the work — a visitor cannot reach it and no product behaviour changes",
+    "commits": 18,
+    "exclusiveCommits": 5,
+    "files": 19
+   },
+   {
+    "class": "unclassified",
+    "why": "no path rule claims this file; it is reported as unclassified rather than absorbed into a neighbouring class",
+    "commits": 8,
+    "exclusiveCommits": 2,
+    "files": 16
+   }
+  ],
+  "whatAVisitorWouldSeeChange": [
+   "aperture-learning.html",
+   "assets/aria-kb-local-bundle.json",
+   "assets/axis-app.js",
+   "assets/axis-director-screen.js",
+   "assets/axis-persona.js",
+   "assets/axis-state.json",
+   "axis.html"
+  ],
+  "policy": "Classified BY PATH, never by commit message: a message is a claim by its author, a file list is a fact. A commit touching more than one class is counted in every class it touches and the overlap is reported as overlap, so the class counts deliberately do not sum to the range size.",
+  "artefact": "senior-director-state/unpublished-range.json"
+ },
+ "delivery": {
+  "bundle": "senior-director-state/delivery/unpublished-line.bundle",
+  "manifest": "senior-director-state/delivery/unpublished-line.manifest.json",
+  "tip": "d83454a096fd8340b1e3d1fcfa297d341cfa216b",
+  "tree": "bce83474b4ea5d65ee2a21917b94abe79d08553d",
+  "basedOn": {
+   "ref": "origin/main",
+   "sha": "cb4f3f0452636e50e9b33572b7960904a639f524"
+  },
+  "commits": 26,
+  "bytes": 407271,
+  "sha256": "1440e4a9c1a3398c23599d309e7360f07bff8226dbe1061c16088914698b1cfe",
+  "fetchCommand": "git fetch \"senior-director-state/delivery/unpublished-line.bundle\" main:refs/heads/from-bundle-d83454a",
+  "verifyCommand": "node scripts/verify-range-bundle.mjs",
+  "verified": true,
+  "tracked": false,
+  "manifestTracked": false,
+  "whyNotTracked": "both live under senior-director-state/, the operator's untracked record root. The bundle is regenerated from the history every cycle, and the manifest's job is to travel WITH the bundle to whoever receives it — a copy in git history would describe a file the receiver does not have. What makes the pair trustworthy is the byte digest and the tip/tree SHAs, not a commit.",
+  "policy": "Verified on four independent things, each with its own failure class: git accepts the header, the BYTES digest to what was recorded at creation, the tip is the exact commit the tests ran against, and the tree at that tip is the tree that was tested. The digest exists because git's own `bundle verify` passes a 60%-truncated file."
+ },
+ "environment": {
+  "gitBoundary": "the-git-directory-refuses-unlink-so-porcelain-writes-are-permanently-blocked",
+  "statement": "The .git directory refuses unlink, so 2 stale lock file(s) are permanent and every porcelain write is blocked for the life of this environment. Plumbing writes are STILL OPEN — commit via a private index and a ref overwrite, and do not spend the cycle re-deriving this.",
+  "staleLocks": [
+   {
+    "name": "index.lock",
+    "ageSeconds": 773
+   },
+   {
+    "name": "HEAD.lock",
+    "ageSeconds": 23
+   }
+  ],
+  "canCreateInGitDir": true,
+  "canOverwriteInGitDir": true,
+  "canUnlinkInGitDir": false,
+  "porcelainWrites": false,
+  "plumbingWrites": true,
+  "gitSaid": "fatal: Unable to create '/sessions/optimistic-adoring-ride/mnt/iisupp-net-deploy/.git/index.lock': File exists. Another git process seems to be running in this repository, e.g.",
+  "workaround": {
+   "why": "porcelain (`git add` / `git commit`) takes `.git/index.lock` and `.git/<ref>.lock` and must REMOVE them afterwards. Where unlink is refused, the very first lock write becomes permanent and every subsequent porcelain command fails with `File exists` — including the commands that would clean it up.",
+   "steps": [
+    "export GIT_INDEX_FILE=/tmp/<unique>.index   # a private index OUTSIDE .git; porcelain's lock is never taken",
+    "git read-tree HEAD && git add -A            # stages into the private index",
+    "git write-tree                              # -> TREE",
+    "git commit-tree TREE -p HEAD -m '<message>' # -> COMMIT (object writes are create-only, which is permitted)",
+    "printf '%s\\n' COMMIT > .git/refs/heads/<branch>   # an OVERWRITE, not a lock — permitted here"
+   ],
+   "cost": "no clone, no network, no credential; the working tree and the object store are the real ones",
+   "doNot": "do not try to delete the stale lock and do not treat its presence as a failure — it cannot be removed from this environment and its presence is expected"
+  },
+  "oneLineCheck": "node -e \"import('./scripts/lib/sandbox-git-boundary.mjs').then(m=>console.log(m.probeGitBoundary().statement))\"",
+  "artefact": "senior-director-state/sandbox-git-boundary.json",
+  "policy": "Reported as a fact about the environment, never as a test failure. A suite that goes red because the environment is inconvenient trains its reader to skip the colour."
+ },
+ "publishRehearsal": {
+  "verdict": "ok",
+  "statement": "publish rehearsal: 14 published files fetched from the bundle into a fresh repository, byte-identical to the tested tree, and served without a 404 or a gate",
+  "filesChecked": 14,
+  "landedTip": "d83454a096fd8340b1e3d1fcfa297d341cfa216b",
+  "landedTree": "bce83474b4ea5d65ee2a21917b94abe79d08553d",
+  "findings": [],
+  "policy": "The whole path is walked in a throwaway directory every cycle: a repository holding only the base commit fetches the bundle from a file, the range lands, every published file is compared blob by blob against the tested tree, and the serving rules are read out of THAT LANDED TREE — not the working copy — so a rule that only exists locally cannot certify a publish that behaves differently once live. It proves the range is safe to publish. It does not publish it."
+ },
+ "primaryAction": {
+  "verdict": "ok",
+  "statement": "primary action: 8 reader-facing pages each open with an ask a first visitor can act on, and every ask has somewhere to land (6 declared not reader-facing)",
+  "readerFacingChecked": 8,
+  "notApplicable": 6,
+  "asks": [
+   {
+    "file": "index.html",
+    "verdict": "ok",
+    "class": "the-page-asks-for-something-a-first-visitor-can-give-and-the-ask-has-somewhere-to-land",
+    "cost": "medium",
+    "detail": "primary ask \"Request Consultation\" (line 1835) → mailto:ahmad.wasee@iisupp.net?subject=Private Consultation Request [medium]"
+   },
+   {
+    "file": "aria.html",
+    "verdict": "ok",
+    "class": "the-page-asks-for-something-a-first-visitor-can-give-and-the-ask-has-somewhere-to-land",
+    "cost": "medium",
+    "detail": "primary ask \"(form)\" (line 1619) → #aoForm [medium]"
+   },
+   {
+    "file": "trust.html",
+    "verdict": "ok",
+    "class": "the-page-asks-for-something-a-first-visitor-can-give-and-the-ask-has-somewhere-to-land",
+    "cost": "medium",
+    "detail": "primary ask \"Book a Security Review\" (line 148) → https://calendar.app.google/LUyV5pHxkqJRg5vp8 [medium]"
+   },
+   {
+    "file": "about.html",
+    "verdict": "ok",
+    "class": "the-page-asks-for-something-a-first-visitor-can-give-and-the-ask-has-somewhere-to-land",
+    "cost": "medium",
+    "detail": "primary ask \"Book a 20-minute review\" (line 583) → mailto:ahmad.wasee@iisupp.net?subject=20-minute%20IT%20review&amp;body=What%20we%20run%20today%3A%0AWhat%20keeps%20breaking%3A%0ATeam%20size%3A [medium]"
+   },
+   {
+    "file": "ai-edge.html",
+    "verdict": "ok",
+    "class": "the-page-asks-for-something-a-first-visitor-can-give-and-the-ask-has-somewhere-to-land",
+    "cost": "high",
+    "detail": "primary ask \"Buy the starter\" (line 366) → product.html [high]"
+   },
+   {
+    "file": "growth-library.html",
+    "verdict": "ok",
+    "class": "the-page-asks-for-something-a-first-visitor-can-give-and-the-ask-has-somewhere-to-land",
+    "cost": "medium",
+    "detail": "primary ask \"Request AI Workflow Audit\" (line 201) → index.html [medium]"
+   },
+   {
+    "file": "health-check.html",
+    "verdict": "ok",
+    "class": "the-page-asks-for-something-a-first-visitor-can-give-and-the-ask-has-somewhere-to-land",
+    "cost": "medium",
+    "detail": "primary ask \"Email us\" (line 262) → mailto:ahmad.wasee@iisupp.net [medium]"
+   },
+   {
+    "file": "scorecard.html",
+    "verdict": "ok",
+    "class": "the-page-asks-for-something-a-first-visitor-can-give-and-the-ask-has-somewhere-to-land",
+    "cost": "medium",
+    "detail": "primary ask \"Try ARIA\" (line 97) → aria.html [medium]"
+   }
+  ],
+  "failures": [],
+  "policy": "The invitation is extracted from the file, never assumed: its words, its target, whether that target can receive anything in the tree being published, and whether the ask is proportionate to a first visit. A page whose only invitation is to pay fails and names itself. A page with no invitation at all is reported as having none — never scored as passing because it could not be graded. Site navigation is furniture and is not counted as what the page asks for."
+ },
+ "publication": {
+  "sharedLineAdvancedByPush": true,
+  "commitsAhead": 26,
+  "confirmedOnRemote": false,
+  "statement": "the shared line has not moved; the range is still local.",
+  "stillOperatorOnly": [
+   "the Netlify publish — merging the line does not deploy it; the web publish stays a deliberate one-click",
+   "the twelve second messages — no software in this repository can send them"
+  ]
+ },
+ "yesPath": {
+  "statement": "the yes-path resolves end to end: 6 steps, every one backed by a carried artefact",
+  "trackedReadable": true,
+  "summary": {
+   "total": 6,
+   "present": 6,
+   "untracked": 0,
+   "unusable": 0,
+   "missing": 0,
+   "manualByDesign": 2,
+   "firstGap": null,
+   "complete": true
+  },
+  "steps": [
+   {
+    "id": "reply-received",
+    "name": "a reply arrives and is seen",
+    "class": "present",
+    "manualByDesign": false,
+    "manualBecause": null,
+    "blocks": null,
+    "artefacts": [
+     {
+      "path": "netlify/functions/aria-lead-capture.js",
+      "class": "present",
+      "detail": ""
+     },
+     {
+      "path": "netlify/functions/aria-lead-capture.mjs",
+      "class": "missing",
+      "detail": "no such file"
+     }
+    ]
+   },
+   {
+    "id": "call-booked",
+    "name": "a call is booked without a second email",
+    "class": "present",
+    "manualByDesign": false,
+    "manualBecause": null,
+    "blocks": null,
+    "artefacts": [
+     {
+      "path": "book.html",
+      "class": "present",
+      "detail": ""
+     }
+    ]
+   },
+   {
+    "id": "scope-agreed",
+    "name": "scope and price are put in writing",
+    "class": "present",
+    "manualByDesign": false,
+    "manualBecause": null,
+    "blocks": null,
+    "artefacts": [
+     {
+      "path": "documents/sales-marketing/Pilot-Program-Offer-2026-06-27.md",
+      "class": "untracked",
+      "detail": "real on this disk, absent from the shared line — a clone of this repository cannot produce it"
+     },
+     {
+      "path": "documents/sales-marketing/ARIA-Sentinel-Pilot-One-Pager.md",
+      "class": "untracked",
+      "detail": "real on this disk, absent from the shared line — a clone of this repository cannot produce it"
+     },
+     {
+      "path": "plans/index.html",
+      "class": "present",
+      "detail": ""
+     }
+    ]
+   },
+   {
+    "id": "agreement-signed",
+    "name": "an agreement exists to sign",
+    "class": "present",
+    "manualByDesign": true,
+    "manualBecause": "a signature is an irreversible act by a named person; software must never forge it",
+    "blocks": null,
+    "artefacts": [
+     {
+      "path": "legal/Pilot-Agreement-TEMPLATE.md",
+      "class": "present",
+      "detail": ""
+     },
+     {
+      "path": "documents/sales-marketing/ARIA-Sentinel-14-Day-Pilot-Agreement-TEMPLATE.md",
+      "class": "untracked",
+      "detail": "real on this disk, absent from the shared line — a clone of this repository cannot produce it"
+     }
+    ]
+   },
+   {
+    "id": "invoice-raised",
+    "name": "a first invoice can be raised",
+    "class": "present",
+    "manualByDesign": false,
+    "manualBecause": null,
+    "blocks": null,
+    "artefacts": [
+     {
+      "path": "netlify/functions/stripe-checkout.js",
+      "class": "present",
+      "detail": ""
+     },
+     {
+      "path": "netlify/functions/aria-invoice-download.js",
+      "class": "present",
+      "detail": ""
+     }
+    ]
+   },
+   {
+    "id": "payment-received",
+    "name": "money lands and is confirmed",
+    "class": "present",
+    "manualByDesign": true,
+    "manualBecause": "the client authorises the payment; no agent in this repository may move money",
+    "blocks": null,
+    "artefacts": [
+     {
+      "path": "netlify/functions/stripe-webhook.js",
+      "class": "present",
+      "detail": ""
+     },
+     {
+      "path": "netlify/functions/sentinel-stripe-webhook.mjs",
+      "class": "present",
+      "detail": ""
+     }
+    ]
+   }
+  ],
+  "policy": "Every step from an inbound reply to a first dollar is resolved against a real file. A step nobody can point at is MISSING and names the steps below it — 'handled manually' is refused as a resolution, because that phrase is how a gap hides. A step that is manual BY DESIGN (a signature, a payment authorisation) still has to point at the artefact the person uses. An artefact the shared line does not carry is UNTRACKED: real on one machine, absent from every clone, and never rounded up to present."
+ },
+ "timeToFirstDollar": {
+  "statement": "between a yes and money: 2 of 6 steps need a person — 2 by design, 0 because nothing carries the step; 14 blanks to fill across 6 counted steps, 0 uncounted; the longest is \"call-booked\" at 8 blanks (book.html)",
+  "summary": {
+   "totalSteps": 6,
+   "manualSteps": 2,
+   "manualByDesign": 2,
+   "manualBecauseNothingCarriesIt": 0,
+   "handInputsCounted": 14,
+   "stepsCounted": 6,
+   "stepsUncounted": 0,
+   "uncounted": [],
+   "longestStep": {
+    "id": "call-booked",
+    "handInputs": 8,
+    "countedFrom": "book.html"
+   },
+   "longestStepReason": null
+  },
+  "steps": [
+   {
+    "id": "reply-received",
+    "manual": false,
+    "manualByDesign": false,
+    "manualByGap": false,
+    "handInputs": 0,
+    "countedFrom": "netlify/functions/aria-lead-capture.js",
+    "uncountedReason": null
+   },
+   {
+    "id": "call-booked",
+    "manual": false,
+    "manualByDesign": false,
+    "manualByGap": false,
+    "handInputs": 8,
+    "countedFrom": "book.html",
+    "uncountedReason": null
+   },
+   {
+    "id": "scope-agreed",
+    "manual": false,
+    "manualByDesign": false,
+    "manualByGap": false,
+    "handInputs": 0,
+    "countedFrom": "plans/index.html",
+    "uncountedReason": null
+   },
+   {
+    "id": "agreement-signed",
+    "manual": true,
+    "manualByDesign": true,
+    "manualByGap": false,
+    "handInputs": 6,
+    "countedFrom": "legal/Pilot-Agreement-TEMPLATE.md",
+    "uncountedReason": null
+   },
+   {
+    "id": "invoice-raised",
+    "manual": false,
+    "manualByDesign": false,
+    "manualByGap": false,
+    "handInputs": 0,
+    "countedFrom": "netlify/functions/stripe-checkout.js",
+    "uncountedReason": null
+   },
+   {
+    "id": "payment-received",
+    "manual": true,
+    "manualByDesign": true,
+    "manualByGap": false,
+    "handInputs": 0,
+    "countedFrom": "netlify/functions/stripe-webhook.js",
+    "uncountedReason": null
+   }
+  ],
+  "policy": "Counted in acts a person must perform and blanks a person must fill — never in hours, because nobody here has ever timed one and an invented duration is a fabricated metric. Manual by design and manual for want of an artefact are counted apart: automating the signature or the payment authorisation would be a defect, not an improvement. A step whose effort cannot be read off an artefact is UNCOUNTED with its reason rather than estimated to keep the total tidy."
+ },
+ "retainerProposal": {
+  "statement": "a retainer proposal generated from plans/index.html:1002 (Personal $899) — every figure traced, nothing sent",
+  "generated": true,
+  "sends": false,
+  "pricingSource": {
+   "file": "plans/index.html",
+   "plans": [
+    {
+     "key": "personal",
+     "line": 1002
+    },
+    {
+     "key": "pro",
+     "line": 1002
+    },
+    {
+     "key": "small-business",
+     "line": 1002
+    },
+    {
+     "key": "mid-size",
+     "line": 1002
+    },
+    {
+     "key": "enterprise",
+     "line": 1002
+    }
+   ]
+  },
+  "traced": [
+   {
+    "token": "$899",
+    "plan": "Personal",
+    "file": "plans/index.html",
+    "line": 1002
+   }
+  ],
+  "refusals": [],
+  "policy": "No figure in a client-facing proposal may be typed into the generator. Each is selected by key out of the plan table published on the website and carries the file and line it came from; the rendered document is then re-read token by token, and any money figure that cannot be traced back refuses the whole write. Guarantee, money-back and risk-free language, an experience claim past 15+ years, and the forbidden name are refusals rather than warnings. It generates a document. It sends nothing, signs nothing and charges nothing."
+ },
+ "clientFacing": {
+  "statement": "27/27 client-facing documents carry nothing operator-internal; 44 quoted figure(s) are not published anywhere a client can check them",
+  "trackedReadable": true,
+  "summary": {
+   "documents": 27,
+   "clean": 27,
+   "refused": 0,
+   "untracked": 0,
+   "refusals": 0,
+   "decisions": 44,
+   "exempted": 6,
+   "ok": true
+  },
+  "documents": [
+   {
+    "file": "legal/BAA-template.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 9650,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "legal/DPA-template.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 11250,
+    "refusals": 0,
+    "decisions": 1
+   },
+   {
+    "file": "legal/MSA-template.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 12587,
+    "refusals": 0,
+    "decisions": 3
+   },
+   {
+    "file": "legal/Pilot-Agreement-TEMPLATE.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 2744,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/C2PA-content-provenance-policy.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 5736,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/CAIQ-Lite-prefilled.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 7462,
+    "refusals": 0,
+    "decisions": 1
+   },
+   {
+    "file": "compliance/EU-AI-Act-readiness-map.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 8614,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/HIPAA-readiness-map.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 6939,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/ISO-27001-SoA.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 7455,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/NIST-AI-RMF-readiness-map.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 6714,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/SIG-Lite-prefilled.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 11154,
+    "refusals": 0,
+    "decisions": 6
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 9201,
+    "refusals": 0,
+    "decisions": 7
+   },
+   {
+    "file": "compliance/policies/acceptable-use.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3421,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/access-control.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3662,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/business-continuity.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 4593,
+    "refusals": 0,
+    "decisions": 2
+   },
+   {
+    "file": "compliance/policies/change-management.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3433,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/data-classification.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 5419,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/encryption.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 2473,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/incident-response.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 5968,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/password.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 2918,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/physical-security.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3037,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/risk-management.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3546,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/vendor-management.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3383,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "compliance/policies/vulnerability-management.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3072,
+    "refusals": 0,
+    "decisions": 0
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3168,
+    "refusals": 0,
+    "decisions": 11
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 3903,
+    "refusals": 0,
+    "decisions": 13
+   },
+   {
+    "file": "ARIA Sentinel/sales/client-guides/ClientGuide-ARIA-Sentinel-Entra-AD-Integration.md",
+    "ok": true,
+    "tracked": true,
+    "bytes": 4110,
+    "refusals": 0,
+    "decisions": 0
+   }
+  ],
+  "decisions": [
+   {
+    "file": "legal/DPA-template.md",
+    "line": 219,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "legal/MSA-template.md",
+    "line": 203,
+    "found": "$5,000",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "legal/MSA-template.md",
+    "line": 204,
+    "found": "$3,000",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "legal/MSA-template.md",
+    "line": 205,
+    "found": "$3,000",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/CAIQ-Lite-prefilled.md",
+    "line": 25,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SIG-Lite-prefilled.md",
+    "line": 20,
+    "found": "$5",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SIG-Lite-prefilled.md",
+    "line": 20,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SIG-Lite-prefilled.md",
+    "line": 104,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SIG-Lite-prefilled.md",
+    "line": 124,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SIG-Lite-prefilled.md",
+    "line": 131,
+    "found": "$1",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SIG-Lite-prefilled.md",
+    "line": 190,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "line": 8,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "line": 103,
+    "found": "$5",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "line": 136,
+    "found": "$3",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "line": 138,
+    "found": "$15",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "line": 138,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "line": 157,
+    "found": "$15",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/SOC2-controls-self-assessment.md",
+    "line": 167,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/policies/business-continuity.md",
+    "line": 21,
+    "found": "$5",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "compliance/policies/business-continuity.md",
+    "line": 66,
+    "found": "$5",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 4,
+    "found": "$15",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 15,
+    "found": "$234",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 15,
+    "found": "$468",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 15,
+    "found": "$937",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 25,
+    "found": "$10,000",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 25,
+    "found": "$60,000",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 33,
+    "found": "$35",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 35,
+    "found": "$73",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 39,
+    "found": "$74,000",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 40,
+    "found": "$368,000",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Integrated-Pricing-ROI.md",
+    "line": 41,
+    "found": "$1.84",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 13,
+    "found": "$60",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 13,
+    "found": "$95",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 49,
+    "found": "$599",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 50,
+    "found": "$1,500",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 51,
+    "found": "$156",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 52,
+    "found": "$312",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 53,
+    "found": "$625",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 61,
+    "found": "$599",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 61,
+    "found": "$150",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 61,
+    "found": "$300",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 62,
+    "found": "$1,500",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 62,
+    "found": "$3",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   },
+   {
+    "file": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md",
+    "line": 62,
+    "found": "$5",
+    "why": "a figure a client is quoted but cannot verify anywhere the company publishes"
+   }
+  ],
+  "policy": "The 2026-07-01 lockdown is NOT weakened: `documents/` stays excluded from git. What moved into the shared line is a document written to be read by a client, and this gate is what makes that claim checkable rather than asserted. A refusal is content that has no business in a client's hands at any price — a credential, an internal path, an internal codename, the forbidden name, rule-7 language, an experience claim past the honest ceiling, a contact detail contradicting what the company publishes. A price quoted to a client that the company publishes nowhere is counted and cited as a DECISION, because a gate that forced working contracts to be deleted in order to go green would be the worse failure (Rule 15)."
+ },
+ "invoiceRehearsal": {
+  "statement": "an invoice can be rendered from traced figures, but 1 step(s) on the way to collecting it are broken (the-currency-on-the-charge-path-disagrees-with-the-published-plan-table); 1 step(s) correctly unrun here (no key, no network, no money)",
+  "sends": false,
+  "charges": false,
+  "readsKeys": false,
+  "writesInRepo": false,
+  "summary": {
+   "total": 7,
+   "ok": 5,
+   "broken": 1,
+   "unrun": 1,
+   "walkedToARenderedInvoice": true,
+   "firstBreak": "the-currency-on-the-charge-path-disagrees-with-the-published-plan-table",
+   "decisions": 1
+  },
+  "steps": [
+   {
+    "id": "read-published-table",
+    "verdict": "ok",
+    "class": "the-invoice-can-be-raised-from-a-traced-figure-without-a-key",
+    "detail": "5 plan figure(s) read from plans/index.html"
+   },
+   {
+    "id": "resolve-plan",
+    "verdict": "ok",
+    "class": "the-invoice-can-be-raised-from-a-traced-figure-without-a-key",
+    "detail": "Personal → $899 per month, from plans/index.html:1002"
+   },
+   {
+    "id": "name-client",
+    "verdict": "ok",
+    "class": "the-invoice-can-be-raised-from-a-traced-figure-without-a-key",
+    "detail": "addressed to Example Client Inc."
+   },
+   {
+    "id": "trace-every-figure",
+    "verdict": "ok",
+    "class": "the-invoice-can-be-raised-from-a-traced-figure-without-a-key",
+    "detail": "every money token on the rendered invoice is selected by key out of plans/index.html"
+   },
+   {
+    "id": "charge-route",
+    "verdict": "ok",
+    "class": "the-invoice-can-be-raised-from-a-traced-figure-without-a-key",
+    "detail": "\"personal\" maps to a price key in netlify/functions/stripe-checkout.js"
+   },
+   {
+    "id": "currency-agreement",
+    "verdict": "broken",
+    "class": "the-currency-on-the-charge-path-disagrees-with-the-published-plan-table",
+    "detail": "plans/index.html:132 states USD (8x); netlify/functions/stripe-checkout.js:114 charges CAD on the inline-one-time path"
+   },
+   {
+    "id": "raise-the-charge",
+    "verdict": "unrun",
+    "class": "the-charge-itself-cannot-be-rehearsed-here-no-key-no-network-and-that-is-correct",
+    "detail": "no Stripe key is read and no network call is made; the preset plan price IDs carry their currency inside Stripe, which cannot be read from this repository"
+   }
+  ],
+  "decisions": [
+   {
+    "kind": "currency-divergence",
+    "published": {
+     "currency": "USD",
+     "file": "plans/index.html",
+     "line": 132,
+     "occurrences": 8
+    },
+    "charged": {
+     "currency": "CAD",
+     "file": "netlify/functions/stripe-checkout.js",
+     "line": 114,
+     "path": "inline-one-time"
+    },
+    "why": "the page a client reads and the code that charges them state different currencies; which one is wrong is a decision about money, not a defect software may pick"
+   }
+  ],
+  "policy": "The same discipline as the publish rehearsal: no live API call, no key read, no network, no money moved, nothing written inside the repository. Every money figure on the rendered draft is selected by key out of the published plan table and carries its file and line; a token that traces to no published line refuses the whole rehearsal. A step this environment genuinely cannot walk — the charge itself — is reported UNRUN with its reason, never as a pass and never as a failure of the publish path, because 'we could not check' and 'it is broken' are different facts and collapsing them is how a program learns to distrust its own greens."
+ },
+ "currency": {
+  "verdict": "undecided",
+  "statement": "currency: UNDECIDED — CAD and USD both declared on the money path, and software may not pick — 2 surface(s) off: netlify/functions/stripe-checkout.js:114 CAD · netlify/functions/aria-web-tier.js:14 CAD · 1 unrun (the preset plan subscriptions).",
+  "direction": {
+   "declared": false,
+   "currency": null,
+   "file": "senior-director-state/decisions/currency.json",
+   "reason": "no direction has been declared in the tree"
+  },
+  "currencies": [
+   "CAD",
+   "USD"
+  ],
+  "summary": {
+   "surfaces": 7,
+   "currencies": 2,
+   "divergent": 2,
+   "unreadable": 0,
+   "unrun": 1,
+   "typed": 1
+  },
+  "declarations": [
+   {
+    "file": "plans/index.html",
+    "line": 132,
+    "currency": "USD",
+    "role": "what-the-visitor-reads-on-the-plan-page",
+    "how": "read-from-the-file-that-declares-it",
+    "why": "the page a visitor decides on; if this is wrong the customer was misled before anyone charged anything",
+    "occurrences": 8
+   },
+   {
+    "file": "netlify/functions/stripe-checkout.js",
+    "line": 114,
+    "currency": "CAD",
+    "role": "what-the-customer-card-is-actually-charged-in",
+    "how": "a-default-used-when-the-upstream-value-is-absent",
+    "why": "the inline one-time price path; this is the currency a card is actually charged in",
+    "occurrences": 1
+   },
+   {
+    "file": "netlify/functions/aria-web-tier.js",
+    "line": 14,
+    "currency": "CAD",
+    "role": "what-the-customer-card-is-actually-charged-in",
+    "how": "read-from-the-file-that-declares-it",
+    "why": "the web tier's own price definition",
+    "occurrences": 1
+   },
+   {
+    "file": "netlify/functions/aria-renewal-reminders.js",
+    "line": 63,
+    "currency": "USD",
+    "role": "what-a-customer-is-told-in-a-message-we-send-them",
+    "how": "a-default-used-when-the-upstream-value-is-absent",
+    "why": "the renewal email a PAYING customer receives, stating the amount they are about to be charged",
+    "occurrences": 1
+   },
+   {
+    "file": "netlify/functions/stripe-webhook.js",
+    "line": 177,
+    "currency": "USD",
+    "role": "what-a-customer-is-told-in-a-message-we-send-them",
+    "how": "a-default-used-when-the-upstream-value-is-absent",
+    "why": "the amount stamped on the payment confirmation a customer receives",
+    "occurrences": 1
+   },
+   {
+    "file": "netlify/functions/aria-mrr-dashboard.js",
+    "line": 80,
+    "currency": "USD",
+    "role": "what-an-operator-dashboard-reports",
+    "how": "read-from-the-file-that-declares-it",
+    "why": "the recurring-revenue figure an operator reads and repeats out loud",
+    "occurrences": 1
+   },
+   {
+    "file": "scripts/lib/retainer-proposal.mjs",
+    "line": 80,
+    "currency": "USD",
+    "role": "what-a-prospect-is-quoted-in-a-document",
+    "how": "a-literal-in-the-generator-rather-than-a-value-parsed-from-the-published-page",
+    "why": "the currency printed beside every figure in the proposal a prospect signs against",
+    "occurrences": 1
+   }
+  ],
+  "divergent": [
+   {
+    "file": "netlify/functions/stripe-checkout.js",
+    "line": 114,
+    "currency": "CAD",
+    "role": "what-the-customer-card-is-actually-charged-in"
+   },
+   {
+    "file": "netlify/functions/aria-web-tier.js",
+    "line": 14,
+    "currency": "CAD",
+    "role": "what-the-customer-card-is-actually-charged-in"
+   }
+  ],
+  "unreadable": [],
+  "unrun": [
+   {
+    "file": "netlify/functions/stripe-checkout.js",
+    "role": "what-the-customer-card-is-actually-charged-in",
+    "how": "stored-outside-this-repository-and-not-readable-here",
+    "what": "the preset plan subscriptions",
+    "reason": "they charge through Stripe price IDs; the currency of a price ID is stored inside Stripe and is not present in this repository, so it can be neither confirmed nor contradicted from here"
+   }
+  ],
+  "policy": "Every currency is READ out of the file that declares it and carries its file, its line and the source text that produced it. There is no code path that can report 'consistent' while more than one distinct currency was read — that is the single invariant the module exists to hold. Software does not pick the direction: which currency this company charges is a decision about money. Until one is declared in the tree the verdict is UNDECIDED and every citation is reported; once one is declared the same module enforces it and goes red on any drift. In an even split, EVERY surface is in dispute rather than the alphabetically-first one winning by accident. What lives inside Stripe stays UNRUN with its reason — never counted as agreeing and never as broken. A typed currency is kept apart from a read one, because a literal in a generator survives the day the page it is supposed to follow changes."
+ },
+ "quotedFigures": {
+  "statement": "quoted figures: 65 across 27 client-facing document(s) — 21 published, 37 declared, 0 silent · 0 stale declaration(s) · 7 figure(s) quote a published plan at a different amount: Personal $599 at ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md:49 vs $899 at plans/index.html:1002 · Pro $1,500 at ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md:50 vs $2250 at plans/index.html:1002 · Small Business $156K at ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md:51 vs $19500 at plans/index.html:1002.",
+  "register": "docs/QUOTED-FIGURES.md",
+  "registerReadable": true,
+  "documents": 27,
+  "summary": {
+   "documents": 27,
+   "figures": 65,
+   "distinct": 35,
+   "published": 21,
+   "declared": 37,
+   "contradictory": 7,
+   "silent": 0,
+   "stale": 0,
+   "contradictions": 7,
+   "refusedDeclarations": 0,
+   "ok": true
+  },
+  "contradictions": [
+   {
+    "plan": "Personal",
+    "found": "$599",
+    "at": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md:49",
+    "published": "$899",
+    "publishedAt": "plans/index.html:1002",
+    "context": "| **Personal** | **$599 / mo** | 1 user · 1 device | Resident IT support, guided Manual-mode fixes |"
+   },
+   {
+    "plan": "Pro",
+    "found": "$1,500",
+    "at": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md:50",
+    "published": "$2250",
+    "publishedAt": "plans/index.html:1002",
+    "context": "| **Pro** | **$1,500 / mo** | Small team | Confirmed + Autonomous auto-fix, full recipe library, quarterly PDF reports |"
+   },
+   {
+    "plan": "Small Business",
+    "found": "$156K",
+    "at": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md:51",
+    "published": "$19500",
+    "publishedAt": "plans/index.html:1002",
+    "context": "| **Small Business** | **$156K / yr** | SMB fleet | Pro + fleet view, compliance evidence, custom recipes |"
+   },
+   {
+    "plan": "Mid Size",
+    "found": "$312K",
+    "at": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md:52",
+    "published": "$39000",
+    "publishedAt": "plans/index.html:1002",
+    "context": "| **Mid-Size** | **$312K / yr** | Mid-size fleet | Same, scaled for a mid-size org |"
+   },
+   {
+    "plan": "Enterprise",
+    "found": "$625K",
+    "at": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md:53",
+    "published": "$78125",
+    "publishedAt": "plans/index.html:1002",
+    "context": "| **Enterprise** | **$625K / yr** | Enterprise fleet | Same, at enterprise scale |"
+   },
+   {
+    "plan": "Personal",
+    "found": "$599",
+    "at": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md:61",
+    "published": "$899",
+    "publishedAt": "plans/index.html:1002",
+    "context": "- **Personal $599/mo** vs. a single emergency IT call-out ($150–$300) twice a month — and ARIA is there 24/7, not next business day."
+   },
+   {
+    "plan": "Pro",
+    "found": "$1,500",
+    "at": "ARIA Sentinel/sales/ARIA-Sentinel-Sales-One-Pager.md:62",
+    "published": "$2250",
+    "publishedAt": "plans/index.html:1002",
+    "context": "- **Pro $1,500/mo** vs. one part-time IT contractor (~$3K–$5K/mo) — ARIA covers the top 80% of tickets before a human is needed."
+   }
+  ],
+  "policy": "A money figure in a client-facing document is PUBLISHED (a client can check it on the plan page), DECLARED (a person deliberately put it outside the table and wrote why, in a tracked register), or SILENT — quoted to somebody and accounted for by nobody. Silent refuses this emit. Nothing is deleted to reach zero: the reconciliation is additive and never edits a client-facing document (Rule 15). The register cannot be a rubber stamp — a reason that is blank, 'n/a', or a restatement of the figure is refused, and a declaration matching nothing in the tree is stale. A plan the company publishes, quoted at a different amount, is a CONTRADICTION: reported with both citations, carried to the operator, and deliberately not declarable, because declaring it would use the register to launder a second price for the same named thing."
+ },
+ "sendSheet": {
+  "statement": "send sheet: 12 message(s), 12 clean, 0 judgement calls left — pressing send requires no check the sender has to make himself. Nothing here sends.",
+  "file": "senior-director-state/outbound/SEND-SHEET-2026-08-05.md",
+  "readable": true,
+  "untracked": null,
+  "untrackedReason": null,
+  "sends": false,
+  "claimedCount": 12,
+  "countAgrees": true,
+  "summary": {
+   "messages": 12,
+   "clean": 12,
+   "refused": 0,
+   "refusals": 0,
+   "unchecked": 0,
+   "judgementCallsLeft": 0,
+   "ok": true
+  },
+  "messages": [
+   {
+    "index": 1,
+    "handle": "WR-R001",
+    "ok": true,
+    "refusals": [],
+    "unchecked": [],
+    "links": []
+   },
+   {
+    "index": 2,
+    "handle": "WR-R002",
+    "ok": true,
+    "refusals": [],
+    "unchecked": [],
+    "links": []
+   },
+   {
+    "index": 3,
+    "handle": "WR-R008",
+    "ok": true,
+    "refusals": [],
+    "unchecked": [],
+    "links": []
+   },
+   {
+    "index": 4,
+    "handle": "WR-R009",
+    "ok": true,
+    "refusals": [],
+    "unchecked": [],
+    "links": []
+   },
+   {
+    "index": 5,
+    "handle": "WR-R010",
+    "ok": true,
+    "refusals": [],
+    "unchecked": [],
+    "links": []
+   },
+   {
+    "index": 6,
+    "handle": "WR-R011",
+    "ok": true,
+    "refusals": [],
+    "unchecked": [],
+    "links": []
+   },
+   {
+    "index": 7,
+    "handle": "WR-C003",
+    "ok": true,
+    "refusals": [],
+    "unchecked": [],
+    "links": []
+   },
+   {
+    "index": 8,
+    "handle": "WR-C004",
+    "ok": true,
+    "refusals": [],
+    "unchecked": [],
+    "links": []
+   },
+   {
+    "index": 9,
+    "handle": "WR-C005",
+    "ok": true,
+    "refusals": [],
+    "unchecked": [],
+    "links": []
+   },
+   {
+    "index": 10,
+    "handle": "WR-D012",
+    "ok": true,
+    "refusals": [],
+    "unchecked": [],
+    "links": []
+   },
+   {
+    "index": 11,
+    "handle": "WR-P006",
+    "ok": true,
+    "refusals": [],
+    "unchecked": [],
+    "links": []
+   },
+   {
+    "index": 12,
+    "handle": "WR-P007",
+    "ok": true,
+    "refusals": [],
+    "unchecked": [],
+    "links": []
+   }
+  ],
+  "policy": "The send stays a human writing to another human — this gate has no transport, no address book, no credential and no network call, and its own suite asserts that. What it removes is the twelve-times-repeated judgement call: rule-7 language, an experience claim past 15+ years, the forbidden name, a figure the plan page does not carry, a link that resolves to nothing, and any real contact detail (Rule 11 — this file is read in demos and screenshots). An external link cannot be resolved without a network call and is UNCHECKED with its reason: not a failure, but still counted as work a person has to do. The sheet is excluded from the tracked tree because this repository's root is served; that is reported as its own class rather than fixed by moving outreach copy into live URL space."
+ },
+ "staleClaims": [],
+ "unmeasuredFigures": [
+  {
+   "name": "testsPassedBeforeAnyWrite",
+   "reason": "the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped"
+  },
+  {
+   "name": "suitesGreenBeforeAnyWrite",
+   "reason": "the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped"
+  }
+ ]
 }

@@ -1,12 +1,12 @@
 {
- "status": "active build — a lane merged, the full registry not re-run",
- "milestone": "The newest direction for the AXIS console — the globe above the Overview deck it fronts, and an unhurried American voice — was built on top of the shared line and had never been merged into it. It is merged now, so the console a browser loads is the one most recently asked for.",
- "readiness": "Built and tested. Measured this cycle: the merged result of the changed files was materialised and run, and both suites covering it are green. The full registry was not re-run this cycle and is therefore not claimed green, and the last figure taken is not repeated as if fresh. Publishing to the live site stays a deliberate manual step.",
+ "status": "active build — a suite is red",
+ "milestone": "The console you talk to and the console this site serves are the same build again. Five changes to how AXIS looks and sounds had been made and were sitting unmerged; they are merged, and every check that covers them was run against the merged result rather than against either side.",
+ "readiness": "Built and tested. Two checks reported as open for several cycles are closed rather than reported again: each was a file present on the build machine and in no copy of the project. One check stays held open by work in progress on that machine, and is reported as held open, not as passing. Publishing to the live site stays a deliberate manual step, and pricing stays under review before publication.",
  "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build and is voice-operable: the spoken status answer reads this feed, regenerated from measurements taken this cycle. Sent: 0. Meetings 0, revenue none. Tests this cycle: both suites covering the merged change ran green on the merged result; the full registry was not re-run.",
+ "headline": "ARIA / AXIS is in active build and is voice-operable: the spoken status answer reads this feed, and this feed is regenerated from measurements taken this cycle. Sent: 0. Meetings 0, revenue none. Tests: 1074 pass, 0 fail (registry exit 1 — a suite is held open and is not counted as green); site suite 111/111.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
  "schema": "axis-status/1",
- "generatedAt": "2026-08-12T17:41:35.814Z",
+ "generatedAt": "2026-08-12T19:12:21.216Z",
  "public": true,
  "honest": true
 }
