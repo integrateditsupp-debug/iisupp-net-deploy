@@ -182,13 +182,20 @@ Neither party is liable for delays or failures caused by acts of God, war, terro
 
 ## Schedule B — Service Level Agreement (SLA)
 
-| Tier | Personal | Pro | SBA | Mid | Enterprise |
-|---|---|---|---|---|---|
-| Uptime guarantee | 99.5% | 99.5% | 99.9% | 99.9% | 99.95% |
-| P1 response time | Next biz day | 4 hr | 1 hr | 30 min | 15 min |
-| P2 response time | 5 biz day | Next biz day | 4 hr | 2 hr | 1 hr |
-| Service credit < SLA | None | None | 10% / 0.1% below | 10% / 0.1% below | 20% / 0.1% below |
-| Scheduled maintenance window | Sat 02:00-06:00 ET | Sat 02:00-06:00 ET | Sat 02:00-06:00 ET | Customer-coordinated | Customer-coordinated |
+Plan names in this Schedule are the same names used in Schedule A. A name that appears in one and
+not the other is a drift and is caught by `tests/plan-name-consistency.test.mjs`.
+
+| Tier | Personal | Pro | Small Business | Mid-Size | Enterprise | Custom |
+|---|---|---|---|---|---|---|
+| Uptime guarantee | 99.5% | 99.5% | 99.9% | 99.9% | 99.95% | N/A |
+| P1 response time | Next biz day | 4 hr | 1 hr | 30 min | 15 min | N/A |
+| P2 response time | 5 biz day | Next biz day | 4 hr | 2 hr | 1 hr | N/A |
+| Service credit < SLA | None | None | 10% / 0.1% below | 10% / 0.1% below | 20% / 0.1% below | N/A |
+| Scheduled maintenance window | Sat 02:00-06:00 ET | Sat 02:00-06:00 ET | Sat 02:00-06:00 ET | Customer-coordinated | Customer-coordinated | Customer-coordinated |
+
+**Custom plan.** "N/A" above means *no standing service level is promised by this Schedule* — it is not
+a hidden commitment and it is not a blank. A Custom engagement's service levels are written into
+Schedule A for that Customer and are binding there. Until Schedule A states them, none are owed.
 
 Service credits are Customer's sole and exclusive remedy for SLA breaches, capped at 30% of monthly fee per month.
 
