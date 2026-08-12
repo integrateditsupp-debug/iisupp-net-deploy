@@ -9,6 +9,7 @@ import test from "node:test";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 import {
   auditCurrency, readDeclarations, readDirection, statementFor,
   SURFACES, UNRUN_SURFACES, VERDICT, HOW, ROLE, DECISION_FILE,
@@ -18,7 +19,7 @@ const root = path.resolve(import.meta.dirname, "..");
 
 /** A fixture tree carrying only the surfaces a case needs. Removed by the caller. */
 function fixture(files) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "currency-fixture-"));
+  const dir = makeScratchDir("currency-fixture-");
   for (const [rel, body] of Object.entries(files)) {
     const abs = path.join(dir, rel);
     fs.mkdirSync(path.dirname(abs), { recursive: true });

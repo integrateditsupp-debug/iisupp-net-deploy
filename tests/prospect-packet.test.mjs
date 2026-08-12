@@ -13,12 +13,13 @@ import {
   assemblePacket, packetManifest, headTree, discardPacket, statementFor, PACKET,
 } from "../scripts/lib/prospect-packet.mjs";
 import { auditClientFacing } from "../scripts/lib/client-facing-leak.mjs";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 
 /** A real, tiny git repository — the only honest way to test a module whose source is HEAD. */
 function repo({ committed = {}, workingOnly = {} }) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "packet-repo-"));
+  const dir = makeScratchDir("packet-repo-");
   const git = (...args) => execFileSync("git", args, { cwd: dir, stdio: ["ignore", "pipe", "ignore"] });
   git("init", "-q");
   git("config", "user.email", "t@example.invalid");
@@ -99,7 +100,7 @@ test("AW3 — an empty SECTION fails, because promising nothing is not the same 
 });
 
 test("AW3 — an unreadable HEAD is reported as unknown and never guessed", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "packet-nogit-"));
+  const dir = makeScratchDir("packet-nogit-");
   const r = assemblePacket({ root: dir, packet: ONE, dryRun: true });
   assert.equal(r.headReadable, false);
   assert.equal(r.summary.ok, false);

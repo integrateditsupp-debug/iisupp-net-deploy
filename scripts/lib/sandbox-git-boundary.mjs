@@ -238,3 +238,51 @@ export function confirmPorcelainBlocked({ root = process.cwd() } = {}) {
     } catch { LAST_CONFIRM_LEFT_LOCK = null; /* the boundary itself; recorded above, never fatal here */ }
   }
 }
+
+// ── RUN-BH / BH2b — WHERE A PARKED LOCK IS ALLOWED TO REST.
+//
+// Found by running it, this cycle. `.git/refs/heads/main.lock` could not be unlinked, so it was
+// PARKED by rename — to `.git/refs/heads/main.lock.parked-1786505853`, beside the ref it belonged
+// to. That looked tidy and was wrong: git reads EVERY FILE UNDER `refs/` as a ref, so an empty
+// parked lock became a ref named `refs/heads/main.lock.parked-1786505853` pointing at nothing, and
+// the next command that walks all refs died on it —
+//
+//     git bundle verify -> fatal: bad object refs/heads/main.lock.parked-1786505853
+//
+// which read, from the outside, as a corrupt delivery bundle. It was not: the bundle was intact and
+// the ref directory was polluted. The remedy is a place to put them that git does not read.
+export const PARK_DIR = "_stale-locks";
+
+/** Any file under `.git/refs` that git will try to resolve as a ref and cannot. Never throws. */
+export function findPollutedRefs({ root = process.cwd() } = {}) {
+  const refs = path.join(root, ".git", "refs");
+  const bad = [];
+  const walk = (dir) => {
+    let entries = [];
+    try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
+    for (const e of entries) {
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) { walk(p); continue; }
+      if (/\.lock(\.|$)/.test(e.name)) bad.push(path.relative(root, p));
+    }
+  };
+  walk(refs);
+  return bad;
+}
+
+/**
+ * Park a lock file somewhere git does not read, on a mount that refuses unlink.
+ * Returns { parked, to, reason }. Never throws — a caller mid-commit must not die here.
+ */
+export function parkLockFile(lockPath, { root = process.cwd(), stamp = Date.now() } = {}) {
+  const dest = path.join(root, ".git", PARK_DIR, `bh-${stamp}`);
+  try {
+    if (!fs.existsSync(lockPath)) return { parked: false, to: null, reason: "no such lock" };
+    fs.mkdirSync(dest, { recursive: true });
+    const to = path.join(dest, path.basename(lockPath));
+    fs.renameSync(lockPath, to);
+    return { parked: true, to: path.relative(root, to), reason: "renamed out of any directory git walks" };
+  } catch (err) {
+    return { parked: false, to: null, reason: `${err.code || err.message}` };
+  }
+}

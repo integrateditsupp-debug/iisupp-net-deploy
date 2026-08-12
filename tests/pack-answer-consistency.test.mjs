@@ -9,6 +9,7 @@ import test from "node:test";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 import {
   auditPack, auditTopic, answersFor, readDeclarations, statementFor,
   TOPICS, NORMALISE, VERDICT, CONFLICT_REGISTER,
@@ -18,7 +19,7 @@ const root = path.resolve(import.meta.dirname, "..");
 
 /** A throwaway pack. Nothing is read from the real tree in the planted cases. */
 function pack(files) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pack-answers-"));
+  const dir = makeScratchDir("pack-answers-");
   for (const [rel, text] of Object.entries(files)) {
     const abs = path.join(dir, rel);
     fs.mkdirSync(path.dirname(abs), { recursive: true });

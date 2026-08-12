@@ -18,6 +18,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -45,7 +46,7 @@ const SILENT = page("<h1>Product</h1><p>Integrated IT Support Inc. Product overv
 const LIES = page("<h1>We save you hours every week.</h1><p>Money-back guarantee on every engagement.</p>");
 
 function tmpSite(files) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "ap1-"));
+  const dir = makeScratchDir("ap1-");
   for (const [rel, html] of Object.entries(files)) {
     const abs = path.join(dir, rel);
     fs.mkdirSync(path.dirname(abs), { recursive: true });

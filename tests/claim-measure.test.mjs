@@ -27,6 +27,7 @@ import {
 } from '../scripts/lib/claim-measure.mjs';
 import { stamp, auditClaim } from '../scripts/lib/claim-evidence.mjs';
 import { emitAxisStatus } from '../scripts/lib/axis-status-emit.mjs';
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const t = (name, fn) => test(name, fn);
@@ -154,7 +155,7 @@ t('G6c — a failure that IS the measurement is allowed, and records the non-zer
 });
 
 t('G6d — measureFile reads the file itself and records the byte count', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'claim-measure-'));
+  const dir = makeScratchDir('claim-measure-');
   fs.writeFileSync(path.join(dir, 'sheet.md'), '1. a\n2. b\n3. c\n');
   const m = measureDraftedMessages({ root: dir, file: 'sheet.md' });
   assert.equal(m.value, 3, 'counted from the file, not asserted');
@@ -184,7 +185,7 @@ t('G6f — measureCommitsAhead runs a real revision count against this repositor
 
 /* ── G7 · the emitter refuses the write, so the audit cannot be skipped ─────────────────────── */
 t('G7 — emitAxisStatus REFUSES a payload whose measurable figure was hand-typed, and writes nothing', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'claim-measure-emit-'));
+  const dir = makeScratchDir('claim-measure-emit-');
   const publicFields = {
     status: 'active build', milestone: 'm', readiness: 'r', revenueToDate: 'none',
     headline: 'h', generatedAt: new Date().toISOString(),

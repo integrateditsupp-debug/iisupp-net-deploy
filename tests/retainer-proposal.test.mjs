@@ -18,6 +18,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 import {
   readPricingSources, generateRetainerProposal, statementFor,
   REFUSALS, REQUIRED_SECTIONS, PROPOSAL_SCHEMA, PRICING_FILE,
@@ -27,7 +28,7 @@ const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 /** A miniature published plan table, shaped exactly like the real page's comparison row. */
 function pricedWorld(row = '<td>Price</td><td>$1,200/mo</td><td>$3,400/mo (billed annually)</td>') {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "at2-proposal-"));
+  const dir = makeScratchDir("at2-proposal-");
   fs.mkdirSync(path.join(dir, "plans"));
   fs.writeFileSync(
     path.join(dir, "plans/index.html"),
@@ -67,7 +68,7 @@ test("AT2 · a proposal addressed to nobody is REFUSED", () => {
 });
 
 test("AT2 · no pricing page means no proposal — never a remembered default", () => {
-  const empty = fs.mkdtempSync(path.join(os.tmpdir(), "at2-nopricing-"));
+  const empty = makeScratchDir("at2-nopricing-");
   const r = generateRetainerProposal({ root: empty, client: "Acme", planKey: "growth" });
   assert.equal(r.ok, false);
   assert.ok(r.refusals.some((x) => x.class === REFUSALS.NO_SOURCE));

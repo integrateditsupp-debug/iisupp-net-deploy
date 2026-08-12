@@ -25,6 +25,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -70,7 +71,7 @@ const HISTORY = [
 ].join("\n");
 
 function tmpRepo({ block = STALE_BLOCK, truth = null, feed = null } = {}) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "ap4-"));
+  const dir = makeScratchDir("ap4-");
   fs.mkdirSync(path.join(dir, "senior-director-state"), { recursive: true });
   fs.mkdirSync(path.join(dir, "netlify/functions"), { recursive: true });
   fs.writeFileSync(path.join(dir, LEDGER_FILE), block + HISTORY);

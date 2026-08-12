@@ -18,6 +18,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 import {
   auditPrimaryActions, auditFile, extractAsks, gradeAsk, resolveTarget, statementFor,
   ACTION_CLASSES, VERDICT, COST, READER_FACING, NOT_READER_FACING,
@@ -27,7 +28,7 @@ import {
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 function scratch(files = {}) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "as3-action-"));
+  const dir = makeScratchDir("as3-action-");
   for (const [rel, body] of Object.entries(files)) {
     const abs = path.join(dir, rel);
     fs.mkdirSync(path.dirname(abs), { recursive: true });

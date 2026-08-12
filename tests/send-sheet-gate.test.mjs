@@ -14,6 +14,7 @@ import {
   CHECKS, SEND_SHEET_FILE, SEVERITY, SENDS, UNTRACKED,
 } from "../scripts/lib/send-sheet-gate.mjs";
 import { publishedMoney } from "../scripts/lib/client-facing-leak.mjs";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 const SHEET = "outbound/SHEET.md";
@@ -24,7 +25,7 @@ const sheetWith = (bodies, { claimed = bodies.length } = {}) =>
   "\n---\n\n## AFTER YOU SEND\n\nSending stays your action.\n";
 
 function fixture(bodies, extra = {}, opts = {}) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "send-sheet-"));
+  const dir = makeScratchDir("send-sheet-");
   fs.mkdirSync(path.join(dir, "outbound"), { recursive: true });
   fs.writeFileSync(path.join(dir, SHEET), sheetWith(bodies, opts));
   fs.mkdirSync(path.join(dir, "plans"), { recursive: true });
@@ -145,7 +146,7 @@ test("a published figure is fine; the check is against the page the recipient wi
 });
 
 test("an empty message body is refused — a sheet that lists one is not ready to send", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "send-sheet-empty-"));
+  const dir = makeScratchDir("send-sheet-empty-");
   try {
     fs.mkdirSync(path.join(dir, "outbound"), { recursive: true });
     fs.writeFileSync(path.join(dir, SHEET), "# S\n\n**1 live**\n\n### 1 · WR-R001 — a label\n\n### 2 · WR-R002 — b\n\n> real body\n");
@@ -238,7 +239,7 @@ test("deliberate exclusion and mere absence are different facts", () => {
 });
 
 test("an unreadable sheet never reports ok, and never reports a judgement-call count it did not compute", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "send-sheet-none-"));
+  const dir = makeScratchDir("send-sheet-none-");
   try {
     const r = auditSendSheet({ root: dir, file: SHEET });
     assert.equal(r.summary.ok, false);

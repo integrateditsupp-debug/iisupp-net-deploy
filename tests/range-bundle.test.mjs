@@ -17,6 +17,7 @@ import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 import {
   createRangeBundle, verifyRangeBundle, BUNDLE_CLASSES,
   BUNDLE_FILE, MANIFEST_FILE, RANGE_BUNDLE_SCHEMA, SENDS, digestFile,
@@ -27,7 +28,7 @@ const git = (args, cwd) => execFileSync("git", args, { cwd, encoding: "utf8", st
 
 /** A tiny real repository, so every assertion below is against git and not against a fake. */
 function scratchRepo() {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "ar2-bundle-"));
+  const dir = makeScratchDir("ar2-bundle-");
   git(["init", "-q", "-b", "main"], dir);
   git(["config", "user.email", "t@example.invalid"], dir);
   git(["config", "user.name", "T"], dir);
@@ -70,7 +71,7 @@ test("AR2 — the bundle actually reproduces the tree, fetched by a receiver tha
   assert.equal(made.ok, true, made.detail);
 
   // A separate repository holding ONLY the base commit — the receiver's situation exactly.
-  const rx = fs.mkdtempSync(path.join(os.tmpdir(), "ar2-rx-"));
+  const rx = makeScratchDir("ar2-rx-");
   git(["init", "-q", "-b", "main"], rx);
   git(["config", "user.email", "t@example.invalid"], rx);
   git(["config", "user.name", "T"], rx);
@@ -162,7 +163,7 @@ test("AR2 — RED: a bundle with no manifest proves nothing and must say so", ()
 });
 
 test("AR2 — RED: a missing bundle is missing, not 'fine'", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "ar2-empty-"));
+  const dir = makeScratchDir("ar2-empty-");
   const res = verifyRangeBundle({ root: dir });
   assert.equal(res.ok, false);
   assert.equal(res.class, BUNDLE_CLASSES.NOT_ON_DISK);

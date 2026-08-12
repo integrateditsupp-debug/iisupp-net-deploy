@@ -16,6 +16,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -84,7 +85,7 @@ test("naming a file that does not exist fails — the click would have nothing t
 });
 
 test("an EMPTY artefact is not a handover", () => {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "staged-guard-"));
+  const tmp = makeScratchDir("staged-guard-");
   try {
     fs.writeFileSync(path.join(tmp, "empty.md"), "");
     const f = auditStagedAction({ item: "x", what: "y", artefact: "empty.md" }, { root: tmp });

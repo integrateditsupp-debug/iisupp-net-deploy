@@ -14,6 +14,7 @@ import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 import {
   probeGitBoundary, confirmPorcelainBlocked, statementFor, WORKAROUND,
   BOUNDARY_CLASSES, LOCK_NAMES, SANDBOX_GIT_BOUNDARY_SCHEMA, SENDS,
@@ -34,7 +35,7 @@ test("AR3 — the probe never throws, whatever it is pointed at", () => {
 });
 
 test("AR3 — a directory that is not a repository is classified, not failed", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "ar3-norepo-"));
+  const dir = makeScratchDir("ar3-norepo-");
   const r = probeGitBoundary({ root: dir });
   assert.equal(r.class, BOUNDARY_CLASSES.NOT_A_REPO);
   assert.equal(r.gitDirPresent, false);
@@ -42,7 +43,7 @@ test("AR3 — a directory that is not a repository is classified, not failed", (
 });
 
 test("AR3 — a healthy repository reports CLEAR and porcelain open", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "ar3-clean-"));
+  const dir = makeScratchDir("ar3-clean-");
   git(["init", "-q", "-b", "main"], dir);
   const r = probeGitBoundary({ root: dir });
   assert.equal(r.class, BOUNDARY_CLASSES.CLEAR);
@@ -53,7 +54,7 @@ test("AR3 — a healthy repository reports CLEAR and porcelain open", () => {
 });
 
 test("AR3 — a REMOVABLE stale lock is a nuisance, and is classified as one", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "ar3-lock-"));
+  const dir = makeScratchDir("ar3-lock-");
   git(["init", "-q", "-b", "main"], dir);
   fs.writeFileSync(path.join(dir, ".git/index.lock"), "");
   const r = probeGitBoundary({ root: dir });
@@ -95,7 +96,7 @@ test("AR3 — the recorded workaround is complete enough to follow without redis
 
 test("AR3 — the workaround actually produces a commit where porcelain is blocked", () => {
   // The claim is tested for real: a repository whose index.lock exists, committed via plumbing.
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "ar3-plumb-"));
+  const dir = makeScratchDir("ar3-plumb-");
   git(["init", "-q", "-b", "main"], dir);
   git(["config", "user.email", "t@example.invalid"], dir);
   git(["config", "user.name", "T"], dir);

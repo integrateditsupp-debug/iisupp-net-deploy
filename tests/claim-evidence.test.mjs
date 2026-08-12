@@ -19,6 +19,7 @@ import {
   ageHours, maxAgeHoursFor, annotateStaleness, staleClaims, auditAndAnnotate,
 } from "../scripts/lib/claim-evidence.mjs";
 import { emitAxisStatus } from "../scripts/lib/axis-status-emit.mjs";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 // Anchored to real time on purpose: the emitter tests below go through the real writer, which uses
 // the real clock. A frozen fixture would make every stamp look like it was measured in the future.
@@ -40,7 +41,7 @@ const headline = () => ({
 });
 
 function tmpRoot() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "claim-evidence-"));
+  return makeScratchDir("claim-evidence-");
 }
 
 test("claim-evidence — AK1: a well-formed claim passes and declares its schema", () => {

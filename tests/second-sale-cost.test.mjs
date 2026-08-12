@@ -24,6 +24,7 @@ import {
 } from "../scripts/lib/second-sale-cost.mjs";
 import { SIGNAL } from "../scripts/lib/churn-signals.mjs";
 import { STAGE } from "../scripts/lib/term-and-exit.mjs";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 
@@ -31,7 +32,7 @@ const churnWith = (signals) => ({ signals });
 const exitWith = (stages) => ({ stages });
 
 function repo(committed) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "second-sale-repo-"));
+  const dir = makeScratchDir("second-sale-repo-");
   const git = (...a) => execFileSync("git", a, { cwd: dir, stdio: ["ignore", "pipe", "ignore"] });
   git("init", "-q");
   git("config", "user.email", "t@example.invalid");
@@ -212,7 +213,7 @@ test("AZ3 — every step is either backed by named artefacts, a signal, a stage,
 });
 
 test("AZ3 — an unreadable tree reports uncounted rather than assumed", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "second-nogit-"));
+  const dir = makeScratchDir("second-nogit-");
   const r = priceSecondSale({
     root: dir,
     steps: [{ id: "S", step: "s", needs: ["plans/index.html"] }],

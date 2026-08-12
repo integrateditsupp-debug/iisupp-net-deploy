@@ -12,6 +12,7 @@ import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 import { execFileSync } from "node:child_process";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 import {
   auditChurnSignals,
   auditSignal,
@@ -26,7 +27,7 @@ import {
 const root = path.resolve(import.meta.dirname, "..");
 
 function repo(committed) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "churn-signals-repo-"));
+  const dir = makeScratchDir("churn-signals-repo-");
   const git = (...a) => execFileSync("git", a, { cwd: dir, stdio: ["ignore", "pipe", "ignore"] });
   git("init", "-q");
   git("config", "user.email", "t@example.invalid");
@@ -186,7 +187,7 @@ test("AZ1 — a declared unobservable commitment is reported and does NOT hold t
 });
 
 test("AZ1 RED — a declaration for a commitment a signal now covers is STALE and goes red", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "churn-reg-"));
+  const dir = makeScratchDir("churn-reg-");
   fs.mkdirSync(path.join(dir, "docs"), { recursive: true });
   fs.writeFileSync(
     path.join(dir, "docs/REG.md"),
@@ -205,7 +206,7 @@ test("AZ1 RED — a declaration for a commitment a signal now covers is STALE an
 });
 
 test("AZ1 RED — a rubber-stamp declaration is REFUSED and goes red", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "churn-reg2-"));
+  const dir = makeScratchDir("churn-reg2-");
   fs.mkdirSync(path.join(dir, "docs"), { recursive: true });
   fs.writeFileSync(
     path.join(dir, "docs/REG.md"),
@@ -262,7 +263,7 @@ test("AZ1 — every signal carries who it costs and what it costs them", () => {
 });
 
 test("AZ1 — an unreadable tree reports UNSOURCED rather than silently green", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "churn-nogit-"));
+  const dir = makeScratchDir("churn-nogit-");
   const a = auditSignal({ id: "s", question: "q", receivers: ["fn/x.mjs"], commitments: [] }, { root: dir });
   assert.equal(a.state, SIGNAL.UNSOURCED);
   fs.rmSync(dir, { recursive: true, force: true });

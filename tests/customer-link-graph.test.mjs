@@ -16,6 +16,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -26,7 +27,7 @@ const {
 
 // A throwaway site on disk. Nothing here touches the real repository.
 function fixture(files) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "an1-"));
+  const dir = makeScratchDir("an1-");
   for (const [rel, body] of Object.entries(files)) {
     const abs = path.join(dir, rel);
     fs.mkdirSync(path.dirname(abs), { recursive: true });

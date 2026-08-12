@@ -14,11 +14,12 @@ import {
   COMMITMENTS, SUPPORT_REGISTER, SUPPORT_COMMITMENT_SCHEMA,
 } from "../scripts/lib/support-commitments.mjs";
 import { VERDICT } from "../scripts/lib/pack-answer-consistency.mjs";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 
 function fixture(files) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "support-fixture-"));
+  const dir = makeScratchDir("support-fixture-");
   for (const [rel, text] of Object.entries(files)) {
     const abs = path.join(dir, rel);
     fs.mkdirSync(path.dirname(abs), { recursive: true });

@@ -8,6 +8,7 @@ import test from "node:test";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 import {
   reconcileClaims, collectClaims, readClaimDeclarations, readPublished, publishedCitation,
   statementFor, hasCondition, hasEvidence, isForwardLooking, isDisclaimed,
@@ -18,7 +19,7 @@ const root = path.resolve(import.meta.dirname, "..");
 
 /** A throwaway tree: documents to read, a register to read them against. Nothing in-repo is written. */
 function sandbox({ docs = {}, register = null, pages = {} }) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "claim-register-"));
+  const dir = makeScratchDir("claim-register-");
   for (const [rel, text] of Object.entries(docs)) {
     const abs = path.join(dir, rel);
     fs.mkdirSync(path.dirname(abs), { recursive: true });

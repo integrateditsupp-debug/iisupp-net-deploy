@@ -16,12 +16,13 @@ import {
   STATE, PACK_GLOBS, CITATION_GAPS,
 } from "../scripts/lib/answer-citations.mjs";
 import { assemblePacket } from "../scripts/lib/prospect-packet.mjs";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 
 /** A real, tiny git repository — the only honest way to test a module whose source is HEAD. */
 function repo({ committed = {}, workingOnly = {} } = {}) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "citations-repo-"));
+  const dir = makeScratchDir("citations-repo-");
   const git = (...a) => execFileSync("git", a, { cwd: dir, stdio: ["ignore", "pipe", "ignore"] });
   git("init", "-q");
   git("config", "user.email", "t@example.invalid");
@@ -189,7 +190,7 @@ test("AX2 — one promise, one row: a section citation is not double-counted as 
 });
 
 test("AX2 — RED: an unreadable HEAD is reported, never assumed clean", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "not-a-repo-"));
+  const dir = makeScratchDir("not-a-repo-");
   const r = auditCitations({ root: dir, gapsFile: GAPS });
   assert.equal(r.headReadable, false);
   assert.equal(r.summary.ok, false);

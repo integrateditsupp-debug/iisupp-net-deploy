@@ -29,6 +29,7 @@ import {
   feedAgeHours, auditGeneratedAt, auditFeedObject, checkFeedFreshness, requireFreshGeneratedAt,
 } from "../scripts/lib/feed-freshness.mjs";
 import { emitAxisStatus, checkPublicFiles, PUBLIC_STATUS_FILES } from "../scripts/lib/axis-status-emit.mjs";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 const NOW = new Date();
 const hoursAgo = (h) => new Date(NOW.getTime() - h * 3_600_000).toISOString();
@@ -43,7 +44,7 @@ const headline = (extra = {}) => ({
   ...extra,
 });
 
-const tmpRoot = () => fs.mkdtempSync(path.join(os.tmpdir(), "feed-freshness-"));
+const tmpRoot = () => makeScratchDir("feed-freshness-");
 const readMirror = (root, rel) => JSON.parse(fs.readFileSync(path.join(root, rel), "utf8"));
 const writeMirror = (root, rel, obj) => {
   const p = path.join(root, rel);

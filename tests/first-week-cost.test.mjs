@@ -11,11 +11,12 @@ import path from "node:path";
 import os from "node:os";
 import { execFileSync } from "node:child_process";
 import { priceFirstWeek, statementFor, FIRST_WEEK, ACT, FIRST_WEEK_SCHEMA } from "../scripts/lib/first-week-cost.mjs";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 
 function repo(committed) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "first-week-repo-"));
+  const dir = makeScratchDir("first-week-repo-");
   const git = (...a) => execFileSync("git", a, { cwd: dir, stdio: ["ignore", "pipe", "ignore"] });
   git("init", "-q");
   git("config", "user.email", "t@example.invalid");
@@ -117,7 +118,7 @@ test("AY3 — every for-want act names its missing artefact; forWantUnnamed is t
 });
 
 test("AY3 RED — an unreadable HEAD makes every artefact step UNCOUNTED, never assumed fine", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "not-a-repo-"));
+  const dir = makeScratchDir("not-a-repo-");
   try {
     const r = priceFirstWeek({ root: dir, steps: [{ id: "W-01", day: 1, step: "the tenant is set up for the customer", needs: ["a.md"] }] });
     assert.equal(r.steps[0].cost, ACT.UNCOUNTED);

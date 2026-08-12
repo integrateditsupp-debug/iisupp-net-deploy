@@ -11,11 +11,12 @@ import os from "node:os";
 import { execFileSync } from "node:child_process";
 import { priceFollowUp, statementFor, FOLLOW_UP, COST } from "../scripts/lib/answer-cost.mjs";
 import { readGapDeclarations } from "../scripts/lib/answer-citations.mjs";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 
 function repo({ committed = {} } = {}) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "answer-cost-repo-"));
+  const dir = makeScratchDir("answer-cost-repo-");
   const git = (...a) => execFileSync("git", a, { cwd: dir, stdio: ["ignore", "pipe", "ignore"] });
   git("init", "-q");
   git("config", "user.email", "t@example.invalid");
@@ -82,7 +83,7 @@ test("AX3 — by-design and for-want are never collapsed into one number", () =>
 });
 
 test("AX3 — RED: an unreadable HEAD leaves the cost UNCOUNTED, never assigned", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "answer-cost-norepo-"));
+  const dir = makeScratchDir("answer-cost-norepo-");
   const r = priceFollowUp({ root: dir, questions: [Q_POINT], gapsFile: GAPS });
   assert.equal(r.summary.uncounted, 1);
   assert.equal(r.summary.pointable, 0, "a cost silently assigned is a cost nobody will check");

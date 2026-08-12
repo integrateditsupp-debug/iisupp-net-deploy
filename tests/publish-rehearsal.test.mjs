@@ -20,6 +20,7 @@ import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 import {
   rehearsePublish, statementFor, parseServingRules, judgeServingFor, servedPathFor,
   patternMatches, REHEARSAL_CLASSES, VERDICT, PUBLISHED_SET, PUBLISH_REHEARSAL_SCHEMA,
@@ -38,7 +39,7 @@ const git = (args, cwd) =>
  * carrying that range, and a manifest describing it. Every assertion below runs against real git.
  */
 function scratchWorld({ toml = "[build]\n  publish = \".\"\n", secondFile = "hello\n" } = {}) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "as2-rehearsal-"));
+  const dir = makeScratchDir("as2-rehearsal-");
   const repo = path.join(dir, "repo");
   fs.mkdirSync(repo);
   git(["init", "--quiet", "--initial-branch=main"], repo);
@@ -226,7 +227,7 @@ test("AS2 — a SHALLOW source repository still rehearses: the receiver is not r
   // simplification that drops the depth flag goes red instead of going quiet.
   const w = scratchWorld();
   try {
-    const shallowDir = fs.mkdtempSync(path.join(os.tmpdir(), "as2-shallow-"));
+    const shallowDir = makeScratchDir("as2-shallow-");
     const shallow = path.join(shallowDir, "shallow");
     git(["clone", "--quiet", "--depth=1", `file://${w.repo}`, shallow], os.tmpdir());
     fs.mkdirSync(path.join(shallow, "senior-director-state/delivery"), { recursive: true });

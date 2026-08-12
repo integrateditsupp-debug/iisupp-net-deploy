@@ -17,6 +17,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -37,7 +38,7 @@ ${body}
 const classesOf = (r) => r.findings.map((f) => f.class);
 
 function fixture(files) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "ao1-"));
+  const dir = makeScratchDir("ao1-");
   for (const [rel, body] of Object.entries(files)) {
     const abs = path.join(dir, rel);
     fs.mkdirSync(path.dirname(abs), { recursive: true });

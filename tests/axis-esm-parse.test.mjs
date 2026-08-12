@@ -14,10 +14,11 @@ import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ASSETS = path.join(ROOT, 'assets');
-const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'axis-esm-'));
+const tmp = makeScratchDir('axis-esm-');
 
 const mods = fs.readdirSync(ASSETS).filter((f) => f.startsWith('axis-') && f.endsWith('.js'));
 assert.ok(mods.length >= 10, `expected the axis module set, found ${mods.length}`);

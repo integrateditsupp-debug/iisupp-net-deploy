@@ -10,6 +10,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 let n = 0; const ok = () => { n++; };
 
@@ -62,7 +63,7 @@ for (const bad of [sha, branch, oneClick, script, gitState, 'observer run 118', 
 ok();
 
 // ---- 4. round-trip into a temp repo: public mirrors headline-only, full detail internal ----
-const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'axis-emit-'));
+const tmp = makeScratchDir('axis-emit-');
 const res = emitAxisStatus({ root: tmp, publicFields: { ...GOOD }, fullDetail: { lanes: [{ lane: 'x', note: `internal ${sha} ${oneClick}` }] } });
 assert.equal(res.written.public.length, 2, 'both public mirrors written');
 assert.equal(res.written.internal, INTERNAL_FULL_FILE, 'full detail written to the internal path');

@@ -11,6 +11,7 @@ import test from "node:test";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 import {
   reconcileQuotedFigures, collectFigures, readFigureDeclarations, statementFor, normalizeMoney,
   CLASS, CONTRADICTION, CLIENT_FACING_DIRS, DECLARATIONS_FILE,
@@ -19,7 +20,7 @@ import {
 const root = path.resolve(import.meta.dirname, "..");
 
 function fixture(files) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "quoted-figures-"));
+  const dir = makeScratchDir("quoted-figures-");
   for (const [rel, body] of Object.entries(files)) {
     const abs = path.join(dir, rel);
     fs.mkdirSync(path.dirname(abs), { recursive: true });

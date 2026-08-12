@@ -18,6 +18,7 @@ import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 import {
   resolveYesPath, statementFor, canonicalContact, contactFindings, handInputs,
   CLASSES, STEPS, YES_PATH_SCHEMA,
@@ -32,7 +33,7 @@ const git = (args, cwd) =>
 
 /** A miniature of the real situation, built with real git so "tracked" means what git means. */
 function world({ files = {}, ignore = "", track = true } = {}) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "at1-yespath-"));
+  const dir = makeScratchDir("at1-yespath-");
   git(["init", "--quiet", "--initial-branch=main"], dir);
   git(["config", "user.email", "t@t.t"], dir);
   git(["config", "user.name", "t"], dir);
@@ -121,7 +122,7 @@ test("AT1 · a step takes its BEST artefact and no better", () => {
 });
 
 test("AT1 · outside a repository the tracked read is declared unreadable, not assumed", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "at1-norepo-"));
+  const dir = makeScratchDir("at1-norepo-");
   fs.writeFileSync(path.join(dir, "a.md"), "x\n");
   const r = resolveYesPath({ root: dir, steps: [step("s", [doc("a.md")])] });
   assert.equal(r.trackedReadable, false);

@@ -8,6 +8,7 @@ import test from "node:test";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 import {
   rehearseInvoice, statementFor, publishedCurrency, chargeCurrency, chargeableKeys,
   INVOICE_CLASSES, VERDICT, SENDS, CHARGES, READS_KEYS, WRITES_IN_REPO,
@@ -17,7 +18,7 @@ const root = path.resolve(import.meta.dirname, "..");
 
 /** A fixture tree with only the two files the rehearsal reads. Removed by the caller. */
 function fixture({ priceRow, currencyWord, checkoutBody }) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "invoice-fixture-"));
+  const dir = makeScratchDir("invoice-fixture-");
   fs.mkdirSync(path.join(dir, "plans"), { recursive: true });
   fs.mkdirSync(path.join(dir, "netlify/functions"), { recursive: true });
   fs.writeFileSync(path.join(dir, "plans/index.html"),

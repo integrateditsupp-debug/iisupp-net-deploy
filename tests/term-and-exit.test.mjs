@@ -12,6 +12,7 @@ import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 import { execFileSync } from "node:child_process";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 import {
   auditTermAndExit,
   walkStage,
@@ -26,7 +27,7 @@ import {
 const root = path.resolve(import.meta.dirname, "..");
 
 function repo(committed, uncommitted = {}) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "term-exit-repo-"));
+  const dir = makeScratchDir("term-exit-repo-");
   const git = (...a) => execFileSync("git", a, { cwd: dir, stdio: ["ignore", "pipe", "ignore"] });
   git("init", "-q");
   git("config", "user.email", "t@example.invalid");
@@ -270,7 +271,7 @@ test("AZ2 — every term topic exposes its value in capture group 1 of a real re
 });
 
 test("AZ2 — an unreadable tree reports unwalked rather than green", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "term-nogit-"));
+  const dir = makeScratchDir("term-nogit-");
   const r = auditTermAndExit({ root: dir, walk: EXIT_WALK, topics: [], registerFile: "docs/NOPE.md" });
   assert.equal(r.headReadable, false);
   assert.equal(r.summary.ok, false);

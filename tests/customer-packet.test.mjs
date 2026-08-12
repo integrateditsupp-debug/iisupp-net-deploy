@@ -10,6 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 import { execFileSync } from "node:child_process";
+import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
 import {
   assembleCustomerPacket, customerManifest, customerPacketFilesFor, headTree,
   discardCustomerPacket, statementFor, CUSTOMER_PACKET, CUSTOMER_PACKET_SCHEMA,
@@ -19,7 +20,7 @@ const root = path.resolve(import.meta.dirname, "..");
 
 /** A real, tiny git repository — the only honest way to test a module whose source is HEAD. */
 function repo({ committed = {}, workingOnly = {} }) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "customer-repo-"));
+  const dir = makeScratchDir("customer-repo-");
   const git = (...args) => execFileSync("git", args, { cwd: dir, stdio: ["ignore", "pipe", "ignore"] });
   git("init", "-q");
   git("config", "user.email", "t@example.invalid");
@@ -163,7 +164,7 @@ test("AY1 — a real assembly writes only into a throwaway directory, and it doe
 });
 
 test("AY1 RED — an unreadable HEAD is reported as unknown, never assumed to be fine", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "not-a-repo-"));
+  const dir = makeScratchDir("not-a-repo-");
   try {
     const head = headTree({ root: dir });
     assert.equal(head.readable, false);
