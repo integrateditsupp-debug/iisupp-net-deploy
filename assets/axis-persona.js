@@ -66,7 +66,16 @@ export const AXIS_MALE_DEMOTE = [
 //
 // AXIS stays apart from ARIA (en-US, rate .95 / pitch 1.05) on ACCENT now rather than on pitch —
 // AXIS is en-GB and scores +40 for it, and the name-collision demotes are untouched.
-export const AXIS_PROSODY = { rate: 0.97, pitch: 1.08, legacyRate: 1.0, volume: 0.9 };
+export const AXIS_PROSODY = { rate: 0.96, pitch: 1.12, legacyRate: 1.0, volume: 0.85 };
+
+// Bump this whenever the voice POLICY changes (preferred names or prosody). A voice pinned in
+// localStorage under an older revision is released back to the ranker on next load.
+//
+// Without this, a policy change is invisible: axisPickVoice() honours the pin before it ever
+// ranks, so a voice pinned once — including by a single axisVoiceNext() cycle — silently
+// outranked every later persona change. That is why 2026-08-12's voice change "did not change".
+// A deliberate pick still persists: axisSetVoice/axisVoiceNext stamp the current revision.
+export const VOICE_POLICY_REV = '2026-08-12-young-soft';
 
 // CROSS-ENGINE PARITY (2026-08-11, Ahmad: "on edge its one voice and chrome another").
 // Edge and Chrome ship different voice inventories — Edge has the "Online (Natural)" neural set
@@ -76,10 +85,10 @@ export const AXIS_PROSODY = { rate: 0.97, pitch: 1.08, legacyRate: 1.0, volume: 
 // and every other family is rate/pitch-corrected toward it — Google's voices run fast and bright,
 // so they get slowed and lowered the most. The result is one recognisable AXIS in either browser.
 export const VOICE_PROFILES = {
-  neural:  { rate: 0.97, pitch: 1.08, volume: 0.90 }, // Edge "Online (Natural)" — THE REFERENCE
-  google:  { rate: 0.92, pitch: 1.02, volume: 0.90 }, // Chrome network voices run fast + bright
-  premium: { rate: 0.95, pitch: 1.06, volume: 0.90 }, // macOS Siri/premium/enhanced
-  legacy:  { rate: 0.95, pitch: 1.07, volume: 0.94 }, // SAPI desktop — heavy shifts sound artificial
+  neural:  { rate: 0.96, pitch: 1.12, volume: 0.85 }, // Edge "Online (Natural)" — THE REFERENCE
+  google:  { rate: 0.92, pitch: 1.06, volume: 0.85 }, // Chrome network voices run fast + bright
+  premium: { rate: 0.95, pitch: 1.10, volume: 0.85 }, // macOS Siri/premium/enhanced
+  legacy:  { rate: 0.95, pitch: 1.09, volume: 0.90 }, // SAPI desktop — heavy shifts sound artificial
 };
 export function voiceFamily(name) {
   const n = String(name || '');
@@ -104,6 +113,64 @@ const SAY_AS = [
   [/\bvs\.?\b/gi, 'versus'], [/\betc\.?\b/gi, 'and so on'], [/\bapprox\.?\b/gi, 'roughly'],
   [/\bCAD\b/g, 'Canadian dollars'], [/\bASAP\b/g, 'as soon as possible'],
 ];
+// ── Screen text is not speech ────────────────────────────────────────────────
+// Ahmad, 2026-08-12: AXIS kept saying "Next: Accounting Plus Business Services — 29 days overdue.
+// queued → Approvals." That is a table row read out loud. "→" is not a word, "·" is not a word, a
+// field separator is not a sentence, and nobody says "29 days overdue" when they mean "about a
+// month behind".
+//
+// The underlying mistake was that the dock message and the spoken message were the SAME string, so
+// board formatting went straight to the speaker. This is the layer that separates them: the screen
+// keeps its compact badges, and the voice gets English. It runs on everything that reaches the
+// speaker — board answers, brain answers, task read-backs — so a template added later cannot leak
+// punctuation into speech the way this one did.
+const SPOKEN = [
+  // Status badges → what a person would actually say happened.
+  [/\bqueued\s*(?:→|->)\s*approvals?\b/gi, 'queued for your approval'],
+  [/\b(?:routed|sent)\s*(?:→|->)\s*/gi, 'routed to '],
+  [/\bdraft\s*[—-]\s*not sent\b/gi, 'drafted, not sent yet'],
+  [/\bawaiting approval\b/gi, 'waiting for your approval'],
+  [/\bclient waiting\b/gi, 'the client is waiting'],
+  [/\bwaiting on you\b/gi, 'waiting on you'],
+  // Any surviving arrow is a transition; say it.
+  [/\s*(?:→|->)\s*/g, ' to '],
+  // Separators that exist purely to pack a line: a spoken pause is a comma.
+  [/\s*·\s*/g, ', '],
+  [/\s+[—–]\s+/g, ', '],
+  // Label prefixes read as headings. Turn them into how someone opens a sentence.
+  [/^\s*Next:\s*/i, 'Next up, '],
+  [/^\s*Top:\s*/i, 'Top of the list, '],
+  [/\bTop:\s*/g, 'Top of the list, '],
+  [/^\s*Being worked on:\s*/i, 'Right now the agents are on '],
+];
+
+// Nobody counts past about a fortnight. "29 days overdue" is data; "about a month behind" is speech.
+function humanDays(text) {
+  return String(text).replace(/\b(\d+)\s+days?\s+overdue\b/gi, (m, d) => {
+    const n = Number(d);
+    if (n <= 2) return 'a couple of days overdue';
+    if (n <= 6) return n + ' days overdue';
+    if (n <= 10) return 'about a week overdue';
+    if (n <= 20) return 'a couple of weeks behind';
+    if (n <= 45) return 'about a month behind';
+    if (n <= 75) return 'a couple of months behind';
+    return 'months behind';
+  }).replace(/\bin (\d+) days\b/gi, (m, d) => {
+    const n = Number(d);
+    if (n === 7) return 'in a week';
+    if (n <= 6) return 'in ' + n + ' days';
+    return 'in about ' + Math.round(n / 7) + ' weeks';
+  });
+}
+
+export function speechify(text) {
+  let t = String(text || '');
+  for (const [re, to] of SPOKEN) t = t.replace(re, to);
+  t = humanDays(t);
+  // Collapse the double punctuation the substitutions can leave behind (", ." / ", ,").
+  return t.replace(/,\s*([.,;])/g, '$1').replace(/\s{2,}/g, ' ').replace(/\s+([.,])/g, '$1').trim();
+}
+
 export function polishForSpeech(text) {
   let t = String(text || '');
   for (const [re, to] of SAY_AS) t = t.replace(re, to);

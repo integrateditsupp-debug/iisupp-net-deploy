@@ -17,7 +17,7 @@ import { mountGlobes } from './axis-globe.js';
 import { toggleHologram } from './axis-hologram.js';
 // AXIS persona + turn grammar (the JARVIS flow). Additive: the voice machinery below is unchanged;
 // this only decides who AXIS sounds like and how a spoken turn is shaped.
-import { axisPersonaBonus, AXIS_PROSODY, ackLine, greetLine, routeTail,
+import { axisPersonaBonus, AXIS_PROSODY, VOICE_POLICY_REV, ackLine, greetLine, routeTail,
   isWake, isStop, isConfirm, isDeny, stripWake,
   voiceProfile, voiceFamily, polishForSpeech, phraseChunks,
   splitForTurns, isContinue, isReferential, detectOp } from './axis-persona.js';
@@ -1524,11 +1524,11 @@ function renderDock() {
   renderAxisPri();
 }
 
-// Poll the tier-3 queue until the Max plan answer lands, then swap it into the message that is
+// Poll the tier-3 queue until the answer lands, then swap it into the message that is
 // already on screen. Bounded so a dead worker can never leave the console polling forever.
 async function axisCollect(jobId, msg, tries = 0) {
   if (tries > 30) {                                   // ~60s ceiling
-    msg.text = 'The Max plan did not answer in time. Ask again — it may already be banked.';
+    msg.text = 'That took longer than it should have. Ask again — it may already be banked.';
     renderDock(); return;
   }
   await new Promise(r => setTimeout(r, 2000));
@@ -1544,7 +1544,7 @@ async function axisCollect(jobId, msg, tries = 0) {
       if (axisSpeak(msg.text)) __turnDone = axisTurnDone;
       return;
     }
-    if (p && p.ready && p.error) { msg.text = 'The Max plan hit an error on that one.'; renderDock(); return; }
+    if (p && p.ready && p.error) { msg.text = 'That one errored. Worth another try.'; renderDock(); return; }
   } catch { /* transient — keep polling until the ceiling */ }
   return axisCollect(jobId, msg, tries + 1);
 }
@@ -1830,7 +1830,22 @@ function axisPickVoice() {
     const vs = (window.speechSynthesis && speechSynthesis.getVoices()) || [];
     if (!vs.length) return null;
     let wanted = ''; try { wanted = localStorage.getItem('axis-voice-name') || ''; } catch {}
-    if (wanted) { const hit = vs.find(v => v.name === wanted); if (hit) return hit; }
+    // A pin used to win unconditionally, which made every later voice change invisible: one
+    // axisVoiceNext() cycle months ago would keep overriding the persona forever. Ahmad reported
+    // exactly that on 2026-08-12 ("change the voice as it did not change"). A pin made under an
+    // older policy revision is now released back to the ranker.
+    let pinnedRev = ''; try { pinnedRev = localStorage.getItem('axis-voice-rev') || ''; } catch {}
+    if (wanted && pinnedRev !== VOICE_POLICY_REV) {
+      try { localStorage.removeItem('axis-voice-name'); localStorage.removeItem('axis-voice-rev'); } catch {}
+      wanted = '';
+    }
+    if (wanted) {
+      const hit = vs.find(v => v.name === wanted);
+      // Even a current pin may not put AXIS on a male, child, or ARIA voice — those score negative
+      // under the persona, and honouring one would quietly break the identity the rest of this
+      // module exists to protect.
+      if (hit && axisPersonaBonus(hit.name, hit.lang) > 0) return hit;
+    }
     return vs.slice().sort((a, b) => axisScoreVoice(b) - axisScoreVoice(a))[0] || null;
   } catch { return null; }
 }
@@ -1842,12 +1857,23 @@ window.axisVoiceNext = function () {
     const cur = axisPickVoice();
     const i = Math.max(0, vs.findIndex(v => cur && v.name === cur.name));
     const nxt = vs[(i + 1) % vs.length];
-    try { localStorage.setItem('axis-voice-name', nxt.name); } catch {}
+    try { localStorage.setItem('axis-voice-name', nxt.name);
+          localStorage.setItem('axis-voice-rev', VOICE_POLICY_REV); } catch {}
     axisSpeak('Now speaking with ' + nxt.name.replace(/microsoft|google|online|\(|\)/gi, ' ').replace(/\s+/g, ' ').trim() + '.');
     return nxt.name;
   } catch { return null; }
 };
-window.axisSetVoice = function (name) { try { localStorage.setItem('axis-voice-name', String(name || '')); } catch {} return name; };
+window.axisSetVoice = function (name) {
+  try { localStorage.setItem('axis-voice-name', String(name || ''));
+        localStorage.setItem('axis-voice-rev', VOICE_POLICY_REV); } catch {}
+  return name;
+};
+// Escape hatch: drop any pin and fall back to the persona ranker.
+window.axisClearVoice = function () {
+  try { localStorage.removeItem('axis-voice-name'); localStorage.removeItem('axis-voice-rev'); } catch {}
+  const v = axisPickVoice();
+  return v && v.name;
+};
 
 // Make text sound like a person, not a screen reader: strip glyphs/markdown, speak symbols naturally.
 function axisHumanizeForSpeech(text) {
@@ -1885,9 +1911,19 @@ function axisSpeak(text) {
     // ("KB" → "knowledge base") instead of spelling it out.
     const queue = phraseChunks(polishForSpeech(clean), 180);
     setAxisState('speaking');
-    // Deafen the wake listener while AXIS talks, or it hears its own voice say "Axis" and wakes
-    // itself in a loop. The mic comes back in axisTurnDone / restMic.
-    axisWakePause();
+    // BARGE-IN (Ahmad, 2026-08-12: "when its talking and I interrupt or stop it to talk about
+    // something it mentioned it should listen to me then respond and act accordingly").
+    //
+    // This used to call axisWakePause() — the listener was deafened for the whole reply, so cutting
+    // in by voice was impossible and the only way to interrupt was to reach for the mic button. The
+    // reason was real, though: AXIS says its own name ("Axis"), hears it, and wakes itself in a loop.
+    //
+    // So the listener now stays ARMED while AXIS talks, and the echo problem is handled where it
+    // actually lives — axisIsSelfEcho() below drops anything that matches what AXIS is currently
+    // saying. Laptop mics apply hardware echo cancellation to speaker output, so in practice the
+    // recognizer mostly hears Ahmad; the filter is the belt to that braces.
+    axisSpokenNow = clean;
+    if (axisHandsFree) axisWakeResume(); else axisWakePause();
     queue.forEach((part, qi) => {
       const u = new SpeechSynthesisUtterance(part);
       if (v) { u.voice = v; u.lang = v.lang; }
@@ -1990,6 +2026,23 @@ let axisHeldRest = '';          // the un-spoken tail of a chunked answer, relea
 let axisPendingOp = null;       // an operational task read back and awaiting a spoken confirm
 const OP_TTL_MS = 5 * 60 * 1000; // a confirm must answer a RECENT read-back, never a stale one
 let axisConvoUntil = 0;         // until this ms, speech counts as addressed without the wake word
+let axisSpokenNow = '';         // what AXIS is saying right now — used to reject its own echo
+
+// Is this transcript just AXIS hearing itself? Compared on words rather than characters: the
+// recognizer never returns the synthesiser's exact string, but it does return a run of the same
+// words. Anything that is mostly words AXIS is currently saying is an echo, not Ahmad.
+//
+// A stop always wins — "stop" is a word AXIS could plausibly be saying, and being unable to
+// interrupt is far worse than one dropped turn.
+function axisIsSelfEcho(said) {
+  if (!axisSpokenNow) return false;
+  const s = String(said || '').toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).filter(Boolean);
+  if (!s.length) return true;
+  if (isStop(said)) return false;
+  const mine = new Set(String(axisSpokenNow).toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).filter(Boolean));
+  const overlap = s.filter((w) => mine.has(w)).length / s.length;
+  return overlap >= 0.7;
+}
 const CONVO_MS = 25000;         // long enough to think before replying, short enough not to eavesdrop
 const axisConvoOpen = () => Date.now() < axisConvoUntil;
 function axisOpenConvo(ms = CONVO_MS) { axisConvoUntil = Date.now() + ms; }
@@ -2015,6 +2068,12 @@ function axisWakeStart() {
     const said = String(r[0] && r[0].transcript || '').trim();
     if (!said) return;
     if (isStop(said)) { axisStandDown(); return; }           // stand-down wins over everything
+    // AXIS is talking and the mic is deliberately still open (barge-in). Drop its own voice, and
+    // treat anything else as Ahmad cutting in: silence the reply and take the new turn.
+    if (document.documentElement.dataset.axisState === 'speaking') {
+      if (axisIsSelfEcho(said)) return;
+      axisBargeIn();
+    }
     // Ahmad: "when its in hands free mode it listens to what I am saying." Saying "Axis" before
     // every sentence is not a conversation. Once AXIS has spoken, the floor stays open for a short
     // window and anything said in it counts as addressed — the wake word is only needed to START.
