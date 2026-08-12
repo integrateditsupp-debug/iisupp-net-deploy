@@ -43,41 +43,62 @@ assert.ok(/const R = Math\.min\(W, H\) \* 0\.36 \* \(1 \+ env \* 0\.06\)/.test(g
   'the sphere itself swells with the voice');
 ok('speaking is visibly alive — enveloped swell plus a syllable halo');
 
-// ---- 3. ONE resting size, 15% up from the original 104px ----
-// Ahmad, 2026-08-12 (second pass): "take it back to how the globe was initially center and bottom
-// middle and small, but increase the size by 15%." The grow-to-25vh behaviour is gone; any return
-// of it would reintroduce the "big then suddenly small" complaint, so it is asserted against.
+// ---- 3. ONE resting size, 30% up from the original 104px ----
+// Ahmad, 2026-08-12 (third pass): "make the size 30% instead of the 15% it is right now."
+// The 104px baseline is unchanged — the percentage is the knob. The grow-to-25vh behaviour is still
+// gone; any return of it would reintroduce the "big then suddenly small" complaint.
 const orbit = css.match(/\.axis-orbit \.axis-globe \{ width:(\d+)px; height:(\d+)px;/);
 assert.ok(orbit, 'the orbit globe has a fixed resting size');
 assert.equal(Number(orbit[1]), Number(orbit[2]), 'the globe is square');
-assert.equal(Number(orbit[1]), Math.round(104 * 1.15), '15% up from the original 104px');
+assert.equal(Number(orbit[1]), Math.round(104 * 1.30), '30% up from the original 104px');
+// The two derived sizes scale off their own baselines, so the whole set stays proportional.
+const docked = css.match(/:root\[data-axis-open="1"\] \.axis-orbit \.axis-globe \{ width:(\d+)px/);
+assert.ok(docked && Number(docked[1]) === Math.round(74 * 1.30), 'docked globe is 30% up from 74px');
+const small = css.match(/@media \(max-width:720px\) \{\s*\.axis-orbit \.axis-globe \{ width:(\d+)px/);
+assert.ok(small && Number(small[1]) === Math.round(78 * 1.30), 'the <=720px globe is 30% up from 78px');
 // No state may resize it — that is what "take it back" means.
 for (const state of ['listening', 'speaking', 'thinking']) {
   const rule = new RegExp(':root\\[data-axis-state="' + state + '"\\] \\.axis-orbit \\.axis-globe \\{[^}]*(?:width|height):');
   assert.ok(!rule.test(css), `${state} must not resize the globe`);
 }
 assert.ok(!/\.axis-orbit \.axis-globe[^}]*clamp\([^)]*vh/.test(css), 'no viewport-relative growth remains');
-ok(`one resting size at ${orbit[1]}px (104 + 15%), and no state resizes it`);
+ok(`one resting size at ${orbit[1]}px (104 + 30%), and no state resizes it`);
 
-// ---- 4. it is still bottom-centre ----
-assert.ok(/\.axis-orbit \{ position:fixed; left:50%; bottom:22px; transform:translateX\(-50%\)/.test(css),
-  'the orbit stays pinned bottom-centre');
-ok('bottom-centre, fixed, as it originally was');
+// ---- 4. it sits ABOVE the Overview, not under it ----
+// Ahmad, 2026-08-12: "move the axis globe above the overview." It was bottom:22px, which put AXIS
+// underneath the deck it fronts. Top-anchored now, clearing the 57px topbar.
+assert.ok(/\.axis-orbit \{ position:fixed; left:50%; top:(\d+)px; transform:translateX\(-50%\)/.test(css),
+  'the orbit is top-anchored so it sits above the Overview');
+assert.ok(!/\.axis-orbit \{[^}]*bottom:22px/.test(css), 'the old bottom-centre pin is gone');
+// The transcript has to follow the globe; opening it at the far end of the screen from the thing
+// that opened it is the bug this guards.
+assert.ok(/\.axis-dock \{ position:fixed; left:50%; right:auto; top:(\d+)px/.test(css),
+  'the dock follows the orbit to the top instead of staying at the bottom');
+ok('top-anchored above the Overview, with the dock following it');
 
-// ---- 5. the voice: younger, softer, classy — and still never ARIA ----
-assert.ok(P.AXIS_PROSODY.pitch > 1.0, 'younger reads as a higher pitch, not a lowered one');
+// ---- 5. the voice: American, classy, upscale — and still never ARIA ----
+// Ahmad 2026-08-12: "change the voice to a english USA accent but classy and up scale style."
+assert.ok(P.AXIS_PROSODY.pitch > 1.0, 'a human register sits above 1.0, not below it');
 assert.notEqual(P.AXIS_PROSODY.pitch, 1.05, 'never ARIA pitch');
+assert.notEqual(P.AXIS_PROSODY.rate, 0.95, 'never ARIA rate');
 assert.ok(P.AXIS_PROSODY.volume < 1, 'softer is volume');
-assert.ok(P.AXIS_PROSODY.rate < 1, 'classy is unhurried');
+assert.ok(P.AXIS_PROSODY.rate < 0.95, 'upscale is unhurried — slower than ARIA, not merely under 1');
 const score = (n, l) => P.axisPersonaBonus(n, l);
+const ava = score('Microsoft Ava Online (Natural) - English (United States)', 'en-US');
+const jenny = score('Microsoft Jenny Online (Natural) - English (United States)', 'en-US');
+assert.ok(ava > jenny, 'the upscale US voice (Ava) outranks the default assistant one (Jenny)');
+// The accent is the point of this change: an American voice must beat the old British house voice.
 const libby = score('Microsoft Libby Online (Natural) - English (United Kingdom)', 'en-GB');
-const sonia = score('Microsoft Sonia Online (Natural) - English (United Kingdom)', 'en-GB');
-assert.ok(libby > sonia, 'the younger en-GB voice (Libby) outranks the formal one (Sonia)');
-// Maisie is Microsoft's en-GB CHILD voice — "younger woman" must never resolve to a child.
+assert.ok(ava > libby, 'an en-US voice outranks the former en-GB house voice');
+assert.ok(libby > 0, 'en-GB stays eligible — a British AXIS beats a robotic one on a bare machine');
+// Maisie is Microsoft's en-GB CHILD voice — "classy woman" must never resolve to a child.
 assert.ok(score('Microsoft Maisie Online (Natural) - English (United Kingdom)', 'en-GB') < 0,
   'a child voice can never win the ranking');
-assert.ok(score('Microsoft Ryan Online (Natural) - English (United Kingdom)', 'en-GB') < libby, 'never male');
-assert.ok(score('Samantha', 'en-US') < libby, 'never the customer orb voice');
-ok('AXIS is a younger, softer, en-GB woman — not a child, not male, not ARIA');
+assert.ok(score('Microsoft Guy Online (Natural) - English (United States)', 'en-US') < ava, 'never male');
+assert.ok(score('Samantha', 'en-US') < ava, 'never the customer orb voice');
+// Both assistants are American now, so a voice literally named Aria is the worst possible pick.
+assert.ok(score('Microsoft Aria Online (Natural) - English (United States)', 'en-US') < ava,
+  'AXIS never speaks in a voice named Aria');
+ok('AXIS is an upscale American woman — not a child, not male, not ARIA');
 
-console.log('ok — globe grows and speaks; voice is younger, softer, classy');
+console.log('ok — globe grows and speaks; voice is American, classy, upscale');

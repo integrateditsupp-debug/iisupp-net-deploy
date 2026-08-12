@@ -168,7 +168,12 @@ a { color:var(--gold); text-decoration:none; }
 .axis-fab:hover .axis-orb svg { filter:drop-shadow(0 0 10px color-mix(in srgb, var(--gold) 42%, transparent)); }
 
 /* Director dock — cinematic glass */
-.axis-dock { position:fixed; left:50%; right:auto; bottom:84px; width:min(520px,calc(100vw - 40px)); max-height:66vh; z-index:71; transform:translateX(-50%);
+/* Follows the orbit. bottom:84px was chosen to sit just above the globe when the orbit lived at
+   bottom:22px; with the orbit now at top:70px that would open the transcript at the far end of the
+   screen from the thing that opened it. Anchored below the orbit instead — 70px top + 135px globe
+   + 9px gap + the bar ≈ 258px — and the height is capped against the remaining viewport rather
+   than a flat 66vh, so a short window cannot push it off the bottom. */
+.axis-dock { position:fixed; left:50%; right:auto; top:258px; width:min(520px,calc(100vw - 40px)); max-height:calc(100vh - 278px); z-index:71; transform:translateX(-50%);
   background:color-mix(in srgb, var(--surface) 85%, transparent);
   backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
   border:1px solid var(--line-2); border-radius:14px; display:flex; flex-direction:column;
@@ -496,10 +501,14 @@ a { color:var(--gold); text-decoration:none; }
    ══════════════════════════════════════════════════════════════════════════════ */
 .axis-fab { display:none !important; }        /* the orbit IS the launcher now */
 
-.axis-orbit { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); z-index:72;
+/* Ahmad, 2026-08-12: "move the axis globe above the overview." The orbit was pinned bottom-centre,
+   which put AXIS underneath the Overview deck it is meant to front. It is now top-anchored, clearing
+   the 57px topbar, so the globe reads as the head of the page with Overview beneath it. Still
+   position:fixed, so nothing in .content reflows and no screen had to change. */
+.axis-orbit { position:fixed; left:50%; top:70px; transform:translateX(-50%); z-index:72;
   display:flex; flex-direction:column; align-items:center; gap:9px; pointer-events:none; }
 .axis-orbit > * { pointer-events:auto; }
-.axis-orbit .axis-globe { width:120px; height:120px; cursor:pointer;
+.axis-orbit .axis-globe { width:135px; height:135px; cursor:pointer;
   filter:drop-shadow(0 10px 26px color-mix(in srgb, var(--gold) 30%, transparent)); }
 .axis-orbit .axis-globe:hover { filter:drop-shadow(0 10px 34px color-mix(in srgb, var(--gold) 55%, transparent)); }
 @keyframes axis-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
@@ -520,20 +529,26 @@ a { color:var(--gold); text-decoration:none; }
 /* The transcript is hidden until asked for; the dock keeps every id it always had. */
 .axis-dock { display:none; }
 :root[data-axis-open="1"] .axis-dock { display:flex; }
-:root[data-axis-open="1"] .axis-orbit .axis-globe { width:85px; height:85px; animation:none; }
+:root[data-axis-open="1"] .axis-orbit .axis-globe { width:96px; height:96px; animation:none; }
 /* Resting state must not shove the page over — only the expanded transcript reserves width. */
 :root[data-axis-dock="open"] .content { padding-right:16px; }
 :root[data-axis-open="1"][data-axis-dock="open"] .content {
   padding-right:calc(min(430px,calc(100vw - 36px)) + 30px); }
 
 @media (max-width:720px) {
-  .axis-orbit .axis-globe { width:90px; height:90px; }
+  .axis-orbit .axis-globe { width:101px; height:101px; }
   .axis-bar input { width:44vw; }
 }
 @media (prefers-reduced-motion:reduce) { .axis-orbit .axis-globe { animation:none; } }
 
-/* Ahmad, 2026-08-12 (second pass): "take it back to how the globe was initially center and bottom
-   middle and small, but increase the size by 15%."
+/* Ahmad, 2026-08-12 (third pass): "make the size 30% instead of the 15% it is right now."
+   Same 104px baseline as before, so 30% up is 135px rather than 120px. The two derived sizes move
+   with it off their own baselines: the docked globe from 74px (was 85, now 96) and the ≤720px one
+   from 78px (was 90, now 101). The percentage is the knob — the baselines have not changed.
+
+   Ahmad, 2026-08-12 (second pass): "take it back to how the globe was initially center and bottom
+   middle and small, but increase the size by 15%." Superseded by the 30% pass above; the reasoning
+   below about holding ONE resting size still stands and is why there is a single number to scale.
 
    The growth-to-25vh experiment is REMOVED. It was built to satisfy an earlier request and it did
    grow smoothly in the end, but a quarter of the viewport is simply too much presence for something
@@ -541,7 +556,7 @@ a { color:var(--gold); text-decoration:none; }
    at the moment a sentence ended, because any return to rest looks like a collapse when the thing
    was that large.
 
-   The globe now keeps ONE resting size, 15% up from the original 104px. Liveliness while speaking
+   The globe now keeps ONE resting size, scaled off the original 104px. Liveliness while speaking
    did not go away; it moved into the canvas (assets/axis-globe.js), where an eased envelope swells
    the sphere and a halo widens on each syllable. That reads as speech without the footprint ever
    changing, which is the point. Nothing here reflows: .axis-orbit is position:fixed. */
