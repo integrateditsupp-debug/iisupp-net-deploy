@@ -25,6 +25,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getStore } from '@netlify/blobs';
 import * as vault from './lib/axis-vault-brain.mjs';
+import * as convoLog from './lib/axis-conversation-log.mjs';
 import { classify, escalate, answerUsable, recordUse, usageReport, TIER_BY_NAME,
          modelForRequest } from './lib/axis-model-router.mjs';
 // The same conversation detector the cloud cascade uses (Node ESM imports the CJS lib directly).
@@ -201,13 +202,22 @@ async function answerQuestion(query, { turns = [], board = '' } = {}) {
   // Brain #1 as context for brain #2.
   const context = vault.vaultContext(query);
   const convo = conversationBlock(turns, board);
-  const route = classify(query, { contextChars: context.length + convo.length });
+  // …and the conversation log, which is what `turns` cannot be: `turns` is THIS session only, and
+  // the CLI runs --no-session-persistence, so every previous conversation is otherwise gone. Ahmad,
+  // 2026-08-12: "that way you can take a look and have context when we're talking … and I don't have
+  // to explain things to you all the time." Bounded hard — see recallBlock.
+  let recall = '';
+  try { recall = convoLog.recallBlock(query, { exclude: turns }); } catch { recall = ''; }
+  const route = classify(query, { contextChars: context.length + convo.length + recall.length });
 
   const pieces = [];
   // Measurement FIRST in the prompt: the model speaks after the probe, so it has no gap to fill
   // with a guessed availability claim.
   const measured = formatMeasuredBlock(probes);
   if (measured) pieces.push(measured);
+  // Oldest context first, live session last: the turn Ahmad is actually in must be the nearest thing
+  // to his question, or the model answers the log instead of him.
+  if (recall) pieces.push(recall);
   if (convo) pieces.push(convo);
   if (context) pieces.push(`Context from Ahmad's AXIS vault. Prefer it over general knowledge where they disagree, and say so if it is silent on the question.\n\n${context}`);
   const prompt = pieces.length
@@ -662,6 +672,20 @@ Reply with ONE short sentence describing what you did, or why you did not.`,
     return { answer: String(r.answer || '').trim().slice(-600) };
   }
 
+  // Phase 2 (2026-08-13): the researcher. Read-only toward the repo, the board and the queues —
+  // it retrieves the open web on the plan, enforces per-claim sourcing in axis-researcher.mjs,
+  // and files the sourced note in the vault's 15_Research/. Inconclusive says inconclusive.
+  if (kind === 'research.web') {
+    const q = String(arg || '').trim();
+    if (q.length < 8) return { error: 'research needs a real question' };
+    await progress('researching: ' + q.slice(0, 60), 'run');
+    const { research, spokenSummary } = await import('./lib/axis-researcher.mjs');
+    const fastMoving = /\b(?:latest|current|news|today|this (?:week|month|year)|20(?:2[5-9]|3\d)|price|pricing|version)\b/i.test(q);
+    const r = await research(q, { fastMoving });
+    await progress((r.ok ? 'research done: ' : 'research inconclusive: ') + q.slice(0, 50), r.ok ? 'done' : 'error');
+    return { answer: spokenSummary(r) };
+  }
+
   return { error: 'unknown task kind: ' + kind };
 }
 
@@ -702,13 +726,22 @@ async function drain() {
     try { await jobs.setJSON(`done/${job.id}`, { answer: res.answer, error: res.error, t: Date.now() }); } catch {}
     try { await jobs.delete(b.key); } catch {}
     if (res.answer) {
+      // The conversation log takes EVERY answered turn, including the vault-tier ones and including
+      // the turns worthLearning() rejects. That gate protects the fact brain from state questions and
+      // corrections; those are exactly the turns that carry context, so the log is deliberately
+      // ungated. Logged here rather than inside answerQuestion so both tiers land in one place.
+      const logged = convoLog.appendTurn({
+        question: job.query, answer: res.answer,
+        tier: res.tier, model: res.model,
+      });
       // A vault answer never touches the plan, so it is never re-banked into Blobs either — it is
       // already in the brain that produced it.
       const banked = res.tier === 'vault' ? false : await bank(job.query, res.answer);
       const how = res.tier === 'vault'
         ? `from the vault (${res.source.replace('axis-vault:', '')}) in ${res.ms}ms · no model`
         : `on the Max plan · ${res.model}${res.escalatedFrom ? ` (escalated from ${res.escalatedFrom})` : ''} · ${res.ms}ms`;
-      const saved = [res.learned ? 'vault' : null, banked ? 'ARIA brain' : null].filter(Boolean).join(' + ');
+      const saved = [res.learned ? 'vault' : null, banked ? 'ARIA brain' : null,
+        logged.written ? `conversation log (${logged.day} ${logged.time})` : null].filter(Boolean).join(' + ');
       console.log(`[axis-brain-worker] answered ${how}${saved ? ` · saved to ${saved}` : ''}`);
     } else {
       console.warn('[axis-brain-worker] failed:', res.error);
@@ -734,6 +767,11 @@ console.log('[axis-brain-worker] online — answering AXIS on the Claude Max pla
     ? `[axis-brain-worker] brain #1: Obsidian vault, ${v.notes} notes at ${v.root}`
     : `[axis-brain-worker] brain #1: NO VAULT at ${v.root} — falling back to the plan for everything.`);
   console.log(`[axis-brain-worker] system prompt: ${vault.loadSystemPrompt() ? 'vault (00_Index/AXIS-SYSTEM.md)' : 'built-in fallback'}`);
+  const c = convoLog.conversationStats();
+  console.log(c.available
+    ? `[axis-brain-worker] conversation log: ${c.days} day note${c.days === 1 ? '' : 's'}, `
+      + `${c.turns} turn${c.turns === 1 ? '' : 's'} in the last ${c.window} days at ${c.dir}`
+    : `[axis-brain-worker] conversation log: NO VAULT at ${c.root} — answering without cross-session context.`);
 }
 // Usage by tier, so "the plan ran out again" is answerable with numbers rather than a guess.
 setInterval(() => {

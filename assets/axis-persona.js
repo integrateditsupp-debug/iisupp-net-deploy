@@ -414,6 +414,17 @@ const OPS = [
     arg: /\b(?:resume|re-?enable|unpause|restart)\s+(?:the\s+)?(.+)$/i,
     say: (a) => `Put the ${a || 'named'} agent back on its schedule` },
 
+  // ── Web research, via the researcher agent (Phase 2, 2026-08-13) ──────────
+  // "Research the competitor pricing" / "investigate X" / "deep dive on Y". Distinct from
+  // search.find (which greps the board and vault): this retrieves the OPEN WEB on the plan, with
+  // per-claim sources enforced, and files the note in 15_Research/. Confirm-gated: it spends
+  // minutes of plan time. The verb must LEAD — "we should research that someday" is a musing.
+  { kind: 'research.web',
+    re: /^\s*(?:(?:ok(?:ay)?|please|now|just|can you|could you)[,\s]+)*(?:research|investigate|deep.?dive (?:on|into))\b/i,
+    notAsk: /^\s*(?:how|what|why|when|where|who|which|should|did|is|are)\b/i,
+    arg: /\b(?:research|investigate|deep.?dive (?:on|into))\s+(.+)$/i,
+    say: (a) => `Send the researcher after ${a || 'that'} — sourced findings land in the vault, gaps stated, nothing invented` },
+
   { kind: 'video.short',  re: /\b(?:make|create|do|build|record)\b[^.?!]*\b(short|shorts|clip|reel)\b/i,
     arg: /\b(?:about|on|for|covering)\s+(.+)$/i,
     say: (a) => `Build a short${a ? ' about ' + a : ''}` },
@@ -634,7 +645,7 @@ export function detectOp(text) {
     if (op.kind === 'self.fix' && (arg.length < 6 || /^(?:that|this|it|them|those)\b/i.test(arg))) arg = t;
     // These are meaningless without a subject, and guessing at one is worse than asking. "fix it"
     // with no antecedent must not become a repo edit.
-    if (['self.fix', 'machine.run', 'cowork.ask', 'cowork.plan', 'code.build'].includes(op.kind) && arg.length < 6) return null;
+    if (['self.fix', 'machine.run', 'cowork.ask', 'cowork.plan', 'code.build', 'research.web'].includes(op.kind) && arg.length < 6) return null;
     return { kind: op.kind, arg, confirm: op.say(arg) + '. Say confirm, or cancel.' };
   }
   return null;

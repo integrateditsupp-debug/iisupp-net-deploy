@@ -175,9 +175,12 @@ export default async (request) => {
     // fleet.* is the management rail Ahmad asked for (2026-08-12, "give axis full access to manage
     // them"): the worker maps each verb to a fixed PowerShell scheduled-task cmdlet against its own
     // named roster — the queue can name an agent, it can never name a command.
+    // research.web (Phase 2, 2026-08-13): the researcher agent — WebSearch/WebFetch on the plan,
+    // per-claim sources enforced in scripts/lib/axis-researcher.mjs, findings to the vault's
+    // 15_Research/. Read-only toward the repo and the board; confirm-gated on the console side.
     const ALLOWED = ['video.make', 'video.short', 'video.upload', 'video.status', 'self.fix',
       'cowork.ask', 'cowork.plan', 'code.build', 'machine.run',
-      'fleet.status', 'fleet.run', 'fleet.pause', 'fleet.resume'];
+      'fleet.status', 'fleet.run', 'fleet.pause', 'fleet.resume', 'research.web'];
     if (!ALLOWED.includes(kind)) return json(400, { error: 'unknown task kind' });
     const id = 't-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
     try {
