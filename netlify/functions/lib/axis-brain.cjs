@@ -271,6 +271,14 @@ const TROUBLESHOOT = /\b(?:error|fail(?:s|ed|ing)?|broken|not working|can'?t|can
 const MEMORY_QUERY = /\b(?:what did (?:we|you|i)|remind me|our notes?|the vault|we (?:decided|agreed|learned|said|discussed)|last time|previously|do you remember|what do you know about (?:our|my)|from (?:the|our) (?:vault|notes|memory))\b/i;
 const isTroubleshoot = (q) => TROUBLESHOOT.test(String(q || ''));
 const isMemoryQuery = (q) => MEMORY_QUERY.test(String(q || ''));
+// Phase 1 (2026-08-13): a question about the CURRENT STATE of a local app — "is Outlook running
+// right now?" — can only be answered by the layer that can measure it: the worker on Ahmad's
+// machine, which now probes (scripts/lib/axis-app-detect.mjs). The kb tier's helpdesk articles
+// literally contain the words "Outlook … offline" in their bodies; serving one as the answer to a
+// state question is Phase 0's mechanism 2. This function runs in Netlify's cloud and can measure
+// nothing, so it routes state questions past every document tier.
+const LOCAL_STATE = /\b(?:is|are|was)\s+(?:my\s+|the\s+)?(?:outlook|teams|word|excel|obsidian|chrome|edge|it)\s+(?:even\s+)?(?:running|open|up|down|closed|responding|alive|online|offline)\b|\b(?:outlook|teams|word|excel|obsidian|chrome|edge)\b[^.?!]*\b(?:right now|currently|at the moment|still (?:running|open))\b/i;
+const isLocalStateQuery = (q) => LOCAL_STATE.test(String(q || ''));
 
 // ── The cascade ──────────────────────────────────────────────────────────────
 // Returns an answer from the cheapest tier that has one, or null so the caller escalates to the
@@ -302,6 +310,8 @@ async function askBrain({ query, turns = [], board = '', origin, auth, skip = []
     // wrong document delivered confidently. Memory questions never go to helpdesk or research.
     if (name === 'kb' && !isTroubleshoot(q)) continue;
     if (isMemoryQuery(q) && (name === 'kb' || name === 'research')) continue;
+    // Local-app state is measured, never retrieved: only the machine-side worker may answer.
+    if (isLocalStateQuery(q) && name !== 'subscription') continue;
     tried.push(name);
     let hit = null;
     try { hit = await run(); } catch (_) { hit = null; }
@@ -310,5 +320,5 @@ async function askBrain({ query, turns = [], board = '', origin, auth, skip = []
   return null;
 }
 
-module.exports = { askBrain, stripTrailingOffer, recallTier, kbTier, researchTier, subscriptionTier, workerOnline, learnBack, isSubstantive, worthLearning, isConversational, isTroubleshoot, isMemoryQuery,
+module.exports = { askBrain, stripTrailingOffer, recallTier, kbTier, researchTier, subscriptionTier, workerOnline, learnBack, isSubstantive, worthLearning, isConversational, isTroubleshoot, isMemoryQuery, isLocalStateQuery,
   KB_LIVE, JOBS, HEARTBEAT_KEY, HEARTBEAT_MAX_MS };

@@ -32,6 +32,11 @@ import { classify, escalate, answerUsable, recordUse, usageReport, TIER_BY_NAME,
 // DIRECT tier and came back as a raw feedback note — wikilinks and all — because vault matching is
 // word overlap and cannot know a correction from a question. One detector, both brains.
 import { isConversational } from '../netlify/functions/lib/axis-brain.cjs';
+// Phase 1 (2026-08-13): the app-detection layer. When a task NAMES a local app, its state is
+// MEASURED before any text is generated, the measurement rides in the prompt, and no generated
+// sentence may out-claim it. Phase 0 proved "Outlook is offline" had no probe behind it — it was
+// model prose. This is the only module allowed to hold detection logic.
+import { detectAppsInText, formatMeasuredBlock, availabilityClaimGuard } from './lib/axis-app-detect.mjs';
 
 const JOBS = 'axis-brain-jobs';
 const KB_LIVE = 'aria-kb-live';
@@ -178,13 +183,18 @@ function conversationBlock(turns, board) {
 async function answerQuestion(query, { turns = [], board = '' } = {}) {
   const t0 = Date.now();
 
+  // Phase 1: if the question names a local app, MEASURE it first. Zero cost when nothing is named
+  // (the common path); ~1-2s of probing when something is — cheaper than one wrong "offline".
+  let probes = [];
+  try { probes = await detectAppsInText(query); } catch { probes = []; }
+
   // Brain #1, alone. A confident vault hit skips the model entirely: no tokens, no plan usage, and
   // an answer in single-digit milliseconds instead of seconds. But NEVER for a conversational turn
   // — a correction or an instruction answered by note-matching is how "show me where" became a
   // pasted feedback note. The vault still rides along as CONTEXT below either way.
   const direct = isConversational(query) ? null : vault.vaultTier(query);
   if (direct) {
-    return { answer: direct.text, tier: 'vault', model: null, source: direct.source,
+    return { answer: availabilityClaimGuard(direct.text, probes), tier: 'vault', model: null, source: direct.source,
       ms: Date.now() - t0, learned: false };
   }
 
@@ -194,6 +204,10 @@ async function answerQuestion(query, { turns = [], board = '' } = {}) {
   const route = classify(query, { contextChars: context.length + convo.length });
 
   const pieces = [];
+  // Measurement FIRST in the prompt: the model speaks after the probe, so it has no gap to fill
+  // with a guessed availability claim.
+  const measured = formatMeasuredBlock(probes);
+  if (measured) pieces.push(measured);
   if (convo) pieces.push(convo);
   if (context) pieces.push(`Context from Ahmad's AXIS vault. Prefer it over general knowledge where they disagree, and say so if it is silent on the question.\n\n${context}`);
   const prompt = pieces.length
@@ -231,6 +245,11 @@ async function answerQuestion(query, { turns = [], board = '' } = {}) {
 
   if (!res || res.error || !res.answer) return { error: (res && res.error) || 'no answer' };
 
+  // The belt: no generated sentence out-claims the measurement. If the guard had to correct the
+  // answer, the answer contradicted reality — it must not be banked as knowledge either.
+  const guarded = availabilityClaimGuard(res.answer, probes);
+  const contradicted = guarded !== res.answer;
+
   // "Future info and learning will be saved in obsidian axis vault (brain)."
   // The vault write is what makes the next identical question free — brain #1 will answer it.
   // Confidence tracks the tier that produced the answer, not whether it escalated. The quality gate
@@ -243,15 +262,15 @@ async function answerQuestion(query, { turns = [], board = '' } = {}) {
   // Same gate as bank(): a clarifying question, hedge, or reply about the prompt is not knowledge.
   // Measured 2026-08-12: "Which list do you mean — …?" was written to 13_Learned as a fact because
   // this call had no gate while bank() did. The vault is the *durable* brain — it needs the gate more.
-  const w = worthLearning(query, res.answer)
+  const w = (!contradicted && worthLearning(query, res.answer))
     ? vault.learn({
         question: query, answer: stripTrailingOffer(res.answer),
         source: 'claude-max', model: TIER_BY_NAME[tierName].model,
         confidence: CONFIDENCE[tierName] || 'medium',
       })
-    : { written: false, reason: 'not-knowledge' };
+    : { written: false, reason: contradicted ? 'contradicted-measurement' : 'not-knowledge' };
 
-  return { answer: res.answer, tier: tierName, model: TIER_BY_NAME[tierName].model,
+  return { answer: guarded, tier: tierName, model: TIER_BY_NAME[tierName].model,
     escalatedFrom, ms: Date.now() - t0, vaultContext: context.length, learned: w.written,
     learnedFile: w.rel || null, learnSkipped: w.written ? null : w.reason };
 }
