@@ -100,7 +100,10 @@ assert.ok(/turns: sanitizeTurns\(body\.turns\)/.test(read('netlify/functions/axi
 const worker = read('scripts/axis-brain-worker.mjs');
 assert.ok(/conversationBlock\(turns, board\)/.test(worker) && /conversationBlock\(task\.turns, task\.board\)/.test(worker),
   'the worker renders the conversation into both Q&A and Cowork/Code prompts');
-assert.ok(/worthLearning\(query, res\.answer\)\s*\?\s*vault\.learn/.test(worker),
+// Phase 1 (2026-08-13) added one guard in front of the same gate: an answer the availability
+// claim-guard had to correct is never banked either (`!contradicted &&`). Same rail, one more
+// reason to refuse.
+assert.ok(/\(!contradicted && worthLearning\(query, res\.answer\)\)\s*\?\s*vault\.learn/.test(worker),
   'the vault write-back is gated — a clarifying question must never be banked as knowledge');
 ok('client → endpoint → queue → worker wiring intact, vault write-back gated');
 

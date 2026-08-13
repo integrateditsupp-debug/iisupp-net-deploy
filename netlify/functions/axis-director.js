@@ -133,7 +133,12 @@ exports.handler = async (event) => {
       const { askBrain } = require('./lib/axis-brain.cjs');
       const host = (event.headers && (event.headers.host || event.headers.Host)) || '';
       const auth = (event.headers && (event.headers.authorization || event.headers.Authorization)) || '';
-      const hit = await askBrain({ query: askText, turns, board, origin: host ? `https://${host}` : '', auth });
+      // AXIS_BRAIN_SKIP: Ahmad's kill-switch for whole tiers, no code change. Set it to
+      // "recall,research,kb" in Netlify env and AXIS runs on the Obsidian brain + the Claude
+      // worker alone — "just use obsidian for the brain and claude for the work" (2026-08-12).
+      // Unset, all four $0 tiers run in their lanes (kb is troubleshoot-only regardless).
+      const skip = String(process.env.AXIS_BRAIN_SKIP || '').split(',').map((s) => s.trim()).filter(Boolean);
+      const hit = await askBrain({ query: askText, turns, board, origin: host ? `https://${host}` : '', auth, skip });
       // Answer in hand — return it.
       if (hit && hit.text) {
         return json(200, {

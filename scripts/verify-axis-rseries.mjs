@@ -100,25 +100,27 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
   await page.close();
 }
 
-// ═══ PASS B — authed (R1 states, R2 dock, R3 strip, badge law) ═══
+// ═══ PASS B — authed (R1 states, R2 dock, R3 orbit counts line, badge law) ═══
+// R3 note (2026-08-12): the director strip above the globe is gone — its counts line is
+// #axisOrbStatus on the orbit, and its input's job is done by the orbit bar (#axisQuick).
 {
   const page = await newPage({ authed: true });
   await sleep(1600); // fetchSnapshots + auto-open at 600ms
   const b = await page.evaluate(() => ({
     dockOpen: !document.getElementById('axisDock').hidden,
     strip: !!document.querySelector('.axis-strip'),
-    stripText: (document.querySelector('.axis-strip-status') || {}).textContent,
+    orbStatus: (document.getElementById('axisOrbStatus') || {}).textContent,
     stateWord: document.getElementById('axisStateWord').textContent,
     redBadge: (document.querySelector('.badge-red') || {}).textContent,
     neutralBadge: (document.querySelector('.badge-neutral') || {}).textContent,
     orbCount: document.querySelectorAll('[data-orb-live] svg').length,
   }));
   R('B1 auto-open on authed load', b.dockOpen);
-  R('B2 command strip rendered', b.strip);
-  R('B3 strip honest counts line', /3 approvals waiting · 2 client replies waiting · 1 follow-up due/.test(b.stripText || ''), JSON.stringify(b.stripText));
+  R('B2 the old command strip must NOT render', !b.strip);
+  R('B3 orbit honest counts line', /3 approvals waiting · 2 client replies waiting · 1 follow-up due/.test(b.orbStatus || ''), JSON.stringify(b.orbStatus));
   R('B4 badge law: red inbox badge = 2', b.redBadge === '2', String(b.redBadge));
   R('B5 badge law: approvals neutral = 3', b.neutralBadge === '3', String(b.neutralBadge));
-  R('B6 orbs live (dock+strip)', b.orbCount >= 2, b.orbCount + ' svg');
+  R('B6 orbs live', b.orbCount >= 1, b.orbCount + ' svg');
   await shot(page, 'r2-dock-autopen-idle.png');
 
   // R1 state: listening via REAL mic toggle (fake SR)
@@ -127,8 +129,8 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
   await shot(page, 'r1-state-listening.png');
   await page.click('#axisMic'); await sleep(200); // stop → idle
 
-  // R3→R2: strip input routes through dock pipeline; thinking then speaking
-  await page.type('.axis-strip input', 'status'); await page.keyboard.press('Enter');
+  // R3→R2: orbit bar routes through the dock pipeline; thinking then speaking
+  await page.type('#axisQuick', 'status'); await page.keyboard.press('Enter');
   await sleep(250);
   const thinking = await axState(page);
   const dots = await page.evaluate(() => !!document.querySelector('.axis-thinking'));
@@ -167,20 +169,20 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
   await sleep(1500);
   const c = await page.evaluate(() => ({
     badgeEls: document.querySelectorAll('.badge-red, .badge-neutral').length,
-    stripText: (document.querySelector('.axis-strip-status') || {}).textContent,
-    coreAnim: getComputedStyle(document.querySelector('.axis-strip .orb-core')).animationName,
-    spinAnim: getComputedStyle(document.querySelector('.axis-strip .orb-spin')).animationName,
-    pulseOpacity: getComputedStyle(document.querySelector('.axis-strip .orb-pulse')).opacity,
+    orbStatus: (document.getElementById('axisOrbStatus') || {}).textContent,
+    coreAnim: getComputedStyle(document.querySelector('.axis-fab .orb-core')).animationName,
+    spinAnim: getComputedStyle(document.querySelector('.axis-fab .orb-spin')).animationName,
+    pulseOpacity: getComputedStyle(document.querySelector('.axis-fab .orb-pulse')).opacity,
   }));
   R('C1 badge law zero: NO badge elements', c.badgeEls === 0, c.badgeEls + ' badges');
-  R('C2 strip all-quiet line', /All quiet/.test(c.stripText || ''), JSON.stringify(c.stripText));
+  R('C2 orbit all-quiet line', /All quiet/.test(c.orbStatus || ''), JSON.stringify(c.orbStatus));
   R('C3 reduced-motion: orb static', c.coreAnim === 'none' && c.spinAnim === 'none', c.coreAnim + '/' + c.spinAnim);
   R('C4 reduced-motion: pulse hidden', c.pulseOpacity === '0', c.pulseOpacity);
   await shot(page, 'r5-reduced-motion.png');
   await page.setViewport({ width: 390, height: 844 });
   await sleep(400); await shot(page, 'r5-mobile-390.png');
-  const mob = await page.evaluate(() => document.querySelector('.axis-strip').getBoundingClientRect().width <= 390);
-  R('C5 strip fits 390px', mob);
+  const mob = await page.evaluate(() => document.querySelector('.axis-orbit').getBoundingClientRect().width <= 390);
+  R('C5 orbit fits 390px', mob);
   await page.close();
 }
 

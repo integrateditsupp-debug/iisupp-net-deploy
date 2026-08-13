@@ -15,7 +15,7 @@ import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 import { execFileSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { makeScratchDir, CANDIDATES, scratchSubstitutions, substitutionReport, insideQuotesOrComment } from "../scripts/lib/scratch-dir.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -76,22 +76,36 @@ test("BH2 — survives a hostile TMPDIR, proven by launching a process under one
   // The standalone launch path, reproduced: no runner, and the first candidate is unusable.
   const lib = path.join(HERE, "..", "scripts", "lib", "scratch-dir.mjs");
   const src = [
-    `import { makeScratchDir } from ${JSON.stringify(lib)};`,
+    // A file URL, not a raw path: on Windows an absolute path handed to the ESM loader is read as
+    // a URL whose scheme is the drive letter ("protocol 'c:'") and the child dies before line one.
+    `import { makeScratchDir } from ${JSON.stringify(pathToFileURL(lib).href)};`,
     `import fs from "node:fs";`,
     `const d = makeScratchDir("bh2-hostile-");`,
     `fs.writeFileSync(d + "/p", "ok");`,
     `console.log("SCRATCH_OK " + d);`,
   ].join("\n");
+  // Hostile on every platform: a path whose parent is a FILE, so mkdir of it can never succeed —
+  // unlike "/nonexistent-volume-bh2", which on Windows is a perfectly creatable C:\ directory.
+  const hostile = path.join(fileURLToPath(import.meta.url), "not-a-dir");
   const out = execFileSync(process.execPath, ["--input-type=module", "-e", src], {
     encoding: "utf8",
     timeout: 20000,
     // A MINIMAL env on purpose: inheriting this process's environment under `node --test` carries
     // the runner's own options into the grandchild, which then waits for a test file that never
-    // arrives. The child needs a PATH, a HOME and a hostile TMPDIR — nothing else.
-    env: { PATH: process.env.PATH || "/usr/bin:/bin", HOME: process.env.HOME || "/tmp", TMPDIR: "/nonexistent-volume-bh2" },
+    // arrives. The child needs a PATH, a HOME and a hostile temp dir — nothing else. Windows reads
+    // TEMP/TMP where POSIX reads TMPDIR, and node.exe needs SystemRoot to initialize.
+    env: {
+      PATH: process.env.PATH || "/usr/bin:/bin",
+      HOME: process.env.HOME || process.env.USERPROFILE || "/tmp",
+      USERPROFILE: process.env.USERPROFILE || process.env.HOME || "/tmp",
+      ...(process.env.SystemRoot ? { SystemRoot: process.env.SystemRoot } : {}),
+      TMPDIR: hostile, TEMP: hostile, TMP: hostile,
+    },
     cwd: path.join(HERE, ".."),
   });
-  assert.match(out, /SCRATCH_OK \//, "a suite launched with an unusable TMPDIR must still get a floor");
+  // An absolute path on either platform: "/tmp/...", "C:\...", or the drive-relative "\tmp\..."
+  // that the POSIX "/tmp" candidate becomes under Windows path.join.
+  assert.match(out, /SCRATCH_OK (?:[\\/]|[A-Za-z]:[\\/])/, "a suite launched with an unusable TMPDIR must still get a floor");
 });
 
 test("BH2 — the candidate list is ordered and the override comes first", () => {
