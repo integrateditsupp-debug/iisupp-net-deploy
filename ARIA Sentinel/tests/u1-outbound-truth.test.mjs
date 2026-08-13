@@ -13,6 +13,12 @@ import {
   OUTBOUND_TRUTH_SCHEMA, NEVER, UNVERIFIED, EVENT_KINDS,
   SENDS, HAS_TRANSPORT, PERSISTS, READS_IDENTITY,
 } from "../src/shared/outbound-truth.mjs";
+import { whenOperatorRecords } from "../../scripts/lib/operator-record.mjs";
+
+// RUN-BR — these assertions read a REAL operator record under senior-director-state/, which is
+// untracked by design. Present here: they run for real. Absent (clean clone): the reading is
+// reported NOT TAKEN rather than counted as a code failure.
+const REAL_RECORD = whenOperatorRecords(new URL("../../senior-director-state", import.meta.url));
 
 const NOW = Date.parse("2026-07-28T23:00:00Z");
 const SRC = "src/shared/outbound-truth.mjs";
@@ -48,7 +54,7 @@ test("U1: `0`, `never` and `unverified` are three distinct renderings", () => {
   assert.notEqual(f.meetingsBooked, 0);
 });
 
-test("U1: the real recorded mail set reproduces the first-hand numbers", () => {
+test("U1: the real recorded mail set reproduces the first-hand numbers", REAL_RECORD, () => {
   const t = buildOutboundTruth(realRecord(), { now: NOW });
   const f = outboundFacts(t);
   assert.equal(t.sourced, true);
@@ -94,7 +100,7 @@ test("U1: a bounce is subtracted from delivered - a send that did not land is no
   assert.equal(t.delivered, 1);
 });
 
-test("U1: identity can never enter the path (vault Rule 11)", () => {
+test("U1: identity can never enter the path (vault Rule 11)", REAL_RECORD, () => {
   const bad = normalizeEvent({ kind: "sent", at: "2026-07-28T10:00:00Z", handle: "someone@example.com" });
   assert.equal(bad.ok, false);
   assert.match(bad.problems.join(" "), /identity never enters this path/i);
@@ -130,7 +136,7 @@ test("U1: software progress cannot move a single number", () => {
   assert.deepEqual(before, after, "sequences, suites, commits and merges are not inputs and cannot move outbound truth");
 });
 
-test("U2: reconciliation names an understated counter as a Rule 14 failure", () => {
+test("U2: reconciliation names an understated counter as a Rule 14 failure", REAL_RECORD, () => {
   const t = buildOutboundTruth(realRecord(), { now: NOW });
   const r = reconcileWithClaimed(t, { asksSent: 0, meetingsBooked: 0 });
   assert.equal(r.clean, false);

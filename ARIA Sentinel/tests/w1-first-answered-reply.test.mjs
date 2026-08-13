@@ -22,6 +22,12 @@ import {
   buildFirstReplySurface, surfaceOverclaims, surfaceTrendViolations, allRenderings,
   NOT_YET_HEADLINE,
 } from "../src/shared/first-reply-surface.mjs";
+import { whenOperatorRecords } from "../../scripts/lib/operator-record.mjs";
+
+// RUN-BR — these assertions read a REAL operator record under senior-director-state/, which is
+// untracked by design. Present here: they run for real. Absent (clean clone): the reading is
+// reported NOT TAKEN rather than counted as a code failure.
+const REAL_RECORD = whenOperatorRecords(new URL("../../senior-director-state", import.meta.url));
 
 const NOW = Date.parse("2026-07-29T02:15:00Z");
 const C_SRC = "src/shared/reply-capture.mjs";
@@ -42,7 +48,7 @@ const mailWithSends = (count) => ({
 });
 
 // ── W1 ───────────────────────────────────────────────────────────────────────
-test("W1: module and real record carry NO address or domain (vault Rule 11, grep-proof)", () => {
+test("W1: module and real record carry NO address or domain (vault Rule 11, grep-proof)", REAL_RECORD, () => {
   const rx = /[a-z0-9._-]+@[a-z0-9.-]+|[a-z0-9-]+\.(com|ca|net|org|gov|io|co)\b/i;
   assert.equal(rx.test(srcText(C_SRC)), false, "W1 module must not contain a real address/domain");
   assert.equal(rx.test(realRecordRaw()), false, "reply record must contain no real address/domain");
@@ -77,7 +83,7 @@ test("W1: no inbound SOURCE read => unverified, a third state distinct from `no 
   assert.equal(rc.sourced, false);
 });
 
-test("W1: the real record is honest — sourced, and it holds no invented reply", () => {
+test("W1: the real record is honest — sourced, and it holds no invented reply", REAL_RECORD, () => {
   const rec = JSON.parse(realRecordRaw());
   const rc = buildReplyCapture(rec, { now: NOW, sourced: true });
   assert.equal(Array.isArray(rec.replies), true);
