@@ -20,6 +20,8 @@ const scratch = makeScratchDir('app-detect-');
 process.env.AXIS_DETECT_LOG = path.join(scratch, 'probes.jsonl');
 const D = await import('../scripts/lib/axis-app-detect.mjs');
 
+import { canReadOnWindows } from '../scripts/lib/host-reading.mjs';
+
 const ROOT = path.join(import.meta.dirname, '..');
 const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
 const ok = (m) => console.log('  ok —', m);
@@ -130,7 +132,15 @@ if (process.platform === 'win32') {
 // ---- 8. Structured logging: JSON lines with app, layer, result, latency, attempt ----
 {
   const lines = fs.readFileSync(process.env.AXIS_DETECT_LOG, 'utf8').trim().split('\n').map((l) => JSON.parse(l));
-  assert.ok(lines.length >= 20, `every probe attempt logged (${lines.length})`);
+  // The ≥20 floor is section 7's twenty REAL probes, and section 7 only runs on Windows — on any
+  // other host it deliberately takes one probe and refuses to guess. Counting 20 lines here on
+  // Linux asserted on a measurement this host never took (RUN-BS). The SHAPE of every line is
+  // checked on every host; the VOLUME claim is reported NOT TAKEN where the probes did not happen.
+  if (canReadOnWindows('the twenty-probe log volume floor')) {
+    assert.ok(lines.length >= 20, `every probe attempt logged (${lines.length})`);
+  }
+  assert.ok(lines.length >= 1, 'no probe wrote a log line at all');
+  for (const e of lines) for (const k of ['ts', 'app', 'layer', 'result', 'ms', 'attempt']) assert.ok(k in e, `log entry carries ${k}`);
   for (const e of lines.slice(0, 5)) {
     for (const k of ['ts', 'app', 'layer', 'result', 'ms', 'attempt']) assert.ok(k in e, `log entry carries ${k}`);
   }

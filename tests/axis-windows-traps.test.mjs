@@ -40,6 +40,8 @@ function listFiles(dir, ext, out = []) {
   return out;
 }
 
+import { notTaken, readingSummary } from '../scripts/lib/host-reading.mjs';
+
 const rel = (p) => path.relative(root, p).replace(/\\/g, '/');
 const codeLines = (src) => src.split(/\r?\n/).map((l, i) => [i + 1, l]).filter(([, l]) => !/^\s*#/.test(l));
 
@@ -47,7 +49,15 @@ const codeLines = (src) => src.split(/\r?\n/).map((l, i) => [i + 1, l]).filter((
 // PowerShell launchers
 // ---------------------------------------------------------------------------
 const ps1 = listFiles(path.join(root, 'scripts'), '.ps1');
-assert.ok(ps1.length > 0, 'no .ps1 launchers found — has the layout moved?');
+// `.gitignore:80  *.ps1` — every launcher is deliberately off the shared line. A clean checkout
+// therefore finds ZERO of them, and "zero launchers" is a fact about the checkout, not a moved
+// layout and not a broken trap. On the operator machine this suite reads every launcher for real
+// and a genuine trap still fails it (RUN-BS).
+if (ps1.length === 0) {
+  notTaken('the .ps1 launcher trap sweep', 'gitignored', 'scripts/**/*.ps1');
+  console.log(readingSummary('axis-windows-traps', 0, 1));
+  process.exit(0);
+}
 
 for (const f of ps1) {
   const src = fs.readFileSync(f, 'utf8');
