@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-08-11T23:32:11.465Z",
+  "generatedAt": "2026-08-13T01:31:35.657Z",
   "public": true,
   "note": "Counts only. Approval detail + live activity require an Aperture login (served via /api/axis-state).",
   "health": {
     "worker": "up",
-    "heartbeatAt": "2026-08-11T23:31:48.730Z",
-    "leadsQueued": 353,
+    "heartbeatAt": "2026-08-13T01:31:32.839Z",
+    "leadsQueued": 369,
     "agentsTotal": 27,
-    "approvalsPending": 31,
-    "classifierSelfTestPassPct": 98.28
+    "approvalsPending": 7,
+    "classifierSelfTestPassPct": 98.9
   },
   "autoApprove": {
     "enabled": true,
@@ -22,14 +22,14 @@
     "note": "Auto-sends fire only within the rails. Anything irreversible / anomalous waits in Approvals; a daily auto-fire digest lists what fired."
   },
   "approvalsSummary": {
-    "pending": 31,
+    "pending": 7,
     "byKind": {
-      "review": 31
+      "review": 7
     }
   },
   "activitySummary": {
     "recentCount": 8,
-    "lastActivityAt": "2026-08-11T23:31:51.285Z"
+    "lastActivityAt": "2026-08-13T01:28:52.158Z"
   },
   "agentsSummary": {
     "total": 27,

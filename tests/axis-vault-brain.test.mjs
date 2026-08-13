@@ -18,12 +18,13 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { makeScratchDir } from '../scripts/lib/scratch-dir.mjs';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 let n = 0; const ok = () => { n++; };
 
 // Build a throwaway vault so the test never depends on Ahmad's real notes.
-const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'axis-vault-test-'));
+const tmp = makeScratchDir('axis-vault-test-');
 process.env.AXIS_VAULT = tmp;
 for (const d of ['00_Index', '02_Hippocampus', '07_Cortex', '13_Learned']) {
   fs.mkdirSync(path.join(tmp, d), { recursive: true });

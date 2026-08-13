@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-08-11T23:32:11.464Z",
+  "generatedAt": "2026-08-13T01:31:35.655Z",
   "health": {
     "worker": "up",
-    "heartbeatAt": "2026-08-11T23:31:48.730Z",
-    "leadsQueued": 353,
+    "heartbeatAt": "2026-08-13T01:31:32.839Z",
+    "leadsQueued": 369,
     "agentsTotal": 27,
-    "approvalsPending": 31,
-    "classifierSelfTestPassPct": 98.28
+    "approvalsPending": 7,
+    "classifierSelfTestPassPct": 98.9
   },
   "autoApprove": {
     "enabled": true,
@@ -21,45 +21,45 @@
   },
   "recentActivity": [
     {
-      "at": "2026-08-11T23:31:51.285Z",
-      "agent": "CEO Action Digest Agent",
-      "text": "CEO-only approval, send, publish, and register decisions are compressed into a short digest.",
-      "status": "ready"
-    },
-    {
-      "at": "2026-08-11T23:29:01.426Z",
+      "at": "2026-08-13T01:28:52.158Z",
       "agent": "Opportunity Review Agent",
       "text": "Opportunity records were enriched with summaries, drafts, reminders, and required-document scaffolding.",
       "status": "ready"
     },
     {
-      "at": "2026-08-11T23:29:01.332Z",
+      "at": "2026-08-13T01:28:52.065Z",
       "agent": "Opportunity Research Agent",
       "text": "Public opportunity sources were rescanned and merged into the opportunity engine.",
       "status": "ready"
     },
     {
-      "at": "2026-08-11T23:21:55.283Z",
+      "at": "2026-08-13T01:21:54.991Z",
       "agent": "Opportunity Prep Packets Agent",
       "text": "Bid, portal, and job preparation packets are refreshed to the CEO final-action point.",
       "status": "ready"
     },
     {
-      "at": "2026-08-11T23:16:42.901Z",
+      "at": "2026-08-13T01:16:24.563Z",
       "agent": "Senior Director Worker",
       "text": "Director heartbeat, lead scans, mission brief cadence, and operating board orchestration completed for this tick.",
       "status": "ready"
     },
     {
-      "at": "2026-08-11T22:47:24.214Z",
+      "at": "2026-08-13T00:47:23.860Z",
       "agent": "Interaction Avoidance Agent",
       "text": "Prep-agent routing and one-minute CEO final-action lanes are refreshed.",
       "status": "ready"
     },
     {
-      "at": "2026-08-11T22:44:51.311Z",
+      "at": "2026-08-13T00:44:50.933Z",
       "agent": "Opportunity Quality Gate Agent",
       "text": "Opportunity quality gate refreshed the revenue queue and parked weak-fit noise.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-08-13T00:31:50.826Z",
+      "agent": "CEO Action Digest Agent",
+      "text": "CEO-only approval, send, publish, and register decisions are compressed into a short digest.",
       "status": "ready"
     },
     {
@@ -87,141 +87,21 @@
     },
     {
       "id": "apr-4",
-      "title": "New local-only Start Here route-guide slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-5",
-      "title": "New local-only overflow conversion slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-6",
-      "title": "New local-only ARIA deployment-path slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-7",
-      "title": "New local-only Help Desk Blueprint sample-preview slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-8",
-      "title": "New local-only Overflow Support Pilot preview slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-9",
-      "title": "New local-only M365 Security & Productivity Tune-Up preview slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-10",
-      "title": "New local-only Website Checklist sample-preview slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-11",
-      "title": "New local-only Office Move readiness preview slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-12",
-      "title": "New local-only AI Workflow Audit preview slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-13",
-      "title": "New local-only AI Workflow Quick-Win Sprint preview slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-14",
-      "title": "New local-only MSP / Partner Overflow Coverage preview slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-15",
-      "title": "New local-only product route-back conversion slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-16",
-      "title": "New local-only enterprise-reference compliance cleanup slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-17",
-      "title": "New local-only homepage proof-shelf conversion slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-18",
-      "title": "New local-only Monthly AI Support Plan preview slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-19",
-      "title": "New local-only contact route reassurance slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-20",
-      "title": "New local-only services fit-and-first-deliverable slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-21",
-      "title": "New local-only Prompt Engineering for Workflows preview slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-22",
-      "title": "New local-only Cybersecurity Basics for Employees preview slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-23",
-      "title": "New local-only Meeting-to-SOP AI pack preview slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-24",
-      "title": "New local-only AI Agent Starter Kit preview slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-25",
-      "title": "New local-only No-Code Automation Kit preview slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-26",
-      "title": "New local-only Outlook Fix Guide preview slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-27",
-      "title": "New local-only Marketplace quote-first routeback slice: … is ready for Ahmad to approve publish or hold local only.",
-      "kind": "review"
-    },
-    {
-      "id": "apr-28",
       "title": "Workspace cleanup posture: summary-only cleanup pass is approved. Destructive cleanup remains blocked.",
       "kind": "review"
     },
     {
-      "id": "apr-29",
+      "id": "apr-5",
       "title": "Samsung ProCare tender posture: park as no-bid unless a real no-cost compliant OEM/partner path appears.",
       "kind": "review"
     },
     {
-      "id": "apr-30",
+      "id": "apr-6",
       "title": "RBC supplier registration path: live portal open and partially prefilled with verified IIS company/contact fields. Remaining Ahmad-only steps are CAPT",
       "kind": "review"
     },
     {
-      "id": "apr-31",
+      "id": "apr-7",
       "title": "Workspace steward has cleanup/retirement recommendations; destructive action stays blocked until a later keep/archive/delete review.",
       "kind": "review"
     }
