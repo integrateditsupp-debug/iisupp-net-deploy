@@ -27,6 +27,8 @@
 // tests can prove the taxonomy against fixtures without a repository. The read half is the only
 // part that shells out.
 import { execFileSync } from "node:child_process";
+// RUN-BL / BL2: the reference is resolved by ONE module, never re-implemented here.
+import { resolveReadingRef, RESOLVE_HERE } from "./branch-reference.mjs";
 
 export const UNPUBLISHED_RANGE_SCHEMA = "unpublished-range.v1";
 export const SENDS = false;
@@ -196,16 +198,33 @@ export function statementFor(summary, publicFiles = []) {
  * THE READ. Shells out to git for the range. Never converts a refusal into a zero.
  * Returns { ok, class, report|null, detail }.
  */
-export function readUnpublishedRange({ root = process.cwd(), ref = "origin/main", head = "HEAD" } = {}) {
+export function readUnpublishedRange({ root = process.cwd(), ref = RESOLVE_HERE, head = "HEAD" } = {}) {
+  // RUN-BL / BL2. The default used to be the literal string `origin/main`, and on this machine that
+  // pointer is a cached remote ref no credential can refresh (BH1). Every caller that took the
+  // default was measuring the distance to a line the repository had already moved past, and the
+  // result said nothing about which ref it had used, so the wrongness was invisible downstream.
+  // The default is now "work it out here, and carry the answer in the result".
+  const picked = resolveReadingRef({ root, ref });
+  const usedRef = picked.ref;
+  const reference = {
+    ref: usedRef, sha: picked.sha, requested: picked.requested, resolvedHere: picked.resolvedHere,
+    stale: picked.stale, staleBy: picked.staleBy, class: picked.class, statement: picked.statement,
+  };
+
   const git = (args) => execFileSync("git", args, {
     cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
     env: { ...process.env, GIT_TERMINAL_PROMPT: "0" },
   });
 
-  try { git(["rev-parse", "--verify", `${ref}^{commit}`]); }
+  if (!usedRef) {
+    return { ok: false, class: READ_CLASSES.NO_REF, report: null, reference,
+      detail: `no reference resolves in this checkout, so the distance is unknown rather than zero — ${picked.statement}` };
+  }
+
+  try { git(["rev-parse", "--verify", `${usedRef}^{commit}`]); }
   catch (err) {
-    return { ok: false, class: READ_CLASSES.NO_REF, report: null,
-      detail: `${ref} does not resolve in this checkout — the distance to it is unknown, not zero: ${String(err.message || err).split("\n")[0]}` };
+    return { ok: false, class: READ_CLASSES.NO_REF, report: null, reference,
+      detail: `${usedRef} does not resolve in this checkout — the distance to it is unknown, not zero: ${String(err.message || err).split("\n")[0]}` };
   }
 
   // The ledger has always quoted `rev-list --count`, which INCLUDES merge commits; this read
@@ -213,14 +232,14 @@ export function readUnpublishedRange({ root = process.cwd(), ref = "origin/main"
   // every file it carries. Both figures are reported so the two numbers can never drift apart
   // unexplained — a reader seeing 49 in one place and 37 in another is owed the reconciliation.
   let mergeCount = null;
-  try { mergeCount = Number(git(["rev-list", "--count", "--merges", `${ref}..${head}`]).trim()); } catch { mergeCount = null; }
+  try { mergeCount = Number(git(["rev-list", "--count", "--merges", `${usedRef}..${head}`]).trim()); } catch { mergeCount = null; }
   let totalCount = null;
-  try { totalCount = Number(git(["rev-list", "--count", `${ref}..${head}`]).trim()); } catch { totalCount = null; }
+  try { totalCount = Number(git(["rev-list", "--count", `${usedRef}..${head}`]).trim()); } catch { totalCount = null; }
 
   let raw;
-  try { raw = git(["log", "--no-merges", "--name-only", `--pretty=format:${REC}%H${FLD}%s`, `${ref}..${head}`]); }
+  try { raw = git(["log", "--no-merges", "--name-only", `--pretty=format:${REC}%H${FLD}%s`, `${usedRef}..${head}`]); }
   catch (err) {
-    return { ok: false, class: READ_CLASSES.UNREADABLE, report: null,
+    return { ok: false, class: READ_CLASSES.UNREADABLE, report: null, reference,
       detail: `git refused the range read: ${String(err.message || err).split("\n")[0]}` };
   }
 
@@ -235,7 +254,8 @@ export function readUnpublishedRange({ root = process.cwd(), ref = "origin/main"
     consistent: Number.isInteger(totalCount) && Number.isInteger(mergeCount)
       ? commits.length + mergeCount === totalCount : null,
   };
-  return { ok: true, class: READ_CLASSES.OK, report, detail: `${commits.length} non-merge commit(s) of ${totalCount} read from ${ref}..${head}` };
+  return { ok: true, class: READ_CLASSES.OK, report, reference,
+    detail: `${commits.length} non-merge commit(s) of ${totalCount} read from ${usedRef}..${head} — ${picked.statement}` };
 }
 
 /** PURE. Parse `git log --name-only --pretty=format:\x01%H\x02%s` output. */

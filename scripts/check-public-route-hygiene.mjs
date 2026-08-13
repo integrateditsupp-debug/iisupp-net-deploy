@@ -10,12 +10,15 @@ const skipDirs = new Set(['.git', 'node_modules', 'backups', 'archive', 'artifac
 // missingRefs they produced buried the handful of REAL ones. Nothing is deleted and no
 // check is weakened (RULE 15): these directories are out of scope, and the count of what
 // was skipped is printed in the report so the exclusion stays honest and visible.
+// tmp/ is gitignored, ephemeral test scratch (run-tests-*/as3-action-*/index.html fixtures);
+// it never publishes, so its throwaway /a.html-style anchors are not site routes either.
 const skipDirPatterns = [
   /^venv$/i,
   /^\.venv$/i,
   /^site-packages$/i,
   /^win-unpacked$/i,
   /^dist(\.|$)/i,
+  /^tmp$/i,
 ];
 let scopeSkippedDirs = 0;
 const isOutOfScopeDir = (name) => {

@@ -18,6 +18,12 @@ import {
 } from "../src/shared/second-message.mjs";
 import { replyRateFacts, replyRateMarkdown, NOT_ESTABLISHED, REPLY_RATE_SCHEMA } from "../src/shared/reply-rate.mjs";
 import { buildOutboundTruth, UNVERIFIED, NEVER } from "../src/shared/outbound-truth.mjs";
+import { whenOperatorRecords } from "../../scripts/lib/operator-record.mjs";
+
+// RUN-BR — these assertions read a REAL operator record under senior-director-state/, which is
+// untracked by design. Present here: they run for real. Absent (clean clone): the reading is
+// reported NOT TAKEN rather than counted as a code failure.
+const REAL_RECORD = whenOperatorRecords(new URL("../../senior-director-state", import.meta.url));
 
 const NOW = Date.parse("2026-07-29T00:45:00Z");
 const Q_SRC = "src/shared/warm-redirect-queue.mjs";
@@ -29,7 +35,7 @@ const realRecord = () => JSON.parse(readFileSync(new URL(RECORD, import.meta.url
 const srcText = (rel) => readFileSync(new URL("../" + rel, import.meta.url), "utf8");
 
 // ── V1 ───────────────────────────────────────────────────────────────────────
-test("V1: module + record carry NO address or domain (vault Rule 11, grep-proof)", () => {
+test("V1: module + record carry NO address or domain (vault Rule 11, grep-proof)", REAL_RECORD, () => {
   // A real address (word@word) or a bare domain (word.tld) — NOT the module's own refusal-regex `@`.
   const rx = /[a-z0-9._-]+@[a-z0-9.-]+|[a-z0-9-]+\.(com|ca|net|org|gov|io|co)\b/i;
   assert.equal(rx.test(srcText(Q_SRC)), false, "V1 module must not contain a real address/domain");
@@ -44,7 +50,7 @@ test("V1: normalizeRoute refuses an identity-carrying handle and an unknown clas
   assert.equal(normalizeRoute({ handle: "WR-1", routeClass: "successor-firm", mode: "email" }).ok, true);
 });
 
-test("V1: expiry is first-class — an expired route is separated, never in the live queue", () => {
+test("V1: expiry is first-class — an expired route is separated, never in the live queue", REAL_RECORD, () => {
   const q = buildWarmRedirectQueue(realRecord(), { now: NOW });
   assert.equal(q.schema, WARM_REDIRECT_SCHEMA);
   assert.ok(q.expired.length >= 1, "the closed redirect window must render expired");
@@ -53,7 +59,7 @@ test("V1: expiry is first-class — an expired route is separated, never in the 
   for (const live of q.queue) assert.equal(expiredHandles.has(live.handle), false, "no expired route may appear live");
 });
 
-test("V1: a passed return date outranks a future one; a reachable route beats one without a mode", () => {
+test("V1: a passed return date outranks a future one; a reachable route beats one without a mode", REAL_RECORD, () => {
   const q = buildWarmRedirectQueue(realRecord(), { now: NOW });
   // The two passed return dates (WR-R001/R002) must sort ahead of the future ones (R008/R009/R010/R011).
   const idx = (h) => q.queue.findIndex((r) => r.handle === h);
@@ -67,7 +73,7 @@ test("V1: a passed return date outranks a future one; a reachable route beats on
   }
 });
 
-test("V1: facts count phone routes as phone, not email", () => {
+test("V1: facts count phone routes as phone, not email", REAL_RECORD, () => {
   const f = warmRedirectFacts(buildWarmRedirectQueue(realRecord(), { now: NOW }));
   assert.equal(f.phoneRoutes, 2, "two direct phone lines were handed back");
   assert.ok(f.emailRoutes >= 1);
@@ -93,7 +99,7 @@ test("V2: a draft is REFUSED BY NAME for each unsupportable claim class", () => 
   }
 });
 
-test("V2: an honest draft ships, states true provenance, and carries no banned language", () => {
+test("V2: an honest draft ships, states true provenance, and carries no banned language", REAL_RECORD, () => {
   const q = buildWarmRedirectQueue(realRecord(), { now: NOW });
   const { drafts, refused } = draftQueue(q.queue);
   assert.ok(drafts.length >= 1);

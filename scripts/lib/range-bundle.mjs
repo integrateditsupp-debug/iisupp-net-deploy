@@ -41,6 +41,9 @@ import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 
+// RUN-BL / BL2: one implementation of "which ref is the reference", imported, never repeated.
+import { resolveReadingRef, RESOLVE_HERE } from "./branch-reference.mjs";
+
 export const RANGE_BUNDLE_SCHEMA = "range-bundle.v1";
 export const SENDS = false;
 
@@ -87,20 +90,32 @@ export function digestFile(abs) {
  * have, which is what makes it small enough to move by any means. A receiver that lacks `ref`
  * is told so by `git bundle verify` — that is a correct refusal, not a defect of this function.
  */
-export function createRangeBundle({ root = process.cwd(), ref = "origin/main", head = "HEAD", branch = "main" } = {}) {
+export function createRangeBundle({ root = process.cwd(), ref = RESOLVE_HERE, head = "HEAD", branch = "main" } = {}) {
   const dir = path.join(root, BUNDLE_DIR);
   const bundleAbs = path.join(root, BUNDLE_FILE);
   const manifestAbs = path.join(root, MANIFEST_FILE);
+
+  // RUN-BL / BL2. A bundle is THIN against its base: the base ref decides which objects a receiver
+  // must already hold. Defaulting that base to a cached `origin/main` meant a bundle could be built
+  // against a pointer the local line had moved past — thin against a commit, described as thin
+  // against the shared line. The base is now resolved through the one module that knows which ref
+  // this checkout can trust, and the manifest CARRIES that resolution so a receiver reads it too.
+  const picked = resolveReadingRef({ root, ref });
+  const usedRef = picked.ref;
+  if (!usedRef) {
+    return { ok: false, class: BUNDLE_CLASSES.CREATE_FAILED, manifest: null,
+      detail: `no reference resolves in this checkout, so there is no base to be thin against — ${picked.statement}` };
+  }
 
   let tip, tree, refSha, count;
   try {
     tip = git(["rev-parse", `${head}^{commit}`], root).trim();
     tree = git(["rev-parse", `${head}^{tree}`], root).trim();
-    refSha = git(["rev-parse", `${ref}^{commit}`], root).trim();
-    count = Number(git(["rev-list", "--count", `${ref}..${head}`], root).trim());
+    refSha = git(["rev-parse", `${usedRef}^{commit}`], root).trim();
+    count = Number(git(["rev-list", "--count", `${usedRef}..${head}`], root).trim());
   } catch (err) {
     return { ok: false, class: BUNDLE_CLASSES.CREATE_FAILED, manifest: null,
-      detail: `could not resolve the range ${ref}..${head}: ${String(err.message || err).split("\n")[0]}` };
+      detail: `could not resolve the range ${usedRef}..${head}: ${String(err.message || err).split("\n")[0]}` };
   }
 
   fs.mkdirSync(dir, { recursive: true });
@@ -117,7 +132,13 @@ export function createRangeBundle({ root = process.cwd(), ref = "origin/main", h
     schema: RANGE_BUNDLE_SCHEMA,
     generatedAt: new Date().toISOString(),
     bundle: BUNDLE_FILE,
-    basedOn: { ref, sha: refSha },
+    basedOn: {
+      ref: usedRef, sha: refSha,
+      // BL2: the reference travels with the number, always. A receiver reading `commits: 51` is
+      // owed the fact of what those 51 are counted from and whether that ref lags this checkout.
+      requested: picked.requested, resolvedHere: picked.resolvedHere,
+      stale: picked.stale, staleBy: picked.staleBy, statement: picked.statement,
+    },
     tip,
     tree,
     branch,

@@ -29,6 +29,12 @@ import { buildWarmRedirectQueue } from "../src/shared/warm-redirect-queue.mjs";
 import { buildCostOfDelay } from "../src/shared/cost-of-delay.mjs";
 import { buildOutcomeLadder } from "../src/shared/outcome-ladder.mjs";
 import { buildTheHour, ONE_SITTING_MAX } from "../src/shared/the-hour.mjs";
+import { whenOperatorRecords } from "../../scripts/lib/operator-record.mjs";
+
+// RUN-BR — these assertions read a REAL operator record under senior-director-state/, which is
+// untracked by design. Present here: they run for real. Absent (clean clone): the reading is
+// reported NOT TAKEN rather than counted as a code failure.
+const REAL_RECORD = whenOperatorRecords(new URL("../../senior-director-state", import.meta.url));
 
 const NOW = Date.parse("2026-07-29T15:00:00Z");
 const S_SRC = "src/shared/spent-hour.mjs";
@@ -84,7 +90,7 @@ test("Y1: an hour the operator sat down for and executed nothing is `0`, NOT `no
   assert.match(s.note, /sitting down and doing nothing is different from never sitting down/i);
 });
 
-test("Y1: a fully-populated hour artefact with NO operator entry still renders `not spent` — nothing is inferred", () => {
+test("Y1: a fully-populated hour artefact with NO operator entry still renders `not spent` — nothing is inferred", REAL_RECORD, () => {
   const hour = buildTheHour({ warm: realWarmQueue() }, { now: NOW });
   assert.ok(hour.actions.length > 0, "fixture sanity: the hour has drafted actions");
   // Every draft in the world does not make a send.
@@ -133,7 +139,7 @@ test("Y1: software-progress inputs are accepted at the door and discarded unread
   for (const k of S_DISCARDED) assert.ok(srcText(S_SRC).includes(k), `${k} must be named as discarded`);
 });
 
-test("Y1: no identity anywhere — module, entries, or the real record (vault Rule 11)", () => {
+test("Y1: no identity anywhere — module, entries, or the real record (vault Rule 11)", REAL_RECORD, () => {
   const ADDR = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i;
   assert.ok(!ADDR.test(srcText(S_SRC)), "module must carry no address");
   assert.ok(!ADDR.test(realSpentRaw()), "the real spent-hour record must carry no address");
@@ -142,7 +148,7 @@ test("Y1: no identity anywhere — module, entries, or the real record (vault Ru
   assert.match(n.refusals.join(" "), /address or a domain/i);
 });
 
-test("Y1: the REAL record is honest — the hour has not been spent", () => {
+test("Y1: the REAL record is honest — the hour has not been spent", REAL_RECORD, () => {
   const rec = JSON.parse(realSpentRaw());
   const s = buildSpentHour(rec, { now: NOW });
   assert.equal(s.state, NOT_SPENT);
@@ -175,7 +181,7 @@ const snapshot = ({ landed = 0, lastSentAt = "2026-07-26T14:00:00Z", drafted = 1
   warm: realWarmQueue(),
 });
 
-test("Y2: an hour that is not spent produces no diff and says so — not a change set of zero", () => {
+test("Y2: an hour that is not spent produces no diff and says so — not a change set of zero", REAL_RECORD, () => {
   const c = buildHourChange({ spent: buildSpentHour({}, { now: NOW }), before: snapshot(), after: snapshot() }, { now: NOW });
   assert.equal(c.schema, HOUR_CHANGE_SCHEMA);
   assert.equal(c.hourWasSpent, false);
@@ -183,7 +189,7 @@ test("Y2: an hour that is not spent produces no diff and says so — not a chang
   assert.equal(renderHourChange(c), NOT_SPENT_LINE);
 });
 
-test("Y2: a spent hour with zero real events produces an EMPTY change set", () => {
+test("Y2: a spent hour with zero real events produces an EMPTY change set", REAL_RECORD, () => {
   const spent = buildSpentHour({
     spentAt: "2026-07-29T14:00:00Z",
     entries: [{ handle: "WR-R001", disposition: "executed", observed: "sent" }],
@@ -196,7 +202,7 @@ test("Y2: a spent hour with zero real events produces an EMPTY change set", () =
   assert.match(NO_CHANGE_LINE, /nothing has changed yet/i);
 });
 
-test("Y2: no software-progress input can populate the change set", () => {
+test("Y2: no software-progress input can populate the change set", REAL_RECORD, () => {
   const spent = buildSpentHour({ spentAt: "2026-07-29T14:00:00Z", entries: [] }, { now: NOW });
   const same = snapshot();
   const a = buildHourChange({ spent, before: same, after: same }, { now: NOW });
@@ -206,7 +212,7 @@ test("Y2: no software-progress input can populate the change set", () => {
   for (const k of C_DISCARDED) assert.ok(srcText(C_SRC).includes(k), `${k} must be named as discarded`);
 });
 
-test("Y2: a real send moves a cost component and the change is reported with its direction", () => {
+test("Y2: a real send moves a cost component and the change is reported with its direction", REAL_RECORD, () => {
   const spent = buildSpentHour({
     spentAt: "2026-07-29T14:00:00Z",
     entries: [{ handle: "WR-R001", disposition: "executed", observed: "sent on the existing thread" }],
@@ -220,7 +226,7 @@ test("Y2: a real send moves a cost component and the change is reported with its
   assert.ok(days.to < days.from);
 });
 
-test("Y2: a rung that gains its own evidence is reported; a worsening number is never hidden", () => {
+test("Y2: a rung that gains its own evidence is reported; a worsening number is never hidden", REAL_RECORD, () => {
   const spent = buildSpentHour({ spentAt: "2026-07-29T14:00:00Z", entries: [] }, { now: NOW });
   const c = buildHourChange({
     spent,
@@ -240,7 +246,7 @@ test("Y2: a rung that gains its own evidence is reported; a worsening number is 
   assert.ok(rose, "a worsening component must be reported, not hidden because the hour was spent");
 });
 
-test("Y2: an unverified side is an absence, never a movement", () => {
+test("Y2: an unverified side is an absence, never a movement", REAL_RECORD, () => {
   const spent = buildSpentHour({ spentAt: "2026-07-29T14:00:00Z", entries: [] }, { now: NOW });
   const before = { cost: buildCostOfDelay({}, { now: NOW }), ladder: snapshot().ladder, warm: realWarmQueue() };
   const after = snapshot();
@@ -249,7 +255,7 @@ test("Y2: an unverified side is an absence, never a movement", () => {
   assert.equal(hourChangeFacts(c).schema, HOUR_CHANGE_SCHEMA);
 });
 
-test("Y2: nothing the operator READS carries celebration language", () => {
+test("Y2: nothing the operator READS carries celebration language", REAL_RECORD, () => {
   const spent = buildSpentHour({ spentAt: "2026-07-29T14:00:00Z", entries: [] }, { now: NOW });
   const rendered = [
     NO_CHANGE_LINE,
@@ -269,7 +275,7 @@ test("Y2: nothing the operator READS carries celebration language", () => {
 
 const spentWith = (entries) => buildSpentHour({ spentAt: "2026-07-29T14:00:00Z", entries }, { now: NOW });
 
-test("Y3: an executed action can NEVER reappear as a live action", () => {
+test("Y3: an executed action can NEVER reappear as a live action", REAL_RECORD, () => {
   const warm = realWarmQueue();
   const first = buildTheHour({ warm }, { now: NOW });
   const done = first.actions[0].handle;
@@ -280,7 +286,7 @@ test("Y3: an executed action can NEVER reappear as a live action", () => {
   assert.ok(n.completed.some((c) => c.handle === done), "it must appear as completed, not vanish");
 });
 
-test("Y3: a skipped route carries its reason forward verbatim and ranks BELOW never-attempted routes", () => {
+test("Y3: a skipped route carries its reason forward verbatim and ranks BELOW never-attempted routes", REAL_RECORD, () => {
   const warm = realWarmQueue();
   const first = buildTheHour({ warm }, { now: NOW });
   const skipped = first.actions[0].handle;
@@ -293,7 +299,7 @@ test("Y3: a skipped route carries its reason forward verbatim and ranks BELOW ne
   assert.ok(n.actions.slice(0, idx).every((a) => a.previouslySkipped === false));
 });
 
-test("Y3: with no previous entry nothing is consumed and the list is unchanged", () => {
+test("Y3: with no previous entry nothing is consumed and the list is unchanged", REAL_RECORD, () => {
   const warm = realWarmQueue();
   const first = buildTheHour({ warm }, { now: NOW });
   const n = buildNextHour({ warm, spent: buildSpentHour({}, { now: NOW }) }, { now: NOW });
@@ -302,7 +308,7 @@ test("Y3: with no previous entry nothing is consumed and the list is unchanged",
   assert.deepEqual(n.actions.map((a) => a.handle), first.actions.map((a) => a.handle));
 });
 
-test("Y3: windows that closed are rendered as dated losses and are never re-ranked as live", () => {
+test("Y3: windows that closed are rendered as dated losses and are never re-ranked as live", REAL_RECORD, () => {
   const warm = realWarmQueue();
   const n = buildNextHour({ warm, spent: spentWith([]) }, { now: NOW });
   const liveHandles = new Set(n.actions.map((a) => a.handle));
@@ -312,7 +318,7 @@ test("Y3: windows that closed are rendered as dated losses and are never re-rank
   }
 });
 
-test("Y3: the regenerated artefact stays cold-executable, leak-free and within one sitting", () => {
+test("Y3: the regenerated artefact stays cold-executable, leak-free and within one sitting", REAL_RECORD, () => {
   const warm = realWarmQueue();
   const n = buildNextHour({ warm, spent: spentWith([]) }, { now: NOW });
   assert.deepEqual(nextHourLeaks(n), []);
@@ -323,14 +329,14 @@ test("Y3: the regenerated artefact stays cold-executable, leak-free and within o
   for (const a of n.actions) assert.ok(text.includes(a.body), "every action must carry its own body");
 });
 
-test("Y3: overflow is stated, never silently truncated", () => {
+test("Y3: overflow is stated, never silently truncated", REAL_RECORD, () => {
   const warm = realWarmQueue();
   const n = buildNextHour({ warm, spent: spentWith([]) }, { now: NOW });
   assert.equal(n.actions.length + n.overflow, n.actionsTotalReachable);
   assert.equal(typeof n.heldBeyondSitting, "number");
 });
 
-test("Y3: against the REAL records the next hour is identical to the current one — nothing has been spent", () => {
+test("Y3: against the REAL records the next hour is identical to the current one — nothing has been spent", REAL_RECORD, () => {
   const warm = realWarmQueue();
   const spent = buildSpentHour(JSON.parse(realSpentRaw()), { now: NOW });
   const n = buildNextHour({ warm, spent }, { now: NOW });

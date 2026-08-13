@@ -111,7 +111,10 @@ test("AR3 — the workaround actually produces a commit where porcelain is block
   assert.equal(porcelainFailed, true, "the premise: with index.lock present, porcelain refuses");
 
   // Now the recorded steps, executed literally.
-  const idx = path.join(os.tmpdir(), `ar3-${process.pid}.index`);
+  // RUN-BL / BL3: was `path.join(os.tmpdir(), …)`. `os.tmpdir()` on this machine is a volume that
+  // has reached ENOSPC more than once, and an alternate index file written there fails the plumbing
+  // path this very suite exists to prove. Substitution taken verbatim from the gate's own output.
+  const idx = path.join(makeScratchDir("ar3-"), `ar3-${process.pid}.index`);
   const env = { ...process.env, GIT_INDEX_FILE: idx };
   const g = (args) => execFileSync("git", args, { cwd: dir, encoding: "utf8", env, stdio: ["ignore", "pipe", "pipe"] });
   fs.writeFileSync(path.join(dir, "b.txt"), "two\n");

@@ -26,6 +26,12 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { makeScratchDir } from "../scripts/lib/scratch-dir.mjs";
+import { whenOperatorRecords } from "../scripts/lib/operator-record.mjs";
+
+// RUN-BR — these assertions read a REAL operator record under senior-director-state/, which is
+// untracked by design. Present here: they run for real. Absent (clean clone): the reading is
+// reported NOT TAKEN rather than counted as a code failure.
+const REAL_RECORD = whenOperatorRecords(new URL("../senior-director-state", import.meta.url));
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -165,7 +171,7 @@ test("AP4 GREEN — regeneration clears the drift and the history below END is b
 });
 
 // ── THE ONE THAT MATTERS: the real file, on the real repository ───────────────────────────────
-test("AP4 — the REAL ledger head on disk matches the truth this cycle emitted", async () => {
+test("AP4 — the REAL ledger head on disk matches the truth this cycle emitted", REAL_RECORD, async () => {
   const truth = readProgramTruth(ROOT);
   assert.ok(truth, `${TRUTH_FILE} is missing — the emit must record the truth it published from`);
 
@@ -178,7 +184,7 @@ test("AP4 — the REAL ledger head on disk matches the truth this cycle emitted"
     `--- on disk ---\n${(r.actual || "").slice(0, 900)}\n--- regenerated ---\n${(r.expected || "").slice(0, 900)}`);
 });
 
-test("AP4 — regenerating the real ledger is a no-op, which is the point", async () => {
+test("AP4 — regenerating the real ledger is a no-op, which is the point", REAL_RECORD, async () => {
   const w = await regenerateLedgerHeadOnDisk({ root: ROOT, write: false });
   assert.equal(w.ok, true, w.detail);
   assert.equal(w.changed, false,

@@ -728,6 +728,37 @@ const TESTS = [
   "./goal-probe-grade.test.mjs",
 ];
 
+// RUN-BJ / BJ1 (2026-08-12) — THE FLOOR THIS RUNNER NEVER HAD.
+//
+// Measured this cycle, on a tree whose code was not touched: this registry read 1047 pass / 27 fail,
+// and every one of the 27 was `ENOSPC: no space left on device, mkdtemp` against the volume
+// `os.tmpdir()` points at. Not one was about the code under test. The SAME tree at the SAME commit
+// read 1074 pass / 0 fail with nothing changed but the directory the fixtures were handed.
+//
+// The remedy already existed and this runner was simply outside it. RUN-BC pinned a path, RUN-BE
+// extracted `scripts/lib/scratch-dir.mjs`, and RUN-BF made the SITE runner own the floor so no suite
+// had to opt in — which is why the site suite stayed green all cycle while this one flickered. The
+// gap RUN-BG recorded and deferred ("35 suites call os.tmpdir() directly and bypass the probe") is
+// closed here the same way, at the runner, rather than in 35 files: suites are imported INTO this
+// process, so `os.tmpdir()` re-reads these variables at call time and every existing caller is
+// covered without editing one of them.
+//
+// It sets the variables rather than asking suites to read a new one, because a remedy each caller
+// has to remember only works on the callers that remembered — that is exactly why this red survived
+// three cycles of fixes aimed at it.
+//
+// `makeScratchDir` is IMPORTED, never re-implemented: it probes write AND remove before returning,
+// which matters because this environment has volumes that accept a write and refuse `unlink`, and a
+// fixture that runs `git commit` needs to remove a file. If no candidate accepts a write it throws,
+// and throwing is correct — a registry that measures against a volume silently dropping data would
+// report a health it has not got (Rule 14).
+const { makeScratchDir } = await import("../../scripts/lib/scratch-dir.mjs");
+const SCRATCH = makeScratchDir("sentinel-registry-");
+process.env.TMPDIR = SCRATCH;
+process.env.TEMP = SCRATCH;
+process.env.TMP = SCRATCH;
+process.env.AXIS_SCRATCH_DIR = process.env.AXIS_SCRATCH_DIR || SCRATCH;
+
 const bail = process.argv.includes("--bail");
 const results = [];
 for (const spec of TESTS) {

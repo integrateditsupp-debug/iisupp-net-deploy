@@ -20,7 +20,21 @@ import { fileURLToPath } from 'node:url';
 
 const SITE = (process.env.ARIA_SITE || 'https://iisupp.net').replace(/\/$/, '');
 const SECRET = process.env.ARIA_AUDIT_SECRET || process.env.ARIA_EXPORT_SECRET || '';
-const LIMIT = process.env.ARIA_KB_LIMIT || '5000';
+// LIMIT LADDER, not a single number. Measured against production 2026-08-12:
+//   limit=5000 -> 502   limit=2000 -> 502   limit=1600 -> 502   limit=1200 -> 502 (~41s)
+//   limit=800  -> 200 (26s)   limit=500 -> 200   limit=50 -> 200
+// aria-kb-export does one Blobs read PER BIT (`blobs.slice(0, limit)` then `kb.get` in a loop), so
+// its runtime scales with the limit and it blows Netlify's ~26s synchronous ceiling somewhere
+// between 800 and 1200 bits. The old hard-coded 5000 was therefore guaranteed to fail the moment
+// the KB outgrew ~1000 bits, which it did: pull.log shows "Export failed: 502" on every run from
+// 2026-07-21 to 2026-08-12 - 22 failing days, logged faithfully, alerting nobody.
+//
+// A single smaller number would rot the same way as the KB keeps growing. So: walk DOWN the ladder
+// until one completes. Getting some of the KB is strictly better than getting none, which is what
+// three weeks of 502s delivered.
+const LIMIT_LADDER = process.env.ARIA_KB_LIMIT
+  ? [process.env.ARIA_KB_LIMIT]
+  : ['800', '500', '250', '100'];
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(root, 'aria_brain_pack', 'bits');
@@ -30,14 +44,34 @@ async function main() {
     console.error('ERROR: set ARIA_AUDIT_SECRET (the value from your Netlify env) before running.');
     process.exit(1);
   }
-  const url = `${SITE}/.netlify/functions/aria-kb-export?limit=${encodeURIComponent(LIMIT)}`;
-  console.log('Pulling live bit-KB from', url);
-  const res = await fetch(url, { headers: { 'x-aria-export-secret': SECRET } });
-  if (!res.ok) {
-    console.error('Export failed:', res.status, await res.text().catch(() => ''));
+  let data = null, usedLimit = null, lastStatus = null, lastBody = '';
+  for (const limit of LIMIT_LADDER) {
+    const url = `${SITE}/.netlify/functions/aria-kb-export?limit=${encodeURIComponent(limit)}`;
+    console.log('Pulling live bit-KB from', url);
+    let res;
+    try {
+      // Below the 26s server ceiling, so a hang is a real failure rather than us giving up early.
+      res = await fetch(url, { headers: { 'x-aria-export-secret': SECRET }, signal: AbortSignal.timeout(50000) });
+    } catch (e) {
+      lastStatus = 'network'; lastBody = e.message;
+      console.error(`  limit=${limit} failed (${e.message}) — trying a smaller page`);
+      continue;
+    }
+    if (res.ok) { data = await res.json(); usedLimit = limit; break; }
+    lastStatus = res.status;
+    lastBody = await res.text().catch(() => '');
+    // 401/403 is the secret, not the size — no smaller page will fix it.
+    if (res.status === 401 || res.status === 403) break;
+    console.error(`  limit=${limit} -> ${res.status} — trying a smaller page`);
+  }
+  if (!data) {
+    console.error('Export failed:', lastStatus, String(lastBody).slice(0, 200));
     process.exit(1);
   }
-  const data = await res.json();
+  if (usedLimit !== LIMIT_LADDER[0]) {
+    console.warn(`NOTE: fell back to limit=${usedLimit}. The export has no pagination, so this is a`
+      + ' PARTIAL mirror — aria-kb-export needs an offset/cursor to pull the whole KB.');
+  }
   const bits = data.bits || [];
   await mkdir(outDir, { recursive: true });
 

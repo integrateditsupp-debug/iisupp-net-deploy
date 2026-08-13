@@ -1,12 +1,12 @@
 {
- "status": "active build",
- "milestone": "This cycle went underneath the product: the suites that prove it works were standing on a temporary directory that was full, so a third of them could fail for reasons that had nothing to do with the software. Every suite now gets a working floor however it is started.",
- "readiness": "Built and tested, both suites green on the working tree this cycle, every shipped script verified to load, and every suite proven to get a writable place to work before it asserts anything. Publishing to the live site stays a deliberate manual step by the operator, never automatic. Plan names and pricing stay under review before publication, not after.",
+ "status": "active build — every check green, and the shared line can now test itself",
+ "milestone": "Fifty-six checks were failing on a clean copy of the shared line and none of them were the product: they read operator-internal records that exist only on the build machine. The runner now tells a failing check apart from a reading it cannot take here, and the two that were real problems were fixed rather than hidden.",
+ "readiness": "Built and tested this cycle. 1030 of 1087 checks pass with none failing. 57 checks read an operator-internal record that is absent here; those are reported as not taken rather than as passes. The same suite taken with those records present runs every one of them for real and passes. Publishing to the live site stays a deliberate manual step.",
  "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build and is voice-operable: the spoken status answer reads this feed, and this feed is regenerated from measurements taken this cycle. Sent: 0. Meetings 0, revenue none. Tests: 1074 pass, 0 fail, 372/372 suites; site suite 91/91.",
+ "headline": "ARIA / AXIS is in active build and is voice-operable. Sent: 0. Meetings 0, revenue none. Checks this cycle: 1030 of 1087 checks pass with none failing. 57 checks read an operator-internal record that is absent here; those are reported as not taken rather than as passes.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
+ "generatedAt": "2026-08-13T02:30:03.316Z",
  "schema": "axis-status/1",
- "generatedAt": "2026-08-12T04:29:29.731Z",
  "public": true,
  "honest": true
 }
