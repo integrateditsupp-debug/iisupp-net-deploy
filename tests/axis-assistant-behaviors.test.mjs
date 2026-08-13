@@ -18,7 +18,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
-import { detectOp, detectUiOpen, detectQueueWork, detectSearchAsk, isMetaTurn } from '../assets/axis-persona.js';
+import { detectOp, detectUiOpen, detectQueueWork, detectSearchAsk, isMetaTurn, detectBoardRead } from '../assets/axis-persona.js';
 import { localAnswer } from '../assets/axis-priorities.js';
 import { speakable } from '../scripts/lib/axis-vault-brain.mjs';
 
@@ -146,4 +146,34 @@ assert.equal(route("I didn't ask what's waiting I asked what's going on"), 'brai
 assert.equal(route("I don't see anything opened on the browser show me where"), 'brain-meta', 'turn 6: never the vault matcher');
 ok('the transcript replayed: act, answer, or hand to the brain — never recite, never dump');
 
-console.log('axis-assistant-behaviors test passed (navigation is real · meta turns reach the brain only · sources route by intent · vault answers are earned and clean · the queue goes to Claude · search works).');
+// ---- 9. Content, not counts: "let me see it" reads the item OUT ----
+// The 2026-08-12 midnight transcript: five asks for ONE pending approval — "pull it up let me see
+// for details", "let me see it", "just give me the approval it's listed on this website", "open
+// it" — answered with counts, a which-database question, and four orphaned "One moment."s. The
+// subject, channel, age and draft body were in the page's own snapshot the entire time.
+for (const [say, why] of [
+  ['okay pull it up let me see for details and then we can approve it', 'the first ask'],
+  ['okay let me see it', 'the second'],
+  ["okay you've already told me that stuff just give me the approval it's listed on this website", 'the fifth'],
+  ['open it', 'bare pronoun open'],
+  ['okay can you tell us if you have any leads can you check the inbox', 'the inbox check'],
+]) assert.ok(detectBoardRead(say), `${why}: must be board.read`);
+assert.equal(detectBoardRead('what needs me today'), null, 'a counts question stays a counts question');
+assert.ok(/axisReadBoardItem\(text\)/.test(app), 'the console executes the read');
+assert.ok(app.indexOf('detectBoardRead(text)') < app.indexOf('detectUiOpen(text)'),
+  'content beats navigation: "let me see it" wants the words, not just the window');
+assert.ok(/draftBody\(r\.id\)/.test(app), 'the read joins the approval to its outreach draft BODY by id');
+assert.ok(/approving stays your click/.test(app), 'reading out never becomes approving');
+ok('"let me see it" reads the approval aloud and opens the screen — content, not counts');
+
+// ---- 10. "One moment." can no longer be the last word ----
+const worker2 = read('scripts/axis-brain-worker.mjs');
+assert.ok(/150000/.test(worker2) && !/job\.t \|\| 0\)\) > 20000/.test(worker2),
+  'the worker stale cutoff matches the console poll window — 20s was the silent-drop dead-end');
+assert.ok(/stale: the worker was busy/.test(worker2), 'a dropped question writes an honest done-record, never silence');
+assert.ok(/were you able to/.test(read('assets/axis-persona.js')), '"were you able to find it" is a meta turn');
+const director = read('netlify/functions/axis-director.js');
+assert.ok(/AXIS_BRAIN_SKIP/.test(director), 'the tier kill-switch exists: AXIS_BRAIN_SKIP=recall,research,kb runs Obsidian+Claude only');
+ok('dropped questions answer honestly, and the ARIA tiers have an off switch');
+
+console.log('axis-assistant-behaviors test passed (navigation is real · meta turns reach the brain only · sources route by intent · vault answers are earned and clean · the queue goes to Claude · search works · items read aloud · no silent drops).');

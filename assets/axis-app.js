@@ -21,7 +21,7 @@ import { axisPersonaBonus, AXIS_PROSODY, VOICE_POLICY_REV, ackLine, greetLine, r
   isWake, isStop, isConfirm, isDeny, stripWake, smallTalk, stripMetaNarration, markRepeat,
   voiceProfile, voiceFamily, polishForSpeech, speechify, phraseChunks,
   splitForTurns, isContinue, isReferential, detectOp, detectVideoDirection,
-  detectUiOpen, detectQueueWork, detectSearchAsk, isMetaTurn } from './axis-persona.js';
+  detectUiOpen, detectQueueWork, detectSearchAsk, isMetaTurn, detectBoardRead } from './axis-persona.js';
 
 const TOKEN_KEY = 'aperture_jwt';
 
@@ -1745,6 +1745,58 @@ function axisOpenTarget(text) {
   dockLog.push({ role: 'axis', text: line }); renderDock(); axisSpeakTurn(line);
 }
 
+// ── Read the item OUT LOUD: content, not counts ──────────────────────────────
+// "Just give me the approval, it's listed on this website" (2026-08-12, after four failed asks).
+// The approval's subject, kind, channel and age are in approvals.rows; the full draft body is in
+// the outreach module under the SAME id. Reading them is a local lookup — no model, no queue, no
+// "One moment." The screen opens too, so hearing it and seeing it are one act.
+function axisReadBoardItem(text) {
+  const t = String(text || '').toLowerCase();
+  const mod = (m) => (state.snap[m] && state.snap[m].data) || {};
+  const say = [];
+  let screen = null;
+
+  const wantsInbox = /\b(?:inbox|messages?|repl(?:y|ies)|leads?)\b/.test(t);
+  const approvals = (mod('approvals').rows || []).filter((r) => r.status === 'pending');
+  const drafts = mod('outreach').drafts;
+  const draftBody = (id) => {
+    const d = Array.isArray(drafts) ? drafts.find((x) => x.id === id) : null;
+    return d && d.body ? String(d.body).replace(/\s+/g, ' ').trim() : '';
+  };
+  const inboxRows = (mod('inbox').rows || []).filter((m) => ACTIONABLE.includes(m.classification) && !m.actioned && !m.snoozed_until);
+
+  if (!wantsInbox && approvals.length) {
+    screen = 'approvals';
+    for (const r of approvals.slice(0, 2)) {
+      const body = draftBody(r.id);
+      say.push(`${r.kind === 'followup' ? 'A follow-up draft' : 'A draft'} ${r.channel ? 'by ' + r.channel : ''}: “${r.subject || '(no subject)'}”${ago(r.created_at) ? ', raised ' + ago(r.created_at) : ''}.`
+        + (body ? ` It opens: “${body.slice(0, 180)}${body.length > 180 ? '…' : ''}”` : ''));
+    }
+    if (approvals.length > 2) say.push(`And ${approvals.length - 2} more pending.`);
+    say.push('Approvals is on screen now — approving stays your click.');
+  } else if (inboxRows.length) {
+    screen = 'inbox';
+    for (const m of inboxRows.slice(0, 2)) {
+      say.push(`${m.classification === 'reply_to_outreach' ? 'A client reply' : 'A new inbound request'}: “${m.subject || '(no subject)'}”${ago(m.received_at) ? ', ' + ago(m.received_at) + ' ago' : ''}.`);
+    }
+    if (inboxRows.length > 2) say.push(`And ${inboxRows.length - 2} more.`);
+    say.push('The inbox is on screen now.');
+  } else {
+    let items = [];
+    try { items = collectPriorities(state.snap); } catch {}
+    if (items.length) {
+      const top = items[0];
+      screen = top.screen;
+      say.push(`${top.title} — ${top.source}, ${dueLabel(top.dueAt).text}${top.detail ? `, ${top.detail}` : ''}. ${(navItem(screen) || {}).label || screen} is on screen now.`);
+    } else {
+      say.push('The board is clear — nothing pending to read out.');
+    }
+  }
+  if (screen) go(screen);
+  const line = say.join(' ');
+  dockLog.push({ role: 'axis', text: line }); renderDock(); axisSpeakTurn(line);
+}
+
 // ── Search: the snapshot first, Cowork on a miss ─────────────────────────────
 function axisRunSearch(arg) {
   const needles = String(arg).toLowerCase().split(/[\s,]+/).filter((w) => w.length > 2);
@@ -1936,6 +1988,12 @@ async function axisSend(inputId = 'axisInput') {
     axisSpeakTurn(op.confirm);
     return;
   }
+
+  // "Let me see it" / "pull it up" / "check the inbox": read the item's CONTENT from the snapshot
+  // and open its screen — one act, no model, no queue. Checked before ui.open because these want
+  // the words, not just the window.
+  const br = detectBoardRead(text);
+  if (br) { axisReadBoardItem(text); return; }
 
   // Opening a screen is an action this page performs itself, synchronously — never something to
   // describe, promise, or hallucinate. Runs unconfirmed like the other read-only ops: showing a

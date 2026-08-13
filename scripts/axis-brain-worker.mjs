@@ -666,9 +666,17 @@ async function drain() {
     let job;
     try { job = await jobs.get(b.key, { type: 'json' }); } catch { continue; }
     if (!job || !job.query) { try { await jobs.delete(b.key); } catch {} continue; }
-    // The console gives up after ~6.5s; anything older has already escalated. Drop it rather than
-    // spend plan tokens on an answer nobody is waiting for.
-    if (Date.now() - (job.t || 0) > 20000) { try { await jobs.delete(b.key); } catch {} continue; }
+    // The console now polls for ~180s (axisCollect), so a job is only stale past that. The old
+    // 20s cutoff was the "One moment." dead-end, measured 2026-08-12 midnight: one slow answer
+    // jammed this single-threaded loop, every question behind it aged past 20s, and each was
+    // dropped IN SILENCE — five asks in a row answered by an ack that nothing ever replaced.
+    // Stale is still dropped (no plan tokens for an answer nobody is waiting for), but a done/
+    // record now says so, so a console still polling reports it instead of hanging forever.
+    if (Date.now() - (job.t || 0) > 150000) {
+      try { await jobs.setJSON(`done/${job.id}`, { error: 'stale: the worker was busy past the console wait — ask again', t: Date.now() }); } catch {}
+      try { await jobs.delete(b.key); } catch {}
+      continue;
+    }
 
     console.log(`[axis-brain-worker] ${job.id} → ${String(job.query).slice(0, 70)}`);
     const res = await answerQuestion(job.query, { turns: job.turns, board: job.board });

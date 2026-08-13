@@ -426,7 +426,7 @@ const OPS = [
   // question — "what is the status on the YouTube videos" — did not match, fell through to the
   // board, and got answered with follow-up counts three times in a row (2026-08-12 transcript).
   { kind: 'video.status',
-    re: /\b(?:youtube|videos?|shorts?|channel|clips?)\b[^.?!]*\b(?:status|staged|ready|queued?|left|today|uploaded|posted|published)\b|\b(?:status|how many|how'?s|what'?s|what is|update on|where are)\b[^.?!]*\b(?:youtube|videos?|shorts?|channel|clips?)\b/i,
+    re: /\b(?:youtube|videos?|shorts?|channel|clips?)\b[^.?!]*\b(?:status|staged|ready|queued?|left|today|uploaded|posted|published)\b|\b(?:status|how many|how'?s|what'?s|what is|update on|where are)\b[^.?!]*\b(?:youtube|videos?|shorts?|channel|clips?)\b|\b(?:show me )?what(?:'s| is| do we have| we have)[^.?!]{0,30}\bon (?:youtube|the channel)\b/i,
     say: () => 'Check the channel status' },
   // Talking to Claude Cowork. Read-only, so this only ever comes back as an answer.
   { kind: 'cowork.ask',   re: /\b(?:ask|check with|talk to|speak (?:to|with)|get)\s+(?:claude\s+)?cowork(?:er)?\b|\bask claude\b/i,
@@ -535,8 +535,35 @@ const META_TURN = new RegExp(
   + '|\\bwhy is it taking (?:you )?so long\\b'
   + '|\\bi don\'?t see (?:it|that|anything)\\b'
   + '|\\bshow me where\\b'
+  + '|\\bwere you able to\\b'
+  + '|\\bdid you (?:find|get|manage|do) (?:it|that|them)\\b'
+  + '|\\byou (?:got|are|seem) lost\\b'
+  + '|\\byou(?:\'ve| have) already told me\\b'
   + '|\\bwrong (?:answer|topic|thing)\\b', 'i');
 export const isMetaTurn = (t) => META_TURN.test(String(t || ''));
+
+// ── Read the item OUT: content, not counts ───────────────────────────────────
+// The 2026-08-12 midnight transcript: Ahmad asked FIVE ways to see the one pending approval —
+// "pull it up let me see for details", "okay let me see it", "just give me the approval it's
+// listed on this website", "open it" — and got counts ("1 approval waiting"), a clarifying
+// question about which database the details live in (they were in the snapshot the whole time),
+// and four dead "One moment."s. The approval's subject, channel, age and draft body are all IN
+// the page's own snapshot. Reading them aloud is a lookup, not a model call.
+const BOARD_READ_RE = new RegExp(
+  '\\blet me see\\b'
+  + '|\\b(?:pull|bring|call) (?:it|that|this|them) up\\b'
+  + '|\\bread (?:it|that|them|me the)\\b'
+  + '|\\bwhat does it say\\b'
+  + '|\\b(?:give|show) me the (?:approvals?|details?|messages?|repl(?:y|ies)|drafts?)\\b'
+  + '|\\bcheck (?:the |our |my )?(?:inbox|approvals?|messages|leads)\\b'
+  + '|\\bany leads\\b'
+  + '|^\\s*(?:ok(?:ay)?[,\\s]+)?open (?:it|that|this)\\s*[.!?]?\\s*$', 'i');
+export function detectBoardRead(text) {
+  const t = String(text || '').trim();
+  if (t.length < 5) return null;
+  if (!BOARD_READ_RE.test(t)) return null;
+  return { kind: 'board.read', arg: t };
+}
 
 // ── Open a screen: navigation is an ACTION the console can actually perform ──
 // "okay can you open it up on a web page or something so that I can see the details" (2026-08-12)

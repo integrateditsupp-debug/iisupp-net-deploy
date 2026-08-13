@@ -201,6 +201,10 @@ export function localAnswer(question, snap, now = new Date()) {
     if (!bits.length) return 'All quiet. Nothing needs you.';
     return bits.join(', ') + '.' + (items.length ? ' Top: ' + listBits(items) + '.' : '');
   }
+  // "pull it up let me see for details and then we can approve it" contains "approve", and this
+  // branch answered it with COUNTS (2026-08-12 midnight) — a request to see content, answered
+  // with arithmetic. A deictic or fetching turn is never a what's-waiting question.
+  if (/\b(?:pull|open|read|let me see|give me the|show me the)\b/.test(q)) return null;
   if (/\b(need|needs me|waiting on me|my attention|approve|approvals?)\b/.test(q)) {
     const ap = items.filter(i => i.source === 'Approval');
     const inbox = items.filter(i => i.source === 'Inbox');
