@@ -89,11 +89,18 @@ export const needsAhmadStaged = [
   },
   {
     item: "Push the shared line to the code host",
-    what: "One push of the shared branch, every commit on it verified against a green full registry.",
+    what:
+      "One push of the shared branch, every commit on it verified against a green full registry. The " +
+      "range bundle beside it carries the same commits as real git objects, verified by sha256 and tip, " +
+      "and can be fetched from without any credential.",
     why:
       "The build sandbox holds no code-host credential and that refusal was reproduced against the real " +
       "remote again this cycle. This is the only thing between verified work and the shared host.",
-    artefact: "AHMAD-ONE-CLICK.cmd",
+    // RUN-BR: this named AHMAD-ONE-CLICK.cmd, a file that exists on no disk anywhere — the guard has
+    // reported it artefact-named-but-absent every cycle since AJ1 was written, and the item was
+    // re-staged unchanged each time. The click that actually carries this line is the verified range
+    // bundle: real git objects, a recorded sha256 and tip, and no code-host credential required.
+    artefact: "senior-director-state/delivery/unpublished-line.bundle",
     rank: 5,
     unblocks:
       "Moves every verified commit onto the shared host, where it can be deployed and where a second " +

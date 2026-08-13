@@ -74,8 +74,23 @@ test("GREEN against RUN-AI's post-fix state — the same item, now naming a real
 
 // ── The rest of the rule ──────────────────────────────────────────────────────────────────────────
 
+// RUN-BR: the fixture carries a rank and an unblocks line so this case isolates the ARTEFACT rule.
+// Without them the two checkouts disagreed for an unrelated reason: on the operator machine the missing
+// artefact fails first and is reported MISSING, while in a clean clone the untracked root is absent, the
+// artefact rule returns the honest UNVERIFIABLE pass, and AN2 priority then failed the same item by a
+// different name. A guard whose verdict depends on which disk it runs on is the drift it exists to catch.
 test("naming a file that does not exist fails — the click would have nothing to operate on", () => {
-  const f = auditStagedAction({ item: "x", what: "y", artefact: "senior-director-state/outbound/NOT-A-REAL-FILE.md" }, { root: ROOT });
+  const f = auditStagedAction(
+    {
+      item: "x",
+      what: "y",
+      artefact: "senior-director-state/outbound/NOT-A-REAL-FILE.md",
+      rank: 1,
+      unblocks: "nothing - this is a fixture that exists to be refused",
+      blockedWithout: "nothing - this is a fixture that exists to be refused",
+    },
+    { root: ROOT },
+  );
   if (fs.existsSync(path.join(ROOT, "senior-director-state"))) {
     assert.equal(f.ok, false);
     assert.equal(f.class, CLASSES.MISSING);
