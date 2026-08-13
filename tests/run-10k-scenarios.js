@@ -21,7 +21,7 @@ corpus.forEach((item, idx) => {
   } else {
     got = classify(q); pass = got === expected;
   }
-  if (pass) results.pass++; else { results.fail++; results.failures.push({ q, expected, got }); }
+  if (pass) results.pass++; else { results.fail++; results.failures.push({ q, expected, got, cat: item.cat || '' }); }
   results.by_intent[expected] = results.by_intent[expected] || { total: 0, pass: 0, fail: 0 };
   results.by_intent[expected].total++;
   if (pass) results.by_intent[expected].pass++; else results.by_intent[expected].fail++;
