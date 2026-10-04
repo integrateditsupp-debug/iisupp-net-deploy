@@ -55,3 +55,10 @@ footer { border-top: 1px solid var(--xe-line); }
 hr { border-color: var(--xe-line); }
 ::selection { background: rgba(216,180,106,.35); }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+/* Light-themed legacy pages: keep boxes readable on the obsidian background */
+.box, .kpi-box, .panel, .tile, .note, .callout { background: var(--xe-panel) !important; border-color: var(--xe-line) !important; color: var(--xe-text) !important; }
+.kpi-num, strong, b, label { color: var(--xe-text); }
+code { background: rgba(216,180,106,.12) !important; color: var(--xe-gold-2) !important; }
+input, select, textarea { background: #0b0d12; color: var(--xe-text); border: 1px solid var(--xe-line); }
+.box a, .kpi-box a, p a, li a { color: var(--xe-gold) !important; }
+.wrap > p, .wrap li, .lede { color: var(--xe-dim) !important; }
