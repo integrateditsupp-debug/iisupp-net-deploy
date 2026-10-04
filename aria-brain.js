@@ -39,6 +39,25 @@
   // a default guided path, and an escalation trigger. Steps are guidance the USER performs.
   var TOPICS = [
     {
+      id: 'build', label: 'Build me an app / website / automation', tier: 'L1',
+      signals: [['build', 4], ['app', 3], ['website', 4], ['automation', 4], ['meal plan', 5], ['workout', 5], ['fitness app', 5], ['booking app', 5], ['create an app', 6], ['make an app', 6]],
+      apps: [],
+      clarifier: {
+        q: 'Love it — what should we build for you?',
+        options: ['A fitness / workout app', 'A meal plan / nutrition app', 'A website for my business', 'A booking or automation tool']
+      },
+      branches: [
+        { when: ['workout', 'fitness', 'gym', 'training'], cause: 'A personal workout app — ARIA can design and build it with you.',
+          steps: ['Tell ARIA your goal (strength, fat loss, endurance), days per week, and equipment.', 'ARIA drafts your screens: plan, today\'s workout, progress tracker, reminders.', 'Integrated IT Support Inc. builds, tests and launches it — on your phone and the web.', 'Book a free 15-minute scoping call at iisupp.net/book to get a timeline and quote.'] },
+        { when: ['meal', 'nutrition', 'diet', 'food', 'recipe'], cause: 'A meal plan app — weekly plans, shopping lists and macros in one place.',
+          steps: ['Share dietary needs, family size and budget.', 'ARIA drafts the plan generator, shopping list and recipe screens.', 'Integrated IT Support Inc. builds and launches it for you.', 'Book a free scoping call at iisupp.net/book.'] },
+        { when: ['website', 'site', 'business', 'store', 'shop'], cause: 'A premium, fast business website.',
+          steps: ['Tell ARIA your business, audience and the pages you need.', 'ARIA proposes a clean, elegant layout and copy.', 'Integrated IT Support Inc. builds, hosts and secures it.', 'Book a free scoping call at iisupp.net/book.'] },
+        { when: ['book', 'automation', 'automate', 'tool', 'flight', 'travel', 'schedule'], cause: 'A booking or automation tool that saves you hours each week.',
+          steps: ['Describe the task that takes too much time.', 'ARIA maps the workflow and the smallest tool that removes it.', 'Integrated IT Support Inc. builds and connects it to your existing apps.', 'Book a free scoping call at iisupp.net/book.'] }
+      ]
+    },
+    {
       id: 'outlook', label: 'Outlook won\'t open / crashing', tier: 'L1',
       signals: [['outlook', 5], ['email client', 3], ['mail app', 2]],
       apps: ['outlook'],

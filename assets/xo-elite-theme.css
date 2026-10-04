@@ -1,0 +1,57 @@
+/* XO Elite theme overlay — obsidian + gold, calmer spacing. Additive only: no content or function removed. */
+:root {
+  --xe-bg: #07080b;
+  --xe-panel: #0e1015;
+  --xe-gold: #d8b46a;
+  --xe-gold-2: #f3dca0;
+  --xe-text: #ece6d8;
+  --xe-dim: #a59f92;
+  --xe-line: rgba(216, 180, 106, .22);
+}
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(70% 50% at 50% 0%, rgba(216,180,106,.08), transparent 70%), var(--xe-bg) !important;
+  color: var(--xe-text);
+  font-family: "Work Sans", "Inter", system-ui, sans-serif;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 {
+  font-family: "Instrument Serif", Georgia, serif !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+h1, h2 {
+  background: linear-gradient(100deg, var(--xe-gold) 0%, var(--xe-gold-2) 45%, var(--xe-gold) 90%);
+  -webkit-background-clip: text; background-clip: text; color: transparent !important;
+}
+h1 { font-size: clamp(2.4rem, 5.5vw, 4.6rem) !important; }
+h2 { font-size: clamp(1.9rem, 3.6vw, 3rem) !important; }
+section { padding-top: clamp(3rem, 7vw, 6rem); padding-bottom: clamp(3rem, 7vw, 6rem); }
+p { max-width: 68ch; }
+a { color: inherit; }
+a:hover { color: var(--xe-gold); }
+.btn, button.btn, a.btn, .cta, .button, [class*="btn-primary"] {
+  border-radius: 2px !important;
+  border: 1px solid var(--xe-gold) !important;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-size: .8rem !important;
+  transition: background .25s, color .25s, box-shadow .25s;
+}
+[class*="btn-primary"], .cta {
+  background: linear-gradient(180deg, var(--xe-gold-2), var(--xe-gold)) !important;
+  color: #121212 !important;
+  box-shadow: 0 0 24px rgba(216,180,106,.25);
+}
+.card, [class*="card"]:not([class*="card-body"]) {
+  border-color: var(--xe-line) !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+header, nav { backdrop-filter: blur(12px); border-bottom: 1px solid var(--xe-line); }
+footer { border-top: 1px solid var(--xe-line); }
+hr { border-color: var(--xe-line); }
+::selection { background: rgba(216,180,106,.35); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
