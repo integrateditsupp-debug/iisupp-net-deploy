@@ -1235,7 +1235,7 @@
     }
     var r = {
       topic: topic.id, stage: 'answered', confidence: 'high',
-      say: branch.cause, steps: branch.steps, escalate: topic.escalate, tail: HONEST_TAIL
+      say: branch.cause, steps: branch.steps, escalate: topic.escalate ? topic.escalate + ' Live senior technician: call (647) 581-3182.' : topic.escalate, tail: HONEST_TAIL
     };
     if (extra) { if (extra.empathy) r.empathy = extra.empathy; if (extra.also) r.also = extra.also; }
     return r;
@@ -1316,7 +1316,7 @@
             topic: cur.id, stage: 'escalated', confidence: 'high',
             empathy: empathyFor(t),
             say: 'You\'ve given this a fair shot — I\'m not going to keep you looping on guesses. This one now needs hands-on eyes.',
-            escalate: cur.escalate,
+            escalate: cur.escalate ? cur.escalate + ' Live senior technician: call (647) 581-3182.' : cur.escalate,
             tail: 'Bring the exact error text plus what we tried to a technician — this chat is a ready-made handoff. Integrated IT Support can take it from here.'
           };
         }
