@@ -1181,6 +1181,7 @@
       radial-gradient(circle at 78% 72%,rgba(240,216,149,.35),transparent 24%),
       linear-gradient(135deg,#10212a,#070504);
   }
+  .pulse-video-media{width:100%;height:100%;display:block;object-fit:cover;background:#070504}
   .pulse-video::before{
     content:"";position:absolute;inset:12px;border-radius:50%;
     border:1px solid rgba(240,216,149,.24);box-shadow:0 0 24px rgba(45,212,191,.12);
@@ -1482,6 +1483,46 @@
     #aria-v04-callback-btn{flex:1 1 120px;min-width:0}
     .input-row{gap:8px}
     .input-row input{min-width:0}
+  }
+  /* 2026-10-05: calm, responsive Aria activity office */
+  .aria-section{flex:none;min-height:0;position:relative;z-index:2}
+  .stats-top{grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px}
+  .stat-box{min-width:0;min-height:78px}
+  .stat-box .num,.side-stat .num{letter-spacing:0}
+  .stat-box .lbl,.side-stat .lbl{overflow-wrap:anywhere;letter-spacing:.12em}
+  .globe-area{grid-template-columns:minmax(108px,.7fr) minmax(180px,1.35fr) minmax(108px,.7fr);min-height:260px;height:auto;max-height:none;overflow:visible}
+  .globe-wrap{min-height:230px;overflow:hidden}
+  .globe-stage{width:min(100%,260px)}
+  .content-section{flex:none;min-height:0;position:relative;z-index:1;clear:both}
+  .aria-section > .speak-area{position:relative;z-index:4;isolation:isolate;margin:14px 0 18px;padding:2px 0}
+  .pulse-screen{height:176px;min-height:176px}
+  .pulse-slide{grid-template-columns:minmax(176px,42%) minmax(0,1fr);align-items:stretch;gap:16px;padding:12px}
+  .pulse-video{min-height:0;background:#070504}
+  .pulse-video::before{display:none}
+  .pulse-video-media,.pulse-image{width:100%;height:100%;display:block;object-fit:cover;background:#070504}
+  .pulse-copy{min-width:0;align-self:center}
+  .pulse-headline{font-size:18px;line-height:1.18;margin-bottom:8px}
+  .pulse-summary{font-size:11px;line-height:1.5}
+  @media (max-height:820px) and (min-width:901px){
+    .app{height:auto;min-height:100dvh;overflow:visible}
+    body{height:auto;min-height:100dvh;overflow:auto}
+    .right{max-height:none;overflow:visible}
+    .aria-section > .globe-area{grid-template-columns:minmax(96px,.7fr) minmax(160px,1.3fr) minmax(96px,.7fr);height:auto;min-height:220px;max-height:none;overflow:visible}
+    .side-stat .icon{display:block}.side-stat .lbl{display:block}
+    .globe-wrap,.globe-stage,.globe{overflow:hidden}.globe-stage{width:min(100%,220px);height:auto;max-height:none}
+  }
+  @media (max-width:640px){
+    .right{padding:14px 12px}.right-head{margin-bottom:12px}
+    .live-row{align-items:flex-start;gap:8px}.live-meta{text-align:right;font-size:8px;line-height:1.5}
+    .stats-top{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .globe-area{display:flex;flex-direction:column;min-height:0;margin:8px 0 14px}
+    .globe-wrap{order:-1;width:100%;min-height:210px}.globe-stage{width:min(78vw,230px)}
+    .side-stats{display:grid;width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+    .side-stat{min-height:72px}.side-stat .icon{margin-bottom:6px}
+    .aria-section > .speak-area{margin:14px 0 22px}
+    .content-section{margin-top:0}
+    .pulse-screen{height:auto;min-height:0}.pulse-slide{position:relative;display:none;grid-template-columns:1fr;padding:10px}.pulse-slide.is-active{display:grid}
+    .pulse-video{aspect-ratio:16/9;min-height:0}.pulse-copy{padding:2px 2px 4px}.pulse-headline{font-size:17px;line-height:1.2}.pulse-summary{font-size:12px;line-height:1.5}
   }
 </style>
   <link rel="canonical" href="https://iisupp.net/aria">
@@ -1785,8 +1826,10 @@
     .ap-tag-row{max-height:68px;overflow:hidden}
   }
   @media (max-width:520px){
-    .pulse-screen{min-height:124px}
-    .pulse-slide{grid-template-columns:64px minmax(0,1fr)}
+    .pulse-screen{min-height:0}
+    .pulse-slide{grid-template-columns:minmax(0,1fr)}
+    .pulse-video{width:100%;aspect-ratio:16/9}
+    .pulse-copy{width:100%}
     .ap-band-title{font-size:12px}
     .chat-dock{padding:10px 8px}
     .chat-dock .history-bar{gap:6px;max-width:100%}
@@ -2099,49 +2142,49 @@
       <div class="divider"></div>
 
       <div class="it-pulse" id="itPulsePanel">
-        <div class="status-head"><span class="led green"></span><span>GLOBAL IT PULSE</span></div>
-        <div class="pulse-tv" aria-label="Global IT Pulse elevator news screen">
+        <div class="status-head"><span class="led green"></span><span>ARIA · WHAT'S NEW</span></div>
+        <div class="pulse-tv" aria-label="ARIA and Integrated IT Support updates">
           <div class="pulse-screen" aria-live="off">
             <article class="pulse-slide is-active">
-              <div class="pulse-video" data-mark="WORLD"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
-              <div>
-                <div class="pulse-kicker">World IT brief</div>
-                <div class="pulse-headline">Banks tighten AI risk controls</div>
-                <div class="pulse-summary">Regulated teams are moving from AI hype to evidence, controls, and incident playbooks.</div>
+              <div class="pulse-video" data-mark="ARIA"><video class="pulse-video-media" autoplay muted loop playsinline preload="metadata" poster="assets/aria-command-center-concept.png"><source src="assets/video/aria-stats-and-purpose.mp4" type="video/mp4"></video></div>
+              <div class="pulse-copy">
+                <div class="pulse-kicker">Meet ARIA</div>
+                <div class="pulse-headline">Senior-level help, ready when you are</div>
+                <div class="pulse-summary">Speak or type. ARIA helps diagnose issues, guides the next step, and brings in a person when needed.</div>
               </div>
             </article>
             <article class="pulse-slide">
-              <div class="pulse-video cyber" data-mark="CYBER"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
-              <div>
-                <div class="pulse-kicker">Security desk</div>
-                <div class="pulse-headline">AI app access is now a board-level issue</div>
-                <div class="pulse-summary">The practical ask: inventory tools, lock down data paths, and watch for unauthorized automation.</div>
+              <div class="pulse-video cyber" data-mark="SUPPORT"><img class="pulse-image" src="assets/aria-hq-bg.png" alt="ARIA enterprise support operations centre"></div>
+              <div class="pulse-copy">
+                <div class="pulse-kicker">Enterprise support</div>
+                <div class="pulse-headline">One service desk, from first call to resolution</div>
+                <div class="pulse-summary">Level 1–3 support with clear ownership, careful escalation, and professional follow-through.</div>
               </div>
             </article>
             <article class="pulse-slide">
-              <div class="pulse-video edge" data-mark="EDGE"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
-              <div>
-                <div class="pulse-kicker">Device watch</div>
-                <div class="pulse-headline">AI moves closer to laptops</div>
-                <div class="pulse-summary">More work can happen on-device, which makes endpoint policy and support readiness matter more.</div>
+              <div class="pulse-video edge" data-mark="SERVICE"><img class="pulse-image" src="assets/aria-command-center-concept.png" alt="ARIA service desk command centre"></div>
+              <div class="pulse-copy">
+                <div class="pulse-kicker">Service intelligence</div>
+                <div class="pulse-headline">Complex work, explained simply</div>
+                <div class="pulse-summary">ARIA organizes troubleshooting, security, systems, and service requests into clear next steps.</div>
               </div>
             </article>
             <article class="pulse-slide">
-              <div class="pulse-video ops" data-mark="FACT"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
-              <div>
-                <div class="pulse-kicker">IT fact</div>
-                <div class="pulse-headline">The first webcam watched a coffee pot</div>
-                <div class="pulse-summary">A tiny office annoyance became a famous networked camera story. Support history is wonderfully weird.</div>
+              <div class="pulse-video ops" data-mark="IIS"><img class="pulse-image" src="assets/iisupp-link-preview.png" alt="Integrated IT Support identity"></div>
+              <div class="pulse-copy">
+                <div class="pulse-kicker">Human backup</div>
+                <div class="pulse-headline">Integrated IT Support is behind ARIA</div>
+                <div class="pulse-summary">When a request needs a specialist, ARIA can prepare a clean handoff to the support team.</div>
               </div>
             </article>
           </div>
           <div class="pulse-footer">
-            <div class="pulse-ticker"><span>Now showing: AI risk controls - endpoint readiness - cyber hygiene - support trivia - </span></div>
-            <div class="pulse-dots" aria-label="Global IT Pulse slides">
-              <button class="pulse-dot is-active" type="button" aria-label="Show world IT brief"></button>
-              <button class="pulse-dot" type="button" aria-label="Show security desk"></button>
-              <button class="pulse-dot" type="button" aria-label="Show device watch"></button>
-              <button class="pulse-dot" type="button" aria-label="Show IT fact"></button>
+            <div class="pulse-ticker"><span>ARIA capabilities · enterprise support · service intelligence · human backup · </span></div>
+            <div class="pulse-dots" aria-label="ARIA information slides">
+              <button class="pulse-dot is-active" type="button" aria-label="Show ARIA overview"></button>
+              <button class="pulse-dot" type="button" aria-label="Show enterprise support"></button>
+              <button class="pulse-dot" type="button" aria-label="Show service intelligence"></button>
+              <button class="pulse-dot" type="button" aria-label="Show human backup"></button>
             </div>
           </div>
         </div>
