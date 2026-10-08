@@ -171,10 +171,15 @@ if (deliveries !== null) {
       "",
       audit.statement,
       "",
+      // The number that decides what Ahmad has to do. Omitting it from the written report, while the
+      // console printed it, was this report's own version of the defect it exists to fix.
+      audit.containmentStatement ? `**${audit.containmentStatement}**\n` : "",
       audit.caveat ? `> CAVEAT — ${audit.caveat}\n` : "",
       "| state | age | delivery | commits | note |",
       "| --- | --- | --- | --- | --- |",
-      ...audit.pending.map((r) => `| **PENDING** | ${r.ageDays}d | ${r.name} | ${r.commits ?? "—"} | waiting on a push |`),
+      ...audit.pending.map((r) => r.containedIn
+        ? `| pending | ${r.ageDays}d | ${r.name} | ${r.commits ?? "—"} | already carried inside ${r.containedIn} — pushing that one lands this |`
+        : `| **PENDING — needs a push** | ${r.ageDays}d | ${r.name} | ${r.commits ?? "—"} | ${audit.clicksNeeded === 1 ? "this single push clears the whole shelf" : "its own decision"} |`),
       ...audit.unverifiable.map((r) => `| UNVERIFIABLE | — | ${r.name} | ${r.commits ?? "—"} | ${r.reason} |`),
       ...audit.landed.map((r) => `| landed | — | ${r.name} | ${r.commits ?? "—"} | held by the shared line |`),
       "",
