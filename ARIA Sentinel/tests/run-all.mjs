@@ -10,6 +10,13 @@ const TESTS = [
   // Registered by hand: RUN-AW recorded that this manifest does not pick up new files, and a suite
   // running green outside the count is the same lie in a nicer shirt.
   "../../tests/plumbing-commit-denylist.test.mjs",
+  // PENDING DELIVERY AGE 2026-10-08 (RUN-BU / BU1) — the fifty-six-day class. A batch verified in
+  // August was staged behind a one-click push, reported truthfully as "waiting" by every cycle after
+  // it, and sat off the shared line for fifty-six days because no cycle computed HOW LONG it had been
+  // waiting. This asserts the computation that was missing, and its honesty rules: landing claimed
+  // only on evidence, an unreadable shelf never reported as an empty one, "cannot tell" never folded
+  // into either count, and no pending age of zero standing in for "nothing pending".
+  "../../tests/pending-delivery-age.test.mjs",
   // SERVING-LAYER LOCKDOWN 2026-07-02 — live-probe logic (git-state tests can't see the serving layer).
   "../../tests/probe-deploy-safety.test.mjs",
   // CLONE PREP 2026-08-06 (salvaged from cc/axis-feed-2026-08-04, which is otherwise superseded by
