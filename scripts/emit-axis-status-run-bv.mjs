@@ -40,6 +40,7 @@ import path from "node:path";
 import { emitAxisStatus, checkPublicFiles } from "./lib/axis-status-emit.mjs";
 import { measureInProcess, measureCommitsAhead, declaredUnmeasurable } from "./lib/claim-measure.mjs";
 import { auditDeliveries, speakablePendingLine } from "./lib/pending-delivery.mjs";
+import { remoteClassification } from "./lib/code-host-remote.mjs";
 
 const root = process.cwd();
 // --shelf <dir>: where the delivery manifests live. Deliberately allowed to be OUTSIDE the checkout
@@ -110,7 +111,34 @@ if (here.suitesComplete !== true) {
 }
 
 /* ── reading 2: the shared line, as the code host reports it ──────────────────────────────────── */
+// RUN-BV — FOUND WHILE USING IT. Every cycle since BD has published `mainRef` under the words "as
+// the code host reports it", and every cycle has in fact published whatever `origin` happened to
+// point at. Verification runs in a clone made with `git clone --shared <local path>`, which sets
+// `origin` to that LOCAL PATH — so this cycle's first emit read the build machine's own main
+// (1f6c0d77) and published it as the shared line, forty commits and five pushes out of date. The
+// reading was wrong, it looked exactly like a right one, and nothing could go red about it.
+//
+// So the remote is now CLASSIFIED before it is believed, by scripts/lib/code-host-remote.mjs. A
+// local path, a relative path, a file URL or a missing origin is not the code host: the reading is
+// refused and reported unread, which is a fact an operator can act on. Only a real transport can
+// produce a `mainRef`.
+function readOriginUrl() {
+  try {
+    return String(execFileSync("git", ["remote", "get-url", "origin"], {
+      cwd: root, encoding: "utf8", timeout: 30000, stdio: ["ignore", "pipe", "pipe"],
+    })).trim();
+  } catch { return ""; }
+}
+
+const originUrl = readOriginUrl();
+const originClass = remoteClassification(originUrl);
+const originIsCodeHost = originClass.codeHost;
+if (!originIsCodeHost) {
+  console.log("[RUN-BV] origin is not a code host (" + originClass.reason + ") — the shared-line reading is reported unread, not guessed.");
+}
+
 function readSharedLine() {
+  if (!originIsCodeHost) return null;
   try {
     const out = execFileSync("git", ["ls-remote", "origin", "refs/heads/main"], {
       cwd: root, encoding: "utf8", timeout: 120000, stdio: ["ignore", "pipe", "pipe"],
@@ -122,6 +150,10 @@ function readSharedLine() {
 const mainRef = readSharedLine();
 
 function readRemoteShas() {
+  // Same rule: refs read off a local mirror are not evidence about the shared line. An empty set
+  // means "no evidence of landing", and the auditor already treats absence of evidence as pending
+  // rather than as landed — so refusing here errs toward "still waiting", never toward "done".
+  if (!originIsCodeHost) return new Set();
   try {
     const out = execFileSync("git", ["ls-remote", "--heads", "--tags", "origin"], {
       cwd: root, encoding: "utf8", timeout: 120000, stdio: ["ignore", "pipe", "pipe"],
@@ -167,16 +199,15 @@ const publicFields = {
   milestone:
     "A clean copy of the shared line reported no failures over a smaller number of checks than the " +
     "same code reports here, because two groups of checks could not start and the summary counted " +
-    "only the groups it reached. No failures and every check attempted are now reported as two " +
-    "separate facts, and a run that skipped a group cannot be published as a clean one.",
+    "only the groups it reached. No failures and every check attempted are now two separate facts, " +
+    "and a run that skipped a group can no longer be published as a clean one.",
   readiness:
     "Built and tested this cycle against the shared line as it stands today. " + suiteLine + "; " +
-    readings + "." + notTaken + " " + waiting +
-    " Publishing to the live site stays a deliberate manual step.",
+    readings + "." + notTaken + " Publishing to the live site stays a deliberate manual step.",
   revenueToDate: "none",
   headline:
     "ARIA / AXIS is in active build and is voice-operable. Sent: 0. Meetings 0, revenue none. Checks " +
-    "this cycle: " + suiteLine + "; " + readings + "." + notTaken + " " + waiting,
+    "this cycle: " + suiteLine + "; " + readings + ". " + waiting,
   note:
     "Public status headline only. Detailed build state is operator-internal and served only to " +
     "authenticated operators inside the AXIS command centre. This public feed never carries commit, " +
@@ -227,7 +258,10 @@ const fullDetail = {
     pct: here.tests ? Math.round((here.pass / here.tests) * 1000) / 10 : null,
     statement: "pct is pass/total of assertions actually taken plus not-taken; it is not a completion percentage for the programme, and is not presented as one.",
   },
-  mainRef: mainRef || "unread — git ls-remote did not return refs/heads/main from this environment",
+  mainRef: mainRef || (originIsCodeHost
+    ? "unread — git ls-remote did not return refs/heads/main from this environment"
+    : "unread — this checkout's origin is not the code host, so no shared-line ref was read. A local mirror's main is not the shared line and is never published as one."),
+  mainRefSource: originIsCodeHost ? "git ls-remote origin refs/heads/main" : "refused — " + originClass.reason,
   lanes: [
     { lane: "suite-census", state: "shipped this cycle", detail: "pure decider + 12-assertion guard suite + runner rewired; a declared-but-absent package is unjudged, an undeclared one stays red, and the green line is no longer a tautology" },
     { lane: "delivery-age", state: "on the verified line", detail: "RUN-BU's pending-delivery auditor carried forward; this cycle re-verified the whole shelf against the shared line as it stands today" },

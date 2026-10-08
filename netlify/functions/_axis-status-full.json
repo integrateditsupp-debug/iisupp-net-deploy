@@ -1,35 +1,45 @@
 {
  "_internal": true,
  "_emitRule": "INTERNAL ONLY — force-404 live, served via authenticated /api/axis-status. NEVER copy this content into .well-known: regenerate the public mirrors with scripts/lib/axis-status-emit.mjs (headline-only, leak-scanned).",
- "generatedAt": "2026-10-08T21:06:00.931Z",
+ "generatedAt": "2026-10-08T21:54:22.123Z",
  "program": {
   "series": "CLIENT-READY",
-  "sequence": "RUN-BU",
+  "sequence": "RUN-BV",
   "testsGreen": true,
-  "suitesGreen": 374,
-  "suitesTotal": 374,
-  "assertionsPassed": 1046,
-  "assertionsTotal": 1103,
+  "suitesGreen": 375,
+  "suitesTotal": 375,
+  "assertionsPassed": 1062,
+  "assertionsTotal": 1119,
   "assertionsNotTaken": 57,
-  "pct": 94.8,
+  "suitesTaken": 375,
+  "suitesRegistered": 375,
+  "suitesComplete": true,
+  "suiteVerdict": "green",
+  "pct": 94.9,
   "statement": "pct is pass/total of assertions actually taken plus not-taken; it is not a completion percentage for the programme, and is not presented as one."
  },
  "mainRef": "7a3b3d0a58aa439d9897f7c84690cb4e29a59a98",
+ "mainRefSource": "git ls-remote origin refs/heads/main",
  "lanes": [
   {
-   "lane": "delivery-age",
+   "lane": "suite-census",
    "state": "shipped this cycle",
-   "detail": "pending-delivery library + auditor + 13-assertion guard suite, registered in the runner that counts"
+   "detail": "pure decider + 12-assertion guard suite + runner rewired; a declared-but-absent package is unjudged, an undeclared one stays red, and the green line is no longer a tautology"
+  },
+  {
+   "lane": "delivery-age",
+   "state": "on the verified line",
+   "detail": "RUN-BU's pending-delivery auditor carried forward; this cycle re-verified the whole shelf against the shared line as it stands today"
   },
   {
    "lane": "axis-voice",
    "state": "on the shared line",
-   "detail": "push-to-talk and spoken replies ported into the v2 console; the v1 console is retained as the voice contract and guarded"
+   "detail": "push-to-talk and spoken replies are live in the v2 console; the v1 console is retained as the voice contract and guarded"
   },
   {
    "lane": "classifier",
    "state": "measured each cycle at test time, never stored",
-   "detail": "no-match bucket and overall accuracy both above their floors as of the last measured cycle"
+   "detail": "no-match bucket and overall accuracy both above their floors as of this measured cycle"
   },
   {
    "lane": "publish",
@@ -61,18 +71,24 @@
    "ageDays": 0,
    "commits": null,
    "action": "a push of verified code; deploys nothing"
+  },
+  {
+   "item": "run-bu-2026-10-08",
+   "ageDays": 0,
+   "commits": 23,
+   "action": "a push of verified code; deploys nothing"
   }
  ],
  "onTrack": false,
  "onTrackStatement": "Not on track, and the reason is not the code: the suite is green and the oldest verified batch is past the age at which 'staged' stops being an honest word for it.",
  "deliveryShelf": {
   "state": "taken",
-  "pendingCount": 4,
+  "pendingCount": 5,
   "landedCount": 0,
   "unverifiableCount": 0,
   "oldestPendingDays": 58,
   "overdue": true,
-  "speakable": "4 verified batches of work are waiting on your approval, the oldest for 58 days.",
+  "speakable": "5 verified batches of work are waiting on your approval, the oldest for 58 days.",
   "rows": [
    {
     "name": "unpublished-line",
@@ -105,13 +121,21 @@
     "tip": "cbd8f160783bd4b3244f18a50ad89654487e6faf",
     "commits": null,
     "reason": null
+   },
+   {
+    "name": "run-bu-2026-10-08",
+    "state": "pending",
+    "ageDays": 0,
+    "tip": "077d67f824623b92cf0496219e427247de188d61",
+    "commits": 23,
+    "reason": null
    }
   ]
  },
  "claims": {
   "testsPassedAfterWrites": {
-   "value": 1046,
-   "measuredAt": "2026-10-08T21:06:00.931Z",
+   "value": 1062,
+   "measuredAt": "2026-10-08T21:54:22.123Z",
    "source": "the assertion-level summary printed by the suite run this script performed",
    "kind": "count",
    "provenance": "measured",
@@ -124,8 +148,8 @@
    "stale": false
   },
   "suitesGreenAfterWrites": {
-   "value": 374,
-   "measuredAt": "2026-10-08T21:06:00.931Z",
+   "value": 375,
+   "measuredAt": "2026-10-08T21:54:22.123Z",
    "source": "the suite-level summary printed by the suite run this script performed",
    "kind": "count",
    "provenance": "measured",
@@ -138,8 +162,8 @@
    "stale": false
   },
   "commitsAheadOfSharedLine": {
-   "value": 20,
-   "measuredAt": "2026-10-08T21:06:00.933Z",
+   "value": 29,
+   "measuredAt": "2026-10-08T21:54:22.125Z",
    "source": "a revision count taken against the last known shared reference during this cycle",
    "kind": "count",
    "provenance": "measured",
@@ -153,7 +177,7 @@
   },
   "oldestPendingDeliveryDays": {
    "value": 58,
-   "measuredAt": "2026-10-08T21:06:00.933Z",
+   "measuredAt": "2026-10-08T21:54:22.125Z",
    "source": "the delivery manifests on the operator volume, compared against the refs the code host reports",
    "kind": "count",
    "provenance": "measured",

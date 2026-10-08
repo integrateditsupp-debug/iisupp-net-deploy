@@ -201,3 +201,79 @@ test("every package the manifests declare can be mapped, on this real tree", () 
     assert.equal(packageNameOf(name), name, `${name} (declared in ${rel}) does not round-trip as a package name`);
   }
 });
+
+/* ───────────────────────────────────────────────────────────────────────────────────────────────
+ * BV2 — the shared-line reading that was wrong for twenty cycles and looked right.
+ *
+ * `mainRef` has been published since RUN-BD under the words "the shared line, as the code host
+ * reports it". It was in fact whatever `origin` pointed at. Verification runs in a clone made with
+ * `git clone --shared <local path>`, which sets origin to that LOCAL PATH — so this cycle's first
+ * emit read the build machine's own main, five pushes stale, and published it as the shared line.
+ * `git ls-remote origin` SUCCEEDED, which is exactly why nothing could go red.
+ * ───────────────────────────────────────────────────────────────────────────────────────────────*/
+import { isCodeHostRemote, remoteClassification, CODE_HOST_REMOTE_SCHEMA, SENDS as REMOTE_SENDS }
+  from "../scripts/lib/code-host-remote.mjs";
+
+test("BV2 — a real transport is a code host; every shape of local is not", () => {
+  assert.equal(REMOTE_SENDS, false);
+  assert.equal(CODE_HOST_REMOTE_SCHEMA, "code-host-remote.v1");
+  for (const u of [
+    "https://github.com/integrateditsupp-debug/iisupp-net-deploy.git",
+    "http://example.com/r.git",
+    "git@github.com:owner/repo.git",
+    "ssh://git@github.com/owner/repo.git",
+    "git://example.com/r.git",
+  ]) assert.equal(isCodeHostRemote(u), true, `${u} should read as a code host`);
+
+  for (const u of [
+    "/sessions/x/cyc/repo",                    // the exact shape that produced the stale reading
+    "/mnt/c/Users/x/iisupp-net-deploy",
+    "../iisupp-net-deploy",
+    "./repo",
+    "~/repo",
+    "C:\\Users\\x\\iisupp-net-deploy",
+    "C:/Users/x/iisupp-net-deploy",
+    "file:///sessions/x/repo",
+    "", "   ", undefined, null, 42, {},
+  ]) assert.equal(isCodeHostRemote(u), false, `${JSON.stringify(u)} must NOT read as a code host`);
+});
+
+test("BV2 — a refused remote says why, and 'no origin' is distinguished from 'local origin'", () => {
+  const ok = remoteClassification("https://github.com/o/r.git");
+  assert.equal(ok.codeHost, true);
+  assert.equal(ok.reason, null, "nothing to explain when the remote is real");
+
+  const none = remoteClassification("");
+  assert.equal(none.codeHost, false);
+  assert.match(none.reason, /no origin/, "an absent remote and a local one are different facts");
+
+  const local = remoteClassification("/sessions/x/cyc/repo");
+  assert.equal(local.codeHost, false);
+  assert.match(local.reason, /local path|file URL/);
+  assert.match(local.reason, /never published as one/, "the refusal must state the rule it is keeping");
+});
+
+test("BV2 — the classifier is pure, and is NOT exported from a script that runs on import", () => {
+  const lib = fs.readFileSync(path.join(root, "scripts/lib/code-host-remote.mjs"), "utf8");
+  for (const forbidden of ["node:fs", "node:child_process", "execFileSync", "fetch("]) {
+    assert.ok(!lib.includes(forbidden), `the classifier must stay pure — found ${forbidden}`);
+  }
+  const emit = fs.readFileSync(path.join(root, "scripts/emit-axis-status-run-bv.mjs"), "utf8");
+  assert.ok(emit.includes("code-host-remote.mjs"), "the emitter must take its classification from the lib");
+  assert.ok(!/export function isCodeHostRemote/.test(emit),
+    "importing the emit script RUNS a cycle; a predicate anyone might want must not live there");
+});
+
+test("BV2 — the emitter refuses to read, and refuses to guess, when origin is not the code host", () => {
+  const emit = fs.readFileSync(path.join(root, "scripts/emit-axis-status-run-bv.mjs"), "utf8");
+  assert.ok(/if \(!originIsCodeHost\) return null;/.test(emit),
+    "the shared-line read must be refused outright, not attempted against a mirror");
+  assert.ok(/if \(!originIsCodeHost\) return new Set\(\);/.test(emit),
+    "remote refs read off a mirror are not evidence of landing");
+  assert.ok(/mainRefSource/.test(emit),
+    "the internal payload must record WHERE the ref came from, or the next cycle inherits the same ambiguity");
+  // Erring toward "still waiting" is the safe direction: an empty ref set makes the auditor report
+  // pending, never landed. A refusal that marked deliveries done would be the dangerous inversion.
+  assert.ok(/errs toward "still waiting"|never toward "done"/.test(emit),
+    "the safe direction of the refusal must be stated where the refusal lives");
+});
