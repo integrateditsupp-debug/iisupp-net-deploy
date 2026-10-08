@@ -1,6 +1,8 @@
 # IIS / ARIA — Codex × Cowork Collaboration Brief
 ## "Trend → Trust → Transformation" Ecosystem
 
+> **Read `senior-director-state/AGENT-BOOTSTRAP.md` first** (tracked copy: `docs/AGENT-BOOTSTRAP.md`) — current date, live branch `main`, retired branches, the six hard stops, what is in progress, and the environment-only test reds. Then `node scripts/agent-preflight.mjs`.
+
 **Owner:** Ahmad Wasee — Founder, Integrated IT Support Inc.
 **Created:** 2026-06-03 by Cowork (Sonnet)
 **Recommended repo path:** `docs/COLLAB_BRIEF.md` (covered by the existing `docs/*` 404 redirect in `netlify.toml` — internal-only)

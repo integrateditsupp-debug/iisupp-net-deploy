@@ -18,6 +18,12 @@
 // Pure: reads the filesystem for existence and size only. Sends nothing, writes nothing.
 import fs from "node:fs";
 import path from "node:path";
+// RUN-CU 2026-10-08 — one predicate for "are the operator's records here", shared with
+// operator-record.mjs. `fs.existsSync(root)` used to stand in for it, so a clone that carried only a
+// shared note under `senior-director-state/` (AGENT-BOOTSTRAP.md) was treated as the operator machine
+// and every artefact under that root was reported MISSING instead of UNVERIFIABLE. Same doctrine as
+// before, asked correctly: a record store is a store that holds records.
+import { operatorRecordsPresent } from "./operator-record.mjs";
 
 export const STAGED_ACTION_GUARD_SCHEMA = "staged-action-guard.v1";
 export const SENDS = false;
@@ -134,7 +140,7 @@ export function auditStagedAction(item = {}, { root = process.cwd(), untrackedRo
 
   if (!st) {
     const untracked = untrackedRoots.find((r) => isUnder(rel, r));
-    if (untracked && !fs.existsSync(path.resolve(root, untracked))) {
+    if (untracked && !operatorRecordsPresent(path.resolve(root, untracked))) {
       // The whole record root is absent (bare clone). Honest third state: not a pass, not a failure.
       return priority({
         name,

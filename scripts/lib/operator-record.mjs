@@ -15,12 +15,35 @@
 //
 // It never invents a fixture to stand in for a real record. A substitute reading would be worse than
 // no reading (Rule 14).
+//
+// RUN-CU 2026-10-08 — THE DIRECTORY NAME IS NOT THE RECORD.
+// The first version asked `statSync(root).isDirectory()`, which reads "is there a folder with that
+// name" and was taken to mean "the operator's records are here". Those are different questions, and
+// the gap opened the moment a shared file had to live at that path: `AGENT-BOOTSTRAP.md` and
+// `FLEET-REFRESH-*.md` are fleet-wide notes, not operator records, and a clone carrying only those
+// suddenly claimed it could take readings it has no records for. Two suites that correctly reported
+// NOT TAKEN went red — not because anything broke, but because the predicate answered the wrong
+// question. So presence now requires an actual WITNESS record. A reading taken against an absent
+// record is still NOT TAKEN; the operator machine, which holds every witness, runs every assertion
+// exactly as before.
 import fs from "node:fs";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const OPERATOR_RECORD_ROOT = "senior-director-state";
 export const READS_IDENTITY = false;
 export const WRITES = false;
+
+/**
+ * Files that exist on any machine actually running the operator's record keeping, and on no other.
+ * Both are append-only ledgers the fleet writes every day, so neither can be present by accident
+ * and neither is something a shared bootstrap note would bring with it.
+ */
+export const OPERATOR_RECORD_WITNESSES = Object.freeze([
+  "PROGRESS-LEDGER.md",
+  "codex-claude-queue.md",
+  "Live-Operations-Log.md",
+]);
 
 export const NOT_TAKEN =
   "reading NOT TAKEN — this assertion reads an operator-internal record under senior-director-state/, " +
@@ -29,13 +52,26 @@ export const NOT_TAKEN =
 
 const toPath = (p) => (typeof p === "string" ? p : fileURLToPath(p));
 
-/** True when the untracked operator record root is present in this checkout. */
+/**
+ * True when this checkout actually holds the operator's records — the root directory exists AND at
+ * least one witness ledger is in it. A directory that holds only shared fleet notes is not a record
+ * store, and saying otherwise is how an absent reading gets reported as a failure.
+ */
 export function operatorRecordsPresent(root) {
+  let dir;
   try {
-    return fs.statSync(toPath(root)).isDirectory();
+    dir = toPath(root);
+    if (!fs.statSync(dir).isDirectory()) return false;
   } catch {
     return false;
   }
+  return OPERATOR_RECORD_WITNESSES.some((witness) => {
+    try {
+      return fs.statSync(path.join(dir, witness)).isFile();
+    } catch {
+      return false;
+    }
+  });
 }
 
 /**

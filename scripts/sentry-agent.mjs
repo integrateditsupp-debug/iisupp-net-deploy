@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { openDb, DATA_DIR, setSetting, getSetting } from './lib/axis-db.mjs';
 import { buildCtx, ingestMessage, actionableCount } from './lib/sentry.mjs';
 import { isConfigured, listInbound, getMessageParsed } from './lib/gmail-outreach.mjs';
+import { logBootstrapHeader } from './autonomy-supervisor-core.mjs';
 
 const STATE = path.join(DATA_DIR, 'sentry-state.json');
 const INTERVAL_MS = Number(process.env.SENTRY_INTERVAL_MS || 3 * 60 * 1000); // 3 min (2–5 min band)
@@ -69,4 +70,9 @@ async function main() {
   await tick();
   while (true) { await new Promise(r => setTimeout(r, INTERVAL_MS)); try { await tick(); } catch (e) { console.error('[sentry] tick error', e.message); } }
 }
+// RUN-CU 2026-10-08: name the current-state file this run started from, so a run that acted on
+// stale state can be told apart from one that never read any. Guarded: a missing note is a log
+// line, never a dead worker.
+await logBootstrapHeader('sentry-agent');
+
 main().catch(e => { console.error('[sentry] fatal', e); process.exit(1); });

@@ -20,6 +20,15 @@ const CONTENT_SUMMARY = path.join(STATE_DIR, 'content-product-community', 'conte
 const QUEUE_FILE = path.join(STATE_DIR, 'codex-claude-queue.md');
 const nowIso = new Date().toISOString();
 
+// RUN-CU 2026-10-08. This script OWNS three of the files on the fleet's read-list (the board and the
+// two next-prompts), so a banner hand-added to any of them is erased on the next run. It belongs in
+// the generator. One line, first line, every surface — the current-state file is read before the
+// prompt that assumes it.
+const BOOTSTRAP_BANNER =
+  'Read `senior-director-state/AGENT-BOOTSTRAP.md` first (tracked copy: `docs/AGENT-BOOTSTRAP.md`) — '
+  + 'current date, live branch, retired branches, the six hard stops, and what is already in progress.';
+const BOOTSTRAP_READ_FIRST = '- senior-director-state/AGENT-BOOTSTRAP.md  (or docs/AGENT-BOOTSTRAP.md in a clean clone)';
+
 async function readText(file, fallback = '') {
   try {
     return await fs.readFile(file, 'utf8');
@@ -231,6 +240,8 @@ function boardMarkdown(goals, loops) {
   const lines = [
     '# Loop Engineer Board',
     '',
+    `> ${BOOTSTRAP_BANNER}`,
+    '',
     `Updated: ${nowIso}`,
     '',
     '## Active Goal',
@@ -276,7 +287,10 @@ function claudePrompt(goals, loops) {
   const top = loops.slice(0, 5);
   return `# Claude Cowork Next Prompt
 
+> ${BOOTSTRAP_BANNER}
+
 Read first:
+${BOOTSTRAP_READ_FIRST}
 - docs/COLLAB_BRIEF.md
 - docs/LOOP-ENGINEER.md
 - senior-director-state/loop-engineer/loop-board.md
@@ -305,7 +319,10 @@ function codexPrompt(goals, loops) {
   const top = loops[0];
   return `# Codex Next Prompt
 
+> ${BOOTSTRAP_BANNER}
+
 Read first:
+${BOOTSTRAP_READ_FIRST}
 - docs/COLLAB_BRIEF.md
 - docs/LOOP-ENGINEER.md
 - senior-director-state/loop-engineer/loop-board.md

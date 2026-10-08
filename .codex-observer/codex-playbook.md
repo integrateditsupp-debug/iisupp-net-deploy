@@ -1,5 +1,7 @@
 # Codex Playbook — scan 2026-08-11T11:38Z
 
+> **Read `senior-director-state/AGENT-BOOTSTRAP.md` first** (tracked copy: `docs/AGENT-BOOTSTRAP.md`) — current date, live branch `main`, retired branches, the six hard stops, what is in progress, and the environment-only test reds. Then `node scripts/agent-preflight.mjs`.
+
 ## Top line
 - Window (2d): **0 commits**. Repo HEAD unchanged at `cb4f3f0` since **2026-08-06 02:05 EDT** — **5.4 days frozen**.
 - Since prior scan (2026-08-05T21:09Z): 18 commits, **100% CC Stage2**, all landed inside a ~7-hour Aug 5-6 burst, then silence.

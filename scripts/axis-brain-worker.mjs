@@ -38,6 +38,7 @@ import { isConversational } from '../netlify/functions/lib/axis-brain.cjs';
 // sentence may out-claim it. Phase 0 proved "Outlook is offline" had no probe behind it — it was
 // model prose. This is the only module allowed to hold detection logic.
 import { detectAppsInText, formatMeasuredBlock, availabilityClaimGuard } from './lib/axis-app-detect.mjs';
+import { logBootstrapHeader } from './autonomy-supervisor-core.mjs';
 
 const JOBS = 'axis-brain-jobs';
 const KB_LIVE = 'aria-kb-live';
@@ -842,6 +843,11 @@ function watchdogTick() {
     });
   } catch (e) { console.warn('[axis-brain-worker] watchdog failed:', e.message); }
 }
+// RUN-CU 2026-10-08: name the current-state file this run started from, so a run that acted on
+// stale state can be told apart from one that never read any. Guarded: a missing note is a log
+// line, never a dead worker.
+await logBootstrapHeader('axis-brain-worker');
+
 watchdogTick();
 setInterval(watchdogTick, 3600000);
 

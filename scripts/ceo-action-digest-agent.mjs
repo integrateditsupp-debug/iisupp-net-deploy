@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getVendorRegistrationMeta } from './vendor-registration-metadata.mjs';
-import { publishAgentReport } from './autonomy-supervisor-core.mjs';
+import { publishAgentReport, logBootstrapHeader } from './autonomy-supervisor-core.mjs';
 import {
   APPROVED_PUBLISH_SUMMARY,
   LOCAL_ONLY_STAGED_REVIEW_FILES,
@@ -258,6 +258,11 @@ Result:
 
   console.log(JSON.stringify({ ok: true, queueCount, readyCount, business: business.length, file: DIGEST_FILE }, null, 2));
 }
+
+// RUN-CU 2026-10-08: name the current-state file this run started from, so a run that acted on
+// stale state can be told apart from one that never read any. Guarded: a missing note is a log
+// line, never a dead worker.
+await logBootstrapHeader('ceo-action-digest-agent');
 
 main().catch((error) => {
   console.error(error);

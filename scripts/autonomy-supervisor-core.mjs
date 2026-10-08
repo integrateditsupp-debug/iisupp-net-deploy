@@ -68,6 +68,66 @@ function slug(value) {
     .slice(0, 80) || 'agent';
 }
 
+// ── The bootstrap every agent reads first ────────────────────────────────────────────────────────
+// RUN-CU 2026-10-08. The fleet's read-list pointed at eight files that each describe a slice of the
+// state and none of which says what day it is, which branch is live, or which lines are retired. A
+// watcher reported on a dead branch for ~29 runs on exactly that diet. So there is now ONE current-
+// state file, and the workers that generate the read-list surfaces point at it rather than
+// restating it.
+//
+// Resolution order matters: the operator-machine copy first, then the tracked copy that a clean
+// clone actually receives (`senior-director-state/` is gitignored by design). A missing file is a
+// missing file — never a thrown error inside a scheduled worker.
+export const BOOTSTRAP_FILES = Object.freeze([
+  path.join(STATE_DIR, 'AGENT-BOOTSTRAP.md'),
+  path.join(ROOT, 'docs', 'AGENT-BOOTSTRAP.md'),
+]);
+
+export const BOOTSTRAP_BANNER =
+  'Read `senior-director-state/AGENT-BOOTSTRAP.md` first (tracked copy: `docs/AGENT-BOOTSTRAP.md`) — '
+  + 'current date, live branch, retired branches, the six hard stops, and what is already in progress.';
+
+/**
+ * The bootstrap's text, or null when no copy is present. Reads only; never throws.
+ * @returns {Promise<{file: string, text: string, dated: string|null}|null>}
+ */
+export async function readBootstrap() {
+  for (const file of BOOTSTRAP_FILES) {
+    try {
+      const text = await fs.readFile(file, 'utf8');
+      if (!text.trim()) continue;
+      // The LABELLED date, not the first date in the prose. The first unlabelled match in the
+      // pointer copy is "security lockdown 2026-07-01", so a worker header claimed a bootstrap three
+      // months older than the one it had just read — a staleness report that was itself stale.
+      const dated = (text.match(/current as of\s+\**\s*(20\d\d-\d\d-\d\d)/i)
+        || text.match(/\b20\d\d-\d\d-\d\d\b/)
+        || [null, null]).slice(-1)[0] || null;
+      return { file, text, dated };
+    } catch {
+      /* absent here — try the next copy */
+    }
+  }
+  return null;
+}
+
+/**
+ * One line in a worker's own log naming the bootstrap it started from, so a run that acted on stale
+ * state can be told apart afterwards from a run that never read any. Silent-safe by construction:
+ * a worker must never die because a note is missing.
+ */
+export async function logBootstrapHeader(agentId, log = console.log) {
+  try {
+    const b = await readBootstrap();
+    const line = b
+      ? `[${agentId}] bootstrap: ${b.dated || 'undated'} (${path.relative(ROOT, b.file)})`
+      : `[${agentId}] bootstrap: NOT FOUND — expected senior-director-state/AGENT-BOOTSTRAP.md or docs/AGENT-BOOTSTRAP.md`;
+    log(line);
+    return line;
+  } catch {
+    return null;
+  }
+}
+
 export async function publishAgentReport(report) {
   await ensureAutonomyDirs();
   const payload = {
@@ -282,6 +342,8 @@ function buildStandingOrdersMarkdown(state) {
 function buildActiveHandoffMarkdown(state) {
   return [
     '# Active Agent Handoff',
+    '',
+    `> ${BOOTSTRAP_BANNER}`,
     '',
     `Updated: ${state.generatedAt}`,
     '',

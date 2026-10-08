@@ -24,6 +24,13 @@ const { auditStagedAction, auditStagedActions, assertStagedActionsHonest, CLASSE
   await import(new URL("../scripts/lib/staged-action-guard.mjs", import.meta.url).href);
 const { needsAhmadStaged, NEEDS_AHMAD_SCHEMA } =
   await import(new URL("../scripts/lib/needs-ahmad-staged.mjs", import.meta.url).href);
+// RUN-CU 2026-10-08 — ask the same question the guard now asks. `fs.existsSync(ROOT/senior-director-state)`
+// meant "this is the operator machine", which stopped being true once a shared fleet note
+// (AGENT-BOOTSTRAP.md) had to live at that path: the folder exists, the records do not, and these two
+// cases then demanded a send sheet no clone has. The predicate below is witness-based.
+const { operatorRecordsPresent } =
+  await import(new URL("../scripts/lib/operator-record.mjs", import.meta.url).href);
+const OPERATOR_RECORDS_HERE = operatorRecordsPresent(path.join(ROOT, "senior-director-state"));
 
 // ── The two historical states, verbatim in shape ──────────────────────────────────────────────────
 
@@ -57,11 +64,10 @@ test("RED against RUN-AI's pre-fix state — a staged claim with no artefact is 
 });
 
 test("GREEN against RUN-AI's post-fix state — the same item, now naming a real non-empty file", () => {
-  const recordRoot = path.join(ROOT, "senior-director-state");
   const f = auditStagedAction(POST_FIX, { root: ROOT });
   assert.equal(f.ok, true, "the corrected item must pass");
 
-  if (fs.existsSync(recordRoot)) {
+  if (OPERATOR_RECORDS_HERE) {
     // On the operator's machine the artefact is really there and is really verified.
     assert.equal(f.class, CLASSES.OK);
     assert.ok(f.bytes > 0, "the send sheet holds something a person can read");
@@ -91,7 +97,7 @@ test("naming a file that does not exist fails — the click would have nothing t
     },
     { root: ROOT },
   );
-  if (fs.existsSync(path.join(ROOT, "senior-director-state"))) {
+  if (OPERATOR_RECORDS_HERE) {
     assert.equal(f.ok, false);
     assert.equal(f.class, CLASSES.MISSING);
   } else {

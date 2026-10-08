@@ -4,6 +4,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
+import { logBootstrapHeader } from './autonomy-supervisor-core.mjs';
 
 const execFileAsync = promisify(execFile);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -475,6 +476,11 @@ async function run() {
   await appendExecutionNote(summary);
   console.log(summary);
 }
+
+// RUN-CU 2026-10-08: name the current-state file this run started from, so a run that acted on
+// stale state can be told apart from one that never read any. Guarded: a missing note is a log
+// line, never a dead worker.
+await logBootstrapHeader('workspace-cleanup-agent');
 
 run().catch((error) => {
   console.error(error?.stack || error?.message || String(error));

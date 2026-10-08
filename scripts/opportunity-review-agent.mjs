@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { publishAgentReport } from "./autonomy-supervisor-core.mjs";
+import { publishAgentReport, logBootstrapHeader } from "./autonomy-supervisor-core.mjs";
 
 const root = process.cwd();
 const engineDir = path.join(root, "senior-director-state", "opportunity-engine");
@@ -138,6 +138,11 @@ async function main() {
   });
   console.log(JSON.stringify({ ok: true, reviewed: items.length, updated }, null, 2));
 }
+
+// RUN-CU 2026-10-08: name the current-state file this run started from, so a run that acted on
+// stale state can be told apart from one that never read any. Guarded: a missing note is a log
+// line, never a dead worker.
+await logBootstrapHeader('opportunity-review-agent');
 
 main().catch((error) => {
   console.error(error);

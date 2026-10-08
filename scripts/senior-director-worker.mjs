@@ -8,7 +8,7 @@ import {
   LOCAL_ONLY_STAGED_REVIEW_FILES,
   approvalTextForReview
 } from './staged-review-files.mjs';
-import { publishAgentReport, runAutonomySupervisor } from './autonomy-supervisor-core.mjs';
+import { publishAgentReport, runAutonomySupervisor, logBootstrapHeader } from './autonomy-supervisor-core.mjs';
 import { openAxisInbox, readAxisInbox, processAxisInbox, consumeAxisInbox } from './lib/axis-inbox.mjs';
 
 // AXIS approve-hop (vision-flaw-audit fix #2): each tick, pull the AXIS Command Center inbox, run the
@@ -1412,6 +1412,11 @@ async function main() {
     }
   }
 }
+
+// RUN-CU 2026-10-08: name the current-state file this run started from, so a run that acted on
+// stale state can be told apart from one that never read any. Guarded: a missing note is a log
+// line, never a dead worker.
+await logBootstrapHeader('senior-director-worker');
 
 main().catch(async (e) => {
   await log('worker fatal', { error: e?.stack || e?.message || String(e) }).catch(() => {});

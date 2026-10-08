@@ -2,7 +2,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { publishAgentReport } from './autonomy-supervisor-core.mjs';
+import { publishAgentReport, logBootstrapHeader } from './autonomy-supervisor-core.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const STATE_DIR = path.join(ROOT, 'senior-director-state');
@@ -1052,6 +1052,11 @@ async function run() {
   });
   console.log(summary);
 }
+
+// RUN-CU 2026-10-08: name the current-state file this run started from, so a run that acted on
+// stale state can be told apart from one that never read any. Guarded: a missing note is a log
+// line, never a dead worker.
+await logBootstrapHeader('business-development-agent');
 
 run().catch((e) => {
   console.error(e?.stack || e?.message || String(e));
