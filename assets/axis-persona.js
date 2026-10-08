@@ -363,10 +363,31 @@ const OPS = [
   // system already has — auto_cancelled), while approvals and client messages stay Ahmad's to
   // click, and the confirm line says so before anything moves. FIRST in the list on purpose:
   // "work with cowork to remove the priority items" must land here, not on cowork.ask.
+  // Three shapes, because the 2026-08-12 evening transcript produced all three and only the first
+  // had anywhere to land: (1) verb + board noun in one clause; (2) "take … off/down/out" with the
+  // verb and particle split around the object ("take the first one off the list" — the old adjacent
+  // `take off` never matched real speech); (3) bare anaphora with no board noun at all ("remove it",
+  // "delete those", "clear all") — those went to the LLM queue and timed out into total silence.
+  // The verbs cancel/archive/wipe/purge are lifted from the board's own COMMAND_ANYWHERE decline
+  // list (axis-priorities.js): every verb the board refuses to answer must have a rail to land on,
+  // or the refusal just re-routes the command into chat. Anaphora is confirm-gated like everything
+  // else, so a false positive costs one "cancel", never a cancelled follow-up.
   { kind: 'board.remove',
-    re: /\b(?:remove|delete|clear|dismiss|drop|get rid of|take (?:off|out|down))\b[^.?!]*\b(?:priorit(?:y|ies|i[sz]ed)\w*|to.?do|follow.?ups?|overdue|items?|list|board|queue)\b/i,
-    notAsk: /^\s*(?:how|what|why|when|where|who|which|should|could|would)\b/i,
-    say: () => 'Clear the scheduled follow-ups off the priority board — approvals stay yours to click' },
+    re: new RegExp(
+      '\\b(?:remove|delete|clear|dismiss|drop|get rid of|cancel|archive|wipe|purge)\\b[^.?!]*\\b(?:priorit(?:y|ies|i[sz]ed)\\w*|to.?do|follow.?ups?|overdue|items?|list|board|queued?|tasks?)\\b'
+      + '|\\btake\\s+(?:(?:the|that|this|those|these|it|them|all|everything|first|second|third|last|top)\\b[^.?!]{0,40}?)\\b(?:off|out|down)\\b'
+      + '|^\\s*(?:(?:ok(?:ay)?|all right|alright|please|now|just|yes|yeah|and|then|so)[,\\s]+)*(?:(?:you can|can you|could you|would you|go ahead(?: and)?)\\s+)?(?:remove|delete|clear|drop|dismiss|cancel|archive|wipe|purge|get rid of)\\s+(?:it|that|this|them|those|these|all|everything)\\b[^.?!]{0,20}$',
+      'i'),
+    // Questions stay questions — but "could you remove…" / "can you clear…" is a polite order, not
+    // a question, so the modal is only a question-marker when it is NOT aimed at AXIS ("could we…").
+    notAsk: /^\s*(?:how|what|why|when|where|who|which|should|did|do(?:es)?|is|are|was|were|ha(?:ve|s|d))\b|^\s*(?:can|could|would|will)\b(?!\s+(?:you|we)\b)/i,
+    // What to remove, so ONE named item stops meaning "everything". The tail preposition + board
+    // noun is stripped ("Acme Dental ~from my to-do list~"); resolution against the live rows
+    // happens client-side in axisRunOp via resolveRemovalTargets.
+    arg: /\b(?:remove|delete|clear|dismiss|drop|cancel|archive|wipe|purge|get rid of|take)\s+(.+?)(?:\s+(?:from|off(?:\s+of)?|out of|on|in)\s+(?:my|our|the|this|that)\b[^.?!]*)?\s*[.?!]?$/i,
+    say: (a) => (a && !/^(?:it|that|this|them|those|these|all|everything)$/i.test(a.trim()))
+      ? `Take ${a} off the board — scheduled follow-ups only; approvals stay yours to click`
+      : 'Clear the scheduled follow-ups off the priority board — approvals stay yours to click' },
 
   // ── Fleet management, by voice ─────────────────────────────────────────────
   // Ahmad, 2026-08-12: "have all the agents report to axis and give axis full access to manage
@@ -393,6 +414,17 @@ const OPS = [
     arg: /\b(?:resume|re-?enable|unpause|restart)\s+(?:the\s+)?(.+)$/i,
     say: (a) => `Put the ${a || 'named'} agent back on its schedule` },
 
+  // ── Web research, via the researcher agent (Phase 2, 2026-08-13) ──────────
+  // "Research the competitor pricing" / "investigate X" / "deep dive on Y". Distinct from
+  // search.find (which greps the board and vault): this retrieves the OPEN WEB on the plan, with
+  // per-claim sources enforced, and files the note in 15_Research/. Confirm-gated: it spends
+  // minutes of plan time. The verb must LEAD — "we should research that someday" is a musing.
+  { kind: 'research.web',
+    re: /^\s*(?:(?:ok(?:ay)?|please|now|just|can you|could you)[,\s]+)*(?:research|investigate|deep.?dive (?:on|into))\b/i,
+    notAsk: /^\s*(?:how|what|why|when|where|who|which|should|did|is|are)\b/i,
+    arg: /\b(?:research|investigate|deep.?dive (?:on|into))\s+(.+)$/i,
+    say: (a) => `Send the researcher after ${a || 'that'} — sourced findings land in the vault, gaps stated, nothing invented` },
+
   { kind: 'video.short',  re: /\b(?:make|create|do|build|record)\b[^.?!]*\b(short|shorts|clip|reel)\b/i,
     arg: /\b(?:about|on|for|covering)\s+(.+)$/i,
     say: (a) => `Build a short${a ? ' about ' + a : ''}` },
@@ -405,7 +437,7 @@ const OPS = [
   // question — "what is the status on the YouTube videos" — did not match, fell through to the
   // board, and got answered with follow-up counts three times in a row (2026-08-12 transcript).
   { kind: 'video.status',
-    re: /\b(?:youtube|videos?|shorts?|channel|clips?)\b[^.?!]*\b(?:status|staged|ready|queued?|left|today|uploaded|posted|published)\b|\b(?:status|how many|how'?s|what'?s|what is|update on|where are)\b[^.?!]*\b(?:youtube|videos?|shorts?|channel|clips?)\b/i,
+    re: /\b(?:youtube|videos?|shorts?|channel|clips?)\b[^.?!]*\b(?:status|staged|ready|queued?|left|today|uploaded|posted|published)\b|\b(?:status|how many|how'?s|what'?s|what is|update on|where are)\b[^.?!]*\b(?:youtube|videos?|shorts?|channel|clips?)\b|\b(?:show me )?what(?:'s| is| do we have| we have)[^.?!]{0,30}\bon (?:youtube|the channel)\b/i,
     say: () => 'Check the channel status' },
   // Talking to Claude Cowork. Read-only, so this only ever comes back as an answer.
   { kind: 'cowork.ask',   re: /\b(?:ask|check with|talk to|speak (?:to|with)|get)\s+(?:claude\s+)?cowork(?:er)?\b|\bask claude\b/i,
@@ -471,6 +503,127 @@ const OPS = [
     say: (a) => `Have Claude Code fix: ${a || 'the reported issue'}` },
 ];
 
+// ── Production directions ────────────────────────────────────────────────────
+// Ahmad, 2026-08-12, by voice: "videos sound very robotic have it sound more smooth human-like and
+// make it more clear text on the page one for the cover so that it attracts people's attention."
+// That is a DIRECTION for the video pipeline — voice settings, covers, quality all live in this
+// repo — and it had nowhere to land: no op matched, so the brain cascade keyword-matched it into a
+// Teams helpdesk article. It also hides inside status asks ("what's the status of the YouTube
+// videos AND can we enhance the quality"), where video.status ran and the direction was silently
+// dropped. Detected separately from OPS so the caller can check for it AFTER a status op too.
+// Routed to Claude Code (code.build) on confirm: the pipeline is code, and editing code is what
+// Claude Code is for — this is "talk to AXIS as if talking to Claude" for production work.
+const VIDEO_DIRECTION_RE = /\b(?:videos?|shorts?|clips?|covers?|thumbnails?|voice ?over|narration)\b[^.?!]*\b(?:sounds?|looks?|quality|robotic|human|smoother?|clearer?|attracts?|enhanc\w+|improv\w+|better|image|text)\b|\b(?:enhance|improve|upgrade|sharpen)\b[^.?!]*\b(?:videos?|shorts?|quality|covers?|thumbnails?|audio|voice)\b/i;
+const VIDEO_DIRECTION_ASK = /^\s*(?:how|why|when|where|who|which|is|are|does|do|did)\b|^\s*what(?!\s+about)\b/i;
+export function detectVideoDirection(text) {
+  const t = String(text || '').trim();
+  if (t.length < 12) return null;
+  if (!VIDEO_DIRECTION_RE.test(t)) return null;
+  if (VIDEO_DIRECTION_ASK.test(t)) return null;         // "why do the videos sound robotic" is a question
+  return { kind: 'video.direct', arg: t,
+    confirm: 'Hand that to Claude Code as a direction for the video pipeline — voice, covers and quality live in the repo it edits. Say confirm, or cancel.' };
+}
+
+// ── Meta turns: the user talking about the CONVERSATION, not the world ───────
+// The 2026-08-12 late transcript: "I didn't ask what's waiting I asked what's going on" was
+// answered by the BOARD — twice — because the words "going on" matched the status branch and no
+// layer knew a correction from a question. Then "yes but I literally told you… you didn't do
+// anything… work with me" pulled a lost-laptop KB article, and "I don't see anything opened on the
+// browser show me where" pulled a raw vault note. A turn that references what AXIS said, did, or
+// failed to do can only be answered by the tier that can SEE what AXIS said and did — the brain
+// with the turns. Everything local must stand aside.
+const META_TURN = new RegExp(
+  '\\b(?:that\'?s |this is )?not what i (?:asked|meant|said|was asking)'
+  + '|\\bi didn\'?t ask\\b'
+  + '|\\bi (?:literally |just )?(?:told|asked) you\\b'
+  + '|\\byou (?:said|told me|mentioned|repeated|didn\'?t|never|just said|were supposed|haven\'?t)\\b'
+  + '|\\bwhat are you talking about\\b'
+  + '|\\bi\'?m talking about\\b'
+  + '|\\byou\'?re (?:repeating|not listening|off topic)\\b'
+  + '|\\bsame (?:thing|answer) again\\b'
+  + '|\\bstop repeating\\b'
+  + '|\\bwork with me\\b'
+  + '|\\bwhy is it taking (?:you )?so long\\b'
+  + '|\\bi don\'?t see (?:it|that|anything)\\b'
+  + '|\\bshow me where\\b'
+  + '|\\bwere you able to\\b'
+  + '|\\bdid you (?:find|get|manage|do) (?:it|that|them)\\b'
+  + '|\\byou (?:got|are|seem) lost\\b'
+  + '|\\byou(?:\'ve| have) already told me\\b'
+  + '|\\bwrong (?:answer|topic|thing)\\b', 'i');
+export const isMetaTurn = (t) => META_TURN.test(String(t || ''));
+
+// ── Read the item OUT: content, not counts ───────────────────────────────────
+// The 2026-08-12 midnight transcript: Ahmad asked FIVE ways to see the one pending approval —
+// "pull it up let me see for details", "okay let me see it", "just give me the approval it's
+// listed on this website", "open it" — and got counts ("1 approval waiting"), a clarifying
+// question about which database the details live in (they were in the snapshot the whole time),
+// and four dead "One moment."s. The approval's subject, channel, age and draft body are all IN
+// the page's own snapshot. Reading them aloud is a lookup, not a model call.
+const BOARD_READ_RE = new RegExp(
+  '\\blet me see\\b'
+  + '|\\b(?:pull|bring|call) (?:it|that|this|them) up\\b'
+  + '|\\bread (?:it|that|them|me the)\\b'
+  + '|\\bwhat does it say\\b'
+  + '|\\b(?:give|show) me the (?:approvals?|details?|messages?|repl(?:y|ies)|drafts?)\\b'
+  + '|\\bcheck (?:the |our |my )?(?:inbox|approvals?|messages|leads)\\b'
+  + '|\\bany leads\\b'
+  + '|^\\s*(?:ok(?:ay)?[,\\s]+)?open (?:it|that|this)\\s*[.!?]?\\s*$', 'i');
+export function detectBoardRead(text) {
+  const t = String(text || '').trim();
+  if (t.length < 5) return null;
+  if (!BOARD_READ_RE.test(t)) return null;
+  return { kind: 'board.read', arg: t };
+}
+
+// ── Open a screen: navigation is an ACTION the console can actually perform ──
+// "okay can you open it up on a web page or something so that I can see the details" (2026-08-12)
+// fell to the model, which replied "That's open in your browser, Ahmad" — a claim about an action
+// nothing performed (Rule 1: evidence only, never guess). The console has go(<screen>) and
+// seventeen screens; opening one is a synchronous client call. detectUiOpen names the intent; the
+// app resolves the target (screen alias, named item, or "it" = the last item mentioned) and then
+// SAYS WHAT IT DID, after doing it.
+const UI_OPEN_RE = /\b(?:open(?:\s+(?:it|that|this|them|those|up))?|show me|pull up|bring up|take me to|go to|display)\b[^.?!]*\b(?:screen|page|tab|browser|web ?page|details?|approvals?|follow.?ups?|inbox|pipeline|crm|prospects?|outreach|waiting reply|priorit\w*|to.?do|board|documents?|analytics|products?|fleet|agents|director|reports?|settings|overview|dashboard)\b|\bwhere is (?:the\s+)?(?:approvals?|inbox|pipeline|crm|board|priorit\w*|fleet|reports?|documents?)\b|\bopen (?:it|that|this) up\b/i;
+const UI_OPEN_ASK = /^\s*(?:how|why|should|would|did|has|have)\b|\bhow (?:do|can|would) i\b/i;
+export function detectUiOpen(text) {
+  const t = String(text || '').trim();
+  if (t.length < 5) return null;
+  if (!UI_OPEN_RE.test(t)) return null;
+  if (UI_OPEN_ASK.test(t)) return null;        // "how do I open a shared mailbox" is a support question
+  return { kind: 'ui.open', arg: t };
+}
+
+// ── Work the queue WITH Claude ───────────────────────────────────────────────
+// "at least tackle all of these work with me" / "take the pending items to Claude and action
+// them" (2026-08-12): the pending approvals and queued follow-ups are on the board, Cowork can
+// read them (the task payload already carries turns + board), and drafting replies or proposing
+// next actions is exactly its work. This routes the ask there instead of letting it die in the
+// honesty rail. Approving and sending stay Ahmad's clicks — Cowork drafts, it never submits.
+const QUEUE_WORK_RE = /\b(?:tackle|work (?:with me )?(?:on|through)|go through|process|handle|action|clear|draft)\b[^.?!]*\b(?:these|those|them|all of (?:these|those|them|it)|the (?:queue|pending|backlog|approvals?|repl(?:y|ies)|board|items?)|everything (?:pending|waiting|queued)|pending (?:items?|repl(?:y|ies)|approvals?))\b|\btake (?:the\s+)?(?:pending|queued?)\b[^.?!]*\bto (?:claude|cowork)\b|\bwork (?:the|our) (?:queue|backlog)\b/i;
+const QUEUE_WORK_ASK = /^\s*(?:how|why|what|when|where|who|which|should|did|is|are)\b/i;
+export function detectQueueWork(text) {
+  const t = String(text || '').trim();
+  if (t.length < 8) return null;
+  if (!QUEUE_WORK_RE.test(t)) return null;
+  if (QUEUE_WORK_ASK.test(t)) return null;
+  return { kind: 'queue.work', arg: t,
+    confirm: 'Take the pending queue to Claude Cowork — it reads the board and drafts the moves; approving and sending stay yours. Say confirm, or cancel.' };
+}
+
+// ── Search: find the thing, say where it is ──────────────────────────────────
+// "It also cannot search for what we are looking for" (Ahmad, 2026-08-12). Local first: the
+// snapshot in memory holds every board row, approval, message and document — searching it costs
+// nothing and answers "where is X" with the screen X is on. Only a miss escalates to Cowork.
+const SEARCH_RE = /^\s*(?:(?:ok(?:ay)?|please|now|just|can you|could you)[,\s]+)*(?:search(?:\s+for)?|find|look\s?up|look for|locate)\s+(.{3,})$/i;
+export function detectSearchAsk(text) {
+  const t = String(text || '').trim().replace(/[.?!]+$/, '');
+  const m = t.match(SEARCH_RE);
+  if (!m) return null;
+  const arg = m[1].trim();
+  if (/^(?:out|into|at|up)\b/i.test(arg)) return null;   // "find out whether…" is a question, not a lookup
+  return { kind: 'search.find', arg };
+}
+
 export function detectOp(text) {
   const t = String(text || '').trim();
   if (!t || t.length < 4) return null;
@@ -492,7 +645,7 @@ export function detectOp(text) {
     if (op.kind === 'self.fix' && (arg.length < 6 || /^(?:that|this|it|them|those)\b/i.test(arg))) arg = t;
     // These are meaningless without a subject, and guessing at one is worse than asking. "fix it"
     // with no antecedent must not become a repo edit.
-    if (['self.fix', 'machine.run', 'cowork.ask', 'cowork.plan', 'code.build'].includes(op.kind) && arg.length < 6) return null;
+    if (['self.fix', 'machine.run', 'cowork.ask', 'cowork.plan', 'code.build', 'research.web'].includes(op.kind) && arg.length < 6) return null;
     return { kind: op.kind, arg, confirm: op.say(arg) + '. Say confirm, or cancel.' };
   }
   return null;

@@ -25,8 +25,19 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getStore } from '@netlify/blobs';
 import * as vault from './lib/axis-vault-brain.mjs';
+import * as convoLog from './lib/axis-conversation-log.mjs';
 import { classify, escalate, answerUsable, recordUse, usageReport, TIER_BY_NAME,
          modelForRequest } from './lib/axis-model-router.mjs';
+// The same conversation detector the cloud cascade uses (Node ESM imports the CJS lib directly).
+// Measured 2026-08-12: "I don't see anything opened on the browser show me where" hit the vault's
+// DIRECT tier and came back as a raw feedback note — wikilinks and all — because vault matching is
+// word overlap and cannot know a correction from a question. One detector, both brains.
+import { isConversational } from '../netlify/functions/lib/axis-brain.cjs';
+// Phase 1 (2026-08-13): the app-detection layer. When a task NAMES a local app, its state is
+// MEASURED before any text is generated, the measurement rides in the prompt, and no generated
+// sentence may out-claim it. Phase 0 proved "Outlook is offline" had no probe behind it — it was
+// model prose. This is the only module allowed to hold detection logic.
+import { detectAppsInText, formatMeasuredBlock, availabilityClaimGuard } from './lib/axis-app-detect.mjs';
 
 const JOBS = 'axis-brain-jobs';
 const KB_LIVE = 'aria-kb-live';
@@ -120,13 +131,13 @@ const PLAN_ENV = (() => {
 // stdin. Model ids and bare switches are safe because they contain neither spaces nor quotes.
 const FAST_FLAGS = ['--strict-mcp-config', '--no-session-persistence', '--exclude-dynamic-system-prompt-sections'];
 
-function askClaude(prompt, { model = null, system = null } = {}) {
+function askClaude(prompt, { model = null, system = null, timeoutMs = CLI_TIMEOUT_MS } = {}) {
   return new Promise((resolve) => {
     let out = '', err = '', settled = false;
     const args = ['--print', ...FAST_FLAGS];
     if (model) args.push('--model', model);            // safe: ids are [a-z0-9-] only
     const child = spawn(CLAUDE_BIN, args, { shell: process.platform === 'win32', env: PLAN_ENV });
-    const timer = setTimeout(() => { if (!settled) { settled = true; try { child.kill(); } catch {} resolve({ error: 'timeout' }); } }, CLI_TIMEOUT_MS);
+    const timer = setTimeout(() => { if (!settled) { settled = true; try { child.kill(); } catch {} resolve({ error: 'timeout' }); } }, timeoutMs);
     child.stdout.on('data', (d) => { out += d; });
     child.stderr.on('data', (d) => { err += d; });
     child.on('error', (e) => { if (!settled) { settled = true; clearTimeout(timer); resolve({ error: 'spawn: ' + e.message }); } });
@@ -173,20 +184,40 @@ function conversationBlock(turns, board) {
 async function answerQuestion(query, { turns = [], board = '' } = {}) {
   const t0 = Date.now();
 
+  // Phase 1: if the question names a local app, MEASURE it first. Zero cost when nothing is named
+  // (the common path); ~1-2s of probing when something is — cheaper than one wrong "offline".
+  let probes = [];
+  try { probes = await detectAppsInText(query); } catch { probes = []; }
+
   // Brain #1, alone. A confident vault hit skips the model entirely: no tokens, no plan usage, and
-  // an answer in single-digit milliseconds instead of seconds.
-  const direct = vault.vaultTier(query);
+  // an answer in single-digit milliseconds instead of seconds. But NEVER for a conversational turn
+  // — a correction or an instruction answered by note-matching is how "show me where" became a
+  // pasted feedback note. The vault still rides along as CONTEXT below either way.
+  const direct = isConversational(query) ? null : vault.vaultTier(query);
   if (direct) {
-    return { answer: direct.text, tier: 'vault', model: null, source: direct.source,
+    return { answer: availabilityClaimGuard(direct.text, probes), tier: 'vault', model: null, source: direct.source,
       ms: Date.now() - t0, learned: false };
   }
 
   // Brain #1 as context for brain #2.
   const context = vault.vaultContext(query);
   const convo = conversationBlock(turns, board);
-  const route = classify(query, { contextChars: context.length + convo.length });
+  // …and the conversation log, which is what `turns` cannot be: `turns` is THIS session only, and
+  // the CLI runs --no-session-persistence, so every previous conversation is otherwise gone. Ahmad,
+  // 2026-08-12: "that way you can take a look and have context when we're talking … and I don't have
+  // to explain things to you all the time." Bounded hard — see recallBlock.
+  let recall = '';
+  try { recall = convoLog.recallBlock(query, { exclude: turns }); } catch { recall = ''; }
+  const route = classify(query, { contextChars: context.length + convo.length + recall.length });
 
   const pieces = [];
+  // Measurement FIRST in the prompt: the model speaks after the probe, so it has no gap to fill
+  // with a guessed availability claim.
+  const measured = formatMeasuredBlock(probes);
+  if (measured) pieces.push(measured);
+  // Oldest context first, live session last: the turn Ahmad is actually in must be the nearest thing
+  // to his question, or the model answers the log instead of him.
+  if (recall) pieces.push(recall);
   if (convo) pieces.push(convo);
   if (context) pieces.push(`Context from Ahmad's AXIS vault. Prefer it over general knowledge where they disagree, and say so if it is silent on the question.\n\n${context}`);
   const prompt = pieces.length
@@ -202,7 +233,9 @@ async function answerQuestion(query, { turns = [], board = '' } = {}) {
   for (let hop = 0; hop < 3; hop++) {
     const tier = TIER_BY_NAME[tierName];
     const started = Date.now();
-    res = await askClaude(prompt, { model: tier.model });
+    // Each rung gets its own clock (see TIERS): the deep model being slower than 55s is expected,
+    // not a failure — capping opus at haiku's budget made every escalated answer end in silence.
+    res = await askClaude(prompt, { model: tier.model, timeoutMs: tier.timeoutMs || CLI_TIMEOUT_MS });
     const ms = Date.now() - started;
     recordUse(tierName, tier.model, { escalatedFrom, ms });
 
@@ -222,6 +255,11 @@ async function answerQuestion(query, { turns = [], board = '' } = {}) {
 
   if (!res || res.error || !res.answer) return { error: (res && res.error) || 'no answer' };
 
+  // The belt: no generated sentence out-claims the measurement. If the guard had to correct the
+  // answer, the answer contradicted reality — it must not be banked as knowledge either.
+  const guarded = availabilityClaimGuard(res.answer, probes);
+  const contradicted = guarded !== res.answer;
+
   // "Future info and learning will be saved in obsidian axis vault (brain)."
   // The vault write is what makes the next identical question free — brain #1 will answer it.
   // Confidence tracks the tier that produced the answer, not whether it escalated. The quality gate
@@ -234,15 +272,15 @@ async function answerQuestion(query, { turns = [], board = '' } = {}) {
   // Same gate as bank(): a clarifying question, hedge, or reply about the prompt is not knowledge.
   // Measured 2026-08-12: "Which list do you mean — …?" was written to 13_Learned as a fact because
   // this call had no gate while bank() did. The vault is the *durable* brain — it needs the gate more.
-  const w = worthLearning(query, res.answer)
+  const w = (!contradicted && worthLearning(query, res.answer))
     ? vault.learn({
         question: query, answer: stripTrailingOffer(res.answer),
         source: 'claude-max', model: TIER_BY_NAME[tierName].model,
         confidence: CONFIDENCE[tierName] || 'medium',
       })
-    : { written: false, reason: 'not-knowledge' };
+    : { written: false, reason: contradicted ? 'contradicted-measurement' : 'not-knowledge' };
 
-  return { answer: res.answer, tier: tierName, model: TIER_BY_NAME[tierName].model,
+  return { answer: guarded, tier: tierName, model: TIER_BY_NAME[tierName].model,
     escalatedFrom, ms: Date.now() - t0, vaultContext: context.length, learned: w.written,
     learnedFile: w.rel || null, learnSkipped: w.written ? null : w.reason };
 }
@@ -292,8 +330,19 @@ function stripTrailingOffer(text) {
 // 'are'", which sailed through the gate and was banked as a real answer five times.
 const BROKEN_PROMPT = /\b(got cut off|all i received|all that came through|could you (share|clarify|resend)|what would you like me to|your message (is|was|got)|didn'?t (receive|get) )\b/i;
 
+// A question about LIVE STATE is never knowledge — its answer is stale in minutes and recalls at
+// 55%+ forever. Measured 2026-08-12: "tell me the most prioritized item" was banked promoted:true
+// and would have answered every future asking of it with that afternoon's board. Deixis the same:
+// "tell me more about that" was banked as the timeless answer "I don't have anything to point back
+// to". Mirrors the gate in axis-brain-queue.mjs's learn action, because bank() writes to Blobs
+// DIRECTLY and never passes through it. "status" is listed and "update" is not, deliberately —
+// "give me status update" is state, "how do I fix a stuck windows update" is knowledge.
+const STATE_QUERY = /\b(?:priorit\w*|queued?|board|overdue|status|working on|to.?dos?|follow.?ups?|due today|most (?:urgent|overdue|important)|in (?:the )?queue)\b/i;
+const DEIXIS = /^\s*(?:tell me more|more about|go on|continue|what about (?:it|that|them)|about (?:it|that))\b|\b(?:you (?:already|just) said|said that|talking about|not what i)\b/i;
+
 const worthLearning = (q, a) =>
   String(q).trim().length >= 12 && !SLOP.test(String(q).trim()) &&
+  !STATE_QUERY.test(String(q)) && !DEIXIS.test(String(q)) &&
   stripTrailingOffer(a).length >= 60 && !SLOP.test(stripTrailingOffer(a)) &&
   !NON_ANSWER.test(String(a)) && !BROKEN_PROMPT.test(String(a)) && !/\?\s*$/.test(stripTrailingOffer(a));
 
@@ -623,6 +672,20 @@ Reply with ONE short sentence describing what you did, or why you did not.`,
     return { answer: String(r.answer || '').trim().slice(-600) };
   }
 
+  // Phase 2 (2026-08-13): the researcher. Read-only toward the repo, the board and the queues —
+  // it retrieves the open web on the plan, enforces per-claim sourcing in axis-researcher.mjs,
+  // and files the sourced note in the vault's 15_Research/. Inconclusive says inconclusive.
+  if (kind === 'research.web') {
+    const q = String(arg || '').trim();
+    if (q.length < 8) return { error: 'research needs a real question' };
+    await progress('researching: ' + q.slice(0, 60), 'run');
+    const { research, spokenSummary } = await import('./lib/axis-researcher.mjs');
+    const fastMoving = /\b(?:latest|current|news|today|this (?:week|month|year)|20(?:2[5-9]|3\d)|price|pricing|version)\b/i.test(q);
+    const r = await research(q, { fastMoving });
+    await progress((r.ok ? 'research done: ' : 'research inconclusive: ') + q.slice(0, 50), r.ok ? 'done' : 'error');
+    return { answer: spokenSummary(r) };
+  }
+
   return { error: 'unknown task kind: ' + kind };
 }
 
@@ -646,22 +709,39 @@ async function drain() {
     let job;
     try { job = await jobs.get(b.key, { type: 'json' }); } catch { continue; }
     if (!job || !job.query) { try { await jobs.delete(b.key); } catch {} continue; }
-    // The console gives up after ~6.5s; anything older has already escalated. Drop it rather than
-    // spend plan tokens on an answer nobody is waiting for.
-    if (Date.now() - (job.t || 0) > 20000) { try { await jobs.delete(b.key); } catch {} continue; }
+    // The console now polls for ~180s (axisCollect), so a job is only stale past that. The old
+    // 20s cutoff was the "One moment." dead-end, measured 2026-08-12 midnight: one slow answer
+    // jammed this single-threaded loop, every question behind it aged past 20s, and each was
+    // dropped IN SILENCE — five asks in a row answered by an ack that nothing ever replaced.
+    // Stale is still dropped (no plan tokens for an answer nobody is waiting for), but a done/
+    // record now says so, so a console still polling reports it instead of hanging forever.
+    if (Date.now() - (job.t || 0) > 150000) {
+      try { await jobs.setJSON(`done/${job.id}`, { error: 'stale: the worker was busy past the console wait — ask again', t: Date.now() }); } catch {}
+      try { await jobs.delete(b.key); } catch {}
+      continue;
+    }
 
     console.log(`[axis-brain-worker] ${job.id} → ${String(job.query).slice(0, 70)}`);
     const res = await answerQuestion(job.query, { turns: job.turns, board: job.board });
     try { await jobs.setJSON(`done/${job.id}`, { answer: res.answer, error: res.error, t: Date.now() }); } catch {}
     try { await jobs.delete(b.key); } catch {}
     if (res.answer) {
+      // The conversation log takes EVERY answered turn, including the vault-tier ones and including
+      // the turns worthLearning() rejects. That gate protects the fact brain from state questions and
+      // corrections; those are exactly the turns that carry context, so the log is deliberately
+      // ungated. Logged here rather than inside answerQuestion so both tiers land in one place.
+      const logged = convoLog.appendTurn({
+        question: job.query, answer: res.answer,
+        tier: res.tier, model: res.model,
+      });
       // A vault answer never touches the plan, so it is never re-banked into Blobs either — it is
       // already in the brain that produced it.
       const banked = res.tier === 'vault' ? false : await bank(job.query, res.answer);
       const how = res.tier === 'vault'
         ? `from the vault (${res.source.replace('axis-vault:', '')}) in ${res.ms}ms · no model`
         : `on the Max plan · ${res.model}${res.escalatedFrom ? ` (escalated from ${res.escalatedFrom})` : ''} · ${res.ms}ms`;
-      const saved = [res.learned ? 'vault' : null, banked ? 'ARIA brain' : null].filter(Boolean).join(' + ');
+      const saved = [res.learned ? 'vault' : null, banked ? 'ARIA brain' : null,
+        logged.written ? `conversation log (${logged.day} ${logged.time})` : null].filter(Boolean).join(' + ');
       console.log(`[axis-brain-worker] answered ${how}${saved ? ` · saved to ${saved}` : ''}`);
     } else {
       console.warn('[axis-brain-worker] failed:', res.error);
@@ -687,6 +767,11 @@ console.log('[axis-brain-worker] online — answering AXIS on the Claude Max pla
     ? `[axis-brain-worker] brain #1: Obsidian vault, ${v.notes} notes at ${v.root}`
     : `[axis-brain-worker] brain #1: NO VAULT at ${v.root} — falling back to the plan for everything.`);
   console.log(`[axis-brain-worker] system prompt: ${vault.loadSystemPrompt() ? 'vault (00_Index/AXIS-SYSTEM.md)' : 'built-in fallback'}`);
+  const c = convoLog.conversationStats();
+  console.log(c.available
+    ? `[axis-brain-worker] conversation log: ${c.days} day note${c.days === 1 ? '' : 's'}, `
+      + `${c.turns} turn${c.turns === 1 ? '' : 's'} in the last ${c.window} days at ${c.dir}`
+    : `[axis-brain-worker] conversation log: NO VAULT at ${c.root} — answering without cross-session context.`);
 }
 // Usage by tier, so "the plan ran out again" is answerable with numbers rather than a guess.
 setInterval(() => {
