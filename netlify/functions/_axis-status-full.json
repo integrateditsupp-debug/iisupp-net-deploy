@@ -1,21 +1,34 @@
 {
  "_internal": true,
  "_emitRule": "INTERNAL ONLY — force-404 live, served via authenticated /api/axis-status. NEVER copy this content into .well-known: regenerate the public mirrors with scripts/lib/axis-status-emit.mjs (headline-only, leak-scanned).",
- "generatedAt": "2026-10-08T21:54:22.123Z",
+ "generatedAt": "2026-10-08T22:57:37.595Z",
  "program": {
   "series": "CLIENT-READY",
-  "sequence": "RUN-BV",
-  "testsGreen": true,
-  "suitesGreen": 375,
-  "suitesTotal": 375,
-  "assertionsPassed": 1062,
-  "assertionsTotal": 1119,
-  "assertionsNotTaken": 57,
-  "suitesTaken": 375,
-  "suitesRegistered": 375,
-  "suitesComplete": true,
-  "suiteVerdict": "green",
-  "pct": 94.9,
+  "sequence": "RUN-BW",
+  "testsGreen": null,
+  "testsGreenStatement": "not taken this cycle — --no-suite: the full suite was not runnable in this environment. Null, never true.",
+  "suiteCensus": {
+   "ok": true,
+   "suitesOnDisk": 446,
+   "suitesRegistered": 376,
+   "unregistered": 70,
+   "deferredOnClock": 70,
+   "exempt": 0,
+   "dead": 0,
+   "unexplained": 0,
+   "maxPendingDays": 14,
+   "statement": "446 suite files on disk, 376 registered in TESTS; every one of the 70 unregistered files carries a recorded verdict with a reason (70 deferred on a 14-day clock)."
+  },
+  "suitesGreen": null,
+  "suitesTotal": null,
+  "assertionsPassed": null,
+  "assertionsTotal": null,
+  "assertionsNotTaken": null,
+  "suitesTaken": null,
+  "suitesRegistered": null,
+  "suitesComplete": null,
+  "suiteVerdict": null,
+  "pct": null,
   "statement": "pct is pass/total of assertions actually taken plus not-taken; it is not a completion percentage for the programme, and is not presented as one."
  },
  "mainRef": "7a3b3d0a58aa439d9897f7c84690cb4e29a59a98",
@@ -24,7 +37,12 @@
   {
    "lane": "suite-census",
    "state": "shipped this cycle",
-   "detail": "pure decider + 12-assertion guard suite + runner rewired; a declared-but-absent package is unjudged, an undeclared one stays red, and the green line is no longer a tautology"
+   "detail": "pure decider + 20-assertion guard suite, itself registered in TESTS; a suite file on disk with no written verdict is RED, an exemption with no reason FAILS, a deferred verdict expires after 14 days, and a ledger entry that no longer describes the disk is red too. 70 unregistered files recorded with a reason, 65 of them reading green standalone"
+  },
+  {
+   "lane": "suite-registration-backlog",
+   "state": "deferred on a 14-day clock",
+   "detail": "the 70 are read, not registered: 65 pass standalone on the build machine and 5 do not. RUN-BX registers them in verified batches against a clean extract. On 2026-10-22 the clock expires and the census goes red by itself"
   },
   {
    "lane": "delivery-age",
@@ -77,18 +95,24 @@
    "ageDays": 0,
    "commits": 23,
    "action": "a push of verified code; deploys nothing"
+  },
+  {
+   "item": "run-bv-2026-10-08",
+   "ageDays": 0,
+   "commits": 25,
+   "action": "a push of verified code; deploys nothing"
   }
  ],
  "onTrack": false,
- "onTrackStatement": "Not on track, and the reason is not the code: the suite is green and the oldest verified batch is past the age at which 'staged' stops being an honest word for it.",
+ "onTrackStatement": "Not on track as a matter of evidence rather than of code: the full suite was not run this cycle (--no-suite: the full suite was not runnable in this environment), so nothing here claims it is green. The census that WAS taken is green, and the oldest verified batch is 58 days past the age at which 'staged' stops being an honest word for it.",
  "deliveryShelf": {
   "state": "taken",
-  "pendingCount": 5,
+  "pendingCount": 6,
   "landedCount": 0,
   "unverifiableCount": 0,
   "oldestPendingDays": 58,
   "overdue": true,
-  "speakable": "5 verified batches of work are waiting on your approval, the oldest for 58 days.",
+  "speakable": "6 verified batches of work are waiting on your approval, the oldest for 58 days.",
   "rows": [
    {
     "name": "unpublished-line",
@@ -129,32 +153,76 @@
     "tip": "077d67f824623b92cf0496219e427247de188d61",
     "commits": 23,
     "reason": null
+   },
+   {
+    "name": "run-bv-2026-10-08",
+    "state": "pending",
+    "ageDays": 0,
+    "tip": "5b65a2e6b6fbab62527b3b46413b24fb5b2ae401",
+    "commits": 25,
+    "reason": null
    }
   ]
  },
  "claims": {
   "testsPassedAfterWrites": {
-   "value": 1062,
-   "measuredAt": "2026-10-08T21:54:22.123Z",
-   "source": "the assertion-level summary printed by the suite run this script performed",
+   "value": null,
+   "measuredAt": "2026-10-08T22:57:37.595Z",
+   "source": "npm test (ARIA Sentinel) — not completed in this environment",
+   "kind": "count",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "--no-suite: the full suite was not runnable in this environment",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "suitesGreenAfterWrites": {
+   "value": null,
+   "measuredAt": "2026-10-08T22:57:37.595Z",
+   "source": "npm test (ARIA Sentinel) — not completed in this environment",
+   "kind": "count",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "--no-suite: the full suite was not runnable in this environment",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "suiteFilesOnDisk": {
+   "value": 446,
+   "measuredAt": "2026-10-08T22:57:37.595Z",
+   "source": "a recursive listing of the suite files in this checkout",
    "kind": "count",
    "provenance": "measured",
    "read": {
-    "command": "npm test (ARIA Sentinel) — parsed '# pass' from the runner's own summary",
+    "command": "scripts/suite-census.mjs — globbed at emit time, never typed",
     "exitCode": 0
    },
    "ageHours": 0,
    "maxAgeHours": 24,
    "stale": false
   },
-  "suitesGreenAfterWrites": {
-   "value": 375,
-   "measuredAt": "2026-10-08T21:54:22.123Z",
-   "source": "the suite-level summary printed by the suite run this script performed",
+  "suitesRegisteredInRunner": {
+   "value": 376,
+   "measuredAt": "2026-10-08T22:57:37.595Z",
+   "source": "the TESTS array in ARIA Sentinel/tests/run-all.mjs",
    "kind": "count",
    "provenance": "measured",
    "read": {
-    "command": "npm test (ARIA Sentinel) — parsed 'N/N suites green.' from the runner's own summary",
+    "command": "scripts/suite-census.mjs — text-parsed at emit time; the runner is never imported, because importing it would run every suite",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "unregisteredSuiteFiles": {
+   "value": 70,
+   "measuredAt": "2026-10-08T22:57:37.595Z",
+   "source": "the difference between the files on disk and the TESTS array, both read at emit time",
+   "kind": "count",
+   "provenance": "measured",
+   "read": {
+    "command": "scripts/lib/suite-registry.mjs — pure decider over the two readings",
     "exitCode": 0
    },
    "ageHours": 0,
@@ -162,22 +230,19 @@
    "stale": false
   },
   "commitsAheadOfSharedLine": {
-   "value": 29,
-   "measuredAt": "2026-10-08T21:54:22.125Z",
-   "source": "a revision count taken against the last known shared reference during this cycle",
+   "value": null,
+   "measuredAt": "2026-10-08T22:57:37.597Z",
+   "source": "git rev-list --count origin/main..HEAD",
    "kind": "count",
-   "provenance": "measured",
-   "read": {
-    "command": "git rev-list --count origin/main..HEAD",
-    "exitCode": 0
-   },
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "git could not compare this checkout against origin/main here: measureCommand: `git rev-list --count origin/main..HEAD` exited 128 — refusing to publish a figure from a failed read",
    "ageHours": 0,
    "maxAgeHours": 24,
    "stale": false
   },
   "oldestPendingDeliveryDays": {
    "value": 58,
-   "measuredAt": "2026-10-08T21:54:22.125Z",
+   "measuredAt": "2026-10-08T22:57:37.597Z",
    "source": "the delivery manifests on the operator volume, compared against the refs the code host reports",
    "kind": "count",
    "provenance": "measured",
@@ -191,5 +256,18 @@
   }
  },
  "staleClaims": [],
- "unmeasuredFigures": []
+ "unmeasuredFigures": [
+  {
+   "name": "testsPassedAfterWrites",
+   "reason": "--no-suite: the full suite was not runnable in this environment"
+  },
+  {
+   "name": "suitesGreenAfterWrites",
+   "reason": "--no-suite: the full suite was not runnable in this environment"
+  },
+  {
+   "name": "commitsAheadOfSharedLine",
+   "reason": "git could not compare this checkout against origin/main here: measureCommand: `git rev-list --count origin/main..HEAD` exited 128 — refusing to publish a figure from a failed read"
+  }
+ ]
 }

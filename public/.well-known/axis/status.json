@@ -1,11 +1,11 @@
 {
- "status": "active build — a test count that can no longer shrink without saying so",
- "milestone": "A clean copy of the shared line reported no failures over a smaller number of checks than the same code reports here, because two groups of checks could not start and the summary counted only the groups it reached. No failures and every check attempted are now two separate facts, and a run that skipped a group can no longer be published as a clean one.",
- "readiness": "Built and tested this cycle against the shared line as it stands today. 375 of 375 test suites were attempted and all of them passed; 1062 of 1119 checks pass with none failing. 57 checks read an operator-internal record that is absent here; those are reported as not taken rather than as passes. Publishing to the live site stays a deliberate manual step.",
+ "status": "active build — the list of checks is now itself checked",
+ "milestone": "The number of checks we report each cycle was a count of the checks somebody remembered to put on the list. Counted for the first time: 443 check files exist, 375 were on the list, and 65 of the missing ones pass when run by hand. Nothing was failing because nothing was looking. Every file off the list now carries a written reason and a two-week clock.",
+ "readiness": "Built this cycle. 446 test suite files exist and 376 are registered to run; all 70 unregistered files now carry a written reason and a two-week clock. The full check suite was not run this cycle, so no check figure is reported for it — not taken is not the same as passing. Publishing to the live site stays a deliberate manual step.",
  "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build and is voice-operable. Sent: 0. Meetings 0, revenue none. Checks this cycle: 375 of 375 test suites were attempted and all of them passed; 1062 of 1119 checks pass with none failing. 5 verified batches of work are waiting on an approval, the oldest for 58 days.",
+ "headline": "ARIA / AXIS is in active build and is voice-operable. Sent: 0. Meetings 0, revenue none. This cycle: 446 test suite files exist, 376 registered to run, 70 accounted for in writing. 6 verified batches of work are waiting on an approval, the oldest for 58 days.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
- "generatedAt": "2026-10-08T21:54:22.123Z",
+ "generatedAt": "2026-10-08T22:57:37.595Z",
  "schema": "axis-status/1",
  "public": true,
  "honest": true

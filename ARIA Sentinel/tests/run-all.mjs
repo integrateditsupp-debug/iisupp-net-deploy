@@ -10,6 +10,15 @@ const TESTS = [
   // Registered by hand: RUN-AW recorded that this manifest does not pick up new files, and a suite
   // running green outside the count is the same lie in a nicer shirt.
   "../../tests/plumbing-commit-denylist.test.mjs",
+  // SUITE CENSUS 2026-10-08 (RUN-BW / BW1) — the guard on this array itself. `TESTS` is
+  // hand-maintained, which means a suite file on disk that nobody typed here is not red, not
+  // incomplete, and not counted: it is invisible. Counted for the first time this cycle: 443 suite
+  // files on disk against 375 registered, and 65 of the 70 unregistered ones PASS when invoked by
+  // hand — live guards running outside every count the programme has published. This suite fails
+  // red unless every unregistered file carries a recorded verdict with a real reason, and unless
+  // every deferred verdict is still inside its clock. Registered by hand, like the rest, because
+  // a census running outside the count it takes would be the same lie in a nicer shirt.
+  "../../tests/suite-registry-census.test.mjs",
   // PENDING DELIVERY AGE 2026-10-08 (RUN-BU / BU1) — the fifty-six-day class. A batch verified in
   // August was staged behind a one-click push, reported truthfully as "waiting" by every cycle after
   // it, and sat off the shared line for fifty-six days because no cycle computed HOW LONG it had been

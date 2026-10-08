@@ -1,0 +1,858 @@
+{
+ "schema": "suite-census-ledger.v1",
+ "note": "Every suite file on disk that is NOT registered in `ARIA Sentinel/tests/run-all.mjs` must appear here with a verdict and a real reason. `scripts/suite-census.mjs` goes red if any is missing, if a reason is a placeholder, or if a `register-pending` entry is older than maxPendingDays. An entry about a file that is now registered, or now gone, is STALE and also red — the record cannot drift away from the disk it describes.",
+ "openedBy": "RUN-BW, 2026-10-08",
+ "generatedAt": "2026-10-08T22:47:18.000Z",
+ "maxPendingDays": 14,
+ "clockNote": "The first write of this file carried a hand-typed openedAt 24 minutes in the future, and the census's own future-stamp rule refused all 70 entries as unjudgeable rather than aging them negatively — the guard working on its author, exactly as RUN-BU's did. These stamps are read from the clock.",
+ "evidenceCaveat": "Every standaloneExit here was read by running `node <file>` on the build machine's working tree, which is dirty and is not the shared line. That is why NOTHING is registered this cycle on the strength of it: a pass read here is evidence a guard is alive, not proof it is green on a clean extract.",
+ "counts": {
+  "entries": 70,
+  "passedStandalone": 65,
+  "didNotPassStandalone": 5
+ },
+ "entries": [
+  {
+   "file": "ARIA Sentinel/axis/voice-in/tests/hotkey.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "ARIA Sentinel/tests/escalation-severity.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "ARIA Sentinel/tests/plan-durability-ledger.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "ARIA Sentinel/tests/restore-point.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/ac2-visit-beacon.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/agent-runs.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/analytics.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/aria-brain-v2-matrix.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/asset-parse-gate.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-app-detect.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle: seven named assertions pass, then 'every probe attempt logged (16)' fails — a real assertion about the probe log, not an absent file. Registering it as-is would turn the shared line red, so it is read first: RUN-BX decides whether the suite or the logger is wrong before it joins the count.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 1,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-assistant-behaviors.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle: six named assertions pass, then it reads 'Documents/AXIS-Brain/00_Index/AXIS-SYSTEM.md', an operator-internal path absent from a clean clone. By RUN-BV's taxonomy that is NOT TAKEN rather than failed; it must gain that classification before it can be registered honestly.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 1,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-auth.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-blind-guards.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-board-remove.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-brain-cascade.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-brain-fallback.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-command-center.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-conversation-memory.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-conversation-tiers.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-cowork-code-routes.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-criticality.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-esm-parse.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-fleet-manage.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-globe-voice.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-inbox.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-intent-apply.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-job-watchdog.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-module-graph.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-overview-clearance.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-overview-panels.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-presence-privacy.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-priorities.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-proactive.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-queue-steward.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-real-conversation.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-remove-scenarios.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-researcher.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-snapshots.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-speech-not-screen.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-status-emitter.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle: fails 'repo public mirrors carry zero leak-class content', 2 !== 0. Measured against a dirty build-machine tree holding untracked emitter scratch, so the 2 may be tree state rather than product. RUN-BX re-reads it on a clean extract before registering.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 1,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-transcript-fixes.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-turn-taking.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-vault-brain.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-voice-dock.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-voice-hearing.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-voice-pin.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-voice-ready.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-windows-traps.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/axis-worker-offline.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/branch-reference-consumers.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/chargeable-amounts.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/outreach-merge-guard.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/p6.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/plan-name-consistency.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/plans-savings-sweep.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/price-consistency.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/quote-inputs.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/quote-intake.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/response-time-consistency.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/root-serving-gate.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle: 'every internal-looking root FILE is force-404ed' fails against the build-machine working tree, which carries untracked root scratch the shared line does not. Needs a clean-clone reading before registration, or it imports a false red.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 1,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/scratch-floor.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle: 'BH2b — a parked lock is never left where git walks for refs' fails; this environment genuinely holds leftover git lock files it cannot unlink, so the red may be true of the machine and not of the code. Classify on a clean extract in RUN-BX.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 1,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/scratch-substitution.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/script-syntax-gate.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/sentry-b1-b2.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/sentry.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/snapshot-module-parity.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/stripe-price-staging.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/tier-registry.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/vision-diagnose-handler.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  },
+  {
+   "file": "tests/vision-diagnose.test.mjs",
+   "verdict": "register-pending",
+   "reason": "read standalone this cycle on the build-machine tree: exits 0 with its own assertions passing, so it is a live guard that has been running outside every count this programme has published. Registration staged for RUN-BX in verified batches rather than bulk-added here, because a suite registered without a clean-clone reading is worse than one that never ran.",
+   "openedAt": "2026-10-08T22:47:18.000Z",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "build-machine working tree",
+    "readAt": "2026-10-08T22:47:18.000Z",
+    "cleanCloneReading": "not taken this cycle"
+   }
+  }
+ ],
+ "path": "tests/suite-census-ledger.json",
+ "pathNote": "This ledger lives beside the gate that reads it, NOT under senior-director-state/. That prefix is denied by scripts/lib/deploy-denylist.mjs and force-404'd at the serving layer, so a file a registered test must read cannot live there — found by running the denylist against this cycle's own tree before delivering it, which is the check that was supposed to catch exactly this."
+}
