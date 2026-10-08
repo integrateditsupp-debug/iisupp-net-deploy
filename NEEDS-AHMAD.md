@@ -1,5 +1,30 @@
 # NEEDS AHMAD
 
+## 2026-10-08 · RUN-BU — ONE click, and it clears the WHOLE shelf
+
+**1. The shelf is 58 days old at its oldest, and it is now ONE decision instead of five.**
+Five verified deliveries are off the shared line. Four of them are ancestors of the fifth, proved
+with `git merge-base`, so a single push lands every one of them — RUN-BU, the recovered RUN-BS
+commits, RUN-BT, and the eleven-commit AXIS backlog. Verified **374/374 suites green · 1103 checks ·
+1046 pass · 0 fail · 57 not taken** on that exact tip in a clean clone. The bundle was proven
+importable by actually importing it into a fresh clone of the code host rather than by reasoning
+about its base refs. One click: `senior-director-state/cc-runs/AHMAD-PUSH-RUN133-RUN-BU.cmd`.
+**Code only. Deploys nothing.**
+
+**2. This item can no longer go quiet, which is the real deliverable.**
+`node scripts/pending-delivery-audit.mjs` now computes how long anything verified has been waiting
+on you, publishes it, lets AXIS speak it, and **exits 1 past two days**. The fifty-six-day stall was
+never a lie — every cycle said "staged, one click waiting" and meant it. None of them said for how
+long, because nothing computed it. Now something does.
+
+**3. Netlify publish** — still your separate, deliberate click. Pushing the code line publishes
+nothing a visitor can see.
+
+**What does NOT need you this cycle:** RUN-BS's three commits, which were absent from the line
+entirely and are now merged; two shelf bundles that had no manifest and were unjudgeable, now
+written from reads; and 56 assertions that failed from this cycle's own contamination of the test
+tree, fixed rather than baselined.
+
 > Cleared 2026-08-12 — all items removed by Ahmad.
 
 ## 2026-08-12 · RUN-BO — one capability, one click
