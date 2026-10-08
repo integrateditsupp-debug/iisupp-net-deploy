@@ -55,7 +55,8 @@
           steps: ['Tell ARIA your business, audience and the pages you need.', 'ARIA proposes a clean, elegant layout and copy.', 'Integrated IT Support Inc. builds, hosts and secures it.', 'Book a free scoping call at iisupp.net/book.'] },
         { when: ['book', 'automation', 'automate', 'tool', 'flight', 'travel', 'schedule'], cause: 'A booking or automation tool that saves you hours each week.',
           steps: ['Describe the task that takes too much time.', 'ARIA maps the workflow and the smallest tool that removes it.', 'Integrated IT Support Inc. builds and connects it to your existing apps.', 'Book a free scoping call at iisupp.net/book.'] }
-      ]
+      ],
+      escalate: 'If the scope, timeline or price cannot be settled in chat, hand it to a person \u2014 book a free 15-minute scoping call at iisupp.net/book and someone at Integrated IT Support Inc. picks it up from there.'
     },
     {
       id: 'outlook', label: 'Outlook won\'t open / crashing', tier: 'L1',
