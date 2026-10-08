@@ -23,9 +23,12 @@ const HEADERS = {
   'Content-Type': 'application/json'
 };
 const CAPS = { title: 140, body: 6000, tag: 24, tags: 5, name: 40 };
-// Email hash salt: prefer a dedicated secret, fall back to the shared JWT secret, then a static
-// last resort so hashing is always deterministic within a deploy (needed for vote-dedup + accept).
-const HASH_SALT = process.env.FORUMS_HASH_SALT || process.env.APERTURE_JWT_SECRET || 'forums-mvp-static-salt-v1';
+// Email hash salt: a dedicated secret, else the shared JWT secret. 2026-10-08 (audit §7): the static
+// last-resort salt is gone from production — on Netlify (process.env.NETLIFY) every WRITE op returns 503
+// `not-configured` when neither env is set, so a predictable salt can never reach the live store. The
+// pure core still hashes deterministically for the offline unit tests (dev-only salt, never on Netlify).
+const SALT_CONFIGURED = !!(process.env.FORUMS_HASH_SALT || process.env.APERTURE_JWT_SECRET);
+const HASH_SALT = process.env.FORUMS_HASH_SALT || process.env.APERTURE_JWT_SECRET || (process.env.NETLIFY ? '' : 'local-dev-unsalted-tests-only');
 
 let _store = null;
 function store() {
@@ -188,6 +191,9 @@ exports.handler = async (event) => {
 
   // Rate limit every write: per-IP (anti-abuse) AND a global bucket (anti-flood of the brand page).
   if (WRITE_OPS.has(body.op)) {
+    // Fail-closed on Netlify: never hash identities with a predictable salt in the live store.
+    if (!HASH_SALT) return { statusCode: 503, headers: HEADERS, body: JSON.stringify({ ok: false, error: 'not-configured', hint: 'set FORUMS_HASH_SALT (or APERTURE_JWT_SECRET)' }) };
+    if (!SALT_CONFIGURED) console.warn('[forums-threads] FORUMS_HASH_SALT/APERTURE_JWT_SECRET not set — using the local dev salt (not on Netlify)');
     const perIp = checkRateLimit(event, { scope: 'forums-write', limit: 20, windowMs: 10 * 60 * 1000 });
     const global = checkRateLimit(event, { key: 'forums-global', limit: 240, windowMs: 10 * 60 * 1000 });
     if (!perIp.ok || !global.ok) {

@@ -1,6 +1,111 @@
 const { withBreaker } = require('./_circuit-breaker');
 const { fetchWithRetry } = require('./_retry');
 const context = require('./_conversation-context');
+const crypto = require('node:crypto');
+
+/**
+ * 2026-10-08 changes (audit §6/§8 + VOICE MODE):
+ *  - sessionId is trusted ONLY when it matches /^[A-Za-z0-9_-]{16,80}$/ (the web client used to send the
+ *    constant 'web-2861' for every visitor, so the per-instance server context bled turns between
+ *    strangers). Anything else gets a fresh random id and the server context is never consulted for it.
+ *  - the degraded (provider outage) branch now returns `text` as well as the legacy `reply`, plus the
+ *    resolved/escalate/category/suggestions fields the UI reads — so the honest copy is actually shown.
+ *  - hard errors return a fixed error_code; err.message is logged server-side only.
+ *  - VOICE MODE: body.voice === true asks the model for `speak` / `needs_input` / `listen` / `action`
+ *    and the response always carries them (safe defaults when the model omits them).
+ *  - body.platform (string) / body.device ({os, app}) inject one "User platform: …" line into the prompt.
+ *  - internal fan-out (aria-learn / aria-trace) targets process.env.URL and carries X-Internal-Token.
+ */
+const SESSION_ID_RE = /^[A-Za-z0-9_-]{16,80}$/;
+const VOICE_ACTIONS = new Set(['guide', 'sentinel-fix', 'escalate', 'none']);
+const SPEAK_MAX_WORDS = 55;
+
+const VOICE_MODE_PROMPT = `
+
+# VOICE MODE (active for this turn)
+The user is SPEAKING and LISTENING, not reading. In addition to every JSON field above, ALSO return:
+  "speak": the spoken version of your reply — at most 55 words of natural spoken English. No markdown, no lists, no URLs, no code, no symbols; say numbers as words where natural. Acknowledge what they said in a few words, then give exactly ONE step or ask exactly ONE question. End with a question, or with "tell me what you see".
+  "needs_input": true when you are waiting on the user to answer or report back; false when the issue is resolved or you are handing off.
+  "listen": true when the client should keep the microphone open for the user's reply (normally the same as needs_input).
+  "action": { "kind": "guide" | "sentinel-fix" | "escalate" | "none", "recipeHint": string | null }
+     - "guide": you are walking the user through steps by voice (the default while troubleshooting)
+     - "sentinel-fix": ONLY when a desktop fix is the right next step and the ARIA Sentinel desktop agent can run it — e.g. flush DNS, restart the print spooler, clear temp files, restart the audio service. Put a short recipe name in recipeHint (e.g. "flush-dns", "restart-print-spooler", "clear-temp", "restart-audio-service").
+     - "escalate": remote options are exhausted or an escalation trigger above applies
+     - "none": small talk, a question fully answered, nothing to do
+Keep "text" complete (the screen still shows it) but limit it to at most 3 short steps.`;
+
+function stripMarkdown(input) {
+  let t = String(input || '');
+  t = t.replace(/```[\s\S]*?```/g, ' ');            // fenced code
+  t = t.replace(/`([^`]*)`/g, '$1');                   // inline code
+  t = t.replace(/!\[[^\]]*\]\([^)]*\)/g, ' ');        // images
+  t = t.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1');      // links → text
+  t = t.replace(/https?:\/\/\S+/g, ' ');               // bare URLs
+  t = t.replace(/^\s{0,3}#{1,6}\s+/gm, '');            // headings
+  t = t.replace(/^\s*(?:[-*+•]|\d+[.)])\s+/gm, '');    // bullets / numbered lists
+  t = t.replace(/(\*\*|__)(.*?)\1/g, '$2');           // bold
+  t = t.replace(/(\*|_)(.*?)\1/g, '$2');               // italics
+  t = t.replace(/[>|#*_~]/g, ' ');                     // leftover markup
+  t = t.replace(/\s+/g, ' ').trim();
+  return t;
+}
+
+function firstSentences(text, n) {
+  const parts = String(text || '').split(/(?<=[.!?])\s+/).filter(Boolean);
+  return parts.slice(0, n).join(' ').trim();
+}
+
+function capWords(text, max) {
+  const words = String(text || '').split(/\s+/).filter(Boolean);
+  if (words.length <= max) return words.join(' ');
+  return words.slice(0, max).join(' ').replace(/[,;:]$/, '') + '.';
+}
+
+function defaultSpeak(text) {
+  return capWords(firstSentences(stripMarkdown(text), 2), SPEAK_MAX_WORDS);
+}
+
+function normalizeAction(a) {
+  if (!a || typeof a !== 'object') return { kind: 'none', recipeHint: null };
+  const kind = VOICE_ACTIONS.has(String(a.kind)) ? String(a.kind) : 'none';
+  const hint = typeof a.recipeHint === 'string' && a.recipeHint.trim() ? a.recipeHint.trim().slice(0, 80) : null;
+  return { kind, recipeHint: kind === 'none' ? null : hint };
+}
+
+/** Voice/contract fields that every response carries, derived from the parsed model output. */
+function voiceFields(parsed, text, resolved) {
+  const speak = typeof parsed.speak === 'string' && parsed.speak.trim()
+    ? capWords(stripMarkdown(parsed.speak), SPEAK_MAX_WORDS)
+    : defaultSpeak(text);
+  const needs_input = typeof parsed.needs_input === 'boolean' ? parsed.needs_input : !resolved;
+  const listen = typeof parsed.listen === 'boolean' ? parsed.listen : needs_input;
+  return { speak, needs_input, listen, action: normalizeAction(parsed.action) };
+}
+
+function platformLine(body) {
+  const bits = [];
+  if (typeof body.platform === 'string' && body.platform.trim()) bits.push(body.platform.trim().slice(0, 60));
+  if (body.device && typeof body.device === 'object') {
+    if (typeof body.device.os === 'string' && body.device.os.trim()) bits.push(body.device.os.trim().slice(0, 60));
+    if (typeof body.device.app === 'string' && body.device.app.trim()) bits.push('app: ' + body.device.app.trim().slice(0, 60));
+  }
+  if (!bits.length) return '';
+  const uniq = bits.filter((b, i) => bits.indexOf(b) === i);
+  return '\n\nUser platform: ' + uniq.join(' · ').replace(/[\r\n]+/g, ' ') + ' — do not ask which platform; give steps for this platform.';
+}
+
+function internalHeaders() {
+  const h = { 'content-type': 'application/json' };
+  const tok = process.env.INTERNAL_WEBHOOK_SECRET || process.env.ARIA_ADMIN_TOKEN;
+  if (tok) h['x-internal-token'] = tok;
+  return h;
+}
+
+function internalBaseUrl(event) {
+  if (process.env.URL) return String(process.env.URL).replace(/\/$/, '');
+  if (event.headers && event.headers.host) return 'https://' + event.headers.host;
+  return process.env.APP_URL || 'https://iisupp.net';
+}
 
 /**
  * ARIA Helpdesk AI v2.0 — Emotional Intelligence + 25-Year Pro Mindset
@@ -224,22 +329,33 @@ exports.handler = async (event) => {
       category: 'other',
       suggestions: ['restart_app', 'check_m365_health', 'call_support'],
       offline: true,
+      speak: 'I am running in offline mode right now, so I can only share general steps. First, restart the app or device that is misbehaving, then tell me what you see.',
+      needs_input: true,
+      listen: body.voice === true,
+      action: { kind: 'none', recipeHint: null },
     });
   }
 
-  const sessionId = String(body.sessionId || body.session_id || 'anon-' + Date.now()).slice(0, 80);
+  // Session identity: only a client id that is clearly unique (16-80 url-safe chars) may key the
+  // server-side context. Short/numeric/constant ids are replaced and get NO server memory.
+  const rawSessionId = String(body.sessionId || body.session_id || '').trim();
+  const sessionTrusted = SESSION_ID_RE.test(rawSessionId);
+  const sessionId = sessionTrusted ? rawSessionId : 'anon-' + crypto.randomBytes(12).toString('hex');
+  const voice = body.voice === true;
   const currentUserText = cleanMsgs[cleanMsgs.length - 1].content;
-  const prior = context.getSession(sessionId);
-  const priorMessages = context
-    .buildMessages(sessionId, currentUserText, [])
-    .filter(m => m.role === 'user' || m.role === 'assistant')
-    .slice(-12);
+  const prior = sessionTrusted ? context.getSession(sessionId) : null;
+  const priorMessages = sessionTrusted
+    ? context.buildMessages(sessionId, currentUserText, [])
+        .filter(m => m.role === 'user' || m.role === 'assistant')
+        .slice(-12)
+    : [];
   const clientHistory = cleanMsgs.slice(0, -1).slice(-12);
   const contextSummary = prior && prior.summary
     ? `\n\nPrior conversation summary: ${prior.summary}`
     : '';
   const outboundMessages = (priorMessages.length ? priorMessages : clientHistory)
     .concat([{ role: 'user', content: currentUserText }]);
+  const systemPrompt = SYSTEM_PROMPT + platformLine(body) + (voice ? VOICE_MODE_PROMPT : '') + contextSummary;
 
   try {
     const r = await withBreaker('anthropic-messages', () => fetchWithRetry('https://api.anthropic.com/v1/messages', {
@@ -251,23 +367,23 @@ exports.handler = async (event) => {
       },
       body: JSON.stringify({
         model,
-        max_tokens: 1500,
-        system: SYSTEM_PROMPT + contextSummary,
+        max_tokens: 2000,
+        system: systemPrompt,
         messages: outboundMessages,
       }),
-    }, { attempts: 3, baseDelayMs: 250, maxDelayMs: 1600 }), {
+    }, { attempts: 2, baseDelayMs: 250, maxDelayMs: 1600 }), {
       failure_threshold: 3,
       cooldown_ms: 45 * 1000,
-      request_timeout_ms: 28000
+      request_timeout_ms: 20000
     });
 
     if (!r.ok) {
       const err = await r.text();
       console.error('[aria-chat] Anthropic error:', r.status, 'model:', model, 'body:', err.slice(0, 500));
-      const hint = r.status === 404 ? `model not found: ${model}` :
-                   r.status === 401 ? 'invalid API key' :
-                   r.status === 529 ? 'Anthropic overloaded' : `HTTP ${r.status}`;
-      return json(502, { error: `AI temporarily unavailable (${hint}). Call (647) 581-3182.` });
+      const code = r.status === 404 ? 'model_not_found' :
+                   r.status === 401 ? 'provider_auth' :
+                   r.status === 529 ? 'provider_overloaded' : 'provider_http_' + r.status;
+      return json(502, { error: 'AI temporarily unavailable. Call (647) 581-3182.', error_code: code });
     }
 
     const data = await r.json();
@@ -282,13 +398,17 @@ exports.handler = async (event) => {
         escalation_reason: null, issue_category: 'other', suggestions: [] };
     }
 
-    context.addTurn(sessionId, 'user', currentUserText);
-    context.addTurn(sessionId, 'assistant', parsed.text || '');
+    if (sessionTrusted) {
+      context.addTurn(sessionId, 'user', currentUserText);
+      context.addTurn(sessionId, 'assistant', parsed.text || '');
+    }
+
+    const baseUrl = internalBaseUrl(event);
 
     // Fire-and-forget: log conversation to /aria-learn for self-learning
-    fetch(`${event.headers.host ? 'https://' + event.headers.host : process.env.APP_URL || 'https://iisupp.net'}/.netlify/functions/aria-learn`, {
+    fetch(`${baseUrl}/.netlify/functions/aria-learn`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: internalHeaders(),
       body: JSON.stringify({
         sessionId,
         userMessage: currentUserText,
@@ -311,12 +431,12 @@ exports.handler = async (event) => {
       escalate: Boolean(parsed.escalate),
       category: parsed.issue_category || 'other',
       suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions.slice(0, 5).map(String) : [],
+      escalation_reason: typeof parsed.escalation_reason === 'string' ? parsed.escalation_reason.slice(0, 300) : null,
+      sessionId,
+      ...voiceFields(parsed, String(parsed.text || ''), Boolean(parsed.resolved)),
     };
 
     // ── Aperture Trace Emission (fire-and-forget) ──────────────────────────
-    const baseUrl = event.headers.host
-      ? `https://${event.headers.host}`
-      : (process.env.APP_URL || 'https://iisupp.net');
     const lastUserMsg = cleanMsgs[cleanMsgs.length - 1]?.content || '';
     const tracePayload = {
       ts:           Date.now(),
@@ -335,7 +455,7 @@ exports.handler = async (event) => {
     };
     fetch(`${baseUrl}/.netlify/functions/aria-trace`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: internalHeaders(),
       body: JSON.stringify(tracePayload),
     }).catch(() => {}); // non-blocking — never fail the chat response for tracing
 
@@ -349,21 +469,38 @@ exports.handler = async (event) => {
                          m.includes('502') || m.includes('503') || m.includes('504') ||
                          m.includes('timeout') || m.includes('fetch failed') || m.includes('econnreset');
     if (providerDown) {
-      // 200 status with a fallback reply so the chat UI doesn't bork
+      // 200 status with a fallback reply so the chat UI doesn't bork. `reply` is kept for older consumers;
+      // `text` is what aria.html / aria-core.js actually read (they threw "empty reply" before).
+      const degradedText = "Hey — I'm having a momentary issue reaching my reasoning brain. While I'm reconnecting, here are your fastest next steps: \n\n1. If this is an Outlook / Teams / M365 issue, try a quick restart of the app first.\n2. If you need a human right now, hit the Get a human button at the bottom of the chat — that pages Ahmad directly.\n3. Or try me again in 60 seconds — usually that's all it takes.\n\nNot ignoring you. Just temporarily offline upstream.";
       return json(200, {
-        reply: "Hey — I'm having a momentary issue reaching my reasoning brain. While I'm reconnecting, here are your fastest next steps: \n\n1. If this is an Outlook / Teams / M365 issue, try a quick restart of the app first.\n2. If you need a human right now, hit the Get a human button at the bottom of the chat — that pages Ahmad directly.\n3. Or try me again in 60 seconds — usually that's all it takes.\n\nNot ignoring you. Just temporarily offline upstream.",
+        reply: degradedText,
+        text: degradedText,
+        emotion: 'neutral',
+        tone: 'calming',
+        takeNotes: null,
+        resolved: false,
+        escalate: false,
+        category: 'other',
+        suggestions: [],
         degraded: true,
         retry_in_sec: 60,
-        next_actions: ['restart_app', 'page_human', 'retry_in_60s']
+        next_actions: ['restart_app', 'page_human', 'retry_in_60s'],
+        speak: 'I am having trouble reaching my reasoning brain for a moment. Try restarting the app that is giving you trouble, or ask me again in about a minute. Tell me what you see.',
+        needs_input: true,
+        listen: body.voice === true,
+        action: { kind: 'none', recipeHint: null },
       });
     }
-    return json(500, { error: 'Service error. Call (647) 581-3182.', detail: err.message.slice(0, 200) });
+    return json(500, { error: 'Service error. Call (647) 581-3182.', error_code: 'chat_internal_error' });
   }
 };
 
 function json(statusCode, body) {
   return { statusCode, headers: { ...cors(), 'content-type': 'application/json' }, body: JSON.stringify(body) };
 }
+
+// Exposed for the contract test (pure helpers only).
+exports._voice = { stripMarkdown, firstSentences, capWords, defaultSpeak, normalizeAction, voiceFields, platformLine, SESSION_ID_RE, VOICE_MODE_PROMPT };
 function cors() {
   return { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type' };
 }

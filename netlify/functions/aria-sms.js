@@ -1,6 +1,10 @@
 // netlify/functions/aria-sms.js
 // Outbound SMS for ARIA voice agent. Dormant if Twilio envs missing.
-// Auth: shared X-ARIA-Tool-Secret header matching ARIA_TOOL_SECRET env.
+// Auth: shared X-ARIA-Tool-Secret header matching ARIA_TOOL_SECRET env (or X-Internal-Token =
+// INTERNAL_WEBHOOK_SECRET). 2026-10-08: FAIL-CLOSED (503 when neither is configured — it used to pass
+// every caller when ARIA_TOOL_SECRET was unset), constant-time compare, and the Twilio call now goes
+// through lib/notify.mjs sendSms() so the dormant path is honest: {ok:false, dormant:true}.
+const { requireAdminToken, adminGateResponse } = require('./lib/admin-gate.cjs');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -10,11 +14,8 @@ exports.handler = async (event) => {
     return j(405, { error: 'POST required' });
   }
 
-  const required = process.env.ARIA_TOOL_SECRET;
-  if (required) {
-    const provided = event.headers['x-aria-tool-secret'] || event.headers['X-ARIA-Tool-Secret'];
-    if (provided !== required) return j(401, { error: 'Unauthorized' });
-  }
+  const gate = requireAdminToken(event, { envNames: ['ARIA_TOOL_SECRET', 'INTERNAL_WEBHOOK_SECRET'], allowBodyToken: false });
+  if (!gate.ok) return adminGateResponse(gate, cors());
 
   let body;
   try { body = JSON.parse(event.body || '{}'); }
@@ -24,38 +25,21 @@ exports.handler = async (event) => {
   const text = String(body.body || '').trim();
   if (!to || !text) return j(400, { error: 'to + body required' });
 
-  const sid = process.env.TWILIO_ACCOUNT_SID;
-  const tok = process.env.TWILIO_AUTH_TOKEN;
-  const from = process.env.TWILIO_PHONE_NUMBER;
-
-  if (!sid || !tok || !from) {
-    console.log('[aria-sms] DORMANT (no Twilio envs):', { to: to, preview: text.slice(0, 80) });
-    return j(200, { ok: true, dormant: true, note: 'Twilio not configured; message logged only' });
-  }
-
   try {
-    const params = new URLSearchParams();
-    params.set('To', to);
-    params.set('From', from);
-    params.set('Body', text.slice(0, 1600));
-    const auth = Buffer.from(sid + ':' + tok).toString('base64');
-    const r = await fetch('https://api.twilio.com/2010-04-01/Accounts/' + sid + '/Messages.json', {
-      method: 'POST',
-      headers: {
-        Authorization: 'Basic ' + auth,
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-      body: params.toString(),
-    });
-    const data = await r.json().catch(function(){ return {}; });
-    if (!r.ok) {
-      console.error('[aria-sms] Twilio error', r.status, data);
-      return j(502, { error: 'SMS send failed', detail: data.message || ('HTTP ' + r.status) });
+    const { sendSms, hashIdentity } = await import('./lib/notify.mjs');
+    const r = await sendSms({ to, body: text, tag: 'aria-sms' });
+    if (r.dormant) {
+      console.log('[aria-sms] DORMANT (no Twilio envs):', { to_hash: hashIdentity(to), chars: text.length });
+      // Honest: nothing was sent. 200 so tool callers do not retry forever; ok:false + sent:false say what happened.
+      return j(200, { ok: false, sent: false, dormant: true, note: 'Twilio not configured; message NOT sent (logged only)' });
     }
-    return j(200, { ok: true, sid: data.sid });
+    if (!r.ok) {
+      return j(502, { ok: false, sent: false, error: 'SMS send failed', error_code: 'twilio_failed' });
+    }
+    return j(200, { ok: true, sent: true, sid: r.sid });
   } catch (e) {
     console.error('[aria-sms] error:', e && e.message);
-    return j(500, { error: 'SMS service error' });
+    return j(500, { ok: false, sent: false, error: 'SMS service error' });
   }
 };
 
@@ -66,6 +50,6 @@ function cors() {
   return {
     'access-control-allow-origin': '*',
     'access-control-allow-methods': 'POST, OPTIONS',
-    'access-control-allow-headers': 'content-type,x-aria-tool-secret',
+    'access-control-allow-headers': 'content-type,x-aria-tool-secret,x-internal-token',
   };
 }

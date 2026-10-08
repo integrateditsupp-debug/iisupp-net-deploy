@@ -8,8 +8,15 @@
  *  Privacy: PII redacted before storage. TTL: 90 days inferred (last_write check on load).
  *
  *  Cat 21 — Knowledge graph + memory.
+ *
+ *  Auth (2026-10-08, audit #1): `load` (read-back of 50 turns) and `clear` (delete) now require proof of
+ *  mailbox ownership — a magic-link `token` for the email or an Aperture Bearer JWT
+ *  (lib/require-verified-email.cjs). `save` stays open (write-only, redacted, capped) so the auto-save in
+ *  assets/aria-session-memory-client.js keeps working; nothing can be read back without the token.
+ *  ARIA_ALLOW_EMAIL_ONLY_ACCOUNT_ACTIONS=1 restores the old behaviour as an emergency toggle.
  */
 const { redact } = require('./_pii-redact');
+const { requireVerifiedEmail, verifiedEmailResponse } = require('./lib/require-verified-email.cjs');
 
 let _blobs = null;
 let _memFallback = {}; // { emailHash: { turns: [...], updated_at } }
@@ -38,7 +45,7 @@ exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': 'https://iisupp.net',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-ARIA-Session-Token',
     'Content-Type': 'application/json'
   };
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
@@ -54,6 +61,12 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'valid email required' }) };
   }
   const key = 'user-' + hashEmail(email);
+
+  // Reads and deletes need proof of mailbox ownership (GET/DELETE semantics of this POST-only API).
+  if (ev === 'load' || ev === 'clear') {
+    const gate = requireVerifiedEmail(event, body, { email, scope: 'aria-session-memory:' + ev });
+    if (!gate.ok) return verifiedEmailResponse(gate, headers);
+  }
 
   const store = await getStore();
 

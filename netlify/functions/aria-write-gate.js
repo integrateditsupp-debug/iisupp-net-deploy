@@ -15,8 +15,13 @@
  */
 const crypto = require('crypto');
 const { redact } = require('./_pii-redact');
+const { OWNER_EMAIL } = require('./lib/contacts.cjs');
 
-const SECRET = process.env.APERTURE_JWT_SECRET || process.env.ARIA_GATE_SECRET || 'changeme-dev-only';
+// Signing secret for approve/deny links. NO literal fallback (audit §7: 'changeme-dev-only' made every
+// approval token forgeable when the env was unset). Resolved per call; unset → 503 not-configured.
+function gateSecret() {
+  return process.env.ARIA_GATE_SECRET || process.env.APERTURE_JWT_SECRET || '';
+}
 const SAFE_ACTIONS = [
   'm365.password.reset',
   'm365.license.assign',
@@ -43,13 +48,16 @@ async function getStore() {
 }
 
 function sign(requestId, action) {
-  return crypto.createHmac('sha256', SECRET).update(requestId + ':' + action).digest('hex').slice(0, 24);
+  const secret = gateSecret();
+  if (!secret) throw new Error('gate-secret-not-configured');
+  return crypto.createHmac('sha256', secret).update(requestId + ':' + action).digest('hex').slice(0, 24);
 }
 
 function verify(requestId, action, token) {
+  if (!gateSecret()) return false;
   const expect = sign(requestId, action);
   if (expect.length !== (token || '').length) return false;
-  return crypto.timingSafeEqual(Buffer.from(expect), Buffer.from(token));
+  try { return crypto.timingSafeEqual(Buffer.from(expect), Buffer.from(token)); } catch { return false; }
 }
 
 async function persist(id, record) {
@@ -72,6 +80,11 @@ exports.handler = async (event) => {
   };
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
 
+  if (!gateSecret()) {
+    console.error('[write-gate] ARIA_GATE_SECRET / APERTURE_JWT_SECRET not set — refusing (fail-closed)');
+    return { statusCode: 503, headers, body: JSON.stringify({ ok: false, error: 'not-configured', hint: 'set ARIA_GATE_SECRET or APERTURE_JWT_SECRET' }) };
+  }
+
   // GET for approval clickthrough from email
   if (event.httpMethod === 'GET') {
     const qs = event.queryStringParameters || {};
@@ -91,8 +104,8 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers: { 'Content-Type': 'text/html' }, body:
       '<html><body style="font-family:system-ui;text-align:center;padding:60px;background:#0a0a0a;color:#fff">' +
       '<h1 style="color:' + (rec.status === 'approved' ? '#d4af37' : '#ff6b6b') + '">Request ' + rec.status.toUpperCase() + '</h1>' +
-      '<p>Action: <code>' + rec.action + '</code></p>' +
-      '<p>Tenant: ' + (rec.tenant_email || 'n/a') + '</p>' +
+      '<p>Action: <code>' + escHtml(rec.action) + '</code></p>' +
+      '<p>Tenant: ' + escHtml(rec.tenant_email || 'n/a') + '</p>' +
       '<p>This decision was recorded at ' + new Date(rec.decided_at).toISOString() + '</p></body></html>'
     };
   }
@@ -152,31 +165,30 @@ exports.handler = async (event) => {
   function ok(body) { return { statusCode: 200, headers, body: JSON.stringify(body) }; }
 };
 
+function escHtml(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
 async function emailAhmad(rec, token) {
-  const to = process.env.ARIA_GATE_ALERT_TO || 'ahmad.wasee@iisupp.net';
-  const key = process.env.RESEND_API_KEY;
-  if (!key) { console.warn('[write-gate] RESEND_API_KEY missing — no email sent'); return; }
-  const base = process.env.SITE_BASE_URL || 'https://iisupp.net';
+  const to = process.env.ARIA_GATE_ALERT_TO || OWNER_EMAIL;
+  const base = process.env.SITE_BASE_URL || process.env.URL || 'https://iisupp.net';
   const approveUrl = base + '/.netlify/functions/aria-write-gate?id=' + rec.id + '&action=' + encodeURIComponent(rec.action) + '&token=' + token + '&decision=approve';
   const denyUrl    = base + '/.netlify/functions/aria-write-gate?id=' + rec.id + '&action=' + encodeURIComponent(rec.action) + '&token=' + token + '&decision=deny';
   const subject = '[ARIA write-gate] APPROVE: ' + rec.action + ' for ' + (rec.tenant_email || '?');
   const html =
     '<div style="font-family:system-ui;max-width:600px;margin:0 auto;padding:20px">' +
     '<h2 style="color:#d4af37">ARIA requested approval to act</h2>' +
-    '<p><strong>Action:</strong> <code>' + rec.action + '</code></p>' +
-    '<p><strong>Tenant:</strong> ' + redact(rec.tenant_email || '?') + '</p>' +
-    '<p><strong>Requested by:</strong> ' + redact(rec.requested_by) + '</p>' +
-    '<p><strong>Params:</strong> <pre>' + redact(JSON.stringify(rec.params, null, 2)) + '</pre></p>' +
+    '<p><strong>Action:</strong> <code>' + escHtml(rec.action) + '</code></p>' +
+    '<p><strong>Tenant:</strong> ' + escHtml(redact(rec.tenant_email || '?')) + '</p>' +
+    '<p><strong>Requested by:</strong> ' + escHtml(redact(rec.requested_by)) + '</p>' +
+    '<p><strong>Params:</strong> <pre>' + escHtml(redact(JSON.stringify(rec.params, null, 2))) + '</pre></p>' +
     '<p><strong>Expires:</strong> in 24h</p>' +
     '<div style="margin:30px 0">' +
     '<a href="' + approveUrl + '" style="background:#16a34a;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:600;margin-right:12px">APPROVE</a>' +
     '<a href="' + denyUrl + '" style="background:#dc2626;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:600">DENY</a>' +
     '</div></div>';
   try {
-    await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: process.env.RESEND_FROM || 'ARIA <noreply@iisupp.net>', to: [to], subject, html })
-    });
-  } catch (e) { console.warn('[write-gate] mail failed:', e.message); }
+    const { sendEmail } = await import('./lib/notify.mjs');
+    const r = await sendEmail({ to, subject, html, from: process.env.RESEND_FROM || 'ARIA <noreply@iisupp.net>', tag: 'write-gate-approval' });
+    if (!r.ok) console.error('[write-gate] approval email NOT delivered — request ' + rec.id + ' is pending with no one notified:', r.error, (r.attempts || []).join(' | ').slice(0, 300));
+    return r.ok;
+  } catch (e) { console.warn('[write-gate] mail failed:', e.message); return false; }
 }

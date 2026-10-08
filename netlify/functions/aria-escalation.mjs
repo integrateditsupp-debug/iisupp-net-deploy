@@ -11,9 +11,21 @@
 //
 // Storage: Netlify Blobs. Two stores: 'aria-tickets', 'aria-agent-chat'.
 // Bit format for solutions: { a, q, r, n, s, c, t } (agent, question, result, notes, source, confidence, ts)
+//
+// 2026-10-08 (audit top-10 #9a): escalation / resolved emails used to be relayed through
+// aperture-email-report, which now requires an Aperture JWT — every send was a 401 swallowed by .catch.
+// They now go straight through lib/notify.mjs (Resend → SMTP fallback) and the response carries the
+// honest per-recipient result (`notify`). The internal copy goes to ESCALATION_EMAILS
+// (lib/contacts.cjs: env ESCALATION_EMAILS → SUPPORT_INTERNAL_EMAIL → the support inbox).
+// Internal research calls target process.env.URL. Error bodies are logged, not returned.
 
 import { getStore } from '@netlify/blobs';
+import { randomInt } from 'node:crypto';
 import { verifyAperture } from './aperture-auth.mjs';
+import { sendEmail, sanitizeEmailHtml } from './lib/notify.mjs';
+import contacts from './lib/contacts.cjs';
+
+const SITE = (process.env.URL || 'https://iisupp.net').replace(/\/$/, '');
 
 const PRIORITY_RANK = { critical: 4, high: 3, normal: 2, low: 1 };
 const ETA_BY_PRIORITY = { critical: 180, high: 360, normal: 600, low: 1200 }; // seconds
@@ -41,7 +53,7 @@ export default async (req, ctx) => {
     return json({ error: 'unknown action', got: action }, 400);
   } catch (e) {
     console.error('[aria-escalation] error', e);
-    return json({ error: e.message || String(e) }, 500);
+    return json({ error: 'escalation service error', error_code: 'escalation_failed' }, 500);
   }
 };
 
@@ -76,35 +88,44 @@ async function actEscalate(b) {
   await appendChat({ from: 'ARIA', to: 'research-pool', kind: 'escalation',
     text: `New ticket ${id} [${priority}]: ${issue}`, ticketId: id });
 
-  // Send ESCALATION email (best effort, do not block)
-  sendEmail({
-    to: userEmail,
-    subject: `ESCALATION - NO SOLUTION (CONTACT USER) - ${id}`,
-    name: userName, sessionId,
-    summary: `Your issue "${issue}" has been escalated to our research team. Estimated time to solution: ${humanEta(eta)}. We'll email you the moment it's solved.`,
-    conversation, endedBy: 'aria',
-    metrics: { layers: [['Priority', mapPriorityPct(priority)], ['ETA', Math.min(99, Math.round(eta/12))]] }
-  }, 'escalation').catch(e => console.warn('escalation email failed', e?.message));
+  // Send ESCALATION email — awaited so the result is honest (Rule 14), never blocks ticket creation.
+  const notifyResult = { user: null, internal: [] };
+  if (userEmail) {
+    notifyResult.user = await sendReport({
+      to: userEmail,
+      subject: `ESCALATION - NO SOLUTION (CONTACT USER) - ${id}`,
+      name: userName, sessionId,
+      summary: `Your issue "${issue}" has been escalated to our research team. Estimated time to solution: ${humanEta(eta)}. We'll email you the moment it's solved.`,
+      conversation, endedBy: 'aria',
+      metrics: { layers: [['Priority', mapPriorityPct(priority)], ['ETA', Math.min(99, Math.round(eta/12))]] }
+    }, 'escalation').catch(e => ({ ok: false, error: e?.message }));
+  }
 
-  // Internal copy
-  if (process.env.SUPPORT_INTERNAL_EMAIL) {
-    sendEmail({
-      to: process.env.SUPPORT_INTERNAL_EMAIL,
+  // Internal copy — the people who actually work the ticket.
+  for (const to of contacts.ESCALATION_EMAILS) {
+    const r = await sendReport({
+      to,
       subject: `INTERNAL: ESCALATION ${id} - ${issue}`,
       name: 'Support', sessionId,
       summary: `User: ${userName} <${userEmail||'no email'}>\nIssue: ${issue}\nPriority: ${priority}\nETA: ${humanEta(eta)}\nFindings: ${ariaFindings||'(none)'}`,
       conversation, endedBy: 'aria'
-    }, 'internal').catch(e => console.warn('internal email failed', e?.message));
+    }, 'internal').catch(e => ({ ok: false, error: e?.message }));
+    notifyResult.internal.push({ ok: !!r.ok, provider: r.provider || null, error: r.error || null });
   }
+  const userMailOk = !!(notifyResult.user && notifyResult.user.ok);
+  ticket.notify = { user_email_sent: userMailOk, internal_sent: notifyResult.internal.filter(x => x.ok).length };
+  try { await store.set(`tkt/${id}`, JSON.stringify(ticket)); } catch {}
 
   const ariaScript = {
     speak:   `Your issue's been escalated to our research team. Estimated time: ${humanEta(eta)}. I'll email you the moment we solve it.`,
     apology: `Sorry I couldn't fix this directly — appreciate your patience.`,
     waitFor: 'user-end-or-ack',
-    goodbye: `Thanks ${userName}. Your ticket is ${id}. You'll get an email at ${userEmail||'your inbox'} when we're done. Take care.`
+    goodbye: userMailOk
+      ? `Thanks ${userName}. Your ticket is ${id}. You'll get an email at ${userEmail} when we're done. Take care.`
+      : `Thanks ${userName}. Your ticket is ${id}. Keep that number — our team has it and will follow up${userEmail ? '' : ' by phone'}. Take care.`
   };
 
-  return json({ ok: true, ticket, ariaScript });
+  return json({ ok: true, ticket, ariaScript, notify: { user: notifyResult.user ? { ok: userMailOk, provider: notifyResult.user.provider || null, error: notifyResult.user.error || null } : null, internal: notifyResult.internal } });
 }
 
 async function actResearch(b) {
@@ -166,11 +187,13 @@ async function actResolve(b) {
     `\n\nIf you'd like to discuss further, reach out via ARIA: https://iisupp.net/aria` +
     `\n\nFuture interactions about this same issue will resolve faster — ARIA has learned the fix.`;
 
+  let resolvedMail = null;
   if (t.userEmail) {
-    sendEmail({
+    resolvedMail = await sendReport({
       to: t.userEmail, subject, name: t.userName, sessionId: t.sessionId,
       summary, conversation: t.conversation, endedBy: 'aria'
-    }, 'resolved').catch(e => console.warn('resolved email failed', e?.message));
+    }, 'resolved').catch(e => ({ ok: false, error: e?.message }));
+    t.notify = { ...(t.notify || {}), resolved_email_sent: !!resolvedMail.ok };
   }
 
   t.status = 'resolved';
@@ -183,9 +206,9 @@ async function actResolve(b) {
   await store.set('index', JSON.stringify(idx));
 
   await appendChat({ from: 'ARIA', to: 'user', kind: 'resolved',
-    text: `Resolved ${id}. Email sent to ${t.userEmail}.`, ticketId: id });
+    text: resolvedMail && resolvedMail.ok ? `Resolved ${id}. Email sent to ${t.userEmail}.` : `Resolved ${id}. Email NOT delivered${t.userEmail ? '' : ' (no user email)'}.`, ticketId: id });
 
-  return json({ ok: true, ticket: t });
+  return json({ ok: true, ticket: t, notify: resolvedMail ? { ok: !!resolvedMail.ok, provider: resolvedMail.provider || null, error: resolvedMail.error || null } : null });
 }
 
 async function actListTickets() {
@@ -239,7 +262,7 @@ async function appendChat(m) {
 async function strategyStrict(issue) {
   // Direct call to existing aria-research with strict mode
   try {
-    const r = await fetch('https://iisupp.net/.netlify/functions/aria-research', {
+    const r = await fetch(`${SITE}/.netlify/functions/aria-research`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ q: issue, mode: 'strict' })
     });
@@ -253,7 +276,7 @@ async function strategyStrict(issue) {
 async function strategyFuzzy(issue) {
   await sleep(800); // small stagger so winners diversify
   try {
-    const r = await fetch('https://iisupp.net/.netlify/functions/aria-research', {
+    const r = await fetch(`${SITE}/.netlify/functions/aria-research`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ q: issue, mode: 'fuzzy' })
     });
@@ -267,7 +290,7 @@ async function strategyFuzzy(issue) {
 async function strategyVendor(issue) {
   await sleep(1500);
   try {
-    const r = await fetch('https://iisupp.net/.netlify/functions/aria-research', {
+    const r = await fetch(`${SITE}/.netlify/functions/aria-research`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ q: issue, mode: 'vendor-fetch' })
     });
@@ -281,19 +304,58 @@ async function strategyVendor(issue) {
 
 // ============== EMAIL ==============
 
-async function sendEmail(payload, mode) {
-  // Reuse existing aperture-email-report function
-  const subjectOverride = payload.subject;
-  const r = await fetch('https://iisupp.net/.netlify/functions/aperture-email-report', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      to: payload.to, name: payload.name, sessionId: payload.sessionId,
-      summary: payload.summary, conversation: payload.conversation || [],
-      metrics: payload.metrics || null, endedBy: payload.endedBy,
-      subjectOverride
-    })
-  });
-  return await r.json().catch(() => ({}));
+// Same report layout aperture-email-report.js renders, sent directly (no HTTP round trip, no JWT needed).
+async function sendReport(payload, mode) {
+  const html = renderReport(payload);
+  const text = textVersion(payload.summary, payload.endedBy);
+  const r = await sendEmail({ to: payload.to, subject: payload.subject, html, text, tag: 'escalation-' + (mode || 'mail') });
+  if (!r.ok) console.warn('[aria-escalation] email NOT delivered', JSON.stringify({ mode, error: r.error, attempts: r.attempts }));
+  return r;
+}
+
+function renderReport({ name, sessionId, summary, conversation, metrics, endedBy }) {
+  const esc = sanitizeEmailHtml;
+  const niceName = name || 'there';
+  const endNote = endedBy === 'aria' ? 'ARIA closed the session.' : (endedBy === 'user' ? 'You closed the session.' : '');
+  const conv = (conversation || []).slice(0, 30).map(m =>
+    `<div style="margin:12px 0;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888;">${esc(String((m && (m.from || m.role)) || '').slice(0, 20))}</div><div style="padding:10px 14px;background:#0d1824;border:1px solid #243a47;color:#d8e0e6;margin-top:4px;border-radius:2px;">${esc(String((m && (m.text || m.content)) || '').slice(0, 4000))}</div></div>`
+  ).join('');
+  const layers = metrics && metrics.layers ? metrics.layers.map(([n, p]) =>
+    `<tr><td style="padding:4px 12px 4px 0;color:#d8e0e6;font-family:'JetBrains Mono',monospace;font-size:11px;">${esc(n)}</td><td style="padding:4px 0;color:#2dd4bf;font-family:'JetBrains Mono',monospace;font-size:11px;">${esc(p)}%</td></tr>`).join('') : '';
+  return `<!DOCTYPE html>
+<html><body style="margin:0;background:#050810;color:#d8e0e6;font-family:Inter,system-ui,sans-serif;padding:24px;">
+<table width="100%" cellpadding="0" cellspacing="0" style="max-width:680px;margin:0 auto;">
+<tr><td style="padding-bottom:16px;border-bottom:1px solid #1a2b35;">
+<div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;color:#2dd4bf;">APERTURE · SESSION REPORT</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#6b7c87;margin-top:4px;">${esc(sessionId)}</div>
+${endNote ? `<div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#6b7c87;margin-top:4px;">${endNote}</div>` : ''}
+</td></tr>
+<tr><td style="padding:24px 0 16px 0;">
+<p style="font-size:14px;color:#d8e0e6;margin:0 0 16px 0;">Hi ${esc(niceName)},</p>
+<p style="font-size:13px;color:#98a8b3;line-height:1.6;margin:0 0 16px 0;">Here's the full picture of how ARIA worked your issue. The transcript is below, plus what ARIA used to think through it. Reply to this email if you'd like to chat with a human.</p>
+</td></tr>
+<tr><td style="padding:0 0 24px 0;">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:#6b7c87;text-transform:uppercase;margin-bottom:8px;">RESOLUTION SUMMARY</div>
+<div style="padding:14px;background:#0a1219;border:1px solid #2dd4bf;color:#d8e0e6;font-size:13px;line-height:1.6;white-space:pre-line;">${esc(summary || 'Resolved.')}</div>
+</td></tr>
+${layers ? `<tr><td style="padding:0 0 24px 0;">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:#6b7c87;text-transform:uppercase;margin-bottom:8px;">ARCHITECTURE LAYER USAGE</div>
+<table cellpadding="0" cellspacing="0" style="width:auto;">${layers}</table>
+</td></tr>` : ''}
+<tr><td>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:#6b7c87;text-transform:uppercase;margin-bottom:8px;">CONVERSATION</div>
+${conv}
+</td></tr>
+<tr><td style="padding-top:32px;border-top:1px solid #1a2b35;font-size:11px;color:#6b7c87;text-align:center;font-family:'JetBrains Mono',monospace;letter-spacing:2px;">
+INTEGRATED IT SUPPORT INC. · ${esc(contacts.SUPPORT_PHONE)} · iisupp.net
+</td></tr>
+</table>
+</body></html>`;
+}
+
+function textVersion(summary, endedBy) {
+  const endNote = endedBy === 'aria' ? '\n\n(ARIA closed this session.)' : (endedBy === 'user' ? '\n\n(You closed this session.)' : '');
+  return `Hi — here's a summary of your ARIA session:\n\n${summary || 'Issue resolved.'}${endNote}\n\n— Integrated IT Support Inc.\n${contacts.SUPPORT_PHONE} · iisupp.net`;
 }
 
 // ============== HELPERS ==============
@@ -301,7 +363,7 @@ async function sendEmail(payload, mode) {
 function nextTicketId() {
   const d = new Date();
   const ymd = d.toISOString().slice(0,10).replace(/-/g,'');
-  return `TKT-${ymd}-${Math.floor(Math.random()*9000+1000)}`;
+  return `TKT-${ymd}-${randomInt(1000, 10000)}`;
 }
 function humanEta(s) {
   if (s < 90) return `${s} seconds`;

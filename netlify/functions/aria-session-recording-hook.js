@@ -8,9 +8,21 @@
 const crypto = require('crypto');
 
 function verifyWherebySig(payload, header, secret) {
-  if (!header || !secret) return true; // skip if not configured
-  const expected = crypto.createHmac('sha256', secret).update(payload).digest('hex');
-  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(header));
+  if (!header || !secret) return false; // fail-closed (audit §7: used to return true when unconfigured)
+  // Whereby signs as "t=<unix>,v1=<hex>" over "<t>.<body>"; a bare hex over the body is also accepted.
+  const h = String(header);
+  let expected, provided;
+  const m = h.match(/t=(\d+),\s*v1=([0-9a-f]+)/i);
+  if (m) {
+    expected = crypto.createHmac('sha256', secret).update(m[1] + '.' + payload).digest('hex');
+    provided = m[2];
+  } else {
+    expected = crypto.createHmac('sha256', secret).update(payload).digest('hex');
+    provided = h.trim();
+  }
+  const a = Buffer.from(expected), b = Buffer.from(provided);
+  if (a.length !== b.length) return false;
+  try { return crypto.timingSafeEqual(a, b); } catch { return false; }
 }
 
 exports.handler = async (event) => {
@@ -18,7 +30,10 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'POST only' }) };
 
   const sig = event.headers['whereby-signature'] || event.headers['Whereby-Signature'];
-  if (process.env.WHEREBY_WEBHOOK_SECRET && !verifyWherebySig(event.body, sig, process.env.WHEREBY_WEBHOOK_SECRET)) {
+  if (!process.env.WHEREBY_WEBHOOK_SECRET) {
+    return { statusCode: 503, headers, body: JSON.stringify({ error: 'not-configured', hint: 'set WHEREBY_WEBHOOK_SECRET' }) };
+  }
+  if (!verifyWherebySig(event.body, sig, process.env.WHEREBY_WEBHOOK_SECRET)) {
     return { statusCode: 401, headers, body: JSON.stringify({ error: 'invalid signature' }) };
   }
 

@@ -4,7 +4,12 @@
  *  Maps Stripe price_id to our 5 tiers (personal/pro/small_business/mid_size/enterprise).
  *  Used by /tenant-onboarding + admin views.
  *  Cat 5 — Account.
+ *
+ *  Auth (2026-10-08, audit #1): the customer's Stripe plan/amount is account data — the request must carry
+ *  a magic-link `token` for customer_email or an Aperture Bearer JWT (admin views). See
+ *  lib/require-verified-email.cjs; ARIA_ALLOW_EMAIL_ONLY_ACCOUNT_ACTIONS=1 is the emergency toggle.
  */
+const { requireVerifiedEmail, verifiedEmailResponse } = require('./lib/require-verified-email.cjs');
 const TIER_BY_AMOUNT_USD = [
   { min: 0, max: 700, tier: 'personal' },
   { min: 700, max: 1700, tier: 'pro' },
@@ -22,6 +27,8 @@ exports.handler = async (event) => {
 
   const email = String(body.customer_email || '').toLowerCase().trim();
   if (!email) return ok({ ok: false, error: 'customer_email required' });
+  const gate = requireVerifiedEmail(event, body, { email, scope: 'aria-tenant-tier-detect' });
+  if (!gate.ok) return verifiedEmailResponse(gate, headers);
   if (!process.env.STRIPE_SECRET_KEY) return ok({ ok: false, error: 'STRIPE_SECRET_KEY missing' });
 
   try {
@@ -57,6 +64,9 @@ exports.handler = async (event) => {
       interval,
       plan_name: item.price?.nickname || 'unnamed'
     });
-  } catch (e) { return ok({ ok: false, error: e.message }); }
+  } catch (e) {
+    console.error('[aria-tenant-tier-detect] error:', e.message);
+    return ok({ ok: false, error: 'tier detection failed', error_code: 'tier_detect_failed' });
+  }
   function ok(b) { return { statusCode: 200, headers, body: JSON.stringify(b) }; }
 };

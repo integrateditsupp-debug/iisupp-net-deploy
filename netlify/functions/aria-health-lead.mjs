@@ -1,14 +1,18 @@
 // aria-health-lead.mjs — captures a 60-Second IT Health Check lead. $0:
-// persists to blobs for admin visibility, emails the owner if SMTP is set,
-// otherwise queues (202). Mirrors aria-contact-back's env + email pattern so
-// no new secrets/services are introduced. Public, POST-only, CORS-open.
+// persists to blobs for admin visibility FIRST, then emails the owner + the prospect through
+// lib/notify.mjs (Resend first, SMTP fallback). Public, POST-only, CORS-open.
+//
+// 2026-10-08 (audit top-10 #9d): the SMTP-only version answered `202 {ok:true, queued:true}` when
+// SMTP_APP_PASSWORD was missing/failing — nothing was queued and the prospect never got the promised
+// report. The response is now honest: ok:false + stored:true + delivered:false when no provider confirmed.
 //
 // POST /.netlify/functions/aria-health-lead
 //   body: { name, email, company?, phone?, score, grade, answers?, risks?, source? }
-//   -> { ok, queued? }
+//   -> { ok, stored, delivered, owner_notified, queued? }
 
 import { getStore } from '@netlify/blobs';
-import nodemailer from 'nodemailer';
+import { sendEmail, hashIdentity } from './lib/notify.mjs';
+import contacts from './lib/contacts.cjs';
 
 export default async (request) => {
   const cors = {
@@ -48,53 +52,48 @@ export default async (request) => {
     createdAt: Date.now()
   };
 
-  // persist for admin visibility (best-effort)
+  // 1) persist FIRST (the lead is the asset; email is the courtesy)
+  let stored = false;
   try {
     const store = getStore({ name: 'aria-leads', consistency: 'strong' });
     await store.setJSON(`health/${lead.createdAt}_${email.replace(/[^a-z0-9]/gi, '_')}.json`, lead);
-  } catch {}
+    stored = true;
+  } catch (e) { console.error('[aria-health-lead] lead NOT stored:', e.message); }
 
-  const smtpPass = process.env.SMTP_APP_PASSWORD;
-  const senderEmail = process.env.SMTP_SENDER || 'integrateditsupp@iisupp.net';
-  const smtpAuthUser = process.env.SMTP_AUTH_USER || 'ahmad.wasee@iisupp.net';
-  const adminEmail = 'integrateditsupp@iisupp.net';
+  const adminEmail = contacts.SUPPORT_EMAIL;
 
-  if (!smtpPass) {
-    // captured + stored, but no live email — surface success so the UX is unbroken
-    return resp(202, cors, { ok: true, queued: true, reason: 'SMTP not configured' });
-  }
+  // 2) owner notification — a new qualified lead with their self-scored risks
+  const owner = await sendEmail({
+    to: adminEmail,
+    subject: `IT Health Check lead — ${lead.company || name || email} · ${lead.size || 'size ?'} · ${lead.industry || 'sector ?'} · ${lead.score ?? '?'}/100 (${lead.grade || '?'})`,
+    html: renderAdminEmail(lead),
+    text: `New IT Health Check lead\n\nName: ${name}\nEmail: ${email}\nCompany: ${lead.company || '(none)'}\nPhone: ${lead.phone || '(none)'}\n\nSize: ${lead.size || '(not given)'}\nSector: ${lead.industry || '(not given)'}\nSpending now: ${lead.spend || '(not given)'}\nSuggested tier: ${tierHint(lead.size)}\nBudget read: ${budgetRead(lead.spend, lead.size)}\nLead with: ${angleHint(lead.industry)}\n\nScore: ${lead.score}/100 (${lead.grade})\nRisks: ${(lead.risks || []).join('; ') || '(none)'}\nAlready covered: ${(lead.strengths || []).join('; ') || '(none)'}\nSource: ${lead.source}`,
+    replyTo: email,
+    tag: 'health-lead-owner'
+  });
 
-  try {
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com', port: 587, secure: false, requireTLS: true,
-      auth: { user: smtpAuthUser, pass: smtpPass }
-    });
+  // 3) prospect auto-reply — delivers the "full report" promise, soft review CTA
+  const prospect = await sendEmail({
+    to: email,
+    bcc: [adminEmail],
+    subject: `Your IT Health Check results${lead.grade ? ` — grade ${lead.grade}` : ''}`,
+    html: renderProspectEmail(lead),
+    text: `Hi ${name || 'there'}, thanks for running the 60-Second IT Health Check.\n\nYour score: ${lead.score}/100 (${lead.grade}).\n\nTop things to look at:\n${(lead.risks || []).map((r, i) => `${i + 1}. ${r}`).join('\n') || '— Your basics look solid.'}\n\nWant a senior tech to walk through these with you (no charge, ~20 min)? Just reply to this email or call ${contacts.SUPPORT_PHONE}.\n\n— Integrated IT Support Inc.`,
+    tag: 'health-lead-prospect'
+  });
 
-    // 1) owner notification — a new qualified lead with their self-scored risks
-    await transporter.sendMail({
-      from: `"IIS Health Check" <${senderEmail}>`,
-      to: adminEmail,
-      subject: `IT Health Check lead — ${lead.company || name || email} · ${lead.size || 'size ?'} · ${lead.industry || 'sector ?'} · ${lead.score ?? '?'}/100 (${lead.grade || '?'})`,
-      html: renderAdminEmail(lead),
-      text: `New IT Health Check lead\n\nName: ${name}\nEmail: ${email}\nCompany: ${lead.company || '(none)'}\nPhone: ${lead.phone || '(none)'}\n\nSize: ${lead.size || '(not given)'}\nSector: ${lead.industry || '(not given)'}\nSpending now: ${lead.spend || '(not given)'}\nSuggested tier: ${tierHint(lead.size)}\nBudget read: ${budgetRead(lead.spend, lead.size)}\nLead with: ${angleHint(lead.industry)}\n\nScore: ${lead.score}/100 (${lead.grade})\nRisks: ${(lead.risks || []).join('; ') || '(none)'}\nAlready covered: ${(lead.strengths || []).join('; ') || '(none)'}\nSource: ${lead.source}`
-    });
+  if (!owner.ok) console.error('[aria-health-lead] owner alert NOT delivered', JSON.stringify({ lead_hash: hashIdentity(email), error: owner.error, attempts: owner.attempts }));
+  if (!prospect.ok) console.error('[aria-health-lead] prospect report NOT delivered', JSON.stringify({ lead_hash: hashIdentity(email), error: prospect.error }));
 
-    // 2) prospect auto-reply — delivers the "full report" promise, soft review CTA
-    await transporter.sendMail({
-      from: `"Integrated IT Support" <${senderEmail}>`,
-      to: email,
-      cc: adminEmail,
-      subject: `Your IT Health Check results${lead.grade ? ` — grade ${lead.grade}` : ''}`,
-      html: renderProspectEmail(lead),
-      text: `Hi ${name || 'there'}, thanks for running the 60-Second IT Health Check.\n\nYour score: ${lead.score}/100 (${lead.grade}).\n\nTop things to look at:\n${(lead.risks || []).map((r, i) => `${i + 1}. ${r}`).join('\n') || '— Your basics look solid.'}\n\nWant a senior tech to walk through these with you (no charge, ~20 min)? Just reply to this email or call (647) 581-3182.\n\n— Integrated IT Support Inc.`
-    });
-
-    return resp(200, cors, { ok: true, sent: true });
-  } catch (e) {
-    console.error('[aria-health-lead] send failed:', e.message);
-    // lead is already stored; do not lose it on email failure
-    return resp(202, cors, { ok: true, queued: true, reason: 'email deferred' });
-  }
+  if (prospect.ok) return resp(200, cors, { ok: true, sent: true, stored, delivered: true, owner_notified: !!owner.ok, via: prospect.provider });
+  const dormant = !!prospect.dormant;
+  return resp(dormant ? 202 : 502, cors, {
+    ok: false, sent: false, stored, delivered: false, owner_notified: !!owner.ok, queued: false,
+    reason: dormant ? 'no email provider configured (set RESEND_API_KEY + RESEND_FROM)' : 'email delivery failed',
+    note: stored
+      ? `Your results are saved on our side, but the report email could not be sent. Email ${contacts.SUPPORT_EMAIL} or call ${contacts.SUPPORT_PHONE} and quote "health check" to get it.`
+      : `We could not save or send your results. Please call ${contacts.SUPPORT_PHONE}.`
+  });
 };
 
 function resp(status, headers, obj) {
@@ -207,8 +206,8 @@ function renderProspectEmail(lead) {
   </td></tr>` : ''}
   <tr><td style="padding:24px 0;text-align:center;">
     <p style="font-size:13.5px;color:#d8e0e6;line-height:1.7;margin:0 0 18px;">Want a senior tech to walk through these with you? It's a free ~20-minute review — no pitch, no obligation.</p>
-    <a href="mailto:integrateditsupp@iisupp.net?subject=Free%20IT%20review%20after%20my%20Health%20Check" style="display:inline-block;padding:14px 30px;background:linear-gradient(135deg,#c5a059,#f1dca7,#b38728);color:#050505;font-family:monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;text-decoration:none;font-weight:700;border-radius:6px;">Book my free review</a>
-    <p style="font-size:12px;color:#9aa3ad;margin:18px 0 0;">or call <strong style="color:#e7e3d8;">(647) 581-3182</strong></p>
+    <a href="mailto:${escapeHtml(contacts.SUPPORT_EMAIL)}?subject=Free%20IT%20review%20after%20my%20Health%20Check" style="display:inline-block;padding:14px 30px;background:linear-gradient(135deg,#c5a059,#f1dca7,#b38728);color:#050505;font-family:monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;text-decoration:none;font-weight:700;border-radius:6px;">Book my free review</a>
+    <p style="font-size:12px;color:#9aa3ad;margin:18px 0 0;">or call <strong style="color:#e7e3d8;">${escapeHtml(contacts.SUPPORT_PHONE)}</strong></p>
   </td></tr>
   <tr><td style="padding-top:28px;border-top:1px solid #2a2418;font-size:11px;color:#6b7c87;text-align:center;font-family:monospace;letter-spacing:2px;">INTEGRATED IT SUPPORT INC.</td></tr>
 </table></body></html>`;

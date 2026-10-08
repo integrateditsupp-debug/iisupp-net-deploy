@@ -26,7 +26,11 @@ export async function handler(event) {
   const hash = process.env.ARIA_ADMIN_PASSWORD_HASH;
   const secret = process.env.ARIA_ADMIN_SESSION_SECRET || "";
   if (!user || !hash || !secret) return json(500, { error: "admin-auth-not-configured" });
-  const userOk = crypto.timingSafeEqual(Buffer.from(String(body.username || "")), Buffer.from(String(user))) ;
+  // Length-safe constant-time compare (timingSafeEqual THROWS on a length mismatch → uncaught 500 + a
+  // username-length oracle; audit 2026-10-08 §2.1). bcryptjs is now a declared dependency so verifyPassword
+  // can actually run (it silently returned false before → every login 401).
+  const ub = Buffer.from(String(body.username || "")), eb = Buffer.from(String(user));
+  const userOk = ub.length === eb.length && ub.length > 0 && crypto.timingSafeEqual(ub, eb);
   const passOk = await verifyPassword(body.password, hash);
   if (!userOk || !passOk) return json(401, { error: "invalid-credentials" });
   const expiresAt = Date.now() + ADMIN_SESSION_MS;

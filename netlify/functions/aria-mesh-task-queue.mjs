@@ -11,6 +11,7 @@
 // Auth: simple shared-token via header `x-bridge-token` (env BRIDGE_TOKEN). Required for claim/done/fail.
 
 import { getStore } from '@netlify/blobs';
+import { timingSafeEqual } from 'node:crypto';
 import { verifyAperture } from './aperture-auth.mjs';
 
 const STORE = 'aria-mesh-queue';

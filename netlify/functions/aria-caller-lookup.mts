@@ -1,14 +1,16 @@
 import { getStore } from "@netlify/blobs";
+import adminGate from "./lib/admin-gate.cjs";
+
+const { requireAdminToken, adminGateFetchResponse } = adminGate as any;
 
 export default async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors() });
   if (req.method !== "POST") return j(405, { error: "POST required" });
 
-  const required = process.env.ARIA_TOOL_SECRET;
-  if (required) {
-    const provided = req.headers.get("x-aria-tool-secret");
-    if (provided !== required) return j(401, { error: "Unauthorized" });
-  }
+  // 2026-10-08: fail-closed + constant-time (the old `if (required)` let everyone read call history by phone
+  // whenever ARIA_TOOL_SECRET was unset). X-ARIA-Tool-Secret = ARIA_TOOL_SECRET or X-Internal-Token.
+  const gate = requireAdminToken(req, { envNames: ["ARIA_TOOL_SECRET", "INTERNAL_WEBHOOK_SECRET"], allowBodyToken: false });
+  if (!gate.ok) return adminGateFetchResponse(gate, cors());
 
   let body: any;
   try { body = await req.json(); } catch { return j(400, { error: "Invalid JSON" }); }
@@ -67,6 +69,6 @@ function cors() {
   return {
     "access-control-allow-origin": "*",
     "access-control-allow-methods": "POST, OPTIONS",
-    "access-control-allow-headers": "content-type,x-aria-tool-secret",
+    "access-control-allow-headers": "content-type,x-aria-tool-secret,x-internal-token",
   };
 }

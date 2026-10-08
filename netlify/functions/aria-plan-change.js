@@ -10,11 +10,14 @@
  *    mid_size -> STRIPE_PRICE_MID_SIZE
  *    enterprise -> STRIPE_PRICE_ENTERPRISE
  *
- *  Auth: requires the user to be authenticated via aperture-auth JWT OR
- *  to supply the matching email — for now MVP uses email-only and Stripe
- *  enforces customer ownership by lookup. Future: bolt onto JWT.
+ *  Auth (2026-10-08, audit #1): the request must prove it owns the mailbox — a magic-link `token`
+ *  for that email (POST aria-magic-link {event:'request', email}) or an Aperture Bearer JWT; see
+ *  lib/require-verified-email.cjs. ARIA_ALLOW_EMAIL_ONLY_ACCOUNT_ACTIONS=1 restores email-only as an
+ *  emergency toggle. Success shape unchanged. CORS narrowed to our own origins.
  */
 const Stripe = require('stripe');
+const { requireVerifiedEmail, verifiedEmailResponse } = require('./lib/require-verified-email.cjs');
+const { corsHeaders } = require('./lib/cors.cjs');
 
 const TIER_TO_ENV = {
   personal: 'STRIPE_PRICE_PERSONAL',
@@ -25,13 +28,7 @@ const TIER_TO_ENV = {
 };
 
 exports.handler = async (event) => {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json',
-    'Cache-Control': 'no-store'
-  };
+  const headers = corsHeaders(event);
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'POST only' }) };
 
@@ -44,6 +41,9 @@ exports.handler = async (event) => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'valid email required' }) };
   }
+  const gate = requireVerifiedEmail(event, body, { email, scope: 'aria-plan-change' });
+  if (!gate.ok) return verifiedEmailResponse(gate, headers);
+
   const envKey = TIER_TO_ENV[newTier];
   if (!envKey) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'new_tier must be one of: ' + Object.keys(TIER_TO_ENV).join(', ') }) };
@@ -93,7 +93,7 @@ exports.handler = async (event) => {
       };
     } catch { /* no upcoming invoice */ }
 
-    console.log('[aria-plan-change] OK', email, '->', newTier, 'sub', sub.id);
+    console.log('[aria-plan-change] OK', redact(email), '->', newTier, 'sub', sub.id, 'via', gate.via);
 
     return { statusCode: 200, headers, body: JSON.stringify({
       ok: true,
@@ -106,6 +106,12 @@ exports.handler = async (event) => {
     }) };
   } catch (e) {
     console.error('[aria-plan-change] error:', e.message);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: e.message }) };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'plan change failed — call (647) 581-3182', error_code: 'plan_change_failed' }) };
   }
 };
+
+function redact(email) {
+  const s = String(email || '');
+  const at = s.indexOf('@');
+  return at > 1 ? s.slice(0, 2) + '***' + s.slice(at) : '***';
+}

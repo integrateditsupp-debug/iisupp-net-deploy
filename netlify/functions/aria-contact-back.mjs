@@ -1,8 +1,17 @@
-// aria-contact-back v0.4 — schedules a reconnect, emails user the ARIA link + .ics
+// aria-contact-back v0.5 — schedules a reconnect, emails user the ARIA link + .ics
 // POST /.netlify/functions/aria-contact-back
+//
+// 2026-10-08 (audit top-10 #9d): v0.4 could only send through Gmail SMTP and answered `202 {ok:true,
+// queued:true}` when SMTP_APP_PASSWORD was missing — nothing was queued. The booking is still persisted
+// first; mail now goes through lib/notify.mjs (Resend first, SMTP fallback; the .ics is attached on both)
+// and the response is honest: ok:false + scheduled:true + emailSent:false when no provider confirmed.
+// Also: invalid date/time → 400 (was an unhandled 500); blob key uses the hashed email; date/time escaped.
 
 import { getStore } from '@netlify/blobs';
-import nodemailer from 'nodemailer';
+import { sendEmail, hashIdentity, sanitizeEmailHtml } from './lib/notify.mjs';
+import contacts from './lib/contacts.cjs';
+
+const SESSION_ID_RE = /^[A-Za-z0-9_.@-]{1,120}$/;
 
 export default async (request) => {
   const cors = {
@@ -20,9 +29,12 @@ export default async (request) => {
 
   const { sessionId, date, time, user } = body;
   if (!date || !time) return jsonResp(400, cors, { error: 'date + time required' });
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(date)) || !/^\d{2}:\d{2}$/.test(String(time))) {
+    return jsonResp(400, cors, { error: 'date must be YYYY-MM-DD and time HH:MM' });
+  }
 
   let userObj = user;
-  if (!userObj && sessionId) {
+  if (!userObj && sessionId && SESSION_ID_RE.test(String(sessionId))) {
     try {
       const sessions = getStore({ name: 'aria-sessions', consistency: 'strong' });
       const meta = await sessions.get(`${sessionId}/meta.json`, { type: 'json' });
@@ -32,28 +44,26 @@ export default async (request) => {
   if (!userObj || !userObj.email) return jsonResp(400, cors, { error: 'user email required' });
 
   // build ISO timestamp (assume user-local time as submitted)
-  const startISO = new Date(`${date}T${time}:00`).toISOString();
-  const endISO = new Date(new Date(startISO).getTime() + 30 * 60 * 1000).toISOString();
+  const startMs = new Date(`${date}T${time}:00`).getTime();
+  if (!Number.isFinite(startMs)) return jsonResp(400, cors, { error: 'invalid date/time' });
+  const startISO = new Date(startMs).toISOString();
+  const endISO = new Date(startMs + 30 * 60 * 1000).toISOString();
 
   // reconnect link — includes a hint param so /aria opens contextually
   const reconnect = `https://iisupp.net/aria?reconnect=1&u=${encodeURIComponent(userObj.email)}`;
 
-  // persist booking (for admin visibility)
+  // persist booking FIRST (for admin visibility) — the email is a courtesy, the booking is the record
+  let stored = false;
   try {
     const bookings = getStore({ name: 'aria-bookings', consistency: 'strong' });
-    await bookings.setJSON(`${Date.now()}_${userObj.email}.json`, {
-      sessionId, date, time, user: userObj, createdAt: Date.now()
+    await bookings.setJSON(`${Date.now()}_${hashIdentity(userObj.email)}.json`, {
+      sessionId: sessionId && SESSION_ID_RE.test(String(sessionId)) ? sessionId : null, date, time, user: userObj, createdAt: Date.now()
     });
-  } catch {}
+    stored = true;
+  } catch (e) { console.error('[aria-contact-back] booking NOT stored:', e.message); }
 
-  const smtpPass = process.env.SMTP_APP_PASSWORD;
-  const senderEmail = process.env.SMTP_SENDER || 'integrateditsupp@iisupp.net';
-  const smtpAuthUser = process.env.SMTP_AUTH_USER || 'ahmad.wasee@iisupp.net';
-  const adminEmail = 'integrateditsupp@iisupp.net';
-
-  if (!smtpPass) {
-    return jsonResp(202, cors, { ok: true, queued: true, reason: 'SMTP not configured' });
-  }
+  const senderEmail = process.env.SMTP_SENDER || contacts.SUPPORT_EMAIL;
+  const adminEmail = contacts.SUPPORT_EMAIL;
 
   const ics = buildIcs({
     startISO, endISO,
@@ -63,35 +73,20 @@ export default async (request) => {
     attendees: [userObj.email, adminEmail]
   });
 
-  try {
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false,
-      requireTLS: true,
-      auth: { user: smtpAuthUser, pass: smtpPass }
-    });
+  const subject = `Your ARIA reconnect — ${date} at ${time}`;
+  const html = renderUserCallbackEmail({ user: userObj, date, time, reconnect });
+  const text = `Hi ${userObj.firstName || ''}, your ARIA reconnect is scheduled for ${date} at ${time}.\n\nLink: ${reconnect}\n\n— Integrated IT Support Inc.`;
+  const r = await sendEmail({ to: userObj.email, bcc: [adminEmail], subject, html, text, tag: 'contact-back', icalEvent: { filename: 'aria-reconnect.ics', method: 'REQUEST', content: ics } });
 
-    // user email
-    await transporter.sendMail({
-      from: `"Integrated IT Support" <${senderEmail}>`,
-      to: userObj.email,
-      cc: adminEmail,
-      subject: `Your ARIA reconnect — ${date} at ${time}`,
-      html: renderUserCallbackEmail({ user: userObj, date, time, reconnect }),
-      text: `Hi ${userObj.firstName || ''}, your ARIA reconnect is scheduled for ${date} at ${time}.\n\nLink: ${reconnect}\n\n— Integrated IT Support Inc.`,
-      icalEvent: {
-        filename: 'aria-reconnect.ics',
-        method: 'REQUEST',
-        content: ics
-      }
-    });
-
-    return jsonResp(200, cors, { ok: true, scheduled: true, reconnect });
-  } catch (e) {
-    console.error('[aria-contact-back] send failed:', e.message);
-    return jsonResp(500, cors, { ok: false, error: e.message });
-  }
+  if (r.ok) return jsonResp(200, cors, { ok: true, scheduled: true, stored, emailSent: true, reconnect, via: r.provider });
+  console.error('[aria-contact-back] confirmation NOT delivered', JSON.stringify({ error: r.error, attempts: r.attempts }));
+  return jsonResp(r.dormant ? 202 : 502, cors, {
+    ok: false, scheduled: stored, stored, emailSent: false, queued: false, reconnect,
+    reason: r.dormant ? 'no email provider configured (set RESEND_API_KEY + RESEND_FROM)' : 'email delivery failed',
+    note: stored
+      ? `Your reconnect for ${date} at ${time} is booked on our side, but the confirmation email could not be sent. Keep this link: ${reconnect}`
+      : `We could not record the booking or send a confirmation. Please call ${contacts.SUPPORT_PHONE}.`
+  });
 };
 
 function jsonResp(status, headers, obj) {
@@ -135,9 +130,9 @@ function renderUserCallbackEmail({ user, date, time, reconnect }) {
   </td></tr>
   <tr><td style="padding:22px 0;">
     <p style="font-size:14px;color:#d8e0e6;margin:0 0 18px 0;">Hi ${escapeHtml(user.firstName || '')},</p>
-    <p style="font-size:13.5px;line-height:1.7;color:#d8e0e6;margin:0 0 18px 0;">Your reconnect with ARIA is scheduled for <strong style="color:#2dd4bf;">${date} at ${time}</strong>. We’ve added it to our calendar and attached a calendar invite so you can add it to yours.</p>
+    <p style="font-size:13.5px;line-height:1.7;color:#d8e0e6;margin:0 0 18px 0;">Your reconnect with ARIA is scheduled for <strong style="color:#2dd4bf;">${escapeHtml(date)} at ${escapeHtml(time)}</strong>. We’ve added it to our calendar and attached a calendar invite so you can add it to yours.</p>
     <p style="margin:24px 0;text-align:center;">
-      <a href="${reconnect}" style="display:inline-block;padding:14px 28px;background:#2dd4bf;color:#050810;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;text-decoration:none;font-weight:700;">Open ARIA at that time</a>
+      <a href="${escapeHtml(reconnect)}" style="display:inline-block;padding:14px 28px;background:#2dd4bf;color:#050810;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;text-decoration:none;font-weight:700;">Open ARIA at that time</a>
     </p>
     <p style="font-size:12px;color:#98a8b3;line-height:1.6;margin:24px 0 0 0;">Need to reach us sooner? Call <strong style="color:#d8e0e6;">(647) 581-3182</strong>.</p>
   </td></tr>

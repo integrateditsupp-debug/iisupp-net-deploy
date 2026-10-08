@@ -11,7 +11,9 @@ const SCHEDULED = [
   { fn: 'aria-governor-alert-cron', schedule: '0 9 * * *', purpose: 'daily LLM cost governor' },
   { fn: 'aria-learning-cron', schedule: '0 */4 * * *', purpose: 'KB autonomous improvement' },
   { fn: 'aria-lead-radar-cron', schedule: '0 8 * * *', purpose: 'gov tender hunt' },
-  { fn: 'aria-renewal-reminders', schedule: '0 10 * * *', purpose: 'subscription renewal scan' },
+  // 2026-10-08: the schedule lives in aria-renewal-reminders-cron.mjs (the HTTP function never had one — it
+  // never ran). The heartbeat name stays 'aria-renewal-reminders' so cron-health keeps its history.
+  { fn: 'aria-renewal-reminders', schedule: '0 14 * * *', purpose: 'subscription renewal scan (via aria-renewal-reminders-cron.mjs)' },
   { fn: 'aria-reverify-cron', schedule: '0 */6 * * *', purpose: 'KB verification' },
   { fn: 'aria-self-audit-cron', schedule: '0 */12 * * *', purpose: 'platform self-audit' },
   { fn: 'aria-uptime-probe', schedule: '*/5 * * * *', purpose: 'every 5 min uptime probe' },

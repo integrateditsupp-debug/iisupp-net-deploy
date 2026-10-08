@@ -6,8 +6,16 @@
  *  
  *  Backup blob keyed by YYYY-MM-DD per source store. 12-week retention; older auto-deleted.
  *  Cat 13 — Failure modes + DR.
+ *
+ *  2026-10-08 (audit top-10 #10): a person who exercised their right to erasure must not resurface in
+ *  the next snapshot. lib/user-data.mjs writes a tombstone per purge (aria-deletion-log store); every key
+ *  that matches a tombstone (purged key list, hashed-email key, sanitized-email key) is skipped here and
+ *  counted in `skipped_tombstoned`. Notification goes through lib/notify.mjs (honest result in the log).
  */
 import { beat } from './_heartbeat.mjs';
+import { loadTombstones, isTombstonedKey } from './lib/user-data.mjs';
+import { sendEmail } from './lib/notify.mjs';
+import contacts from './lib/contacts.cjs';
 const SOURCE_STORES = [
   'aria-leads', 'aria-feedback', 'aria-tenant-audit', 'aria-cost-tracker',
   'aria-session-memory', 'aria-write-gate', 'aria-pilot-state',
@@ -31,12 +39,18 @@ export default async () => {
   const today = new Date().toISOString().slice(0, 10);
   const weekAgo = new Date(Date.now() - RETENTION_WEEKS * 7 * 86400000).toISOString().slice(0, 10);
 
+  // Erasure tombstones — keys belonging to purged people are never re-snapshotted.
+  const tombstones = await loadTombstones({ getStore });
+  out.tombstones = tombstones.length;
+  out.skipped_tombstoned = 0;
+
   for (const storeName of SOURCE_STORES) {
     try {
       const src = getStore({ name: storeName, consistency: 'eventual' });
       const list = await src.list();
       const snapshot = { snapshotted_at: Date.now(), source: storeName, count: 0, data: {} };
       for (const item of (list.blobs || []).slice(0, 500)) {
+        if (isTombstonedKey(item.key, tombstones, storeName)) { out.skipped_tombstoned++; continue; }
         try {
           const val = await src.get(item.key, { type: 'json' });
           if (val !== null && val !== undefined) {
@@ -64,22 +78,18 @@ export default async () => {
     }
   } catch {}
 
-  // Notify Ahmad
-  if (process.env.RESEND_API_KEY) {
-    try {
-      const total = Object.values(out.backups).reduce((a, b) => a + b, 0);
-      await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + process.env.RESEND_API_KEY, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          from: process.env.RESEND_FROM || 'ARIA <noreply@iisupp.net>',
-          to: [process.env.FOUNDER_EMAIL || 'ahmad.wasee@iisupp.net'],
-          subject: '[IIS] Weekly backup: ' + total + ' entries across ' + Object.keys(out.backups).length + ' stores',
-          html: '<pre>' + JSON.stringify(out, null, 2) + '</pre>'
-        })
-      });
-    } catch {}
-  }
+  // Notify Ahmad (honest: the log says whether the digest actually went out)
+  try {
+    const total = Object.values(out.backups).reduce((a, b) => a + b, 0);
+    const r = await sendEmail({
+      to: process.env.FOUNDER_EMAIL || contacts.OWNER_EMAIL,
+      from: process.env.RESEND_FROM || 'ARIA <noreply@iisupp.net>',
+      subject: '[IIS] Weekly backup: ' + total + ' entries across ' + Object.keys(out.backups).length + ' stores',
+      html: '<pre>' + JSON.stringify(out, null, 2).replace(/</g, '&lt;') + '</pre>',
+      tag: 'backup-digest'
+    });
+    out.digest_email = r.ok ? 'sent' : (r.dormant ? 'dormant' : 'failed');
+  } catch (e) { out.digest_email = 'failed'; }
 
   return new Response(JSON.stringify(out), { headers: { 'Content-Type': 'application/json' } });
 };

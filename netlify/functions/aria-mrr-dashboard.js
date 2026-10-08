@@ -4,18 +4,30 @@
  *                                churn proxy, top revenue plans
  *
  *  Cat 10 (Reporting + analytics). Pulls direct from Stripe — no DB.
+ *
+ *  AUTH (2026-10-08, audit P1): live MRR/ARR/churn was readable from any web page (no auth, CORS *).
+ *  Now requires EITHER an Aperture admin JWT (Authorization: Bearer …, see _verify-bearer.cjs) OR an
+ *  admin token — body.admin_token (what revenue-dashboard.html already sends) / X-Admin-Token header —
+ *  checked constant-time against ARIA_ADMIN_TOKEN | APERTURE_ADMIN_PASSWORD | ADMIN_PASSWORD
+ *  (lib/admin-gate.cjs). CORS narrowed to https://iisupp.net. Success shape unchanged.
  */
 const Stripe = require('stripe');
+const { bearerFromEvent } = require('./_verify-bearer.cjs');
+const { requireAdminToken, adminGateResponse } = require('./lib/admin-gate.cjs');
+const { corsHeaders } = require('./lib/cors.cjs');
 
 exports.handler = async (event) => {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json'
-  };
+  const headers = corsHeaders(event);
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'POST only' }) };
+
+  let body = {};
+  try { body = JSON.parse(event.body || '{}'); } catch { body = {}; }
+
+  if (!bearerFromEvent(event)) {
+    const gate = requireAdminToken(event, { envNames: ['ARIA_ADMIN_TOKEN', 'APERTURE_ADMIN_PASSWORD', 'ADMIN_PASSWORD'], body });
+    if (!gate.ok) return adminGateResponse(gate, headers);
+  }
 
   const stripeKey = process.env.STRIPE_SECRET_KEY;
   if (!stripeKey) return { statusCode: 503, headers, body: JSON.stringify({ error: 'STRIPE_SECRET_KEY not configured' }) };
@@ -82,7 +94,7 @@ exports.handler = async (event) => {
     }) };
   } catch (e) {
     console.error('[aria-mrr-dashboard]', e.message);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: e.message }) };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'MRR snapshot failed', error_code: 'mrr_snapshot_failed' }) };
   }
 };
 

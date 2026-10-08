@@ -73,7 +73,7 @@ class ARIA {
   renewalScan(dryRun)    { return this._post('aria-renewal-reminders', { event: 'scan', dry_run: !!dryRun }); }
   analyticsSnapshot(p)   { return this._post('aria-analytics-dashboard', { event: 'snapshot', ...(p || {}) }); }
   analyticsSeries(p)     { return this._post('aria-analytics-dashboard', { event: 'series', ...(p || {}) }); }
-  winbackScan(p)         { return this._post('aria-winback-cron', { event: 'scan', ...(p || {}) }); }
+  winbackScan(p)         { return this._post('aria-winback-draft', { event: 'scan', ...(p || {}) }); }
   couponAdmin(p)         { return this._post('aria-coupon-admin', p || { event: 'list' }); }
   slackAuthorizeUrl(p)   { return this._post('aria-slack-install', { event: 'authorize_url', ...(p || {}) }); }
   whiteLabelTheme(tenantId) { return this._get('aria-white-label', { tenant_id: tenantId, format: 'json' }); }

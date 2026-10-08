@@ -1,20 +1,21 @@
 /**
  * aria-invoice-download — Fetch + proxy a Stripe invoice PDF for the user
- *  POST { email, invoice_id? }
+ *  POST { email, invoice_id?, token? }
  *    -> finds customer, lists invoices, returns either:
  *       - specific invoice URL if invoice_id provided
  *       - list of last 12 invoices with hosted_invoice_url + invoice_pdf
  *
  *  No file proxying (Stripe serves PDFs directly via the URL). We surface the URLs.
  *  Cat 5 — Account management.
+ *
+ *  AUTH (2026-10-08, audit #1): requires a magic-link `token` for the email or an Aperture Bearer JWT
+ *  (lib/require-verified-email.cjs). ARIA_ALLOW_EMAIL_ONLY_ACCOUNT_ACTIONS=1 is the emergency toggle.
  */
+const { requireVerifiedEmail, verifiedEmailResponse } = require('./lib/require-verified-email.cjs');
+const { corsHeaders } = require('./lib/cors.cjs');
+
 exports.handler = async (event) => {
-  const headers = {
-    'Access-Control-Allow-Origin': 'https://iisupp.net',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json'
-  };
+  const headers = corsHeaders(event);
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'POST only' }) };
 
@@ -24,6 +25,9 @@ exports.handler = async (event) => {
 
   const email = String(body.email || '').toLowerCase().trim();
   if (!email || !/.+@.+\..+/.test(email)) return ok({ ok: false, error: 'valid email required' });
+
+  const gate = requireVerifiedEmail(event, body, { email, scope: 'aria-invoice-download' });
+  if (!gate.ok) return verifiedEmailResponse(gate, headers);
 
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) return ok({ ok: false, error: 'billing service unavailable' });
@@ -41,7 +45,9 @@ exports.handler = async (event) => {
 
     // 2. Specific invoice or list
     if (body.invoice_id) {
-      const ir = await fetch('https://api.stripe.com/v1/invoices/' + body.invoice_id, {
+      const invoiceId = String(body.invoice_id || '').trim();
+      if (!/^in_[A-Za-z0-9]{6,64}$/.test(invoiceId)) return ok({ ok: false, error: 'invoice_not_found' });
+      const ir = await fetch('https://api.stripe.com/v1/invoices/' + encodeURIComponent(invoiceId), {
         headers: { 'Authorization': 'Bearer ' + key }
       });
       const ij = await ir.json();
@@ -61,7 +67,7 @@ exports.handler = async (event) => {
     }
 
     // 3. List last 12 invoices
-    const lr = await fetch('https://api.stripe.com/v1/invoices?customer=' + customerId + '&limit=12', {
+    const lr = await fetch('https://api.stripe.com/v1/invoices?customer=' + encodeURIComponent(customerId) + '&limit=12', {
       headers: { 'Authorization': 'Bearer ' + key }
     });
     const lj = await lr.json();
@@ -81,7 +87,7 @@ exports.handler = async (event) => {
     return ok({ ok: true, count: invoices.length, invoices });
   } catch (e) {
     console.error('[invoice-download] err:', e.message);
-    return ok({ ok: false, error: 'unexpected', detail: e.message });
+    return ok({ ok: false, error: 'unexpected', error_code: 'invoice_lookup_failed' });
   }
 
   function ok(b) { return { statusCode: 200, headers, body: JSON.stringify(b) }; }

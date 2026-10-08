@@ -11,6 +11,7 @@
  *  Cat 10 — Reporting + analytics.
  */
 const { getStatus: breakerStatus } = require('./_circuit-breaker');
+const { requireAdminToken, adminGateResponse } = require('./lib/admin-gate.cjs');
 
 let _blobs = null;
 async function getStore() {
@@ -22,7 +23,9 @@ async function getStore() {
   return _blobs;
 }
 
-const ADMIN_TOKEN = () => process.env.APERTURE_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD || '';
+// Admin token env names, checked constant-time and FAIL-CLOSED by lib/admin-gate.cjs
+// (audit §7: the old `if (ADMIN_TOKEN() && …)` let every call through when the env was unset).
+const ADMIN_ENVS = ['ARIA_ADMIN_TOKEN', 'APERTURE_ADMIN_PASSWORD', 'ADMIN_PASSWORD'];
 
 exports.handler = async (event) => {
   const headers = { 'Content-Type': 'application/json' };
@@ -32,11 +35,9 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || '{}'); }
   catch { return { statusCode: 400, headers, body: JSON.stringify({ error: 'invalid JSON' }) }; }
 
-  // Admin auth: token in body OR env var fallback for local
-  const token = body.admin_token || '';
-  if (ADMIN_TOKEN() && token !== ADMIN_TOKEN()) {
-    return { statusCode: 401, headers, body: JSON.stringify({ error: 'admin token required' }) };
-  }
+  // Admin auth: token in body (admin_token) or X-Admin-Token header. 503 when no token is configured.
+  const gate = requireAdminToken(event, { envNames: ADMIN_ENVS, body });
+  if (!gate.ok) return adminGateResponse(gate, headers);
 
   const ev = String(body.event || 'snapshot').trim();
   const store = await getStore();

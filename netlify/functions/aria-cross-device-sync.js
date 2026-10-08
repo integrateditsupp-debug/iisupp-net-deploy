@@ -14,7 +14,8 @@
 const crypto = require('crypto');
 const { redact } = require('./_pii-redact');
 
-const SECRET = process.env.APERTURE_JWT_SECRET || 'changeme-dev';
+// No literal fallback (audit §7: 'changeme-dev' made every sync token forgeable when the env was unset).
+function secret() { return process.env.APERTURE_JWT_SECRET || ''; }
 
 let _blobs = null;
 async function getStore() {
@@ -30,13 +31,13 @@ function hashEmail(e) {
   return crypto.createHash('sha256').update(String(e || '').toLowerCase().trim()).digest('hex').slice(0, 32);
 }
 function makeToken(email) {
-  return crypto.createHmac('sha256', SECRET).update(email.toLowerCase().trim()).digest('hex').slice(0, 32);
+  return crypto.createHmac('sha256', secret()).update(email.toLowerCase().trim()).digest('hex').slice(0, 32);
 }
 function verifyToken(email, token) {
-  if (!email || !token) return false;
+  if (!email || !token || !secret()) return false;
   const expect = makeToken(email);
   if (expect.length !== token.length) return false;
-  return crypto.timingSafeEqual(Buffer.from(expect), Buffer.from(token));
+  try { return crypto.timingSafeEqual(Buffer.from(expect), Buffer.from(token)); } catch { return false; }
 }
 
 const MAX_TURNS = 200;
@@ -54,6 +55,8 @@ exports.handler = async (event) => {
   let body;
   try { body = JSON.parse(event.body || '{}'); }
   catch { return { statusCode: 400, headers, body: JSON.stringify({ error: 'invalid JSON' }) }; }
+
+  if (!secret()) return { statusCode: 503, headers, body: JSON.stringify({ ok: false, error: 'not-configured', hint: 'set APERTURE_JWT_SECRET' }) };
 
   const email = String(body.email || '').toLowerCase().trim();
   const token = String(body.token || '');

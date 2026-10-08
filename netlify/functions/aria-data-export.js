@@ -1,28 +1,27 @@
 /**
  * aria-data-export — PIPEDA "right of access" endpoint
- *  POST { email } -> 200 JSON of everything ARIA has on the user
+ *  POST { email, token? } -> 200 JSON of everything ARIA has on the user
  *
  *  Compliance basis: PIPEDA Principle 9 (Individual Access). Must respond
- *  within 30 days. We respond instantly because all per-user data lives in:
+ *  within 30 days. We respond instantly from:
  *    - Stripe (subscription + invoices)  -> queried via Stripe API
+ *    - Netlify Blobs (2026-10-08, audit #10) -> every store that holds the person's content
+ *      (sessions/transcripts, session memory, cross-device memory, learning turns, traces,
+ *      leads, bookings, calls, tickets, licenses) via lib/user-data.mjs → `server_side_data.stores`
  *    - localStorage on user's browser    -> we cannot read remotely; user must
  *                                            run /aria-data-export.html locally
- *    - aria-receipt-email send log       -> not retained server-side currently
  *
- *  For now this endpoint returns: confirmation of receipt + the data we DO
- *  hold server-side (Stripe customer + invoice list) + instructions for
- *  the localStorage-side dump. Logs every request for audit.
+ *  AUTH (2026-10-08, audit #1): this hands over PII — the request must carry a magic-link `token`
+ *  for the email or an Aperture Bearer JWT (lib/require-verified-email.cjs).
+ *  ARIA_ALLOW_EMAIL_ONLY_ACCOUNT_ACTIONS=1 is the emergency toggle. Existing fields are unchanged.
  */
 const Stripe = require('stripe');
+const { requireVerifiedEmail, verifiedEmailResponse } = require('./lib/require-verified-email.cjs');
+const { corsHeaders } = require('./lib/cors.cjs');
+const { OWNER_EMAIL } = require('./lib/contacts.cjs');
 
 exports.handler = async (event) => {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json',
-    'Cache-Control': 'no-store'
-  };
+  const headers = corsHeaders(event);
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'POST only' }) };
 
@@ -35,24 +34,28 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'valid email required' }) };
   }
 
+  const gate = requireVerifiedEmail(event, body, { email, scope: 'aria-data-export' });
+  if (!gate.ok) return verifiedEmailResponse(gate, headers);
+
   const result = {
     request_received_at: new Date().toISOString(),
     email_requested: email,
+    verified_via: gate.via,
     pipeda_principle: 'PIPEDA Principle 9 (Individual Access)',
     response_window_days: 30,
-    server_side_data: { stripe: null, error: null },
+    server_side_data: { stripe: null, stores: null, stores_exported: {}, error: null },
     client_side_data: {
       where_to_find: 'localStorage on your browser at iisupp.net/aria',
       keys_we_store: [
         'aria_user_email', 'aria_user_profile',
         'aria_trial_consumed_<email>', 'aria_device_elapsed_ms',
         'aria_reminder_sent_5min_<email>', 'aria_reminder_sent_expired_<email>',
-        'iis_cookie_consent', 'aria_session'
+        'iis_cookie_consent', 'aria_session', 'aria_session_email', 'aria_session_token', 'aria_session_turns_v1'
       ],
       how_to_export: 'Open iisupp.net/aria-data-export.html in your browser — it will dump every key/value we have on you locally and offer download as JSON.',
       how_to_clear: 'Click Log Out in ARIA, or open browser devtools console and run `Object.keys(localStorage).filter(k=>k.startsWith("aria_")).forEach(k=>localStorage.removeItem(k))`'
     },
-    contact_for_more: 'ahmad.wasee@iisupp.net (Privacy Officer, IIS Inc.)'
+    contact_for_more: OWNER_EMAIL + ' (Privacy Officer, IIS Inc.)'
   };
 
   // Try to pull Stripe customer record + recent invoices
@@ -90,14 +93,38 @@ exports.handler = async (event) => {
       result.server_side_data.error = 'STRIPE_SECRET_KEY not configured';
     }
   } catch (e) {
-    result.server_side_data.error = 'Stripe lookup failed: ' + e.message;
+    console.error('[aria-data-export] stripe lookup failed:', e.message);
+    result.server_side_data.error = 'Stripe lookup failed; the Privacy Officer will complete this part manually within 30 days.';
   }
 
-  // Audit log (server-side only — request itself, not the response body)
+  // Stored content across every Blobs store that holds the person's data.
+  try {
+    const { listStoresFor } = await import('./lib/user-data.mjs');
+    const found = await listStoresFor(email, { phone: body.phone });
+    const stores = {};
+    for (const [name, entry] of Object.entries(found.stores)) {
+      stores[name] = { record_count: entry.keys.length, records: entry.records, note: entry.note || null };
+      result.server_side_data.stores_exported[name] = entry.keys.length;
+    }
+    result.server_side_data.stores = stores;
+    if (found.errors.length) {
+      result.server_side_data.store_errors = found.errors.map((e) => String(e).split(':')[0]);
+      console.warn('[aria-data-export] store errors:', found.errors);
+    }
+  } catch (e) {
+    console.error('[aria-data-export] store export failed:', e.message);
+    result.server_side_data.stores = null;
+    result.server_side_data.store_errors = ['blobs'];
+  }
+
+  // Audit log (server-side only — hashed identity, not the response body)
+  const { hashIdentity } = await import('./lib/notify.mjs');
   console.log('[aria-data-export]', JSON.stringify({
     at: result.request_received_at,
-    email: email,
-    server_side_found: !!(result.server_side_data.stripe && result.server_side_data.stripe.customer_found)
+    email_hash: hashIdentity(email),
+    via: gate.via,
+    server_side_found: !!(result.server_side_data.stripe && result.server_side_data.stripe.customer_found),
+    stores_exported: result.server_side_data.stores_exported
   }));
 
   return { statusCode: 200, headers, body: JSON.stringify(result, null, 2) };

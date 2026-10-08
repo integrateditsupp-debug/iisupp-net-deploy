@@ -13,10 +13,12 @@
 // Risk classes: green (safe info) / yellow (safe diagnostic) / orange (repair w/ consent) / red (admin only) / black (never)
 
 import { getStore } from '@netlify/blobs';
-import { createHmac, randomBytes } from 'node:crypto';
+import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { RECIPES, RECIPE_COUNT } from './aria-recipes-data.mjs';
 
-const AUDIT_SECRET = process.env.ARIA_AUDIT_SECRET || 'CHANGE_ME_IN_NETLIFY_ENV';
+// No literal fallback (audit §7: 'CHANGE_ME_IN_NETLIFY_ENV' made every audit-gate token forgeable when the
+// env was unset). Resolved per call; actions that sign or verify return 503 not-configured without it.
+function auditSecret() { return process.env.ARIA_AUDIT_SECRET || ''; }
 const TOKEN_TTL_SECONDS = 600; // 10 minutes
 
 export default async (req) => {
@@ -88,6 +90,8 @@ async function actAudit(b) {
   if (step.risk === 'black') return json({ error: 'risk=black — never allowed', step: stepId }, 403);
   if (step.risk === 'red') return json({ error: 'risk=red — admin approval required (not implemented in Phase A)', step: stepId }, 403);
 
+  if (!auditSecret()) return json({ error: 'not-configured', hint: 'set ARIA_AUDIT_SECRET' }, 503);
+
   // Issue signed token
   const nonce = randomBytes(8).toString('hex');
   const issuedAt = Math.floor(Date.now() / 1000);
@@ -108,16 +112,23 @@ async function actAudit(b) {
 }
 
 function sign(payload) {
-  return createHmac('sha256', AUDIT_SECRET).update(payload).digest('hex');
+  const secret = auditSecret();
+  if (!secret) throw new Error('audit-secret-not-configured');
+  return createHmac('sha256', secret).update(payload).digest('hex');
 }
 
 function verifyToken(token) {
+  if (!auditSecret()) return { valid: false, error: 'not-configured' };
   if (!token || typeof token !== 'string' || !token.includes('.')) return { valid: false, error: 'malformed' };
   const [payloadB64, sig] = token.split('.');
   let payload;
   try { payload = Buffer.from(payloadB64, 'base64url').toString('utf8'); } catch { return { valid: false, error: 'bad-base64' }; }
   const expected = sign(payload);
-  if (expected !== sig) return { valid: false, error: 'bad-signature' };
+  const a = Buffer.from(expected), b = Buffer.from(String(sig || ''));
+  if (a.length !== b.length) return { valid: false, error: 'bad-signature' };
+  let same = false;
+  try { same = timingSafeEqual(a, b); } catch { same = false; }
+  if (!same) return { valid: false, error: 'bad-signature' };
   const [recipeId, stepId, risk, nonce, issuedAt, expiresAt] = payload.split('|');
   if (Math.floor(Date.now() / 1000) > parseInt(expiresAt, 10)) return { valid: false, error: 'expired' };
   return { valid: true, recipeId, stepId, risk, nonce, issuedAt: parseInt(issuedAt, 10), expiresAt: parseInt(expiresAt, 10) };

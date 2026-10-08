@@ -10,8 +10,21 @@
  * 2) Inline one-time priceData (tech-service purchases from homepage — replaces PayPal sandbox):
  *    { priceData: { amount_cents, currency, product_name, description?, id? } }
  *    → Creates a one-time payment session with inline price_data. No preset Stripe Product needed.
+ *
+ * 2026-10-08 (audit top-10 #8 — payment integrity), all additive:
+ *  - ONE_TIME_CATALOGUE: the server owns the amount for every one-time id that exists in the repo
+ *    (index.html / services.html / purchase-tech.html / shop.html / assets/iis-catalog.js). A client
+ *    amount that disagrees is overridden and logged. Book orders are recomputed from the catalogue
+ *    formula (item + delivery + $40 supply + 15% admin + add-ons). Ids the repo cannot price (concierge
+ *    deposits, which depend on the shopper's budget) keep the client amount, clamped to the known
+ *    [$1.00, $30,000] range (the largest one-time amount on the site) and logged as `unlisted-price`.
+ *  - metadata.kind can no longer be set by the client (kind:'book-order' drives fulfilment mail): it is
+ *    'book-order' only for a catalogue book id; other client meta keys are allow-listed and capped.
+ *  - successPath must be a single-slash relative path (`//evil.tld` and `/\evil` are rejected) and the
+ *    origin comes from our own allow-list / process.env.URL, never a raw Origin header → no open redirect.
  */
 const Stripe = require('stripe');
+const { allowedOrigins } = require('./lib/cors.cjs');
 
 const PRICE_MAP = {
   // Subscription tiers (env var OR baked default from 2026-06-18 Stripe API run)
@@ -86,6 +99,119 @@ const PRICE_MAP = {
   aria_web_m:            process.env.STRIPE_PRICE_ARIA_WEB_M,
 };
 
+// ---------------------------------------------------------------------------------------------
+// ONE-TIME PRICE CATALOGUE (server-side source of truth for inline priceData checkouts).
+// Every amount below is copied from the page/catalog that renders the matching button — nothing is invented.
+//   index.html data-stripe-id buttons (USD), index.html/m.html data-buy-options (CAD), services.html +
+//   purchase-tech.html SKU tables (USD), shop.html finder's fee (USD), assets/iis-catalog.js products
+//   (peek previews = 30%), inventory and concierge books (book-order formula).
+const ONE_TIME_CATALOGUE = {
+  // index.html hero / AI-setup / maintenance buttons (USD)
+  'tier1-first-month': 600000, 'ai-setup-walkthrough': 700000, 'website-ai-deposit': 600000,
+  'ai-learning': 250000, 'ai-automation': 550000, 'ai-agent-setup-deposit': 500000,
+  'ai-maint-smb': 300000, 'ai-maint-mid': 600000, 'ai-maint-ent': 1400000,
+  // services.html AI block
+  'ai-business-automation': 550000,
+  // index.html / m.html data-buy-options (CAD; same cents as rendered "$X CAD")
+  'tier1-deposit': 200000, 'tier2-deposit': 400000, 'tier2-first-month': 1400000,
+  'tier3-deposit': 1000000, 'tier3-first-month': 3000000,
+  'home-diagnostics': 150000, 'home-network': 200000, 'home-tune': 125000,
+  'recovery-data': 250000, 'recovery-audit': 200000,
+  'monthly-home-deposit': 75000, 'monthly-home-first': 150000,
+  // services.html + purchase-tech.html in-stock SKUs (USD)
+  'iis-notebook-ram-16gb': 6500, 'iis-mac-mini-a1347-u1': 26000, 'iis-mac-mini-a1347-u2': 26000,
+  'iis-ipad-a1458': 7200, 'iis-desktop-tower': 45500, 'iis-dell-inspiron': 20800, 'iis-macbook-pro-as': 84500,
+  // assets/iis-catalog.js inventory (USD)
+  'inv-notebook-ram-16gb': 6500, 'inv-mac-mini-1': 26000, 'inv-mac-mini-2': 26000, 'inv-ipad-a1458': 7200,
+  'inv-desktop-tower': 45500, 'inv-dell-inspiron': 20800, 'inv-macbook-pro': 84500,
+};
+// assets/iis-catalog.js products/bundles — full price (used for `<id>-peek` = 30% preview, min $1.00)
+const CATALOGUE_FULL_PRICE = {
+  'gl-l1-it-bible': 11700, 'gl-m365-kb': 38700, 'gl-ai-agent-starter': 40000, 'gl-prompt-workflows': 20000,
+  'gl-win11-kb': 14700, 'gl-outlook-fix': 8700, 'gl-helpdesk-blueprint': 44700, 'gl-cyber-basics': 17700,
+  'gl-nocode-kit': 14700, 'gl-meeting-sop-pack': 9700, 'gl-website-checklist': 2900, 'gl-ai-edge-starter': 4900,
+  'gl-ai-edge-pro-playbook': 19900, 'gl-ai-edge-family-studio': 7900, 'gl-ai-edge-adult-momentum': 14900,
+  'gl-book-living-well': 9700, 'gl-ai-automation-setup-book': 455000,
+  // bundles = sum of their items (iis-catalog.js recomputes them that way); all-access is a fixed membership
+  'bundle-it-mastery': 73800, 'bundle-ai-automation': 119400, 'bundle-allaccess': 200000,
+  'inv-notebook-ram-16gb': 6500, 'inv-mac-mini-1': 26000, 'inv-mac-mini-2': 26000, 'inv-ipad-a1458': 7200,
+  'inv-desktop-tower': 45500, 'inv-dell-inspiron': 20800, 'inv-macbook-pro': 84500,
+};
+// Concierge books (assets/iis-catalog.js BOOKS): vendor list price + estimated delivery.
+const BOOKS = {
+  'tsb-ai-genesis': { item: 3200, delivery: 599 }, 'tsb-future-nexus': { item: 3500, delivery: 599 },
+  'tsb-quantum-supremacy': { item: 3000, delivery: 599 }, 'tsb-psych-body': { item: 1900, delivery: 599 },
+  'tsb-fitness-outlive': { item: 3200, delivery: 599 }, 'tsb-finance-money': { item: 2000, delivery: 599 },
+  'tsb-growth-atomic': { item: 2700, delivery: 599 }, 'tsb-happy-build': { item: 2800, delivery: 599 },
+};
+const BOOK_SUPPLY_FEE_CENTS = 4000;   // flat per-order supply/sourcing fee (iis-catalog.js)
+const BOOK_ADMIN_RATE = 0.15;         // admin + processing fee (iis-catalog.js)
+const BOOK_SERVICES = { consult: { label: '30-min consultation with IIS', cents: 7900 }, setup: { label: 'Setup & configuration', cents: 9900 } };
+const FINDER_FEE_CENTS = 4000;        // shop.html finder's fee
+const MIN_ONE_TIME_CENTS = 100;
+const MAX_ONE_TIME_CENTS = 3000000;   // Tier 3 first month ($30,000) — the largest one-time amount on the site
+const ALLOWED_CURRENCIES = new Set(['usd', 'cad']);
+const META_ALLOW = ['book', 'author', 'item_cents', 'delivery_cents', 'supply_cents', 'admin_cents', 'services_cents', 'services', 'note', 'ref', 'request'];
+
+function bookTotals(book, serviceLabels) {
+  const procurement = book.item + book.delivery + BOOK_SUPPLY_FEE_CENTS;
+  const admin = Math.round(procurement * BOOK_ADMIN_RATE);
+  let services = 0;
+  const labels = [];
+  for (const [id, svc] of Object.entries(BOOK_SERVICES)) {
+    if (serviceLabels.includes(svc.label) || serviceLabels.includes(id)) { services += svc.cents; labels.push(svc.label); }
+  }
+  return { item: book.item, delivery: book.delivery, supply: BOOK_SUPPLY_FEE_CENTS, admin, services, labels, total: procurement + admin + services };
+}
+
+/**
+ * Decide the amount the card is charged. Returns { cents, source, kind, bookMeta? }.
+ * source ∈ 'catalogue' | 'peek' | 'book-order' | 'finder' | 'unlisted-clamped'
+ */
+function resolveOneTimePrice(id, clientCents, meta) {
+  const safeId = String(id || '');
+  if (Object.prototype.hasOwnProperty.call(ONE_TIME_CATALOGUE, safeId)) {
+    return { cents: ONE_TIME_CATALOGUE[safeId], source: 'catalogue', kind: 'one-time' };
+  }
+  const peek = safeId.match(/^(.+)-peek$/);
+  if (peek && Object.prototype.hasOwnProperty.call(CATALOGUE_FULL_PRICE, peek[1])) {
+    return { cents: Math.max(100, Math.round(CATALOGUE_FULL_PRICE[peek[1]] * 0.30)), source: 'peek', kind: 'one-time' };
+  }
+  if (Object.prototype.hasOwnProperty.call(CATALOGUE_FULL_PRICE, safeId)) {
+    return { cents: CATALOGUE_FULL_PRICE[safeId], source: 'catalogue', kind: 'one-time' };
+  }
+  if (Object.prototype.hasOwnProperty.call(BOOKS, safeId)) {
+    const wanted = String((meta && meta.services) || '').split(',').map((x) => x.trim()).filter(Boolean);
+    const t = bookTotals(BOOKS[safeId], wanted);
+    return { cents: t.total, source: 'book-order', kind: 'book-order', bookMeta: t };
+  }
+  if (/^finder-\d+$/.test(safeId)) return { cents: FINDER_FEE_CENTS, source: 'finder', kind: 'one-time' };
+  // Not derivable from the repo (e.g. iis-concierge-<ts> deposits depend on the shopper's budget):
+  // keep the client amount but clamp it to the known range and say so in the logs.
+  const clamped = Math.min(MAX_ONE_TIME_CENTS, Math.max(MIN_ONE_TIME_CENTS, Math.round(Number(clientCents) || 0)));
+  return { cents: clamped, source: 'unlisted-clamped', kind: 'one-time' };
+}
+
+// successPath: a single-slash relative path only. Rejects protocol-relative (`//evil.tld`), backslashes,
+// whitespace/control characters and anything not starting with "/".
+function safeSuccessPath(p) {
+  if (typeof p !== 'string') return null;
+  if (!/^\/(?!\/)/.test(p)) return null;
+  if (/[\s\\]/.test(p) || /[\u0000-\u001f\u007f]/.test(p)) return null;
+  if (p.length > 300) return null;
+  return p;
+}
+
+// The site origin used in success/cancel URLs. The raw Origin header is only honoured when it is one of our
+// own origins; otherwise the deploy's URL (process.env.URL) wins.
+function siteOrigin(event) {
+  const hdr = String((event.headers && (event.headers.origin || event.headers.Origin)) || '').replace(/\/$/, '');
+  if (hdr && allowedOrigins().has(hdr)) return hdr;
+  if (process.env.URL) return String(process.env.URL).replace(/\/$/, '');
+  const host = event.headers && event.headers.host;
+  return host ? 'https://' + host : 'https://iisupp.net';
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'POST required' };
@@ -100,18 +226,28 @@ exports.handler = async (event) => {
   catch { return j(400, { error: 'Invalid JSON' }); }
 
   const stripe = Stripe(stripeKey);
-  const origin = event.headers.origin || event.headers.Origin || ('https://' + event.headers.host);
+  const origin = siteOrigin(event);
 
   let lineItems, mode, metadata, successUrl, cancelUrl;
 
   // Branch 1: inline price_data for one-time tech-service purchases
   if (body.priceData && typeof body.priceData === 'object') {
     const pd = body.priceData;
-    const cents = Math.round(Number(pd.amount_cents || pd.amountCents || 0));
-    if (!cents || cents < 100) {
+    const clientCents = Math.round(Number(pd.amount_cents || pd.amountCents || 0));
+    if (!clientCents || clientCents < 100) {
       return j(400, { error: 'priceData.amount_cents must be >= 100' });
     }
+    const pdId = String(pd.id || '').slice(0, 80);
+    const priced = resolveOneTimePrice(pdId, clientCents, body.meta);
+    const cents = priced.cents;
+    if (cents !== clientCents) {
+      console.warn('[stripe-checkout] amount overridden by server catalogue', JSON.stringify({ id: pdId, client_cents: clientCents, charged_cents: cents, source: priced.source }));
+    }
+    if (priced.source === 'unlisted-clamped') {
+      console.warn('[stripe-checkout] unlisted one-time price id — client amount kept (clamped)', JSON.stringify({ id: pdId, cents }));
+    }
     const currency = String(pd.currency || 'cad').toLowerCase();
+    if (!ALLOWED_CURRENCIES.has(currency)) return j(400, { error: 'currency must be usd or cad' });
     const productName = String(pd.product_name || pd.productName || body.planName || 'Service').slice(0, 200);
     const productDesc = pd.description ? String(pd.description).slice(0, 500) : undefined;
     const productData = productDesc ? { name: productName, description: productDesc } : { name: productName };
@@ -123,19 +259,31 @@ exports.handler = async (event) => {
     metadata = {
       tier: String(body.tier || pd.id || 'one-time').slice(0, 40),
       planName: productName,
-      kind: 'one-time'
+      kind: priced.kind,          // server-decided — a client can no longer flip this to 'book-order'
+      price_source: priced.source
     };
-    // Callers may attach extra metadata (e.g. concierge book-order fee breakdown).
-    // Values must be strings; this can set kind:'book-order' which the webhook acts on.
+    // Callers may attach extra metadata (e.g. concierge book-order fee breakdown). Keys are allow-listed,
+    // values are strings capped at 480 chars, and for book orders the fee breakdown is the SERVER's numbers.
     if (body.meta && typeof body.meta === 'object') {
-      Object.keys(body.meta).forEach(function (k) {
+      META_ALLOW.forEach(function (k) {
         if (body.meta[k] != null && String(body.meta[k]) !== '') metadata[k] = String(body.meta[k]).slice(0, 480);
       });
     }
+    if (priced.kind === 'book-order' && priced.bookMeta) {
+      const bm = priced.bookMeta;
+      metadata.item_cents = String(bm.item);
+      metadata.delivery_cents = String(bm.delivery);
+      metadata.supply_cents = String(bm.supply);
+      metadata.admin_cents = String(bm.admin);
+      metadata.services_cents = String(bm.services);
+      metadata.services = bm.labels.join(', ');
+    }
     // Optional: callers may pass a relative successPath (e.g. "/unlock.html") to
     // land digital buyers on a delivery page. Defaults to homepage (unchanged).
-    successUrl = origin + (typeof body.successPath === 'string' && body.successPath.charAt(0) === '/'
-      ? body.successPath + (body.successPath.indexOf('?') >= 0 ? '&' : '?') + 'checkout=success&session_id={CHECKOUT_SESSION_ID}'
+    const sp = safeSuccessPath(body.successPath);
+    if (body.successPath != null && !sp) console.warn('[stripe-checkout] rejected successPath (must be a single-slash relative path)');
+    successUrl = origin + (sp
+      ? sp + (sp.indexOf('?') >= 0 ? '&' : '?') + 'checkout=success&session_id={CHECKOUT_SESSION_ID}'
       : '/checkout-success.html?checkout=success&session_id={CHECKOUT_SESSION_ID}');
     cancelUrl  = origin + '/checkout-success.html?checkout=canceled';
   } else {
@@ -171,7 +319,9 @@ exports.handler = async (event) => {
       successUrl = origin + '/aria?checkout=success&session_id={CHECKOUT_SESSION_ID}';
       cancelUrl  = origin + '/aria?checkout=canceled';
     } else {
-      successUrl = origin + (body.successPath || '/?checkout=success&session_id={CHECKOUT_SESSION_ID}');
+      const sp = safeSuccessPath(body.successPath);
+      if (body.successPath != null && !sp) console.warn('[stripe-checkout] rejected successPath (must be a single-slash relative path)');
+      successUrl = origin + (sp || '/?checkout=success&session_id={CHECKOUT_SESSION_ID}');
       cancelUrl  = origin + '/?checkout=canceled';
     }
   }
@@ -204,3 +354,6 @@ exports.handler = async (event) => {
 function j(status, body) {
   return { statusCode: status, headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) };
 }
+
+// Exposed for tests (pure; no Stripe calls).
+exports._pricing = { resolveOneTimePrice, safeSuccessPath, bookTotals, ONE_TIME_CATALOGUE, CATALOGUE_FULL_PRICE, BOOKS, MAX_ONE_TIME_CENTS, MIN_ONE_TIME_CENTS };

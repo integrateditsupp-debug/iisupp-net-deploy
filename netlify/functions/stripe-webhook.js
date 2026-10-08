@@ -8,15 +8,25 @@
  *    Vendor/source disclosure must happen in the quote or order summary before
  *    payment when a third-party vendor materially fulfils the order.
  *    Email failures are logged but never fail the webhook.
+ *
+ *  2026-10-08 (audit top-10 #8):
+ *    - events are de-duplicated by event.id (Blobs store `stripe-webhook-events`); Stripe retries and
+ *      replays return 200 {received:true, duplicate:true} without re-sending mail.
+ *    - customer.subscription.deleted now REVOKES the customer's ARIA license(s) (aria-licenses
+ *      by-email/<email> → active:false) instead of only logging.
+ *    - email goes through lib/notify.mjs (honest result; the webhook still never fails on mail errors).
  */
 const Stripe = require('stripe');
+const contacts = require('./lib/contacts.cjs');
 
 const META = {
-  brand: 'Integrated IT Support',
-  email: 'ahmad.wasee@iisupp.net',
-  phone: '(647) 581-3182',
-  tel: '+16475813182'
+  brand: contacts.BRAND,
+  email: contacts.OWNER_EMAIL,
+  phone: contacts.SUPPORT_PHONE,
+  tel: contacts.SUPPORT_TEL
 };
+
+const EVENTS_STORE = 'stripe-webhook-events';
 
 exports.handler = async (event) => {
   const stripeKey   = process.env.STRIPE_SECRET_KEY;
@@ -34,7 +44,14 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: `Webhook Error: ${err.message}` };
   }
 
-  console.log('[stripe-webhook] Received:', evt.type);
+  console.log('[stripe-webhook] Received:', evt.type, evt.id);
+
+  // Dedupe: Stripe retries deliveries; the same event.id must not trigger a second email / revoke.
+  const seen = await markEventSeen(evt.id, evt.type);
+  if (seen === 'duplicate') {
+    console.log('[stripe-webhook] duplicate event ignored:', evt.id);
+    return { statusCode: 200, body: JSON.stringify({ received: true, duplicate: true }) };
+  }
 
   switch (evt.type) {
     case 'checkout.session.completed': {
@@ -48,8 +65,12 @@ exports.handler = async (event) => {
     }
     case 'customer.subscription.created':
     case 'customer.subscription.updated':
+      console.log('[stripe-webhook] Event:', evt.type, 'customer:', evt.data.object.customer);
+      break;
     case 'customer.subscription.deleted':
       console.log('[stripe-webhook] Event:', evt.type, 'customer:', evt.data.object.customer);
+      try { await revokeLicensesForSubscription(stripe, evt.data.object); }
+      catch (e) { console.error('[stripe-webhook] license revoke error:', e.message); }
       break;
     case 'invoice.payment_failed':
       try { await handlePaymentFailed(stripe, evt.data.object); }
@@ -144,28 +165,62 @@ function shell(inner) {
 function esc(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
+// Email via the shared honest helper (lib/notify.mjs). Returns true ONLY when the provider confirmed.
 async function sendResend(to, subject, html) {
-  const key = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM || `${META.brand} <noreply@iisupp.net>`;
-  if (!key) { console.warn('[stripe-webhook] RESEND_API_KEY not set; skipped:', subject); return false; }
-  const send = (fromAddr) => fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: fromAddr, to: [to], subject, html })
-  });
   try {
-    const r = await send(from);
-    const j = await r.json().catch(() => ({}));
-    if (r.ok && j.id) { console.log('[stripe-webhook] emailed', to, 'msg', j.id); return true; }
-    console.warn('[stripe-webhook] resend failed', r.status, JSON.stringify(j).slice(0, 200));
-    // Domain-not-verified fallback (delivers only to the Resend account owner).
-    if (r.status === 403 || JSON.stringify(j).toLowerCase().includes('not verified')) {
-      const r2 = await send('Integrated IT Support <onboarding@resend.dev>');
-      const j2 = await r2.json().catch(() => ({}));
-      if (r2.ok && j2.id) { console.log('[stripe-webhook] emailed via onboarding fallback', to); return true; }
-    }
+    const { sendEmail, hashIdentity } = await import('./lib/notify.mjs');
+    const r = await sendEmail({ to, subject, html, from: process.env.RESEND_FROM || `${META.brand} <noreply@iisupp.net>`, tag: 'stripe-webhook' });
+    if (r.ok) { console.log('[stripe-webhook] emailed', hashIdentity(to), 'via', r.provider, 'msg', r.id); return true; }
+    console.warn('[stripe-webhook] email NOT delivered', hashIdentity(to), r.error, (r.attempts || []).join(' | ').slice(0, 300));
     return false;
-  } catch (e) { console.warn('[stripe-webhook] resend exception', e.message); return false; }
+  } catch (e) { console.warn('[stripe-webhook] email exception', e.message); return false; }
+}
+
+// ---- Idempotency ---------------------------------------------------------
+// Returns 'new' | 'duplicate' | 'unknown' (Blobs unavailable → process the event; never drop it).
+async function markEventSeen(eventId, type) {
+  if (!eventId) return 'unknown';
+  try {
+    const { getStore } = require('@netlify/blobs');
+    const store = getStore({ name: EVENTS_STORE, consistency: 'strong' });
+    const key = 'evt-' + eventId;
+    const prior = await store.get(key, { type: 'json' });
+    if (prior) return 'duplicate';
+    await store.setJSON(key, { id: eventId, type, first_seen: Date.now() });
+    return 'new';
+  } catch (e) {
+    console.warn('[stripe-webhook] dedupe store unavailable:', e.message);
+    return 'unknown';
+  }
+}
+
+// ---- License revocation on cancel ---------------------------------------
+async function revokeLicensesForSubscription(stripe, sub) {
+  let email = null;
+  try {
+    const customer = await stripe.customers.retrieve(sub.customer);
+    email = customer && customer.email ? String(customer.email).trim().toLowerCase() : null;
+  } catch (e) { console.warn('[stripe-webhook] cannot fetch customer for revoke:', e.message); }
+  if (!email) { console.warn('[stripe-webhook] subscription.deleted without customer email; no license to revoke'); return; }
+  let getStore;
+  try { ({ getStore } = require('@netlify/blobs')); } catch (e) { console.warn('[stripe-webhook] Blobs unavailable; license not revoked'); return; }
+  const store = getStore({ name: 'aria-licenses', consistency: 'strong' });
+  const seen = new Set();
+  for (const beKey of ['by-email/' + email]) {
+    const be = await store.get(beKey, { type: 'json' }).catch(() => null);
+    const token = be && be.token;
+    if (!token || seen.has(token)) continue;
+    seen.add(token);
+    const rec = await store.get(token, { type: 'json' }).catch(() => null);
+    if (!rec) continue;
+    if (rec.active === false) { console.log('[stripe-webhook] license already inactive', token.slice(0, 9) + '…'); continue; }
+    rec.active = false;
+    rec.revokedAt = new Date().toISOString();
+    rec.revokedReason = 'customer.subscription.deleted:' + sub.id;
+    await store.setJSON(token, rec);
+    console.log('[stripe-webhook] revoked license', token.slice(0, 9) + '… for subscription', sub.id);
+  }
+  if (!seen.size) console.log('[stripe-webhook] no license on file for cancelled subscription', sub.id);
 }
 
 

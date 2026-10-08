@@ -11,13 +11,17 @@ const crypto = require('crypto');
 function verifyStripeSig(payload, sigHeader, secret) {
   if (!sigHeader || !secret) return false;
   const parts = {};
-  sigHeader.split(',').forEach(p => { const [k, v] = p.split('='); parts[k] = v; });
+  String(sigHeader).split(',').forEach(p => { const [k, v] = p.split('='); parts[k] = v; });
   const ts = parts.t;
   const v1 = parts.v1;
   if (!ts || !v1) return false;
+  // Replay window: Stripe recommends rejecting timestamps older than 5 minutes.
+  if (Math.abs(Math.floor(Date.now() / 1000) - Number(ts)) > 300) return false;
   const signed = ts + '.' + payload;
   const expected = crypto.createHmac('sha256', secret).update(signed).digest('hex');
-  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(v1));
+  const a = Buffer.from(expected), b = Buffer.from(String(v1));
+  if (a.length !== b.length) return false;
+  try { return crypto.timingSafeEqual(a, b); } catch { return false; }
 }
 
 exports.handler = async (event) => {
@@ -26,7 +30,9 @@ exports.handler = async (event) => {
 
   const sig = event.headers['stripe-signature'] || event.headers['Stripe-Signature'];
   const secret = process.env.STRIPE_PILOT_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SECRET;
-  if (secret && !verifyStripeSig(event.body, sig, secret)) {
+  // Fail-closed (audit §7): an unsigned webhook used to be accepted whenever the secret was unset.
+  if (!secret) return { statusCode: 503, headers, body: JSON.stringify({ error: 'not-configured', hint: 'set STRIPE_PILOT_WEBHOOK_SECRET or STRIPE_WEBHOOK_SECRET' }) };
+  if (!verifyStripeSig(event.body, sig, secret)) {
     return { statusCode: 401, headers, body: JSON.stringify({ error: 'invalid signature' }) };
   }
 

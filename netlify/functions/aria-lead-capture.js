@@ -1,4 +1,5 @@
-const { checkRateLimit, rateLimitResponse } = require('./_rate-limit');
+const { checkRateLimit, rateLimitResponse, hashKey } = require('./_rate-limit');
+const { SALES_EMAIL, OWNER_EMAIL, SUPPORT_PHONE, SUPPORT_TEL } = require('./lib/contacts.cjs');
 
 /**
  * aria-lead-capture — Capture a "talk to sales" lead from the /aria chat.
@@ -7,6 +8,11 @@ const { checkRateLimit, rateLimitResponse } = require('./_rate-limit');
  *
  *  Revenue path: Category 15 (Sales/CRM). Closes the gap where users
  *  ready to buy had no path from chat to a sales conversation.
+ *
+ *  2026-10-08 (audit §5 / top-10 #9): the lead is PERSISTED to Blobs (`aria-leads`, key lead/<ts>_<hash>)
+ *  BEFORE any email (pattern marketplace-request.mjs), mail goes through lib/notify.mjs, and when the owner
+ *  alert could not be delivered the response says so — ok:false, stored:true, delivered:false — with the
+ *  fallback email/phone, instead of "Lead captured" over a lost email. The success shape is unchanged.
  */
 exports.handler = async (event) => {
   const headers = {
@@ -41,7 +47,21 @@ exports.handler = async (event) => {
   }
 
   const at = new Date().toISOString();
-  const ahmad = process.env.SALES_NOTIFY_EMAIL || process.env.ORDER_NOTIFY_EMAIL || 'integrateditsupp@gmail.com';
+  const ahmad = process.env.SALES_NOTIFY_EMAIL || process.env.ORDER_NOTIFY_EMAIL || SALES_EMAIL;
+
+  // 1) persist FIRST — the lead is the asset, the email is the courtesy
+  const leadRecord = { at, name, email, company: company || null, phone: phone || null, message: message || null, last_intent: lastIntent || null, source, ua: (event.headers && event.headers['user-agent']) || null };
+  let stored = false;
+  let leadKey = null;
+  try {
+    const { getStore } = require('@netlify/blobs');
+    const store = getStore({ name: 'aria-leads', consistency: 'strong' });
+    leadKey = `lead/${Date.now()}_${hashKey(email).slice(0, 16)}`;
+    await store.setJSON(leadKey, leadRecord);
+    stored = true;
+  } catch (e) {
+    console.error('[aria-lead-capture] lead NOT stored:', e.message);
+  }
 
   // Email Ahmad — formatted as a sales-ready lead
   const opsHtml = shell(`
@@ -64,45 +84,47 @@ exports.handler = async (event) => {
     <p style="margin:0 0 14px">Thanks for reaching out from ARIA. Ahmad — founder of Integrated IT Support — has been notified and will get back to you within the next business day, usually faster.</p>
     ${message ? `<div style="background:rgba(197,160,89,.08);border-left:2px solid #c5a059;padding:12px 16px;border-radius:6px;margin:14px 0">${esc(message)}</div>` : ''}
     <p style="margin:14px 0 0">In the meantime if you want to start ARIA again or browse plans, head to <a href="https://iisupp.net/aria" style="color:#c5a059">iisupp.net/aria</a> or <a href="https://iisupp.net/plans" style="color:#c5a059">iisupp.net/plans</a>.</p>
-    <p style="margin:14px 0 0">Direct line if urgent: <a href="tel:+16475813182" style="color:#c5a059">(647) 581-3182</a></p>
+    <p style="margin:14px 0 0">Direct line if urgent: <a href="tel:${esc(SUPPORT_TEL)}" style="color:#c5a059">${esc(SUPPORT_PHONE)}</a></p>
   `);
 
-  // Fire both emails in parallel
-  await Promise.all([
-    sendResend(ahmad, `[LEAD] ${name} · ${email}${company ? ' · ' + company : ''}`, opsHtml),
+  // 2) emails — both in parallel, both honest
+  const [ops, conf] = await Promise.all([
+    sendResend(ahmad, `[LEAD] ${name} · ${email}${company ? ' · ' + company : ''}`, opsHtml, email),
     sendResend(email, 'Got your message — Ahmad will reach out shortly', leadHtml)
-  ]).catch(e => console.warn('[aria-lead-capture] email error:', e.message));
+  ]).catch(e => { console.warn('[aria-lead-capture] email error:', e.message); return [{ ok: false, error: e.message }, { ok: false, error: e.message }]; });
 
-  console.log('[aria-lead-capture] lead captured:', JSON.stringify({ at, name, email, company, source }));
+  console.log('[aria-lead-capture] lead captured:', JSON.stringify({ at, email_hash: hashKey(email).slice(0, 16), source, stored, key: leadKey, ops_delivered: !!ops.ok, confirmation_delivered: !!conf.ok }));
 
-  return { statusCode: 200, headers, body: JSON.stringify({ ok: true, message: 'Lead captured — Ahmad will reach out shortly.' }) };
+  if (ops.ok) {
+    return { statusCode: 200, headers, body: JSON.stringify({ ok: true, message: 'Lead captured — Ahmad will reach out shortly.', stored, delivered: true, confirmation_sent: !!conf.ok }) };
+  }
+  // The owner alert did not go out: say so, keep the lead, hand the visitor a path that works today.
+  console.error('[aria-lead-capture] owner alert NOT delivered', JSON.stringify({ key: leadKey, error: ops.error, attempts: ops.attempts }));
+  return { statusCode: stored ? 200 : 502, headers, body: JSON.stringify({
+    ok: false,
+    stored,
+    delivered: false,
+    confirmation_sent: !!conf.ok,
+    error: ops.dormant ? 'email_not_configured' : 'email_delivery_failed',
+    message: stored
+      ? `Your details are saved on our side, but our alert email did not go through. To make sure you are not kept waiting, email ${OWNER_EMAIL} or call ${SUPPORT_PHONE} and mention ARIA.`
+      : `We could not save your request right now. Please email ${OWNER_EMAIL} or call ${SUPPORT_PHONE} and mention ARIA.`,
+    fallback: { email: OWNER_EMAIL, phone: SUPPORT_PHONE }
+  }) };
 };
 
 function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
 function shell(inner) {
-  return `<div style="max-width:560px;margin:0 auto;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#222;line-height:1.6;font-size:15px;background:#fff;padding:24px"><div style="border-top:3px solid #c5a059;padding-top:18px">${inner}<p style="margin:24px 0 0;font-size:11px;color:#999;border-top:1px solid #eee;padding-top:12px">Integrated IT Support Inc. · (647) 581-3182 · ahmad.wasee@iisupp.net</p></div></div>`;
+  return `<div style="max-width:560px;margin:0 auto;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#222;line-height:1.6;font-size:15px;background:#fff;padding:24px"><div style="border-top:3px solid #c5a059;padding-top:18px">${inner}<p style="margin:24px 0 0;font-size:11px;color:#999;border-top:1px solid #eee;padding-top:12px">Integrated IT Support Inc. · ${esc(SUPPORT_PHONE)} · ${esc(OWNER_EMAIL)}</p></div></div>`;
 }
 
-async function sendResend(to, subject, html) {
-  const key = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM || 'Integrated IT Support <noreply@iisupp.net>';
-  if (!key) { console.warn('[aria-lead-capture] no RESEND_API_KEY'); return false; }
+// Honest sender (lib/notify.mjs): ok only when Resend/SMTP confirmed the message.
+async function sendResend(to, subject, html, replyTo) {
   try {
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from, to: [to], subject, html })
-    });
-    if (r.ok) return true;
-    if (r.status === 403) {
-      await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from: 'Integrated IT Support <onboarding@resend.dev>', to: [to], subject, html })
-      });
-      return true;
-    }
-    return false;
-  } catch { return false; }
+    const { sendEmail } = await import('./lib/notify.mjs');
+    return await sendEmail({ to, subject, html, replyTo, tag: 'lead-capture' });
+  } catch (e) {
+    return { ok: false, error: e.message };
+  }
 }

@@ -1,8 +1,16 @@
-// aria-session-end v0.4 — split user/admin email + smtp.gmail.com + company name at top
+// aria-session-end v0.5 — split user/admin email + company name at top
 // POST /.netlify/functions/aria-session-end
+//
+// 2026-10-08 (audit top-10 #9d): v0.4 could only send through Gmail SMTP and answered `202 {ok:true,
+// queued:true}` when SMTP_APP_PASSWORD was missing/failing — nothing was queued. Mail now goes through
+// lib/notify.mjs (Resend first, SMTP fallback) and the response is honest: ok:false + emailSent:false
+// when no provider confirmed delivery. The session record is still closed either way. Blob key guarded.
 
 import { getStore } from '@netlify/blobs';
-import nodemailer from 'nodemailer';
+import { sendEmail } from './lib/notify.mjs';
+import contacts from './lib/contacts.cjs';
+
+const SESSION_ID_RE = /^[A-Za-z0-9_.@-]{1,120}$/;
 
 export default async (request) => {
   const cors = {
@@ -19,7 +27,7 @@ export default async (request) => {
   catch { return jsonResp(400, cors, { error: 'invalid JSON' }); }
 
   const { sessionId, status, summary, userIssue, closureReason } = body;
-  if (!sessionId || !['resolved', 'escalated', 'timeout', 'user_ended'].includes(status)) {
+  if (!sessionId || !SESSION_ID_RE.test(String(sessionId)) || !['resolved', 'escalated', 'timeout', 'user_ended'].includes(status)) {
     return jsonResp(400, cors, { error: 'sessionId + valid status required' });
   }
 
@@ -41,55 +49,31 @@ export default async (request) => {
 
   const subject = `Ticket ${meta.ticket}`;
   const adminSubject = `[ADMIN] Ticket ${meta.ticket} · ${(meta.user && meta.user.company) || 'unknown company'} · ${status}`;
-  const userEmail = meta.user.email;
-  const adminEmail = 'integrateditsupp@iisupp.net';
+  const userEmail = meta.user && meta.user.email;
+  const adminEmail = contacts.SUPPORT_EMAIL;
   const userHtml = renderUserReport(meta, events);
   const adminHtml = renderAdminReport(meta, events);
 
-  const smtpPass = process.env.SMTP_APP_PASSWORD;
-  const senderEmail = process.env.SMTP_SENDER || 'integrateditsupp@iisupp.net';
-  const smtpAuthUser = process.env.SMTP_AUTH_USER || 'ahmad.wasee@iisupp.net';
+  // user-safe email
+  const userMail = userEmail
+    ? await sendEmail({ to: userEmail, subject, html: userHtml, text: textVersion(meta), tag: 'session-end-user' })
+    : { ok: false, error: 'no-user-email' };
+  // admin email (includes admin-only section)
+  const adminMail = await sendEmail({ to: adminEmail, subject: adminSubject, html: adminHtml, text: 'See HTML version for full admin report.', tag: 'session-end-admin' });
 
-  if (!smtpPass) {
-    console.log('[aria-session-end] SMTP not configured. Ticket:', meta.ticket, 'to:', userEmail);
-    return jsonResp(202, cors, {
-      ok: true, ticket: meta.ticket, emailSent: false, queued: true,
-      reason: 'SMTP_APP_PASSWORD env var not set'
-    });
+  const emailSent = !!userMail.ok;
+  if (!emailSent) console.error('[aria-session-end] user report NOT delivered', JSON.stringify({ ticket: meta.ticket, error: userMail.error, attempts: userMail.attempts }));
+  if (!adminMail.ok) console.error('[aria-session-end] admin report NOT delivered', JSON.stringify({ ticket: meta.ticket, error: adminMail.error }));
+
+  if (emailSent) {
+    return jsonResp(200, cors, { ok: true, ticket: meta.ticket, emailSent: true, to: userEmail, admin: adminEmail, adminEmailSent: !!adminMail.ok, via: userMail.provider });
   }
-
-  try {
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false,
-      requireTLS: true,
-      auth: { user: smtpAuthUser, pass: smtpPass }
-    });
-
-    // user-safe email
-    await transporter.sendMail({
-      from: `"Integrated IT Support" <${senderEmail}>`,
-      to: userEmail,
-      subject,
-      html: userHtml,
-      text: textVersion(meta)
-    });
-
-    // admin email (includes admin-only section)
-    await transporter.sendMail({
-      from: `"ARIA Admin" <${senderEmail}>`,
-      to: adminEmail,
-      subject: adminSubject,
-      html: adminHtml,
-      text: 'See HTML version for full admin report.'
-    });
-
-    return jsonResp(200, cors, { ok: true, ticket: meta.ticket, emailSent: true, to: userEmail, admin: adminEmail });
-  } catch (e) {
-    console.error('[aria-session-end] email send failed:', e.message);
-    return jsonResp(500, cors, { ok: false, ticket: meta.ticket, emailSent: false, error: e.message });
-  }
+  const dormant = !!userMail.dormant;
+  return jsonResp(dormant ? 202 : 502, cors, {
+    ok: false, ticket: meta.ticket, emailSent: false, queued: false, adminEmailSent: !!adminMail.ok,
+    reason: dormant ? 'no email provider configured (set RESEND_API_KEY + RESEND_FROM)' : 'email delivery failed',
+    note: `Your session is closed and your reference number is ${meta.ticket}. Keep it — the report email could not be delivered; call ${contacts.SUPPORT_PHONE} to request it.`
+  });
 };
 
 function jsonResp(status, headers, obj) {

@@ -2,7 +2,7 @@
   "name": "iisupport-net",
   "version": "1.5.0",
   "private": true,
-  "description": "Integrated IT Support \u2014 main site + ARIA AI helpdesk",
+  "description": "Integrated IT Support — main site + ARIA AI helpdesk",
   "engines": {
     "node": ">=20"
   },
@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@netlify/blobs": "^7.4.0",
+    "bcryptjs": "^3.0.3",
     "busboy": "^1.6.0",
     "exceljs": "^4.4.0",
     "framer-motion": "^12.40.0",

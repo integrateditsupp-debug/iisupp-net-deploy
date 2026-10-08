@@ -1,5 +1,8 @@
 /**
- * aria-winback-cron - draft-only churn and win-back playbook.
+ * aria-winback-draft - draft-only churn and win-back playbook.
+ * (Renamed from aria-winback-cron.js on 2026-10-08, audit #9c: it shared the function name with the
+ *  scheduled aria-winback-cron.mjs, so the bundler picked one of the two at random. The SDK method
+ *  winbackScan() now posts here.)
  *
  * POST { event:'scan', customers:[...] } returns recommended drafts.
  * It never sends email, changes billing, or reactivates subscriptions.

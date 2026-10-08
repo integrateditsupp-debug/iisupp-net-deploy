@@ -1,6 +1,6 @@
 /**
  * aria-billing-portal — Generate Stripe Customer Portal session for self-serve billing
- *  POST { email }
+ *  POST { email, token? }
  *    -> looks up customer in Stripe, creates a billing-portal session,
  *       returns {url} to redirect user to.
  *
@@ -8,14 +8,17 @@
  *  No need to email Ahmad for routine billing changes.
  *
  *  Cat 5 — Account management. Reduces support burden by ~30% per Stripe data.
+ *
+ *  AUTH (2026-10-08, audit #1): "knows the email" is no longer enough. The request must carry a
+ *  magic-link `token` for that email (POST aria-magic-link {event:'request', email}) or an Aperture
+ *  Bearer JWT — see lib/require-verified-email.cjs. ARIA_ALLOW_EMAIL_ONLY_ACCOUNT_ACTIONS=1 restores
+ *  the old behaviour as an emergency toggle. Response shapes are unchanged.
  */
+const { requireVerifiedEmail, verifiedEmailResponse } = require('./lib/require-verified-email.cjs');
+const { corsHeaders, allowedOrigins } = require('./lib/cors.cjs');
+
 exports.handler = async (event) => {
-  const headers = {
-    'Access-Control-Allow-Origin': 'https://iisupp.net',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json'
-  };
+  const headers = corsHeaders(event);
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'POST only' }) };
 
@@ -27,6 +30,9 @@ exports.handler = async (event) => {
   if (!email || !/.+@.+\..+/.test(email)) {
     return ok({ ok: false, error: 'valid email required' });
   }
+
+  const gate = requireVerifiedEmail(event, body, { email, scope: 'aria-billing-portal' });
+  if (!gate.ok) return verifiedEmailResponse(gate, headers);
 
   const stripeKey = process.env.STRIPE_SECRET_KEY;
   if (!stripeKey) {
@@ -42,7 +48,7 @@ exports.handler = async (event) => {
     });
     const searchJson = await searchResp.json();
     if (!searchResp.ok) {
-      console.warn('[billing-portal] stripe search err:', searchJson);
+      console.warn('[billing-portal] stripe search err:', searchJson && searchJson.error && searchJson.error.type);
       return ok({ ok: false, error: 'lookup failed' });
     }
     const customers = searchJson.data || [];
@@ -54,7 +60,7 @@ exports.handler = async (event) => {
     // 2. Create billing portal session
     const params = new URLSearchParams();
     params.append('customer', customerId);
-    params.append('return_url', body.return_url || 'https://iisupp.net/aria');
+    params.append('return_url', safeReturnUrl(body.return_url));
 
     const sessResp = await fetch('https://api.stripe.com/v1/billing_portal/sessions', {
       method: 'POST',
@@ -66,15 +72,30 @@ exports.handler = async (event) => {
     });
     const sess = await sessResp.json();
     if (!sessResp.ok) {
-      console.warn('[billing-portal] stripe session err:', sess);
-      return ok({ ok: false, error: sess.error?.message || 'session creation failed' });
+      console.warn('[billing-portal] stripe session err:', sess && sess.error && sess.error.message);
+      return ok({ ok: false, error: 'session creation failed' });
     }
 
     return ok({ ok: true, url: sess.url, expires_at: sess.expires_at });
   } catch (e) {
     console.error('[billing-portal] err:', e.message);
-    return ok({ ok: false, error: 'unexpected error', detail: e.message });
+    return ok({ ok: false, error: 'unexpected error', error_code: 'billing_portal_failed' });
   }
 
   function ok(b) { return { statusCode: 200, headers, body: JSON.stringify(b) }; }
 };
+
+// Open-redirect fix (audit §4): the Stripe portal "return to site" link may only point at our own
+// origins. A relative path is allowed; anything else falls back to /aria.
+function safeReturnUrl(raw) {
+  const fallback = 'https://iisupp.net/aria';
+  const s = String(raw || '').trim();
+  if (!s) return fallback;
+  if (/^\/(?!\/)/.test(s)) return 'https://iisupp.net' + s;
+  try {
+    const u = new URL(s);
+    if (allowedOrigins().has(u.origin)) return u.toString();
+  } catch { /* fall through */ }
+  console.warn('[billing-portal] rejected return_url (not an allowed origin)');
+  return fallback;
+}

@@ -16,8 +16,11 @@ function baseUrl(event) {
   return proto + '://' + host + '/.netlify/functions/aria-slack-install';
 }
 
+// OAuth state signing secret — no literal fallback (audit §7: 'dev-only' made the state forgeable).
+function stateSecret() { return process.env.SLACK_STATE_SECRET || process.env.APERTURE_JWT_SECRET || ''; }
 function signState(state) {
-  const secret = process.env.SLACK_STATE_SECRET || process.env.APERTURE_JWT_SECRET || 'dev-only';
+  const secret = stateSecret();
+  if (!secret) throw new Error('slack-state-secret-not-configured');
   return crypto.createHmac('sha256', secret).update(String(state || '')).digest('hex').slice(0, 18);
 }
 
@@ -37,6 +40,9 @@ function buildAuthorizeUrl(event, state) {
 
 exports.handler = async (event) => {
   const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' };
+  if (!stateSecret()) {
+    return { statusCode: 503, headers, body: JSON.stringify({ error: 'not-configured', hint: 'set SLACK_STATE_SECRET or APERTURE_JWT_SECRET' }) };
+  }
 
   if (event.httpMethod === 'POST') {
     let body;

@@ -26,16 +26,20 @@
  *                    'list-groups' | 'list-devices' | 'health-check',
  *            params: {...} }
  *    Returns: { ok, data, count } or { error }
+ *
+ *  AUTH (2026-10-08, audit top-10 #3): this endpoint listed a tenant's users/groups/Intune devices to
+ *  ANY caller once the Graph creds were set (no auth, CORS *). Every action except `health-check` now
+ *  requires an Aperture admin JWT (Authorization: Bearer …) or an admin token — X-Admin-Token header /
+ *  body.admin_token — checked constant-time against ARIA_ADMIN_TOKEN | SENTINEL_ADMIN_TOKEN |
+ *  INTERNAL_WEBHOOK_SECRET (lib/admin-gate.cjs, fail-closed). CORS narrowed to our origins. Upstream
+ *  error bodies are logged, not returned.
  */
+const { bearerFromEvent } = require('./_verify-bearer.cjs');
+const { requireAdminToken, adminGateResponse } = require('./lib/admin-gate.cjs');
+const { corsHeaders } = require('./lib/cors.cjs');
 
 exports.handler = async (event) => {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Type': 'application/json',
-    'Cache-Control': 'no-store'
-  };
+  const headers = corsHeaders(event);
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'POST only' }) };
 
@@ -45,6 +49,11 @@ exports.handler = async (event) => {
 
   const action = String(body.action || '').trim();
   const params = body.params || {};
+
+  if (action !== 'health-check' && !bearerFromEvent(event)) {
+    const gate = requireAdminToken(event, { envNames: ['ARIA_ADMIN_TOKEN', 'SENTINEL_ADMIN_TOKEN', 'INTERNAL_WEBHOOK_SECRET'], body });
+    if (!gate.ok) return adminGateResponse(gate, headers);
+  }
 
   // Health check — no auth required, doesn't hit Graph
   if (action === 'health-check') {
@@ -79,7 +88,10 @@ exports.handler = async (event) => {
   // Get an access token via client credentials flow
   let token;
   try { token = await getGraphToken(tenantId, clientId, clientSecret); }
-  catch (e) { return { statusCode: 502, headers, body: JSON.stringify({ error: 'token fetch failed: ' + e.message }) }; }
+  catch (e) {
+    console.error('[aria-m365-graph] token fetch failed:', e.message);
+    return { statusCode: 502, headers, body: JSON.stringify({ error: 'Graph token fetch failed', error_code: 'graph_token_failed' }) };
+  }
 
   try {
     let result;
@@ -123,7 +135,8 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers, body: JSON.stringify({ ok: true, action, data: result }) };
   } catch (e) {
     console.error('[aria-m365-graph] error:', e.message);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: e.message }) };
+    const isInput = /required$/.test(String(e.message || ''));
+    return { statusCode: isInput ? 400 : 502, headers, body: JSON.stringify({ error: isInput ? e.message : 'Graph call failed', error_code: isInput ? 'bad_request' : 'graph_call_failed' }) };
   }
 };
 

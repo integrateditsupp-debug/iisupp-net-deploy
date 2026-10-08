@@ -5,6 +5,7 @@
  *  Cat 11 — Compliance (SOC 2 P6.1 data subject rights + retention).
  */
 const crypto = require('crypto');
+const { requireAdminToken, adminGateResponse } = require('./lib/admin-gate.cjs');
 exports.handler = async (event) => {
   const headers = { 'Content-Type': 'application/json' };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'POST only' }) };
@@ -12,11 +13,10 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || '{}'); }
   catch { return { statusCode: 400, headers, body: JSON.stringify({ error: 'invalid JSON' }) }; }
 
-  const expected = process.env.APERTURE_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD;
-  const internal = body.internal_token === process.env.INTERNAL_WEBHOOK_SECRET;
-  if (!internal && (!expected || body.admin_token !== expected)) {
-    return { statusCode: 401, headers, body: JSON.stringify({ error: 'auth required' }) };
-  }
+  // Fail-closed, constant-time (audit §7: `body.internal_token === undefined` used to pass when the env was unset).
+  const gate = requireAdminToken(event, { envNames: ['INTERNAL_WEBHOOK_SECRET', 'ARIA_ADMIN_TOKEN', 'APERTURE_ADMIN_PASSWORD', 'ADMIN_PASSWORD'], body });
+  if (!gate.ok) return adminGateResponse(gate, headers);
+  const internal = gate.via === 'INTERNAL_WEBHOOK_SECRET';
 
   const tenantId = String(body.tenant_id || body.customer_id || body.email || '');
   if (!tenantId) return { statusCode: 400, headers, body: JSON.stringify({ error: 'tenant_id required' }) };
