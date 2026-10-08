@@ -22,6 +22,9 @@ import { detectOp, detectUiOpen, detectQueueWork, detectSearchAsk, isMetaTurn, d
 import { localAnswer } from '../assets/axis-priorities.js';
 import { speakable } from '../scripts/lib/axis-vault-brain.mjs';
 
+import { canRead, readingSummary } from '../scripts/lib/host-reading.mjs';
+let notTakenCount = 0;
+
 const require = createRequire(import.meta.url);
 const { isConversational, isTroubleshoot, isMemoryQuery } = require('../netlify/functions/lib/axis-brain.cjs');
 const ROOT = path.join(import.meta.dirname, '..');
@@ -122,11 +125,16 @@ ok('search is a rail: snapshot first, Cowork on a miss');
 // ---- 7. The system prompt now carries the evidence rule ----
 // Jared Rhod's Rule 1 ("Evidence only, never guess"), applied where the failure happened: the
 // worker's own system prompt, so no CLI answer claims an act no rail performed.
+// The prompt lives in Ahmad's Obsidian vault, outside this repository — present on the operator
+// machine, absent in every checkout. Reading it there is real; failing here would be a lie (RUN-BS).
 {
-  const sys = fs.readFileSync(path.join(process.env.AXIS_VAULT || path.join(process.env.USERPROFILE || '', 'Documents', 'AXIS-Brain'), '00_Index', 'AXIS-SYSTEM.md'), 'utf8');
-  assert.ok(/Never say an action happened/.test(sys), 'the hard rules forbid claiming unperformed actions');
+  const SYS = path.join(process.env.AXIS_VAULT || path.join(process.env.USERPROFILE || '', 'Documents', 'AXIS-Brain'), '00_Index', 'AXIS-SYSTEM.md');
+  if (canRead(SYS, 'the evidence rule in the worker system prompt', 'operatorVault')) {
+    const sys = fs.readFileSync(SYS, 'utf8');
+    assert.ok(/Never say an action happened/.test(sys), 'the hard rules forbid claiming unperformed actions');
+    ok('the evidence rule is in the hard rules the worker reads at boot');
+  } else notTakenCount++;
 }
-ok('the evidence rule is in the hard rules the worker reads at boot');
 
 // ---- 8. The transcript, end to end: every turn now lands on the right rail ----
 const snap = { followups: { data: { overdue: [{ id: 7, business_id: 1, company: 'Accounting Plus Business Services', due_at: Date.now() - 29 * 86400000 }] } } };

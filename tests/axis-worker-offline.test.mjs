@@ -26,7 +26,20 @@ const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
 const B = require(path.join(root, 'netlify', 'functions', 'lib', 'axis-brain.cjs'));
 const director = fs.readFileSync(path.join(root, 'netlify', 'functions', 'axis-director.js'), 'utf8');
-const runner = fs.readFileSync(path.join(root, 'scripts', 'run-axis-brain-worker.ps1'), 'utf8');
+// The launcher is a .ps1, and `.gitignore:80  *.ps1` keeps every launcher off the shared line by
+// design. It exists on the operator machine and cannot exist in a clean checkout — so its readings
+// are NOT TAKEN here, never faked and never counted as code failures (RUN-BS).
+import { artefactPresent, notTaken, readingSummary } from '../scripts/lib/host-reading.mjs';
+const RUNNER_PS1 = path.join(root, 'scripts', 'run-axis-brain-worker.ps1');
+const runnerHere = artefactPresent(RUNNER_PS1);
+const runner = runnerHere ? fs.readFileSync(RUNNER_PS1, 'utf8') : '';
+let notTakenCount = 0;
+const launcherReading = (what) => {
+  if (runnerHere) return true;
+  notTaken(what, 'gitignored', 'run-axis-brain-worker.ps1');
+  notTakenCount++;
+  return false;
+};
 let n = 0; const ok = () => { n++; };
 
 // ---- 1. workerOnline exists and fails closed ----
@@ -72,6 +85,7 @@ let n = 0; const ok = () => { n++; };
 // ---- 4. The launcher is a supervisor, not a one-shot ----
 // The previous version ran node once, hidden, with no log: any death was silent and permanent, and
 // the only symptom was AXIS telling Ahmad to top up his account.
+if (launcherReading('the launcher is a supervisor, not a one-shot'))
 {
   assert.ok(/while\s*\(\s*\$true\s*\)/.test(runner), 'the launcher does not restart the worker');
   assert.ok(/Start-Sleep/.test(runner), 'there is no backoff between restarts');
@@ -83,6 +97,7 @@ let n = 0; const ok = () => { n++; };
 // `$env:X = $null` assigns an EMPTY STRING in PowerShell. An empty ANTHROPIC_API_KEY still occupies
 // its slot in the precedence chain, beating the OAuth login and authenticating as nobody — the exact
 // trap this launcher exists to avoid.
+if (launcherReading('the launcher truly unsets the credential vars'))
 {
   assert.ok(/Remove-Item\s+"?Env:/.test(runner), 'the launcher does not truly unset the credential vars');
   assert.ok(!/\$env:ANTHROPIC_API_KEY\s*=\s*\$null/.test(runner),
@@ -94,6 +109,7 @@ let n = 0; const ok = () => { n++; };
 // Windows PowerShell 5.1 reads a .ps1 as ANSI unless it carries a UTF-8 BOM. An em dash written by
 // a UTF-8 editor decoded as mojibake, produced a stray quote, and the script failed to parse —
 // silently, because the Startup shortcut runs it with -WindowStyle Hidden.
+if (launcherReading('the launcher is pure ASCII'))
 {
   const bad = [...runner].map((c, i) => [c, i]).filter(([c]) => c.charCodeAt(0) > 126);
   assert.equal(bad.length, 0,
@@ -104,6 +120,7 @@ let n = 0; const ok = () => { n++; };
 // ---- 7. The log is written as UTF-8, not UTF-16 ----
 // PowerShell 5.1's `*>>` redirection writes UTF-16LE; the worker's own lines came out as
 // spaced-apart mojibake, making the log useless for the one job it has.
+if (launcherReading('the launcher log is pinned to UTF-8'))
 {
   // Code lines only: the launcher's comments legitimately name `*>> $Log` while explaining why it
   // is not used, and matching those would make the guard unfixable.
@@ -120,6 +137,7 @@ let n = 0; const ok = () => { n++; };
 // already abandoned. The console times out, the cascade falls through to the metered API, and AXIS
 // reports "out of credit" for a plan that was working the whole time. Observed 2026-08-12 with
 // PIDs 32488 and 45920 both alive after a Startup shortcut and a manual launch overlapped.
+if (launcherReading('only one supervisor may run'))
 {
   assert.ok(runner.includes('System.Threading.Mutex'),
     'the supervisor has no single-instance guard - a second launch starts a second worker');
@@ -135,4 +153,4 @@ let n = 0; const ok = () => { n++; };
   ok();
 }
 
-console.log(`axis-worker-offline: ${n} checks passed`);
+console.log(readingSummary('axis-worker-offline', n, notTakenCount));
