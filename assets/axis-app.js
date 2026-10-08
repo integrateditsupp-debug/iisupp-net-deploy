@@ -12,7 +12,7 @@ import { openComposer } from './axis-composer.js';
 import { renderFleet } from './axis-fleet.js';
 import { renderReports } from './axis-reports.js';
 import { renderDirector } from './axis-director-screen.js';
-import { renderPriorities, collectPriorities, dueLabel, localAnswer } from './axis-priorities.js';
+import { renderPriorities, collectPriorities, dueLabel, localAnswer, resolveRemovalTargets, unsupportedBoardCommand } from './axis-priorities.js';
 import { mountGlobes } from './axis-globe.js';
 import { toggleHologram } from './axis-hologram.js';
 // AXIS persona + turn grammar (the JARVIS flow). Additive: the voice machinery below is unchanged;
@@ -20,7 +20,8 @@ import { toggleHologram } from './axis-hologram.js';
 import { axisPersonaBonus, AXIS_PROSODY, VOICE_POLICY_REV, ackLine, greetLine, routeTail,
   isWake, isStop, isConfirm, isDeny, stripWake, smallTalk, stripMetaNarration, markRepeat,
   voiceProfile, voiceFamily, polishForSpeech, speechify, phraseChunks,
-  splitForTurns, isContinue, isReferential, detectOp } from './axis-persona.js';
+  splitForTurns, isContinue, isReferential, detectOp, detectVideoDirection,
+  detectUiOpen, detectQueueWork, detectSearchAsk, isMetaTurn, detectBoardRead } from './axis-persona.js';
 
 const TOKEN_KEY = 'aperture_jwt';
 
@@ -781,11 +782,9 @@ function globalSection() {
 
 SCREENS.overview = (c) => {
   const d = data('overview'); const k = d.kpis || {};
-  // The director field mounts in the head band, not here. Ahmad, 2026-08-12: "Leave axis-director
-  // field where it was, place axis below that." It reads in the same place it always did — first
-  // thing under the topbar — but it is now above the globe and outside the scroll pane, so it stays
-  // put instead of sliding under the globe on the first scroll.
-  mountAxisHead(axisStrip(k));
+  // The director field is gone. Ahmad, 2026-08-12: "Remove the one above the globe" — its counts
+  // line and chips live on the orbit now (renderOrbStatus, called from renderModule for every
+  // screen, not just Overview).
   c.append(head('Overview', 'command deck'));
   const kpis = [['Pipeline value', fmtMoney(k.pipeline_value)], ['Awaiting approval', k.awaiting_approval ?? 0],
     ['Client messages waiting', k.messages_waiting ?? 0], ['Follow-ups due', k.followups_due ?? 0],
@@ -1459,17 +1458,9 @@ function placeholder(label) {
       el('pre', { class: 'mono', style: 'font-size:11px;white-space:pre-wrap;color:var(--txt-2);margin:0;max-height:340px;overflow:auto' }, d ? JSON.stringify(d, null, 2) : '(empty)')]));
   };
 }
-// The head band sits above the globe and outside the scroll pane. Cleared on every render so a screen
-// that has no director field does not inherit the last one's — the band collapses to nothing instead
-// (.axis-head-strip:empty).
-function mountAxisHead(node) {
-  const slot = $('axisStripSlot'); if (!slot) return;
-  slot.innerHTML = '';
-  if (node) slot.append(node);
-}
 function renderModule() {
   clearOverlays();
-  mountAxisHead(null);
+  renderOrbStatus();   // the orbit's honest-counts line tracks the snapshot on every screen
   const c = $('content'); c.innerHTML = '';
   const screen = el('div', { class: 'screen' }); c.append(screen);
   (SCREENS[state.module] || placeholder(navItem(state.module)?.label || state.module))(screen);
@@ -1540,7 +1531,10 @@ function renderDock() {
 // Poll the tier-3 queue until the answer lands, then swap it into the message that is
 // already on screen. Bounded so a dead worker can never leave the console polling forever.
 async function axisCollect(jobId, msg, tries = 0) {
-  if (tries > 30) {                                   // ~60s ceiling
+  if (tries > 90) {                                   // ~180s ceiling — covers the worker's full
+    // escalation ladder (45s fast + 75s standard + 150s deep is the worst case; an answer that
+    // escalates twice usually lands inside three minutes). The old 60s ceiling stopped polling
+    // before an escalated answer could possibly arrive, so the worker's work was thrown away.
     msg.text = 'That took longer than it should have. Ask again — it may already be banked.';
     renderDock(); return;
   }
@@ -1573,23 +1567,70 @@ async function axisRunOp(op) {
   // cancellable by voice; approvals and client messages are decisions and stay Ahmad's to click —
   // the reply says which is which instead of pretending everything vanished.
   if (op.kind === 'board.remove') {
-    const rows = collectPriorities(state.snap).filter((i) => i.source === 'Follow-up' && i.fid);
-    const kept = collectPriorities(state.snap).filter((i) => i.source !== 'Follow-up').length;
+    const all = collectPriorities(state.snap);
+    const rows = all.filter((i) => i.source === 'Follow-up' && i.fid);
+    const kept = all.length - rows.length;
+    // The utterance decides WHICH rows go, not whether they all go. Removing one named company
+    // used to cancel every follow-up on the board — the arg was captured and then never read.
+    const { mode, targets } = resolveRemovalTargets(op.arg, rows);
     let line;
     if (!rows.length) {
       line = kept
         ? 'Nothing on the board is a scheduled follow-up. The rest are approvals and client messages — those need your click, I do not decide them.'
         : 'The board is already clear.';
+    } else if (mode === 'none') {
+      // The name exists but points at a row voice cannot remove, or at nothing. Say which — a
+      // wrong guess here is a cancelled follow-up nobody asked for.
+      const named = resolveRemovalTargets(op.arg, all).targets;
+      line = named.length
+        ? `${named[0].title} is ${named[0].source === 'Approval' ? 'an approval' : named[0].source === 'Inbox' ? 'a client message' : 'not a scheduled follow-up'} — that one stays your click. Voice removal covers scheduled follow-ups only.`
+        : `Nothing on the board matches “${op.arg}”. The follow-ups I can cancel: ${rows.slice(0, 3).map((r) => r.title).join(', ')}${rows.length > 3 ? `, and ${rows.length - 3} more` : ''}.`;
+    } else if (!targets.length) {
+      line = 'That points past the end of the list — the board holds ' + rows.length + ` scheduled follow-up${rows.length === 1 ? '' : 's'}.`;
     } else {
-      let n = 0;
-      for (const it of rows) {
-        try { postIntent('cancel_followup', { follow_up_id: it.fid, business_id: it.bid }); n++; } catch {}
+      // One cancellation per COMPANY, by business_id, not per visible row by follow_up_id: a chase
+      // is several scheduled touches and the board shows only the next one. Cancelling the visible
+      // touch alone leaves the rest scheduled, and the "removed" item resurfaces days later —
+      // worse than not removing it, because it looks like AXIS lied. The business-level payload
+      // cancels the whole chase (applyCancelFollowup's business branch); fid is the fallback for a
+      // row that predates business ids.
+      const seen = new Set(); const chases = [];
+      for (const it of targets) {
+        const key = it.bid ? 'b' + it.bid : 'f' + it.fid;
+        if (!seen.has(key)) { seen.add(key); chases.push(it); }
       }
-      line = `Queued ${n} follow-up ${n === 1 ? 'cancellation' : 'cancellations'} — the worker applies them on its next pass and the rows drop off at the next sync.`
-        + (kept ? ` ${kept} ${kept === 1 ? 'item stays' : 'items stay'}: approvals and client messages are yours to click.` : '');
+      // Awaited on purpose: postIntent resolves false on 401/network instead of throwing, and the
+      // old fire-and-forget counted every row as queued — "Queued 3 cancellations" with the inbox
+      // unreachable was a success message about nothing.
+      let n = 0, failed = 0;
+      for (const it of chases) {
+        try {
+          (await postIntent('cancel_followup', it.bid ? { business_id: it.bid } : { follow_up_id: it.fid })) ? n++ : failed++;
+        } catch { failed++; }
+      }
+      const names = chases.slice(0, 3).map((t) => t.title).join(', ') + (chases.length > 3 ? `, and ${chases.length - 3} more` : '');
+      line = n
+        ? `Queued ${n} follow-up ${n === 1 ? 'cancellation' : 'cancellations'} — ${names}. The worker applies them on its next pass and the rows drop off at the next sync.`
+          + (mode === 'all' && kept ? ` ${kept} ${kept === 1 ? 'item stays' : 'items stay'}: approvals and client messages are yours to click.` : '')
+        : 'None of those reached the queue — the intent endpoint refused. Worth another try in a moment.';
+      if (n && failed) line += ` ${failed} did not queue — say it again for ${failed === 1 ? 'that one' : 'those'}.`;
     }
     dockLog.push({ role: 'axis', text: line }); renderDock(); axisSpeakTurn(line);
     return;
+  }
+  // A confirmed video direction is a Claude Code job: the pipeline's voice, covers and quality are
+  // code in this repo, and code.build is already the rail with edit permission. Framed so the model
+  // knows it is production direction, not a bug report.
+  if (op.kind === 'video.direct') {
+    op = { kind: 'code.build',
+      arg: 'Direction for the YouTube video pipeline, from Ahmad by voice. Find the pipeline scripts (TTS/voice settings, thumbnail/cover generation) and apply it: ' + op.arg };
+  }
+  // The pending queue handed to Cowork as one job. The board and the recent turns already ride in
+  // the task payload below; Cowork drafts every move, ready for a one-click yes — it never sends,
+  // approves or submits anything itself.
+  if (op.kind === 'queue.work') {
+    op = { kind: 'cowork.plan',
+      arg: 'Work the pending queue with Ahmad. The priority board rides with this task. For each pending approval and queued follow-up on it, draft the reply or propose the single concrete next action, ready for his one-click yes. His ask, verbatim: ' + op.arg };
   }
   try {
     const r = await fetch('/.netlify/functions/axis-brain-queue', {
@@ -1657,6 +1698,129 @@ function axisHistory(exclude) {
 // latency for data sitting in the page. Anything this cannot answer falls through untouched.
 function axisInstantAnswer(text) {
   try { return localAnswer(text, state.snap); } catch { return null; }
+}
+
+// ── Real navigation: DO the open, then say what was done ─────────────────────
+// "okay can you open it up on a web page or something so that I can see the details" (2026-08-12)
+// reached the model, which answered "That's open in your browser, Ahmad" — about an action nothing
+// had performed. Rule 1 (evidence only, never guess) cuts both ways: never claim an act that did
+// not happen, and when the act is one synchronous client call, PERFORM it and then report it.
+const SCREEN_ALIASES = [
+  ['approvals', /\bapprovals?\b/i],
+  ['followups', /\bfollow.?ups?\b/i],
+  ['inbox', /\b(?:inbox|client (?:messages?|repl(?:y|ies)))\b/i],
+  ['pipeline', /\bpipeline\b/i],
+  ['crm', /\bcrm\b/i],
+  ['prospects', /\bprospects?\b/i],
+  ['outreach', /\boutreach\b/i],
+  ['waiting_reply', /\bwaiting repl(?:y|ies)\b/i],
+  ['documents', /\bdocuments?\b/i],
+  ['analytics', /\banalytics\b/i],
+  ['products', /\bproducts?\b/i],
+  ['fleet', /\b(?:fleet|agents)\b/i],
+  ['axis-agent-director', /\bdirector\b/i],
+  ['reports', /\breports?\b/i],
+  ['settings', /\bsettings\b/i],
+  ['overview', /\b(?:overview|dashboard)\b/i],
+  // LAST: half the board vocabulary points here, so every specific screen must get its chance first.
+  ['priorities', /\b(?:priorit\w*|to.?do|board)\b/i],
+];
+const UI_OPEN_FILLER = /^(?:open|show|pull|bring|take|display|details?|pages?|screens?|browser|web|webpage|that|this|it|them|those|these|the|and|something|can|you|me|see|up|on|or|so|to|of|a|an|for)$/i;
+function axisOpenTarget(text) {
+  let items = [];
+  try { items = collectPriorities(state.snap); } catch { items = []; }
+  let screen = null, subject = '';
+  for (const [id, re] of SCREEN_ALIASES) if (re.test(text)) { screen = id; break; }
+  if (!screen) {
+    // A named board item — "open the <company> one" — lands on the screen that holds it.
+    const words = String(text).toLowerCase().split(/[\s,]+/).filter((w) => w.length > 3 && !UI_OPEN_FILLER.test(w));
+    const hit = items.find((i) => words.some((w) => String(i.title || '').toLowerCase().includes(w)));
+    if (hit) { screen = hit.screen; subject = hit.title; }
+  }
+  if (!screen && items.length) { screen = items[0].screen; subject = items[0].title; } // "it" = the item just spoken
+  if (!screen) screen = 'priorities';
+  go(screen);
+  const label = (navItem(screen) || {}).label || screen;
+  const line = `Done — ${label} is on screen now, in this console${subject ? `; ${subject} is on it` : ''}. Say "open ${label === 'Priorities' ? 'approvals' : 'priorities'}" or any screen name to move.`;
+  dockLog.push({ role: 'axis', text: line }); renderDock(); axisSpeakTurn(line);
+}
+
+// ── Read the item OUT LOUD: content, not counts ──────────────────────────────
+// "Just give me the approval, it's listed on this website" (2026-08-12, after four failed asks).
+// The approval's subject, kind, channel and age are in approvals.rows; the full draft body is in
+// the outreach module under the SAME id. Reading them is a local lookup — no model, no queue, no
+// "One moment." The screen opens too, so hearing it and seeing it are one act.
+function axisReadBoardItem(text) {
+  const t = String(text || '').toLowerCase();
+  const mod = (m) => (state.snap[m] && state.snap[m].data) || {};
+  const say = [];
+  let screen = null;
+
+  const wantsInbox = /\b(?:inbox|messages?|repl(?:y|ies)|leads?)\b/.test(t);
+  const approvals = (mod('approvals').rows || []).filter((r) => r.status === 'pending');
+  const drafts = mod('outreach').drafts;
+  const draftBody = (id) => {
+    const d = Array.isArray(drafts) ? drafts.find((x) => x.id === id) : null;
+    return d && d.body ? String(d.body).replace(/\s+/g, ' ').trim() : '';
+  };
+  const inboxRows = (mod('inbox').rows || []).filter((m) => ACTIONABLE.includes(m.classification) && !m.actioned && !m.snoozed_until);
+
+  if (!wantsInbox && approvals.length) {
+    screen = 'approvals';
+    for (const r of approvals.slice(0, 2)) {
+      const body = draftBody(r.id);
+      say.push(`${r.kind === 'followup' ? 'A follow-up draft' : 'A draft'} ${r.channel ? 'by ' + r.channel : ''}: “${r.subject || '(no subject)'}”${ago(r.created_at) ? ', raised ' + ago(r.created_at) : ''}.`
+        + (body ? ` It opens: “${body.slice(0, 180)}${body.length > 180 ? '…' : ''}”` : ''));
+    }
+    if (approvals.length > 2) say.push(`And ${approvals.length - 2} more pending.`);
+    say.push('Approvals is on screen now — approving stays your click.');
+  } else if (inboxRows.length) {
+    screen = 'inbox';
+    for (const m of inboxRows.slice(0, 2)) {
+      say.push(`${m.classification === 'reply_to_outreach' ? 'A client reply' : 'A new inbound request'}: “${m.subject || '(no subject)'}”${ago(m.received_at) ? ', ' + ago(m.received_at) + ' ago' : ''}.`);
+    }
+    if (inboxRows.length > 2) say.push(`And ${inboxRows.length - 2} more.`);
+    say.push('The inbox is on screen now.');
+  } else {
+    let items = [];
+    try { items = collectPriorities(state.snap); } catch {}
+    if (items.length) {
+      const top = items[0];
+      screen = top.screen;
+      say.push(`${top.title} — ${top.source}, ${dueLabel(top.dueAt).text}${top.detail ? `, ${top.detail}` : ''}. ${(navItem(screen) || {}).label || screen} is on screen now.`);
+    } else {
+      say.push('The board is clear — nothing pending to read out.');
+    }
+  }
+  if (screen) go(screen);
+  const line = say.join(' ');
+  dockLog.push({ role: 'axis', text: line }); renderDock(); axisSpeakTurn(line);
+}
+
+// ── Search: the snapshot first, Cowork on a miss ─────────────────────────────
+function axisRunSearch(arg) {
+  const needles = String(arg).toLowerCase().split(/[\s,]+/).filter((w) => w.length > 2);
+  const rows = [];
+  try { for (const i of collectPriorities(state.snap)) rows.push({ title: i.title, where: i.screen, what: i.source }); } catch {}
+  const mod = (m) => (state.snap[m] && state.snap[m].data) || {};
+  for (const d of mod('documents').rows || []) rows.push({ title: d.title || d.type || '', where: 'documents', what: 'Document' });
+  for (const p of mod('prospects').rows || []) rows.push({ title: p.name || p.company || '', where: 'prospects', what: 'Prospect' });
+  for (const c of mod('crm').rows || mod('crm').contacts || []) rows.push({ title: c.name || c.company || '', where: 'crm', what: 'Contact' });
+  const hits = rows.filter((r) => { const t = String(r.title).toLowerCase(); return t && needles.some((n) => t.includes(n)); });
+  let line;
+  if (hits.length) {
+    go(hits[0].where);
+    const label = (navItem(hits[0].where) || {}).label || hits[0].where;
+    line = `Found ${hits.length}: ` + hits.slice(0, 3).map((h) => `${h.title} (${h.what})`).join(', ')
+      + (hits.length > 3 ? `, and ${hits.length - 3} more` : '') + `. ${label} is on screen now.`;
+  } else {
+    // Not on the board — that is a fact, said as one, and Cowork can go deeper on a confirm.
+    axisPendingOp = { kind: 'cowork.ask', t: Date.now(),
+      arg: `Search the repo, the vault notes, and project state for: ${arg}. Report where it lives and what it says.`,
+      confirm: `Nothing on the board matches “${arg}”. Have Cowork search the repo and the vault for it. Say confirm, or cancel.` };
+    line = axisPendingOp.confirm;
+  }
+  dockLog.push({ role: 'axis', text: line }); renderDock(); axisSpeakTurn(line);
 }
 
 // What is on Ahmad's screen right now, as one short block the brain can read. Without it, "remove
@@ -1806,17 +1970,74 @@ async function axisSend(inputId = 'axisInput') {
   // Does this ask AXIS to DO something? Read it back and wait, except for read-only checks.
   const op = detectOp(text);
   if (op) {
-    if (op.kind === 'video.status' || op.kind === 'fleet.status') { await axisRunOp(op); return; }
+    if (op.kind === 'video.status' || op.kind === 'fleet.status') {
+      await axisRunOp(op);
+      // A status ask often carries a direction in the same breath — "what's the status of the
+      // YouTube videos AND can we enhance the quality" (2026-08-12). The status used to claim the
+      // whole utterance and the direction evaporated. Park it for a confirm like any other op.
+      const dir = detectVideoDirection(text);
+      if (dir) {
+        axisPendingOp = { ...dir, t: Date.now() };
+        dockLog.push({ role: 'axis', text: dir.confirm }); renderDock();
+        axisSpeakTurn(dir.confirm);
+      }
+      return;
+    }
     axisPendingOp = { ...op, t: Date.now() };
     dockLog.push({ role: 'axis', text: op.confirm }); renderDock();
     axisSpeakTurn(op.confirm);
     return;
   }
 
+  // "Let me see it" / "pull it up" / "check the inbox": read the item's CONTENT from the snapshot
+  // and open its screen — one act, no model, no queue. Checked before ui.open because these want
+  // the words, not just the window.
+  const br = detectBoardRead(text);
+  if (br) { axisReadBoardItem(text); return; }
+
+  // Opening a screen is an action this page performs itself, synchronously — never something to
+  // describe, promise, or hallucinate. Runs unconfirmed like the other read-only ops: showing a
+  // screen risks nothing.
+  const nav = detectUiOpen(text);
+  if (nav) { axisOpenTarget(text); return; }
+
+  // "Tackle all of these, work with me" — the pending queue handed to Cowork as one job, with the
+  // board and the conversation riding along. Confirm-gated: it spends the plan.
+  const qw = detectQueueWork(text);
+  if (qw) {
+    axisPendingOp = { ...qw, t: Date.now() };
+    dockLog.push({ role: 'axis', text: qw.confirm }); renderDock();
+    axisSpeakTurn(qw.confirm);
+    return;
+  }
+
+  // "Search for X" / "find X": the snapshot in memory first — free, instant, and it can point at
+  // the screen. A miss offers Cowork, which can grep the repo and the vault.
+  const sk = detectSearchAsk(text);
+  if (sk) { axisRunSearch(sk.arg); return; }
+
+  // A production direction with no op verb — "videos sound very robotic, have it sound more
+  // human-like, make the cover text clearer" — is WORK, not a question. Unrouted, the cascade's
+  // keyword tiers matched it into a Teams helpdesk article (2026-08-12, verbatim). It goes to
+  // Claude Code on confirm, like any other build instruction.
+  const dir = detectVideoDirection(text);
+  if (dir) {
+    axisPendingOp = { ...dir, t: Date.now() };
+    dockLog.push({ role: 'axis', text: dir.confirm }); renderDock();
+    axisSpeakTurn(dir.confirm);
+    return;
+  }
+
+  // A meta turn — "I didn't ask what's waiting", "you didn't do anything", "show me where" — is
+  // about THIS conversation. The board's status branch answered one with the same recital twice
+  // (2026-08-12), because "going on" matched. Every local answerer stands aside; only the brain,
+  // which gets the turns, can see what AXIS said and did.
+  const meta = isMetaTurn(text);
+
   // Turn-management is not a question. "okay hold on", "thanks", "you there" get answered right
   // here, because sending them to a model is what produced a paragraph of narration about a
   // two-word pause — and it spent a round trip to do it.
-  const chat = smallTalk(text);
+  const chat = meta ? null : smallTalk(text);
   if (chat) {
     dockLog.push({ role: 'axis', text: chat }); renderDock();
     axisSpeakTurn(chat);
@@ -1824,10 +2045,28 @@ async function axisSend(inputId = 'axisInput') {
   }
 
   // Instant path: anything the board can answer needs no network at all.
-  const instant = axisInstantAnswer(text);
+  const instant = meta ? null : axisInstantAnswer(text);
   if (instant) {
     const line = markRepeat(instant, axisLastAnswer);
     axisLastAnswer = instant;
+    dockLog.push({ role: 'axis', text: line }); renderDock();
+    axisSpeakTurn(line);
+    return;
+  }
+
+  // A board command with no voice rail ends HERE, honestly, not in the model queue. "Mark that one
+  // done", "snooze this", "approve the first one", "open up the items so we can action them" — the
+  // board declines them (correctly) and detectOp has no op for them, so they used to fall through
+  // to the LLM: 19-69 seconds of model time to talk about an action nothing performed, or a timeout
+  // and dead silence (2026-08-12 worker log). The model cannot click an approval either — routing
+  // it there was spend with no possible outcome. One sentence that says what works costs 0ms.
+  if (!meta && unsupportedBoardCommand(text)) {
+    let top = '';
+    try {
+      const items = collectPriorities(state.snap).slice(0, 3);
+      if (items.length) top = ' On the board now: ' + items.map((i) => `${i.title} (${dueLabel(i.dueAt).text})`).join(', ') + '.';
+    } catch {}
+    const line = 'I can\'t do that one by voice yet. I can remove or cancel follow-ups, open any screen, search the board, and hand the pending queue to Cowork; approvals and client replies stay your click.' + top;
     dockLog.push({ role: 'axis', text: line }); renderDock();
     axisSpeakTurn(line);
     return;
@@ -1848,7 +2087,9 @@ async function axisSend(inputId = 'axisInput') {
     // Brain unavailable (no credit / bad key / network): answer from the board instead of going
     // mute. The outage is reported ONCE per session so it is visible but not repeated every turn.
     if (j && j.degraded) {
-      const local = localAnswer(text, state.snap);
+      // Never on a meta turn: falling back to the board for "I didn't ask what's waiting" would
+      // recite the exact answer being complained about, a third time, with a straight face.
+      const local = meta ? null : localAnswer(text, state.snap);
       if (local) {
         reply.text = local;
         let told = false; try { told = sessionStorage.getItem('axisBrainNoted') === '1'; } catch {}
@@ -2521,36 +2762,28 @@ function setAxisState(s) {
   const p = $('axisPubState'); if (p) p.textContent = s;
 }
 
-// ── AXIS command strip (R3) — Overview, above everything ──
+// ── AXIS orbit status — what survived the director strip (removed 2026-08-12) ──
+// Ahmad: "Remove the one above the globe and ensure all its existing data, knowledge and knows is
+// added to the Axis (globe) one." The strip's input was a second door into the same room — it fed
+// the same dock transcript and the same brain queue the orbit bar does, so no knowledge moved with
+// it. What it uniquely SHOWED comes here: the honest-counts line (on the orbit, under the globe)
+// and the four quick chips (static HTML, wired below). The strip's draft-preservation machinery
+// (state.ui.stripDraft) is gone with it: #axisQuick is static DOM, never re-rendered, so a
+// mid-sentence draft survives the snapshot tick natively.
 function askAxis(text) {
   if ($('axisDock').hidden) openDock();
   const inp = $('axisInput'); inp.value = text; axisSend();
 }
-function axisStrip(k) {
-  // Honest counts only — straight from the snapshot KPIs the cards below already show.
+function renderOrbStatus() {
+  const box = $('axisOrbStatus'); if (!box) return;
+  // Honest counts only — straight from the snapshot KPIs the Overview cards show.
+  const k = data('overview').kpis || {};
   const n1 = k.awaiting_approval ?? 0, n2 = k.messages_waiting ?? 0, n3 = k.followups_due ?? 0;
   const bits = [];
   if (n1) bits.push(n1 + (n1 === 1 ? ' approval' : ' approvals') + ' waiting');
   if (n2) bits.push(n2 + (n2 === 1 ? ' client reply' : ' client replies') + ' waiting');
   if (n3) bits.push(n3 + (n3 === 1 ? ' follow-up' : ' follow-ups') + ' due');
-  const line = bits.length ? bits.join(' · ') : 'All quiet. AXIS is watching.';
-  const input = el('input', { placeholder: 'Tell AXIS…', 'aria-label': 'Tell AXIS', autocomplete: 'off' });
-  // The 15s snapshot tick re-renders Overview; a draft mid-sentence must survive it (gate-review finding).
-  input.value = state.ui.stripDraft || '';
-  input.addEventListener('input', () => { state.ui.stripDraft = input.value; });
-  input.addEventListener('focus', () => { state.ui.stripFocus = true; });
-  input.addEventListener('blur', () => { state.ui.stripFocus = false; });
-  if (state.ui.stripFocus) requestAnimationFrame(() => { input.focus(); const n = input.value.length; try { input.setSelectionRange(n, n); } catch {} });
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && input.value.trim()) { const t = input.value.trim(); input.value = ''; state.ui.stripDraft = ''; askAxis(t); } });
-  const chips = [['Status', 'status'], ['Needs me', 'what needs me now'], ['Next', 'what is next'], ['Approvals', 'approvals']]
-    .map(([lbl, q]) => el('button', { class: 'chip', onclick: () => askAxis(q) }, lbl));
-  const s = el('section', { class: 'axis-strip', 'aria-label': 'AXIS command strip' }, [
-    el('span', { class: 'axis-orb', 'data-orb': '' }),
-    el('div', {}, [el('div', { class: 'eyebrow', style: 'color:var(--gold)' }, 'AXIS · Director'),
-      el('div', { class: 'axis-strip-status' }, line)]),
-    input, ...chips]);
-  mountOrbs(s);
-  return s;
+  box.textContent = bits.length ? bits.join(' · ') : 'All quiet. AXIS is watching.';
 }
 
 // ── Public AXIS (R4, pre-auth) ────────────────────────────────────────────────
@@ -2706,6 +2939,9 @@ $('axisQuick')?.addEventListener('keydown', (e) => {
   axisOpenConsole();
   const box = $('axisInput'); if (box) { box.value = v; axisSend(); }
 });
+// Quick chips — inherited from the removed director strip; same questions, same pipeline.
+document.querySelectorAll('[data-orb-q]').forEach((b) =>
+  b.addEventListener('click', () => askAxis(b.getAttribute('data-orb-q'))));
 // The wake button exists in two places now; keep both lit in step.
 const __syncWake = axisSyncWakeBtn;
 axisSyncWakeBtn = function () {

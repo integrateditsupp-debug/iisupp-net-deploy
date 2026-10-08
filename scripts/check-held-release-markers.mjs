@@ -16,8 +16,11 @@
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = new URL('..', import.meta.url).pathname;
+// fileURLToPath, not new URL().pathname — this repo lives under "ARIA — Real-Time AI Assistant",
+// so the raw pathname arrives percent-encoded ("%20", "%E2%80%94") and every fs call misses.
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 
 const HOLDS = [
   {

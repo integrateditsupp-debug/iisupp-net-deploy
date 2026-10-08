@@ -25,6 +25,20 @@ console.log('Fail clusters:', topClusters.length);
 
 const suggestions = [];
 
+// Out-of-scope guard: corpus categories ending in "-default" are DELIBERATE
+// negative controls (compliance / business-process questions that must NOT be
+// routed to an IT intent). A specific classification on those is a FALSE
+// POSITIVE, not a correct routing — never suggest flipping the expectation.
+// Added 2026-08-13 after the engine proposed flipping fin-default and
+// mfg-default entries ("how to escalate a failed settlement" -> escalation).
+const OUT_OF_SCOPE_CAT = /(^|-)default$/;
+function clusterIsOutOfScopeControl(expected, got) {
+  const fails = (results.failures || []).filter(f => f.expected === expected && f.got === got);
+  if (!fails.length) return false;
+  const oos = fails.filter(f => OUT_OF_SCOPE_CAT.test(f.cat || ''));
+  return oos.length / fails.length >= 0.5;
+}
+
 topClusters.forEach(([clusterKey, info]) => {
   const [expected, got] = clusterKey.split('→');
   const examples = info.examples;
@@ -50,7 +64,11 @@ topClusters.forEach(([clusterKey, info]) => {
     recommendation: ''
   };
   
-  if (expected === 'default' && got !== 'default') {
+  if (expected === 'default' && got !== 'default' && clusterIsOutOfScopeControl(expected, got)) {
+    // Deliberate out-of-scope negative control — ARIA over-triggered.
+    suggestion.out_of_scope_control = true;
+    suggestion.recommendation = `FALSE POSITIVE ON OUT-OF-SCOPE CONTROL: "${examples[0]}" is a deliberate non-IT scenario that must stay 'default'. DO NOT flip the corpus expectation. Tighten the ${got} pattern instead (needs human review).`;
+  } else if (expected === 'default' && got !== 'default') {
     // ARIA classified as something specific but corpus expected default
     suggestion.recommendation = `LIKELY EXPECTATION UPDATE: ARIA correctly routes "${examples[0]}" to ${got}. Update corpus expectation from 'default' to '${got}'.`;
   } else if (got === 'default' && expected !== 'default') {

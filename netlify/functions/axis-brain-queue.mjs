@@ -84,6 +84,21 @@ export default async (request) => {
   if (action === 'learn') {
     const { key, topic, question, body: text, source } = body;
     if (!key || !text) return json(400, { error: 'key and body required' });
+    // The gate at the CHOKE POINT, because both bankers (the cloud cascade's learnBack and the
+    // local worker's bank()) flow through here and each had its own partial gate. Measured
+    // 2026-08-12, the store held — promoted:true, recall-eligible — "tell me the most prioritized
+    // item", "give me status update", "tell me what do we have in the queue", "you already said
+    // that what are the", "listen look at". Each is a future wrong answer: a question about LIVE
+    // STATE banks an answer that is stale in minutes and recalls at 55%+ forever; a continuation
+    // or a correction banks a sentence about the conversation, not the world. "status" is in the
+    // list and "update" is not, deliberately — "give me status update" is state, "how do I fix a
+    // stuck windows update" is knowledge.
+    const qq = String(question || topic || '').trim();
+    const STATE_QUERY = /\b(?:priorit\w*|queued?|board|overdue|status|working on|to.?dos?|follow.?ups?|due today|most (?:urgent|overdue|important)|in (?:the )?queue)\b/i;
+    const DEIXIS = /^\s*(?:tell me more|more about|go on|continue|what about (?:it|that|them)|about (?:it|that))\b|\b(?:you (?:already|just) said|said that|talking about|not what i)\b/i;
+    if (STATE_QUERY.test(qq) || DEIXIS.test(qq) || qq.split(/\s+/).filter(Boolean).length < 3) {
+      return json(200, { ok: false, reason: 'not-knowledge', detail: 'state, deixis, or garble — never banked' });
+    }
     try {
       const kb = getStore({ name: 'aria-kb-live', consistency: 'strong' });
       const now = new Date().toISOString();
@@ -160,9 +175,12 @@ export default async (request) => {
     // fleet.* is the management rail Ahmad asked for (2026-08-12, "give axis full access to manage
     // them"): the worker maps each verb to a fixed PowerShell scheduled-task cmdlet against its own
     // named roster — the queue can name an agent, it can never name a command.
+    // research.web (Phase 2, 2026-08-13): the researcher agent — WebSearch/WebFetch on the plan,
+    // per-claim sources enforced in scripts/lib/axis-researcher.mjs, findings to the vault's
+    // 15_Research/. Read-only toward the repo and the board; confirm-gated on the console side.
     const ALLOWED = ['video.make', 'video.short', 'video.upload', 'video.status', 'self.fix',
       'cowork.ask', 'cowork.plan', 'code.build', 'machine.run',
-      'fleet.status', 'fleet.run', 'fleet.pause', 'fleet.resume'];
+      'fleet.status', 'fleet.run', 'fleet.pause', 'fleet.resume', 'research.web'];
     if (!ALLOWED.includes(kind)) return json(400, { error: 'unknown task kind' });
     const id = 't-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
     try {

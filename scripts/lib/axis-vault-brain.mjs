@@ -248,13 +248,19 @@ export function search(query, { limit = 5, minCoverage = 0.34 } = {}) {
     // A note whose best single passage actually addresses the question is worth more than one whose
     // matches are scattered. Multiplicative so it reorders rather than merely nudges.
     score *= 0.7 + 0.6 * passageCoverage;
-    score += REGION_BOOST[n.region] || 0;
-    scored.push({ note: n, score, coverage, matched, titleHits, passageCoverage, bestPara });
+    // The boost RANKS regions against each other; it is not evidence the note matches. Carried
+    // separately so vaultTier can gate on what the note actually earned — measured 2026-08-12,
+    // 13_Learned's +9.0 boost alone cleared the answer bar of 9, so a stale digest could answer a
+    // question it barely matched, and Ahmad.md (+7.8) answered "show me where" with a feedback list.
+    const boost = REGION_BOOST[n.region] || 0;
+    score += boost;
+    scored.push({ note: n, score, boost, coverage, matched, titleHits, passageCoverage, bestPara });
   }
   scored.sort((a, b) => b.score - a.score);
   return scored.slice(0, limit).map((s, i) => ({
     name: s.note.name, rel: s.note.rel, region: s.note.region, file: s.note.file,
     front: s.note.front, body: s.note.body, score: Number(s.score.toFixed(2)),
+    boost: Number(s.boost.toFixed(2)),
     coverage: s.coverage, titleHits: s.titleHits,
     passageCoverage: Number(s.passageCoverage.toFixed(2)),
     passage: s.bestPara >= 0 ? s.note.paragraphs[s.bestPara] : null,
@@ -302,7 +308,28 @@ export function excerpt(hit, query, maxChars = 700) {
     }
     text = best || paras.slice(0, 2).join('\n\n');
   }
-  return text.length > maxChars ? text.slice(0, maxChars).replace(/\s+\S*$/, '') + '…' : text;
+  text = text.length > maxChars ? text.slice(0, maxChars).replace(/\s+\S*$/, '') + '…' : text;
+  return speakable(text);
+}
+
+// Notes are written in markdown; answers are SPOKEN. Measured 2026-08-12: "show me where" was
+// answered with a raw bullet list — "**Director autonomy** — Cowork auto-delegates… ([[feedback-
+// director-autonomy]])" — wikilinks, bold markers and all, read aloud. The vault's own system
+// prompt forbids speaking paths and markup (AXIS-SYSTEM.md "Speaking vs writing"); the excerpt
+// path was the one place that rule was not enforced in code.
+export function speakable(text) {
+  return String(text || '')
+    .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, '$2')   // [[target|label]] → label
+    .replace(/\[\[([^\]]+)\]\]/g, '$1')              // [[target]] → target
+    .replace(/\(\s*\)/g, '')                         // empties left by stripped links
+    .replace(/^#{1,6}\s+/gm, '')                     // heading markers
+    .replace(/^\s*[-*•·]\s+/gm, '')                  // bullet markers
+    .replace(/\*\*([^*]+)\*\*/g, '$1')               // bold
+    .replace(/\*([^*]+)\*/g, '$1')                   // italics
+    .replace(/`([^`]+)`/g, '$1')                     // inline code
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
 
 // ── The tier ─────────────────────────────────────────────────────────────────
@@ -318,7 +345,17 @@ export function vaultTier(query, {
   const hits = search(query, { limit: 3 });
   if (!hits.length) return null;
   const top = hits[0];
-  if (top.score < minScore || top.coverage < minCoverage) return null;
+  // Gate on EVIDENCE — what the note earned by matching — not on score-with-region-boost. The
+  // boost exists to order 13_Learned above 14_Sources when both genuinely match; at +9.0 against a
+  // bar of 9 it also let a note answer with almost no match at all ("show me where" → Ahmad.md at
+  // 0.67 coverage). Ranking keeps the boost; answering must be earned. The one exemption is an
+  // AIRTIGHT match — every query term present AND one passage carrying ~all of the question's
+  // weight — because short questions in small corpora ("who is Ahmad") earn little idf mass while
+  // being unambiguously right, and junk turns never reach full coverage.
+  const evidence = top.score - (top.boost || 0);
+  const airtight = top.coverage >= 0.99 && top.passageCoverage >= 0.9;
+  if (!airtight && evidence < minScore) return null;
+  if (top.coverage < minCoverage) return null;
   // One passage has to actually answer the question. This is the check that separates "this note
   // contains your words somewhere across 400 lines" from "this paragraph is the answer" — measured
   // on the real vault, it is what stopped a SAM.gov procurement page being returned for "the

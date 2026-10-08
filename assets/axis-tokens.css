@@ -201,15 +201,8 @@ a { color:var(--gold); text-decoration:none; }
 .axis-input { display:flex; gap:6px; padding:10px; border-top:1px solid var(--line); }
 .axis-input input { flex:1; min-width:0; background:var(--surface-2); border:1px solid var(--line); border-radius:8px; padding:8px 10px; color:var(--txt); font:inherit; }
 
-/* Overview "AXIS Command Strip" — the front-and-center presence */
-.axis-strip { display:flex; align-items:center; gap:14px; flex-wrap:wrap;
-  background:color-mix(in srgb, var(--surface) 92%, transparent); border:1px solid var(--line-2);
-  border-radius:12px; padding:12px 16px; margin-bottom:16px; animation:rise .3s ease; }
-.axis-strip .axis-orb { width:24px; height:24px; }
-.axis-strip-status { color:var(--txt-2); font-size:12px; }
-.axis-strip input { flex:1; min-width:170px; background:var(--surface-2); border:1px solid var(--line);
-  border-radius:999px; padding:8px 14px; color:var(--txt); font:inherit; }
-.axis-strip input:focus { border-color:var(--gold); outline:none; }
+/* The director strip is gone (2026-08-12, "Remove the one above the globe") — its counts line and
+   quick chips live on the orbit now: .axis-orb-status and .axis-orb-chips, defined with the orbit. */
 
 /* AXIS Agent Director — full, voice-first workspace with live snapshot state only. */
 .axis-director-workspace { width:min(920px,100%); min-height:calc(100vh - 132px); margin:0 auto; display:flex; flex-direction:column;
@@ -251,7 +244,7 @@ a { color:var(--gold); text-decoration:none; }
   :root[data-axis-state] .axis-orb .orb-spin-rev, :root[data-axis-state] .axis-orb .orb-pulse { animation:none !important; }
   .axis-orb .orb-pulse { opacity:0 !important; }
   .axis-state-word, .axis-thinking span { animation:none !important; }
-  .axis-dock, .axis-strip, .axis-public { animation:none; }
+  .axis-dock, .axis-public { animation:none; }
 }
 
 /* ── Command palette ── */
@@ -303,8 +296,6 @@ a { color:var(--gold); text-decoration:none; }
   .axis-fab { bottom:14px; }
   .axis-dock { right:3vw; left:3vw; width:auto; bottom:72px; transform:none; animation:dock-rise-mobile .32s cubic-bezier(.22,1,.36,1); }
   @keyframes dock-rise-mobile { from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none} }
-  .axis-strip { padding:10px 12px; gap:10px; }
-  .axis-strip input { min-width:100%; order:9; }
   .axis-fab-pill { padding:7px 11px; }
   .axis-director-workspace { min-height:calc(100vh - 100px); border-radius:10px; }
   .axis-director-head { padding:22px 18px 18px; }
@@ -516,12 +507,6 @@ a { color:var(--gold); text-decoration:none; }
    .content is what lets the flex child actually shrink to fit rather than overflowing the column. */
 .axis-head { flex:none; display:flex; flex-direction:column; align-items:center;
   padding:18px 18px 0; gap:14px; }
-/* The slot the Overview director field mounts into. Full width so the field looks exactly as it did
-   when it was the first row of .content; collapsed entirely on the screens that do not have one, so
-   they do not carry a stray 14px gap. */
-.axis-head-strip { width:100%; }
-.axis-head-strip:empty { display:none; }
-.axis-head-strip .axis-strip { margin-bottom:0; }
 
 /* The orbit is IN FLOW now — no position, no left/top, no transform, no z-index. It was a fixed
    overlay, which is exactly why content kept ending up underneath it: a fixed box reserves no space,
@@ -530,6 +515,11 @@ a { color:var(--gold); text-decoration:none; }
    under it. Nothing in JS ever positioned this element, so there was nothing to unpick. */
 .axis-orbit { display:flex; flex-direction:column; align-items:center; gap:9px; pointer-events:none; }
 .axis-orbit > * { pointer-events:auto; }
+/* Inherited from the removed director strip: the honest-counts line under the globe, and the quick
+   chips under the bar. Same snapshot KPIs, same askAxis pipeline — only the surface moved. */
+.axis-orb-status { color:var(--txt-2); font-size:12px; text-align:center; }
+.axis-orb-status:empty { display:none; }
+.axis-orb-chips { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
 .axis-orbit .axis-globe { width:176px; height:176px; cursor:pointer;
   filter:drop-shadow(0 10px 26px color-mix(in srgb, var(--gold) 30%, transparent)); }
 .axis-orbit .axis-globe:hover { filter:drop-shadow(0 10px 34px color-mix(in srgb, var(--gold) 55%, transparent)); }

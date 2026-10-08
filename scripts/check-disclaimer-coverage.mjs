@@ -14,6 +14,7 @@
 
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import {
   listPublicPages,
@@ -32,7 +33,9 @@ import {
   riskbarBlock,
 } from './inject-riskbar.mjs';
 
-const ROOT = new URL('..', import.meta.url).pathname;
+// fileURLToPath, not new URL().pathname — this repo lives under "ARIA — Real-Time AI Assistant",
+// so the raw pathname arrives percent-encoded ("%20", "%E2%80%94") and every fs call misses.
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const STYLESHEET = 'assets/iis-fineprint.css';
 const NOTICE_PAGE = 'disclaimer.html';
 
