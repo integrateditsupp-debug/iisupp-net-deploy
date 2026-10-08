@@ -4,14 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=1280">
   <title>ARIA Status History | Integrated IT Support</title>
-  <meta name="description" content="ARIA uptime, SLA, probe history, and incident communication shell.">
+  <meta name="description" content="ARIA uptime and incident-history layout. Sample layout — real probe history appears once the uptime probe is wired. Live component health is on /status.">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="stylesheet" href="/assets/finish100.css">
   <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&display=swap"><link rel="stylesheet" href="/assets/xo-elite-theme.css">
+  <style>
+    .sample-banner{display:flex;gap:12px;align-items:flex-start;border:1px solid rgba(251,191,36,.55);background:rgba(251,191,36,.10);color:#fde68a;border-radius:12px;padding:14px 18px;margin:0 0 18px;font-size:14px;line-height:1.5}
+    .sample-banner strong{color:#fbbf24;letter-spacing:.06em;text-transform:uppercase;font-size:12px;white-space:nowrap;padding-top:2px}
+    .sample-banner a{color:#fde68a;text-decoration:underline}
+    .sample-tag{display:inline-block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#fbbf24;border:1px solid rgba(251,191,36,.45);border-radius:4px;padding:2px 6px;margin-left:6px;vertical-align:middle}
+    .f100-metric.sample{opacity:.55}
+  </style>
 </head>
 <body class="finish100">
   <main class="f100-shell">
+    <div class="sample-banner" role="note" aria-label="Sample layout notice">
+      <strong>Sample layout</strong>
+      <span>Sample layout — real history appears once the uptime probe is wired. The numbers and rows on this page are placeholders, not measurements; <code>aria-uptime-probe</code> still needs a public reader. For live component health read from the production endpoints, see <a href="/status.html">/status</a>.</span>
+    </div>
     <nav class="f100-nav">
       <a class="f100-mark" href="/"><span>ARIA</span> Status History</a>
       <div class="f100-navlinks">
@@ -26,26 +37,27 @@
         <p>The status-history page turns uptime probes into a trust asset: last check, SLA posture, incident timeline, and customer-facing remediation notes.</p>
       </div>
       <aside class="f100-panel">
-        <div class="f100-label">Performance coverage</div>
-        <div class="f100-metric">100%</div>
-        <p class="f100-small">Cron probe, status page, SLA posture, and historical incident surface are represented.</p>
+        <div class="f100-label">Performance coverage <span class="sample-tag">sample</span></div>
+        <div class="f100-metric sample">100%</div>
+        <p class="f100-small">Placeholder value. Describes what the layout will show (cron probe, status page, SLA posture, incident surface) — not a measured figure.</p>
       </aside>
     </section>
     <section class="f100-grid four">
-      <article class="f100-card"><div class="f100-label">30-day uptime</div><div class="f100-metric">99.95%</div></article>
-      <article class="f100-card"><div class="f100-label">Median response</div><div class="f100-metric">182ms</div></article>
-      <article class="f100-card"><div class="f100-label">Last probe</div><div class="f100-metric">OK</div></article>
-      <article class="f100-card"><div class="f100-label">SLA target</div><div class="f100-metric">99.9%</div></article>
+      <article class="f100-card"><div class="f100-label">30-day uptime <span class="sample-tag">sample</span></div><div class="f100-metric sample">99.95%</div><p class="f100-small">Placeholder — not measured.</p></article>
+      <article class="f100-card"><div class="f100-label">Median response <span class="sample-tag">sample</span></div><div class="f100-metric sample">182ms</div><p class="f100-small">Placeholder — not measured.</p></article>
+      <article class="f100-card"><div class="f100-label">Last probe <span class="sample-tag">sample</span></div><div class="f100-metric sample">OK</div><p class="f100-small">Placeholder — see <a href="/status.html">/status</a> for a live check.</p></article>
+      <article class="f100-card"><div class="f100-label">SLA target <span class="sample-tag">sample</span></div><div class="f100-metric sample">99.9%</div><p class="f100-small">Placeholder — the contractual target is set per agreement.</p></article>
     </section>
     <section class="f100-card">
-      <h2>Incident log</h2>
+      <h2>Incident log <span class="sample-tag">sample rows</span></h2>
+      <p class="f100-small">These rows show the shape of the log. They are not recorded incidents or recorded healthy days.</p>
       <table class="f100-table">
         <tr><th>Date</th><th>Area</th><th>Status</th><th>Remediation</th></tr>
-        <tr><td>2026-06-18</td><td>ARIA functions</td><td><span class="f100-status">Healthy</span></td><td>Probe and graceful fallback active.</td></tr>
+        <tr><td>2026-06-18 <span class="sample-tag">sample</span></td><td>ARIA functions</td><td><span class="f100-status">Healthy (sample)</span></td><td>Probe and graceful fallback active.</td></tr>
         <tr><td>Template</td><td>LLM upstream</td><td><span class="f100-status warn">Use when needed</span></td><td>Circuit breaker opens, retry jitter runs, customer sees degraded message.</td></tr>
       </table>
     </section>
-    <p class="f100-footer">Replace sample values with <code>aria-uptime-probe</code> output after deployment wiring.</p>
+    <p class="f100-footer">Sample layout. Replace sample values with <code>aria-uptime-probe</code> output after deployment wiring — until then nothing on this page is a measurement.</p>
   </main>
 <!-- iis-fineprint:start -->
 <div class="iis-fineprint" role="note" aria-label="Site content disclaimer">

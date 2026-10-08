@@ -27,8 +27,8 @@
     {
       "name": "Status",
       "short_name": "Status",
-      "description": "Open ARIA status history.",
-      "url": "/status-history.html",
+      "description": "Open the live ARIA + iisupp.net system status.",
+      "url": "/status.html",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {

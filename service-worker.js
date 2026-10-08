@@ -1,4 +1,9 @@
 /*!
+ * NOT REGISTERED — sw.js is the live worker.
+ * Nothing on the site calls navigator.serviceWorker.register('/service-worker.js'); the two
+ * registrations (assets/aria-core.js and aria.html) both point at /sw.js. This file is kept in
+ * place unchanged (Rule 15) — RUN-CU 2026-10-08 site audit, Top-10 #10.
+ *
  * service-worker.js — IIS PWA cache-first for static + offline shell
  *  Cache key bumped per release. Runtime cache for /aria + /scorecard + /plans + /assets/*.
  *  Cat 11 — Mobile + responsive.

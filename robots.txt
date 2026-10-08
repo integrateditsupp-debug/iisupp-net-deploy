@@ -1,5 +1,8 @@
 User-agent: *
 Allow: /
+# AI/LLM knowledge base bulk export — explicitly allowed for every crawler.
+# (RUN-CU 2026-10-08: this line used to sit under the DotBot group at the bottom, where it applied to DotBot only.)
+Allow: /assets/aria-kb-chunks.json
 Disallow: /admin-console.html
 Disallow: /aperture-learning.html
 Disallow: /aperture.html
@@ -54,8 +57,5 @@ Disallow: /
 
 User-agent: DotBot
 Disallow: /
-
-# AI/LLM knowledge base bulk export
-Allow: /assets/aria-kb-chunks.json
 
 Sitemap: https://iisupp.net/sitemap.xml

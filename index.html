@@ -50,7 +50,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/aria-core.css">
     <link rel="stylesheet" href="/assets/ai-edge.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- RUN-CU 2026-10-08: pinned (was lucide@latest, unpinned, no SRI). 1.53.0 is what @latest resolved to on 2026-10-08; hash computed from the file unpkg served that day. -->
+    <script src="https://unpkg.com/lucide@1.53.0/dist/umd/lucide.min.js" integrity="sha384-9jc6sq4hIHE19IfEOsGFw4OBb8FXKksvsPgSzlLdEJO7Z0GT1a+TUtBYK/+FAk3p" crossorigin="anonymous"></script>
     <script>
         (function(){
             if (!window.MutationObserver || window.__IIS_SAFE_MUTATION_OBSERVER__) return;
@@ -64,7 +65,7 @@
     </script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;900&display=swap');
+        /* RUN-CU 2026-10-08: Cinzel + Inter now load from the single consolidated Google Fonts <link> in <head> (was an @import here). */
 
         :root {
             --luxury-gold: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%);
@@ -1568,7 +1569,11 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
 }
 </style>
   <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&display=swap"><link rel="stylesheet" href="/assets/xo-elite-theme.css">
+<!-- RUN-CU 2026-10-08: the three Google Fonts loads on this page (head @import, xo-elite <link>, cinema @import) are consolidated into this one request. Families and weights are the union of all three — nothing dropped. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;900&family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/xo-elite-theme.css">
 </head>
 <body class="overflow-hidden">
 
@@ -2295,7 +2300,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         <div class="sc-card">
 
             <!-- Hero CTA -->
-            <button class="sc-hero-cta" onclick="openPortal('chat')">
+            <button class="sc-hero-cta" onclick="openPortal('chat', this)">
                 <span class="sc-hero-icon">🌐</span>
                 <span class="sc-hero-text">Get IT Support</span>
                 <span class="sc-hero-arrow">→</span>
@@ -2304,22 +2309,22 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             <!-- Quick Actions — 4 clean tiles -->
             <div class="sc-section-label"><span>Quick Actions</span></div>
             <div class="sc-tiles">
-                <button class="sc-tile" onclick="openPortal('diagnostics')">
+                <button class="sc-tile" onclick="openPortal('diagnostics', this)">
                     <div class="sc-tile-icon">💾</div>
                     <div class="sc-tile-title">Diagnostics</div>
                     <div class="sc-tile-sub">Health &amp; specs</div>
                 </button>
-                <button class="sc-tile" onclick="openPortal('relaunch')">
+                <button class="sc-tile" onclick="openPortal('relaunch', this)">
                     <div class="sc-tile-icon">🔄</div>
                     <div class="sc-tile-title">Re-launch</div>
                     <div class="sc-tile-sub">Kill &amp; reopen</div>
                 </button>
-                <button class="sc-tile" onclick="openPortal('screenshot')">
+                <button class="sc-tile" onclick="openPortal('screenshot', this)">
                     <div class="sc-tile-icon">📷</div>
                     <div class="sc-tile-title">Error Analysis</div>
                     <div class="sc-tile-sub">Screenshot AI</div>
                 </button>
-                <button class="sc-tile" onclick="openPortal('ticket')">
+                <button class="sc-tile" onclick="openPortal('ticket', this)">
                     <div class="sc-tile-icon">🎫</div>
                     <div class="sc-tile-title">Log Ticket</div>
                     <div class="sc-tile-sub">Submit request</div>
@@ -2340,14 +2345,14 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             <!-- Purchase + Business — 2 wide cards -->
             <div class="sc-section-label"><span>Purchase &amp; Business</span></div>
             <div class="sc-pair">
-                <button class="sc-action-card" onclick="openPortal('purchase')">
+                <button class="sc-action-card" onclick="openPortal('purchase', this)">
                     <div class="sc-action-icon">🛒</div>
                     <div class="sc-action-body">
                         <div class="sc-action-title">Purchase IT Equipment</div>
                         <div class="sc-action-sub">Laptops, peripherals, hardware</div>
                     </div>
                 </button>
-                <button class="sc-action-card" onclick="openPortal('ticket')">
+                <button class="sc-action-card" onclick="openPortal('ticket', this)">
                     <div class="sc-action-icon">🏢</div>
                     <div class="sc-action-body">
                         <div class="sc-action-title">Business Consultation</div>
@@ -2965,7 +2970,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         
         <section id="aria-cinema" class="cn-section">
           <style>
-            @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap');
+            /* RUN-CU 2026-10-08: Instrument Serif + JetBrains Mono now load from the single consolidated Google Fonts <link> in <head> (was an @import here). */
             #aria-cinema { --cn-bg:#0a0a0b;--cn-bg2:#111113;--cn-fg:#f4f1ea;--cn-dim:#8a857c;--cn-accent:oklch(72% 0.14 75);--cn-line:rgba(244,241,234,0.08); display:block; padding:36px 24px; color:var(--cn-fg); font-family:'JetBrains Mono',ui-monospace,monospace; background:radial-gradient(ellipse at center, var(--cn-bg2) 0%, var(--cn-bg) 70%); border:0; }
             #aria-cinema *, #aria-cinema *::before, #aria-cinema *::after { box-sizing:border-box; }
             #aria-cinema .cn-stage { max-width:1160px; margin:0 auto; }
@@ -3051,7 +3056,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
               <div>Press <b style="color:var(--cn-fg)">SPACE</b> to play</div>
             </div>
             <div class="cn-player" id="cn-player">
-              <video id="cn-vid" preload="auto" muted autoplay loop playsinline>
+              <video id="cn-vid" preload="none" poster="/assets/aria-stats-and-purpose-poster.jpg" muted autoplay loop playsinline>
                 <source src="/assets/video/aria-stats-and-purpose.mp4" type="video/mp4" />
               </video>
               <div class="cn-corners"><span class="cn-bl"></span><span class="cn-br"></span></div>
@@ -4030,14 +4035,83 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         // ====== SERVICE CENTER MODAL ======
         // IMPORTANT: Replace this URL with your deployed portal URL
         const PORTAL_URL = 'https://ii-support-portal-wd05qh.abacusai.app';
+        // RUN-CU 2026-10-08: the portal host answered 404 on every panel, so the modal opened blank.
+        // openPortal() now checks reachability first (server-side via /api/portal-check, which reads the
+        // real HTTP status; then a direct HEAD as a second opinion) and, when the portal does not answer,
+        // sends the visitor to the on-site path that does the same job. The iframe path is unchanged when
+        // the portal responds, so reviving the portal needs no code change here.
+        const PORTAL_CHECK_URL = '/api/portal-check';
+        const PORTAL_CHECK_TIMEOUT_MS = 3000;
+        const PORTAL_FALLBACKS = {
+            chat:        { href: '/aria', label: 'ARIA chat' },
+            diagnostics: { href: '/aria?prefill=' + encodeURIComponent('Run a quick health check on my computer — what should I look at first for specs, disk, memory and startup?'), label: 'ARIA diagnostics' },
+            relaunch:    { href: '/aria?prefill=' + encodeURIComponent('An application is frozen. Walk me through safely closing and relaunching it without losing work.'), label: 'ARIA re-launch guide' },
+            screenshot:  { href: '/aria?prefill=' + encodeURIComponent('I have an error on my screen. How do I capture a screenshot and what should I send you for analysis?'), label: 'ARIA error analysis' },
+            ticket:      { contact: true, subject: 'Service Center — Log a ticket', label: 'the contact form' },
+            purchase:    { href: '/purchase-tech', label: 'Purchase Tech' }
+        };
+        let portalReachableCache = null; // null = not checked yet; {ok, at}
 
-        function openPortal(panel) {
+        function withTimeout(ms) {
+            const ctrl = ('AbortController' in window) ? new AbortController() : null;
+            const timer = ctrl ? setTimeout(function() { ctrl.abort(); }, ms) : null;
+            return { signal: ctrl ? ctrl.signal : undefined, clear: function() { if (timer) clearTimeout(timer); } };
+        }
+
+        async function portalReachable() {
+            if (portalReachableCache && (Date.now() - portalReachableCache.at) < 60000) return portalReachableCache.ok;
+            let ok = false;
+            // 1) same-origin check that reads the portal's real HTTP status server-side
+            const t1 = withTimeout(PORTAL_CHECK_TIMEOUT_MS);
+            try {
+                const r = await fetch(PORTAL_CHECK_URL + '?cb=' + Date.now(), { cache: 'no-store', signal: t1.signal });
+                if (r.ok) { const j = await r.json(); ok = !!(j && j.ok); portalReachableCache = { ok: ok, at: Date.now() }; return ok; }
+            } catch (_) { /* edge check unavailable — fall through */ } finally { t1.clear(); }
+            // 2) direct HEAD (a 404 host or a host without CORS headers both reject, which is the safe answer)
+            const t2 = withTimeout(PORTAL_CHECK_TIMEOUT_MS);
+            try {
+                const r = await fetch(PORTAL_URL + '/?probe=1', { method: 'HEAD', mode: 'cors', cache: 'no-store', signal: t2.signal });
+                ok = !!(r && r.ok);
+            } catch (_) { ok = false; } finally { t2.clear(); }
+            portalReachableCache = { ok: ok, at: Date.now() };
+            return ok;
+        }
+
+        function openPortalFallback(panel, btn) {
+            const fb = PORTAL_FALLBACKS[panel] || PORTAL_FALLBACKS.chat;
+            if (fb.contact) {
+                // Same form the ?contact=1 deep links use — open it in place, no reload.
+                const subject = document.getElementById('cf-subject');
+                const titleEl = btn && btn.querySelector ? btn.querySelector('.sc-tile-title, .sc-action-title, .sc-hero-text') : null;
+                const titleText = titleEl && titleEl.textContent ? titleEl.textContent.trim() : '';
+                if (subject) subject.value = titleText ? 'Service Center — ' + titleText : fb.subject;
+                const fab = document.getElementById('chatFab');
+                const win = document.getElementById('chatWindow');
+                if (fab && win && win.classList.contains('hidden')) fab.click();
+                const desc = document.getElementById('cf-description');
+                if (desc) setTimeout(function() { desc.focus({ preventScroll: true }); }, 350);
+                return;
+            }
+            window.location.href = fb.href;
+        }
+
+        function openPortal(panel, triggerEl) {
             const modal = document.getElementById('scModal');
             const iframe = document.getElementById('scIframe');
-            // Load the portal — the portal reads ?panel= to auto-open specific panels
-            iframe.src = PORTAL_URL + '?panel=' + panel;
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            const btn = triggerEl || (window.event && window.event.currentTarget) || null;
+            const restore = btn && btn.tagName === 'BUTTON' ? { disabled: btn.disabled, aria: btn.getAttribute('aria-busy') } : null;
+            if (restore) { btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
+            portalReachable().then(function(ok) {
+                if (restore) { btn.disabled = restore.disabled; if (restore.aria === null) btn.removeAttribute('aria-busy'); else btn.setAttribute('aria-busy', restore.aria); }
+                if (!ok) { openPortalFallback(panel, btn); return; }
+                // Load the portal — the portal reads ?panel= to auto-open specific panels
+                iframe.src = PORTAL_URL + '?panel=' + panel;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }).catch(function() {
+                if (restore) { btn.disabled = restore.disabled; btn.removeAttribute('aria-busy'); }
+                openPortalFallback(panel, btn);
+            });
         }
 
         function closePortal() {

@@ -693,11 +693,13 @@
                 <p class="text-white/30 uppercase tracking-[0.3em] text-[10px] max-w-xl mx-auto">A curated selection of certified hardware ready for immediate purchase. Contact us for pricing and pick-up / delivery options.</p>
             </div>
 
+            <!-- RUN-CU 2026-10-08: cards load 1600px derivatives from /assets/inventory-1600/ (260–460 KB each, EXIF orientation baked in)
+                 instead of the 3–4 MB camera originals; the originals stay in /images/inventory/ and are referenced via data-full. -->
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
                 <!-- Notebook RAM 16GB × 7 -->
                 <div class="inv-card">
-                    <div class="inv-media"><span class="inv-badge">7 Available</span><img src="/images/inventory/notebook-ram-16gb.jpg" alt="Notebook 16GB RAM"></div>
+                    <div class="inv-media"><span class="inv-badge">7 Available</span><img src="/assets/inventory-1600/notebook-ram-16gb.jpg" data-full="/images/inventory/notebook-ram-16gb.jpg" loading="lazy" decoding="async" alt="Notebook 16GB RAM"></div>
                     <div class="inv-body">
                         <h4>Notebook 16GB RAM</h4>
                         <div class="inv-sub">Crucial • DDR3L SODIMM</div>
@@ -707,7 +709,7 @@
 
                 <!-- Mac Mini #1 -->
                 <div class="inv-card">
-                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/images/inventory/mac-mini-1.jpg" alt="Mac Mini Model A1347"></div>
+                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/assets/inventory-1600/mac-mini-1.jpg" data-full="/images/inventory/mac-mini-1.jpg" loading="lazy" decoding="async" alt="Mac Mini Model A1347"></div>
                     <div class="inv-body">
                         <h4>Mac Mini</h4>
                         <div class="inv-sub">Model A1347 • Unit 1 of 2</div>
@@ -717,7 +719,7 @@
 
                 <!-- Mac Mini #2 -->
                 <div class="inv-card">
-                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/images/inventory/mac-mini-2.jpg" alt="Mac Mini Model A1347"></div>
+                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/assets/inventory-1600/mac-mini-2.jpg" data-full="/images/inventory/mac-mini-2.jpg" loading="lazy" decoding="async" alt="Mac Mini Model A1347"></div>
                     <div class="inv-body">
                         <h4>Mac Mini</h4>
                         <div class="inv-sub">Model A1347 • Unit 2 of 2</div>
@@ -727,7 +729,7 @@
 
                 <!-- iPad A1458 -->
                 <div class="inv-card">
-                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/images/inventory/ipad-a1458.jpg" alt="iPad Model A1458"></div>
+                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/assets/inventory-1600/ipad-a1458.jpg" data-full="/images/inventory/ipad-a1458.jpg" loading="lazy" decoding="async" alt="iPad Model A1458"></div>
                     <div class="inv-body">
                         <h4>iPad</h4>
                         <div class="inv-sub">Model A1458 • 1 Available</div>
@@ -737,7 +739,7 @@
 
                 <!-- Desktop Tower -->
                 <div class="inv-card">
-                    <div class="inv-media"><span class="inv-badge">Custom Build</span><img src="/images/inventory/desktop-tower.jpg" alt="Desktop Tower with Parts"></div>
+                    <div class="inv-media"><span class="inv-badge">Custom Build</span><img src="/assets/inventory-1600/desktop-tower.jpg" data-full="/images/inventory/desktop-tower.jpg" loading="lazy" decoding="async" alt="Desktop Tower with Parts"></div>
                     <div class="inv-body">
                         <h4>Desktop Tower</h4>
                         <div class="inv-sub">Corsair Case • With Parts</div>
@@ -747,7 +749,7 @@
 
                 <!-- Dell Laptop -->
                 <div class="inv-card">
-                    <div class="inv-media"><span class="inv-badge">Dell</span><img src="/images/inventory/dell-laptop.jpg" alt="Dell Laptop"></div>
+                    <div class="inv-media"><span class="inv-badge">Dell</span><img src="/assets/inventory-1600/dell-laptop.jpg" data-full="/images/inventory/dell-laptop.jpg" loading="lazy" decoding="async" alt="Dell Laptop"></div>
                     <div class="inv-body">
                         <h4>Dell Laptop</h4>
                         <div class="inv-sub">Inspiron Series • 1 Available</div>
@@ -757,7 +759,7 @@
 
                 <!-- MacBook Pro -->
                 <div class="inv-card">
-                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/images/inventory/macbook-pro.jpg" alt="MacBook Pro"></div>
+                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/assets/inventory-1600/macbook-pro.jpg" data-full="/images/inventory/macbook-pro.jpg" loading="lazy" decoding="async" alt="MacBook Pro"></div>
                     <div class="inv-body">
                         <h4>MacBook Pro</h4>
                         <div class="inv-sub">Apple Silicon Class • 1 Available</div>

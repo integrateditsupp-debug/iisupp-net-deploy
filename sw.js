@@ -1,35 +1,42 @@
 // Bump this version on each deploy to force returning visitors to flush the
 // old cache and pick up the new aria-trial widget + kb-index. The fetch
 // strategy is network-first, so cache only matters when offline.
-const CACHE_NAME = "iisupport-v12";
+//
+// RUN-CU 2026-10-08 (site audit, Top-10 #10): the precache list is trimmed to paths that exist and
+// are served as-is. Removed from PRECACHE (the pages themselves are untouched — they are simply
+// cached on first visit instead of pre-fetched for everyone):
+//   /docs/api                      force-404 in netlify.toml (never resolved)
+//   /compare/aria-vs-msp-x/        301 → /compare/ (killed page)
+//   /analytics.html                301 → /aperture-learning.html
+//   /tenant-admin.html, /white-label-admin.html, /cost-dashboard.html, /write-gate-history.html
+//                                  operator/admin shells (noindex) — no reason to pre-fetch for visitors
+//   /  and  /aria.html             320 KB + 504 KB on every first visit; both are cached at runtime
+//                                  by the fetch handler the first time they are actually opened
+// Also: cache.put is now guarded with res.ok so a 404/500 body never replaces a good cached copy.
+const CACHE_NAME = "iisupport-v13";
 const PRECACHE = [
-  "/",
-  "/aria.html",
+  "/offline.html",
+  "/manifest.webmanifest",
+  "/favicon.svg",
+  "/icons/icon-192.png",
+  "/icons/icon-512.png",
+  "/assets/finish100.css",
+  "/assets/finish100-pages.js",
+  "/assets/xo-elite-theme.css",
+  "/assets/aria-core.css",
   "/about.html",
   "/purchase-tech.html",
   "/account.html",
-  "/analytics.html",
-  "/tenant-admin.html",
   "/status-history.html",
-  "/white-label-admin.html",
   "/screenshare-consent.html",
   "/partner-application-checker.html",
   "/platform-readiness.html",
-  "/docs/api",
   "/compare/",
   "/compare/aria-vs-retell/",
   "/compare/aria-vs-vapi/",
-  "/compare/aria-vs-msp-x/",
   "/compare/compare.css",
-  "/write-gate-history.html",
   "/iso-27001-readiness.html",
-  "/pipeda-readiness.html",
-  "/cost-dashboard.html",
-  "/offline.html",
-  "/assets/finish100.css",
-  "/assets/finish100-pages.js",
-  "/manifest.webmanifest",
-  "/favicon.svg"
+  "/pipeda-readiness.html"
 ];
 
 self.addEventListener("install", (event) => {
@@ -63,12 +70,17 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith("/.netlify/")) return;
+  if (url.pathname.startsWith("/api/")) return;
 
   event.respondWith(
     fetch(req)
       .then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE_NAME).then((c) => c.put(req, copy)).catch(() => {});
+        // Only a good, basic (same-origin, non-opaque) response is worth keeping: a 404 or 500
+        // page must never overwrite a previously cached working copy.
+        if (res && res.ok && res.type === "basic") {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((c) => c.put(req, copy)).catch(() => {});
+        }
         return res;
       })
       .catch(() => caches.match(req).then((r) => r || caches.match("/offline.html") || caches.match("/")))

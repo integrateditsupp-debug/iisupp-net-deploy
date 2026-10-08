@@ -11,6 +11,12 @@ import type { Context, Config } from 'https://edge.netlify.com';
 const MOBILE_UA = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|webOS/i;
 
 export default async (request: Request, context: Context) => {
+  // RUN-CU 2026-10-08: only rewrite page loads. The contact forms on index.html and m.html POST
+  // urlencoded Netlify Forms submissions to "/"; rewriting that POST to /m.html for a phone would
+  // hand the form body to a static file instead of Netlify Forms. GET/HEAD are the only methods
+  // that fetch a page, so they are the only ones this function touches.
+  if (request.method !== 'GET' && request.method !== 'HEAD') return;
+
   const url = new URL(request.url);
 
   // Only intercept the bare root

@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=1280">
 <title>System Status · Integrated IT Support</title>
-<meta name="description" content="Real-time service health for ARIA + iisupp.net infrastructure.">
+<meta name="description" content="Live component health for ARIA + iisupp.net, read from the production health endpoints on every page load.">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>
 body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#050505;color:#fff;line-height:1.6;margin:0}
@@ -15,6 +15,8 @@ header.top{padding:14px 22px;border-bottom:1px solid rgba(197,160,89,.18);displa
 .banner{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(74,222,128,.10),rgba(74,222,128,.04));border:1px solid rgba(74,222,128,.35);border-radius:14px;padding:20px 24px;margin:20px 0;font-family:Cinzel,serif}
 .banner.degraded{background:linear-gradient(135deg,rgba(251,191,36,.12),rgba(251,191,36,.04));border-color:rgba(251,191,36,.45)}
 .banner.down{background:linear-gradient(135deg,rgba(251,113,133,.12),rgba(251,113,133,.04));border-color:rgba(251,113,133,.45)}
+.banner.unknown{background:linear-gradient(135deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border-color:rgba(255,255,255,.18)}
+.banner.unknown .dot{background:rgba(255,255,255,.45);box-shadow:none;animation:none}
 .banner .dot{width:14px;height:14px;border-radius:50%;background:#4ade80;box-shadow:0 0 12px #4ade80;flex-shrink:0;animation:pulse 1.6s ease-in-out infinite}
 .banner.degraded .dot{background:#fbbf24;box-shadow:0 0 12px #fbbf24}
 .banner.down .dot{background:#fb7185;box-shadow:0 0 12px #fb7185}
@@ -25,14 +27,23 @@ header.top{padding:14px 22px;border-bottom:1px solid rgba(197,160,89,.18);displa
 .svc{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;background:linear-gradient(165deg,#0a0805,#15110a);border:1px solid rgba(197,160,89,.20);border-radius:10px;padding:14px 18px}
 .svc strong{font-family:Cinzel,serif;color:#fff;font-size:14px;letter-spacing:.04em}
 .svc .desc{color:rgba(255,255,255,.55);font-size:12px;font-family:Inter,sans-serif}
+.svc .desc code,.b-sub code,.uptime-note code{font-family:'JetBrains Mono',monospace;font-size:11px;color:#c5a059}
 .svc .pill{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;font-weight:700;padding:5px 11px;border-radius:5px;text-transform:uppercase}
 .pill.ok{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.30)}
 .pill.deg{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.30)}
 .pill.down{background:rgba(251,113,133,.12);color:#fb7185;border:1px solid rgba(251,113,133,.30)}
+.pill.na{background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.14)}
+.pill.chk{background:rgba(197,160,89,.10);color:#c5a059;border:1px solid rgba(197,160,89,.30)}
 .uptime-grid{display:grid;grid-template-columns:repeat(90,1fr);gap:2px;margin-top:8px}
 .uptime-grid .day{height:30px;border-radius:2px;background:#4ade80;opacity:.72}
 .uptime-grid .day.deg{background:#fbbf24}
 .uptime-grid .day.down{background:#fb7185}
+.uptime-grid .day.nodata{background:rgba(255,255,255,.10);opacity:.5}
+.uptime-note{color:rgba(255,255,255,.55);font-size:12px;margin-top:10px;font-family:Inter,sans-serif}
+.measured{background:rgba(197,160,89,.05);border:1px solid rgba(197,160,89,.18);border-radius:10px;padding:14px 18px;margin-top:18px;font-size:12.5px;color:rgba(255,255,255,.62)}
+.measured ul{margin:8px 0 0;padding-left:18px}
+.measured li{margin:3px 0}
+.measured code{font-family:'JetBrains Mono',monospace;font-size:11px;color:#f1dca7}
 .uptime-grid .day:hover{opacity:1;transform:scaleY(1.08)}
 .uptime-meta{display:flex;justify-content:space-between;color:rgba(255,255,255,.5);font-size:11px;margin-top:6px;letter-spacing:.08em;text-transform:uppercase}
 .metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:14px}
@@ -43,19 +54,19 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid rgba(197,160,89,.12
 a{color:#c5a059;text-decoration:none}a:hover{color:#f1dca7}
 </style>
 <meta property="og:title" content="IIS / ARIA System Status — IIS">
-<meta property="og:description" content="Live uptime + component health.">
+<meta property="og:description" content="Live component health for ARIA + iisupp.net.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://iisupp.net/status">
 <meta property="og:image" content="https://iisupp.net/assets/aria-og.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="IIS / ARIA System Status — IIS">
-<meta name="twitter:description" content="Live uptime + component health.">
+<meta name="twitter:description" content="Live component health for ARIA + iisupp.net.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "name": "IIS / ARIA System Status",
-  "description": "Live uptime + component health.",
+  "description": "Live component health for ARIA + iisupp.net.",
   "url": "https://iisupp.net/status",
   "provider": {
     "@type": "Organization",
@@ -79,37 +90,48 @@ a{color:#c5a059;text-decoration:none}a:hover{color:#f1dca7}
 </head><body>
 <header class="top"><a href="/">&larr; Home</a><span class="brand">SYSTEM STATUS</span><a href="/aria">Try ARIA</a></header>
 <div class="wrap">
-<h1>All systems <span class="gold">operational</span></h1>
-<p>Real-time health snapshot. Auto-refreshes every 60 seconds. Last check: <span id="last-check">—</span></p>
+<h1 id="headline">Checking <span class="gold">systems</span>…</h1>
+<p>Health snapshot read from the production endpoints each time this page loads. Auto-refreshes every 60 seconds. Last check: <span id="last-check">—</span></p>
 
-<div class="banner" id="main-banner">
+<div class="banner unknown" id="main-banner">
   <span class="dot"></span>
   <div>
-    <h2 id="main-status">All systems operational</h2>
-    <div class="b-sub" id="main-sub">No active incidents. ARIA, payments, and email are responding normally.</div>
+    <h2 id="main-status">Checking…</h2>
+    <div class="b-sub" id="main-sub">Reading <code>/health</code> and <code>/aria-system-status</code>. Nothing on this page is assumed — if a probe fails, it says so.</div>
   </div>
 </div>
 
 <h2>Components</h2>
 <div class="svc-grid">
-  <div class="svc"><div><strong>iisupp.net</strong><div class="desc">Main website + assets</div></div><span class="pill ok" id="s-site">OPERATIONAL</span></div>
-  <div class="svc"><div><strong>ARIA chat (/aria)</strong><div class="desc">Live trial + chat surface</div></div><span class="pill ok" id="s-aria">OPERATIONAL</span></div>
-  <div class="svc"><div><strong>Stripe checkout</strong><div class="desc">Plans, billing, webhooks</div></div><span class="pill ok" id="s-stripe">OPERATIONAL</span></div>
-  <div class="svc"><div><strong>Email delivery</strong><div class="desc">Resend + Gmail SMTP fallback</div></div><span class="pill ok" id="s-email">OPERATIONAL</span></div>
-  <div class="svc"><div><strong>Anthropic Claude API</strong><div class="desc">LLM backbone for ARIA</div></div><span class="pill ok" id="s-claude">OPERATIONAL</span></div>
-  <div class="svc"><div><strong>Microsoft Graph (read)</strong><div class="desc">M365 / Azure AD integration</div></div><span class="pill ok" id="s-graph">OPERATIONAL</span></div>
+  <div class="svc"><div><strong>iisupp.net</strong><div class="desc" id="d-site">Site + functions layer — measured via <code>/.netlify/functions/health</code></div></div><span class="pill chk" id="s-site">CHECKING</span></div>
+  <div class="svc"><div><strong>ARIA chat (/aria)</strong><div class="desc" id="d-aria">Chat endpoint probe — measured via <code>/.netlify/functions/aria-system-status</code></div></div><span class="pill chk" id="s-aria">CHECKING</span></div>
+  <div class="svc"><div><strong>ARIA knowledge base</strong><div class="desc" id="d-kb">KB query probe, chunk count and KB age — measured via <code>aria-system-status</code></div></div><span class="pill chk" id="s-kb">CHECKING</span></div>
+  <div class="svc"><div><strong>Stripe checkout</strong><div class="desc" id="d-stripe">Plans, billing, webhooks — configuration check only (key present), not a live Stripe API probe</div></div><span class="pill chk" id="s-stripe">CHECKING</span></div>
+  <div class="svc"><div><strong>Email delivery</strong><div class="desc" id="d-email">Resend + Gmail SMTP fallback — no probe wired yet</div></div><span class="pill na" id="s-email">NOT MEASURED</span></div>
+  <div class="svc"><div><strong>Anthropic Claude API</strong><div class="desc" id="d-claude">LLM backbone for ARIA — configuration check (key present) plus the chat probe above</div></div><span class="pill chk" id="s-claude">CHECKING</span></div>
+  <div class="svc"><div><strong>Microsoft Graph (read)</strong><div class="desc" id="d-graph">M365 / Azure AD integration — no probe wired yet</div></div><span class="pill na" id="s-graph">NOT MEASURED</span></div>
 </div>
 
 <h2>90-day uptime · ARIA</h2>
-<div class="uptime-grid" id="uptime-grid"></div>
-<div class="uptime-meta"><span id="ut-from">90 days ago</span><span><strong style="color:#f1dca7">99.99%</strong> uptime</span><span>Today</span></div>
+<div class="uptime-grid" id="uptime-grid" aria-label="90-day uptime history"></div>
+<div class="uptime-meta"><span id="ut-from">90 days ago</span><span><strong style="color:#f1dca7" id="ut-pct">—</strong> <span id="ut-pct-label">uptime · no history recorded yet</span></span><span>Today</span></div>
+<div class="uptime-note" id="uptime-note">No uptime history is recorded yet. The scheduled probe (<code>aria-uptime-probe</code>) writes to Netlify Blobs, but no public reader is wired to this page, so the grid stays grey instead of showing invented days.</div>
+<div class="uptime-note" id="session-note" hidden></div>
 
 <h2>SLA + metrics</h2>
 <div class="metric-row">
-  <div class="metric"><span class="v">99.99%</span><span class="k">30-day uptime</span></div>
-  <div class="metric"><span class="v">11.4s</span><span class="k">Mean resolve</span></div>
-  <div class="metric"><span class="v">&lt;2s</span><span class="k">First token</span></div>
-  <div class="metric"><span class="v">24×7</span><span class="k">Coverage</span></div>
+  <div class="metric"><span class="v" id="m-uptime">—</span><span class="k">30-day uptime · not measured yet</span></div>
+  <div class="metric"><span class="v" id="m-resolve">—</span><span class="k">Mean resolve · not measured yet</span></div>
+  <div class="metric"><span class="v" id="m-chat">—</span><span class="k" id="m-chat-k">ARIA chat probe latency</span></div>
+  <div class="metric"><span class="v" id="m-kb">—</span><span class="k" id="m-kb-k">KB query latency</span></div>
+</div>
+<div class="measured">
+  <strong style="color:#f1dca7;font-family:Cinzel,serif;letter-spacing:.08em;font-size:12px">What this page measures</strong>
+  <ul>
+    <li><code>GET /.netlify/functions/health</code> — the functions layer answered, and whether the Anthropic and Stripe keys are configured (a config check, not a transaction).</li>
+    <li><code>GET /.netlify/functions/aria-system-status</code> — a live KB query probe and a chat-endpoint probe, with latency, KB chunk count and KB age.</li>
+    <li>Not measured yet: email delivery, Microsoft Graph, 30-day uptime history, mean resolve time, human coverage hours. Those read "—" or "not measured" until a real probe is wired.</li>
+  </ul>
 </div>
 
 <h2>Subscribe to updates</h2>
@@ -119,37 +141,184 @@ a{color:#c5a059;text-decoration:none}a:hover{color:#f1dca7}
 </div>
 
 <script>
-function paintUptime(){
-  var grid = document.getElementById('uptime-grid');
-  if (!grid || grid.children.length) return;
+// Rule 14 — real-or-empty. Every pill, metric and banner on this page is set from the two
+// production endpoints below, or left as "—" / "not measured". Nothing is hard-coded green.
+var HEALTH_URL = '/.netlify/functions/health';
+var SYSTEM_STATUS_URL = '/.netlify/functions/aria-system-status';
+// Set this to a PUBLIC reader of the aria-uptime blob once one exists. Expected shape:
+//   { days: [ { date: 'YYYY-MM-DD', up: <ok checks>, down: <failed checks> }, ... ] }
+// Until then the 90-day grid renders an honest "no history" state.
+var HISTORY_URL = '';
+
+var SLOW_MS = 3000;
+var sessionChecks = { ok: 0, fail: 0, since: new Date() };
+
+function $(id){ return document.getElementById(id); }
+function setPill(id, cls, label){ var p = $(id); if (p) { p.className = 'pill ' + cls; p.textContent = label; } }
+function setText(id, text){ var el = $(id); if (el) el.textContent = text; }
+function fmtMs(ms){ return (typeof ms === 'number' && isFinite(ms)) ? (ms >= 1000 ? (ms/1000).toFixed(1) + ' s' : Math.round(ms) + ' ms') : '—'; }
+function fmtAge(hours){
+  if (typeof hours !== 'number' || !isFinite(hours)) return 'age unknown';
+  if (hours < 48) return 'generated ' + Math.round(hours) + ' h ago';
+  return 'generated ' + Math.round(hours / 24) + ' days ago';
+}
+
+async function fetchJson(url, timeoutMs){
+  var ctrl = ('AbortController' in window) ? new AbortController() : null;
+  var t = ctrl ? setTimeout(function(){ ctrl.abort(); }, timeoutMs) : null;
+  var t0 = Date.now();
+  try {
+    var r = await fetch(url + (url.indexOf('?') === -1 ? '?' : '&') + 'cb=' + t0, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined });
+    var ms = Date.now() - t0;
+    var data = null;
+    try { data = await r.json(); } catch (_) { data = null; }
+    return { ok: r.ok, status: r.status, ms: ms, data: data };
+  } catch (err) {
+    return { ok: false, status: 0, ms: Date.now() - t0, error: String(err && err.message || err) };
+  } finally { if (t) clearTimeout(t); }
+}
+
+function paintUptime(history){
+  var grid = $('uptime-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  var byDate = {};
+  var hasHistory = !!(history && Array.isArray(history.days) && history.days.length);
+  if (hasHistory) history.days.forEach(function(d){ if (d && d.date) byDate[d.date] = d; });
+  var okDays = 0, measuredDays = 0;
   for (var i = 0; i < 90; i++) {
     var d = document.createElement('div');
-    d.className = 'day';
-    // Mostly green; occasional amber for realism
-    if (i === 12 || i === 58) d.className = 'day deg';
     var date = new Date(); date.setDate(date.getDate() - (89 - i));
-    d.title = date.toDateString() + ' — operational';
+    var key = date.toISOString().slice(0, 10);
+    var rec = byDate[key];
+    if (rec && (rec.up + rec.down) > 0) {
+      measuredDays++;
+      var ratio = rec.up / (rec.up + rec.down);
+      d.className = ratio >= 0.999 ? 'day' : (ratio >= 0.95 ? 'day deg' : 'day down');
+      if (ratio >= 0.999) okDays++;
+      d.title = date.toDateString() + ' — ' + rec.up + ' ok / ' + rec.down + ' failed checks';
+    } else {
+      d.className = 'day nodata';
+      d.title = date.toDateString() + ' — no data recorded';
+    }
     grid.appendChild(d);
   }
   var from = new Date(); from.setDate(from.getDate() - 89);
-  document.getElementById('ut-from').textContent = from.toDateString();
+  setText('ut-from', from.toDateString());
+  if (measuredDays) {
+    var pct = history.days.reduce(function(a, x){ a.up += (x.up||0); a.down += (x.down||0); return a; }, { up: 0, down: 0 });
+    var total = pct.up + pct.down;
+    setText('ut-pct', total ? ((pct.up / total) * 100).toFixed(2) + '%' : '—');
+    setText('ut-pct-label', 'uptime over ' + measuredDays + ' measured day' + (measuredDays === 1 ? '' : 's'));
+    setText('m-uptime', total ? ((pct.up / total) * 100).toFixed(2) + '%' : '—');
+    var note = $('uptime-note'); if (note) note.hidden = true;
+  }
 }
-function tickClock(){
-  document.getElementById('last-check').textContent = new Date().toLocaleTimeString();
+
+function paintSession(){
+  var el = $('session-note'); if (!el) return;
+  var n = sessionChecks.ok + sessionChecks.fail;
+  if (!n) return;
+  el.hidden = false;
+  el.textContent = 'This browser only: ' + n + ' check' + (n === 1 ? '' : 's') + ' since ' + sessionChecks.since.toLocaleTimeString() +
+    ' — ' + sessionChecks.ok + ' reached both endpoints, ' + sessionChecks.fail + ' did not. (Not a history; just what this tab has seen.)';
 }
-// Light real-health probe — try fetching favicon (fast, cached) as a heartbeat
+
+function setBanner(level, title, sub){
+  var b = $('main-banner'); if (b) b.className = 'banner ' + level;
+  setText('main-status', title);
+  setText('main-sub', sub);
+  var h = $('headline');
+  if (h) {
+    var map = {
+      ok: ['All measured systems ', 'operational'],
+      degraded: ['Partial ', 'degradation'],
+      down: ['Service ', 'disruption'],
+      unknown: ['Status checks ', 'unavailable']
+    };
+    var parts = map[level] || map.unknown;
+    h.textContent = '';
+    h.appendChild(document.createTextNode(parts[0]));
+    var g = document.createElement('span'); g.className = 'gold'; g.textContent = parts[1];
+    h.appendChild(g);
+  }
+}
+
+function tickClock(){ setText('last-check', new Date().toLocaleTimeString()); }
+
 async function probe(){
-  try {
-    var t0 = Date.now();
-    await fetch('/favicon.svg?cb=' + t0, { cache: 'no-store' });
-    if (Date.now() - t0 > 3000) markDegraded('s-site', 'Slow');
-  } catch { markDown('s-site'); }
+  var results = await Promise.all([ fetchJson(HEALTH_URL, 8000), fetchJson(SYSTEM_STATUS_URL, 12000) ]);
+  var health = results[0], sys = results[1];
+  var h = health.data || {}, sd = sys.data || {};
+  var brain = sd.brain || {}, chat = brain.aria_chat || null, kb = brain.kb_query || null;
+
+  // iisupp.net — the functions layer answered /health
+  if (health.ok) {
+    setPill('s-site', health.ms > SLOW_MS ? 'deg' : 'ok', health.ms > SLOW_MS ? 'SLOW · ' + fmtMs(health.ms) : 'OPERATIONAL · ' + fmtMs(health.ms));
+    setText('d-site', 'Functions layer answered /health in ' + fmtMs(health.ms) + (h.version ? ' · ARIA ' + h.version : ''));
+  } else {
+    setPill('s-site', 'down', health.status ? 'HTTP ' + health.status : 'UNREACHABLE');
+    setText('d-site', '/health did not answer' + (health.error ? ' (' + health.error + ')' : ''));
+  }
+
+  // ARIA chat — probe result from aria-system-status
+  if (sys.ok && chat) {
+    if (chat.ok) { setPill('s-aria', chat.latency_ms > SLOW_MS ? 'deg' : 'ok', (chat.latency_ms > SLOW_MS ? 'SLOW · ' : 'OPERATIONAL · ') + fmtMs(chat.latency_ms)); }
+    else { setPill('s-aria', 'down', 'PROBE FAILED'); }
+    setText('d-aria', 'Chat endpoint probe: HTTP ' + (chat.status || '—') + ' in ' + fmtMs(chat.latency_ms) + (chat.mode ? ' · mode: ' + chat.mode : '') + (chat.error ? ' · ' + chat.error : ''));
+    setText('m-chat', fmtMs(chat.latency_ms));
+  } else if (sys.ok) {
+    setPill('s-aria', 'na', 'NOT MEASURED'); setText('d-aria', 'aria-system-status answered without a chat probe result');
+  } else {
+    setPill('s-aria', 'down', sys.status ? 'HTTP ' + sys.status : 'UNREACHABLE'); setText('d-aria', 'aria-system-status did not answer' + (sys.error ? ' (' + sys.error + ')' : ''));
+  }
+
+  // ARIA knowledge base — KB query probe
+  if (sys.ok && kb) {
+    var kbLabel = kb.ok ? 'OPERATIONAL · ' + fmtMs(kb.latency_ms) : 'PROBE FAILED';
+    setPill('s-kb', kb.ok ? (kb.latency_ms > SLOW_MS ? 'deg' : 'ok') : 'down', kb.ok && kb.latency_ms > SLOW_MS ? 'SLOW · ' + fmtMs(kb.latency_ms) : kbLabel);
+    setText('d-kb', (kb.total_chunks ? kb.total_chunks + ' chunks · ' : '') + fmtAge(kb.kb_age_hours) + (kb.kb_generated_at ? ' (' + String(kb.kb_generated_at).slice(0, 10) + ')' : '') + (kb.error ? ' · ' + kb.error : ''));
+    setText('m-kb', fmtMs(kb.latency_ms));
+  } else if (sys.ok) {
+    setPill('s-kb', 'na', 'NOT MEASURED');
+  } else {
+    setPill('s-kb', 'down', 'UNREACHABLE');
+  }
+
+  // Stripe + Anthropic — configuration checks from /health (key present), nothing more is claimed
+  if (health.ok && typeof h.stripe === 'boolean') { setPill('s-stripe', h.stripe ? 'ok' : 'deg', h.stripe ? 'CONFIGURED' : 'NOT CONFIGURED'); }
+  else { setPill('s-stripe', 'na', 'NOT MEASURED'); }
+  if (health.ok && typeof h.anthropic === 'boolean') {
+    var claudeOk = h.anthropic && (!chat || chat.ok);
+    setPill('s-claude', h.anthropic ? (claudeOk ? 'ok' : 'deg') : 'deg', h.anthropic ? (claudeOk ? 'CONFIGURED' : 'CONFIGURED · CHAT PROBE FAILED') : 'NOT CONFIGURED');
+  } else { setPill('s-claude', 'na', 'NOT MEASURED'); }
+
+  // Banner — from aria-system-status.overall + /health reachability
+  var bothUp = health.ok && sys.ok;
+  if (bothUp) sessionChecks.ok++; else sessionChecks.fail++;
+  if (!health.ok && !sys.ok) {
+    setBanner('unknown', 'Status checks unavailable', 'Neither /health nor aria-system-status answered from this browser. That may be a local network issue — call (647) 581-3182 if you cannot reach the site.');
+  } else if (sd.overall === 'red' || !health.ok) {
+    setBanner('down', 'Service disruption detected', !health.ok ? 'The functions layer did not answer /health.' : 'The ARIA knowledge-base probe failed (aria-system-status reports red).');
+  } else if (sd.overall === 'yellow') {
+    setBanner('degraded', 'Partial degradation', 'KB answers are up; the chat-endpoint probe failed. ARIA keeps answering from the knowledge base.');
+  } else if (sd.overall === 'green') {
+    setBanner('ok', 'All measured systems operational', 'Functions layer, ARIA chat probe and KB probe all answered. Email and Microsoft Graph are not probed yet.');
+  } else {
+    setBanner('degraded', 'Partial data', '/health answered but aria-system-status did not return an overall verdict.');
+  }
+
+  paintSession();
   tickClock();
 }
-function markDegraded(id, label){ var p = document.getElementById(id); if(p){p.className='pill deg';p.textContent=label||'DEGRADED';} }
-function markDown(id){ var p = document.getElementById(id); if(p){p.className='pill down';p.textContent='DOWN';} }
 
-paintUptime(); tickClock(); probe();
+async function loadHistory(){
+  if (!HISTORY_URL) { paintUptime(null); return; }
+  var r = await fetchJson(HISTORY_URL, 8000);
+  paintUptime(r.ok ? r.data : null);
+}
+
+loadHistory(); tickClock(); probe();
 setInterval(probe, 60000);
 </script>
   <script src="/assets/iis-motion.js?v=20260710L" defer></script>

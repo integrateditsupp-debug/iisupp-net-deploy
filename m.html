@@ -566,16 +566,16 @@
       <p class="tracking">AI diagnostics · guided fixes · equipment · 24/7 live escalation</p>
     </div>
     <div class="sc-card reveal">
-      <button class="sc-hero-cta" onclick="openPortal('chat')">
+      <button class="sc-hero-cta" onclick="openPortal('chat', this)">
         <span class="ico">🌐</span><span class="txt">Get IT Support</span><span class="arr">→</span>
       </button>
 
       <div class="sc-label"><span>Quick Actions</span></div>
       <div class="sc-tiles">
-        <button class="sc-tile" onclick="openPortal('diagnostics')"><div class="sc-tile-ico">💾</div><div class="sc-tile-title">Diagnostics</div><div class="sc-tile-sub">Health &amp; specs</div></button>
-        <button class="sc-tile" onclick="openPortal('relaunch')"><div class="sc-tile-ico">🔄</div><div class="sc-tile-title">Re-launch</div><div class="sc-tile-sub">Kill &amp; reopen</div></button>
-        <button class="sc-tile" onclick="openPortal('screenshot')"><div class="sc-tile-ico">📷</div><div class="sc-tile-title">Error Analysis</div><div class="sc-tile-sub">Screenshot AI</div></button>
-        <button class="sc-tile" onclick="openPortal('ticket')"><div class="sc-tile-ico">🎫</div><div class="sc-tile-title">Log Ticket</div><div class="sc-tile-sub">Submit request</div></button>
+        <button class="sc-tile" onclick="openPortal('diagnostics', this)"><div class="sc-tile-ico">💾</div><div class="sc-tile-title">Diagnostics</div><div class="sc-tile-sub">Health &amp; specs</div></button>
+        <button class="sc-tile" onclick="openPortal('relaunch', this)"><div class="sc-tile-ico">🔄</div><div class="sc-tile-title">Re-launch</div><div class="sc-tile-sub">Kill &amp; reopen</div></button>
+        <button class="sc-tile" onclick="openPortal('screenshot', this)"><div class="sc-tile-ico">📷</div><div class="sc-tile-title">Error Analysis</div><div class="sc-tile-sub">Screenshot AI</div></button>
+        <button class="sc-tile" onclick="openPortal('ticket', this)"><div class="sc-tile-ico">🎫</div><div class="sc-tile-title">Log Ticket</div><div class="sc-tile-sub">Submit request</div></button>
       </div>
 
       <a class="sc-emergency" href="tel:6475813182">
@@ -586,8 +586,8 @@
 
       <div class="sc-label"><span>Purchase &amp; Business</span></div>
       <div class="sc-pair">
-        <button class="sc-action" onclick="openPortal('purchase')"><span class="ico">🛒</span><div><div class="title">Purchase IT Equipment</div><div class="sub">Laptops, peripherals, hardware</div></div></button>
-        <button class="sc-action" onclick="openPortal('ticket')"><span class="ico">🏢</span><div><div class="title">Business Consultation</div><div class="sub">Office IT setup &amp; review</div></div></button>
+        <button class="sc-action" onclick="openPortal('purchase', this)"><span class="ico">🛒</span><div><div class="title">Purchase IT Equipment</div><div class="sub">Laptops, peripherals, hardware</div></div></button>
+        <button class="sc-action" onclick="openPortal('ticket', this)"><span class="ico">🏢</span><div><div class="title">Business Consultation</div><div class="sub">Office IT setup &amp; review</div></div></button>
       </div>
 
       <div class="sc-label"><span>Perks &amp; Plans</span></div>
@@ -1011,7 +1011,8 @@
     <div id="chatFormContainer">
       <form class="chat-form" id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
         <input type="hidden" name="form-name" value="contact">
-        <input type="hidden" name="subject" value="URGENT - Lead - New Contact Form Submission (mobile)">
+        <input type="hidden" id="cf-subject" name="subject" value="URGENT - Lead - New Contact Form Submission (mobile)">
+        <input type="hidden" id="cf-topic" name="request_topic" value=""><input type="hidden" id="cf-entry-page" name="entry_page" value=""><input type="hidden" id="cf-entry-url" name="entry_url" value="">
         <p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
         <div class="form-group"><label for="cf-name">Full Name</label><input type="text" id="cf-name" name="name" required placeholder="Your full name"><div class="error-msg" id="nameError">Please enter your name.</div></div>
         <div class="form-group"><label for="cf-email">Email Address</label><input type="email" id="cf-email" name="email" required placeholder="you@example.com"><div class="error-msg" id="emailError">Please enter a valid email address.</div></div>
@@ -1052,12 +1053,70 @@
 
   // ===== Service Center modal (same portal as desktop) =====
   var PORTAL_URL = 'https://ii-support-portal-wd05qh.abacusai.app';
-  function openPortal(panel) {
+  // RUN-CU 2026-10-08: the portal host answered 404 on every panel, so the modal opened blank.
+  // Same reachability check + on-site fallbacks as index.html (see the comment there).
+  var PORTAL_CHECK_URL = '/api/portal-check';
+  var PORTAL_CHECK_TIMEOUT_MS = 3000;
+  var PORTAL_FALLBACKS = {
+    chat:        { href: '/aria' },
+    diagnostics: { href: '/aria?prefill=' + encodeURIComponent('Run a quick health check on my computer — what should I look at first for specs, disk, memory and startup?') },
+    relaunch:    { href: '/aria?prefill=' + encodeURIComponent('An application is frozen. Walk me through safely closing and relaunching it without losing work.') },
+    screenshot:  { href: '/aria?prefill=' + encodeURIComponent('I have an error on my screen. How do I capture a screenshot and what should I send you for analysis?') },
+    ticket:      { contact: true, subject: 'Service Center — Log a ticket (mobile)' },
+    purchase:    { href: '/purchase-tech' }
+  };
+  var portalReachableCache = null;
+  function portalTimeout(ms) {
+    var ctrl = ('AbortController' in window) ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, ms) : null;
+    return { signal: ctrl ? ctrl.signal : undefined, clear: function(){ if (timer) clearTimeout(timer); } };
+  }
+  function portalReachable() {
+    if (portalReachableCache && (Date.now() - portalReachableCache.at) < 60000) return Promise.resolve(portalReachableCache.ok);
+    var t1 = portalTimeout(PORTAL_CHECK_TIMEOUT_MS);
+    return fetch(PORTAL_CHECK_URL + '?cb=' + Date.now(), { cache: 'no-store', signal: t1.signal })
+      .then(function(r){ if (!r.ok) throw new Error('check ' + r.status); return r.json(); })
+      .then(function(j){ return !!(j && j.ok); })
+      .catch(function(){
+        var t2 = portalTimeout(PORTAL_CHECK_TIMEOUT_MS);
+        return fetch(PORTAL_URL + '/?probe=1', { method: 'HEAD', mode: 'cors', cache: 'no-store', signal: t2.signal })
+          .then(function(r){ return !!(r && r.ok); })
+          .catch(function(){ return false; })
+          .finally(function(){ t2.clear(); });
+      })
+      .finally(function(){ t1.clear(); })
+      .then(function(ok){ portalReachableCache = { ok: ok, at: Date.now() }; return ok; });
+  }
+  function openPortalFallback(panel, btn) {
+    var fb = PORTAL_FALLBACKS[panel] || PORTAL_FALLBACKS.chat;
+    if (fb.contact) {
+      var subject = document.getElementById('cf-subject');
+      var titleEl = btn && btn.querySelector ? btn.querySelector('.sc-tile-title, .title, .txt') : null;
+      var titleText = titleEl && titleEl.textContent ? titleEl.textContent.trim() : '';
+      if (subject) subject.value = titleText ? 'Service Center — ' + titleText + ' (mobile)' : fb.subject;
+      var win = document.getElementById('chatWindow');
+      if (win) win.classList.add('visible');
+      var desc = document.getElementById('cf-description');
+      if (desc) setTimeout(function(){ desc.focus({ preventScroll: true }); }, 350);
+      return;
+    }
+    window.location.href = fb.href;
+  }
+  function openPortal(panel, triggerEl) {
     var modal = document.getElementById('scModal');
     var iframe = document.getElementById('scIframe');
-    iframe.src = PORTAL_URL + '?panel=' + panel;
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    var btn = triggerEl || null;
+    if (btn) { btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
+    portalReachable().then(function(ok){
+      if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); }
+      if (!ok) { openPortalFallback(panel, btn); return; }
+      iframe.src = PORTAL_URL + '?panel=' + panel;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }, function(){
+      if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); }
+      openPortalFallback(panel, btn);
+    });
   }
   function closePortal() {
     var modal = document.getElementById('scModal');
@@ -1173,6 +1232,31 @@
     fab.addEventListener('click', function(){ win.classList.toggle('visible'); });
     closeBtn.addEventListener('click', function(){ win.classList.remove('visible'); });
     function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+    // RUN-CU 2026-10-08: /?contact=1&subject=…&desc=… deep links (product, services, shop, index CTAs)
+    // land here on phones because the edge function rewrites / to m.html. Ported from index.html so the
+    // mobile visitor reaches the same prefilled form instead of a plain homepage reload.
+    (function(){
+      var subjectField = document.getElementById('cf-subject'), descField = document.getElementById('cf-description'),
+          nameField = document.getElementById('cf-name'), topicField = document.getElementById('cf-topic'),
+          entryPageField = document.getElementById('cf-entry-page'), entryUrlField = document.getElementById('cf-entry-url');
+      var params = new URLSearchParams(window.location.search);
+      var requestedSubject = params.get('subject');
+      var requestedDesc = params.get('desc');
+      var wantsContact = !!(params.get('contact') || requestedSubject || requestedDesc);
+      if (entryPageField) entryPageField.value = window.location.pathname;
+      if (entryUrlField) entryUrlField.value = window.location.href;
+      if (requestedSubject && subjectField) subjectField.value = requestedSubject;
+      if (topicField) topicField.value = requestedSubject || '';
+      if (requestedDesc && descField && !descField.value.trim()) descField.value = requestedDesc;
+      if (!wantsContact) return;
+      // Wait for the entry gate (opens at ~1s, failsafe 2.2s) so the form is not hidden behind it.
+      setTimeout(function(){
+        win.classList.add('visible');
+        var focusTarget = (requestedDesc && nameField) ? nameField : descField;
+        if (focusTarget) focusTarget.focus({ preventScroll: true });
+      }, REDUCED ? 300 : 1700);
+    })();
     form.addEventListener('submit', async function(e){
       e.preventDefault();
       form.querySelectorAll('.invalid').forEach(function(el){ el.classList.remove('invalid'); });

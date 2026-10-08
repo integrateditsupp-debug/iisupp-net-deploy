@@ -6,6 +6,17 @@
   # script lands on main from sprint-0-backend, re-enable as: command = "..."
 
 [build.environment]
+  # RUN-CU 2026-10-08 (site audit §1): this omit list tells Netlify's secrets scanner NOT to fail the
+  # build when these env values appear in the published output. Most entries are plain config
+  # (APP_URL, SALES_NOTIFY_EMAIL, ARIA_MODEL, ARIA_RATE_LIMIT, NETLIFY_SITE_ID, RESEND_FROM,
+  # SENIOR_DIRECTOR_DAILY_ALWAYS) and belong here. Three are REAL SECRETS that the scanner would now
+  # let through silently — they should be rotated and removed from this list once nothing in the
+  # publish dir echoes them:
+  #   TELEGRAM_BOT_TOKEN        (bot credential — rotate via @BotFather)
+  #   TELEGRAM_WEBHOOK_SECRET   (webhook signing secret — rotate + re-register the webhook)
+  #   SENIOR_DIRECTOR_SECRET    (agent auth secret — rotate in Netlify env)
+  # TELEGRAM_OWNER_CHAT_ID is an identifier, not a credential, but it also need not be public.
+  # The setting itself is kept unchanged (Rule 15) — removal is Ahmad's call after rotation.
   SECRETS_SCAN_OMIT_KEYS = "APP_URL,SALES_NOTIFY_EMAIL,ARIA_MODEL,ARIA_RATE_LIMIT,NETLIFY_SITE_ID,RESEND_FROM,TELEGRAM_BOT_TOKEN,TELEGRAM_WEBHOOK_SECRET,TELEGRAM_OWNER_CHAT_ID,SENIOR_DIRECTOR_SECRET,SENIOR_DIRECTOR_DAILY_ALWAYS"
   SECRETS_SCAN_OMIT_PATHS = "node_modules/**,.netlify/**,extension/**,downloads/**"
 
@@ -28,7 +39,11 @@
   [headers.values]
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "microphone=(self), camera=(), geolocation=(self)"
+    # RUN-CU 2026-10-08: same merged value as the /*.html block below. Netlify applies the LAST matching
+    # rule per header, so the two blocks must agree or one silently wins (verified live: /aria.html had
+    # only interest-cohort=() and lost the camera/geolocation lock). microphone=(self) stays — ARIA's
+    # tap-to-speak on /aria and /aria.html needs it.
+    Permissions-Policy = "microphone=(self), camera=(), geolocation=(self), interest-cohort=()"
 
 # ARIA Sentinel binaries. The publish dir is "." so the installer physically lives at
 # /public/sentinel-binaries/..., but src/shared/update-manifest.mjs builds electron-updater
@@ -51,56 +66,58 @@
 
 # Internal-only paths â€” blocked from public access (return 404).
 # force=true is required so the rule overrides the physically-present static files.
+# RUN-CU 2026-10-08: these rules now resolve to the branded /404.html (2 KB) instead of /index.html
+# (the 320 KB homepage served with a 404 status). Status and force are unchanged.
 [[redirects]]
   from = "/docs/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/scripts/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   # AXIS CC v2: worker-owned SQLite DB + secrets + local snapshot spool. Belt-and-suspenders with
   # .gitignore (data/) — even if a data file is ever present at publish, this force-404s it.
   from = "/data/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/senior-director-state/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/netlify/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/node_modules/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/apps/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/tests/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/ARIA%20Sentinel/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/ARIA Sentinel/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 # Working-tree scratch. publish = "." uploads whatever is sitting in the directory, and none of
@@ -108,22 +125,22 @@
 # public URL on iisupp.net. Deny the paths rather than trusting that nobody leaves a file behind.
 [[redirects]]
   from = "/_to_delete/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/zz_test/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/zz_test"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/.tmp-sentinel/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 # NOTE: Netlify's splat only matches a trailing path segment — "/*.tmp" as a suffix glob silently
@@ -132,38 +149,38 @@
 # all, so .lv.new / .probe-write / .tmp-sentinel/ already 404 without a rule.
 [[redirects]]
   from = "/out1.tmp"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/.github/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/backups/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/archive/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/artifacts/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   # Staged video media. publish="." would otherwise serve every mp4/wav from the site root.
   from = "/content/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/outputs/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
@@ -180,7 +197,7 @@
 
 [[redirects]]
   from = "/procurement-downloads/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
@@ -200,7 +217,7 @@
   force = true
 [[redirects]]
   from = "/plans/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
@@ -222,83 +239,83 @@
 # gitignored/untracked; the 404 rules are defense-in-depth in case a file is ever re-added.
 [[redirects]]
   from = "/aria_memory/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/design-handoff/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/aria-voice-agent/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/aria-pitch/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/openclaw/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/aria-architecture/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/aria_brain_pack/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/library-admin.html"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/AGENT_EXECUTION_NOTES.md"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/COLLAB-CLAUDE-CODEX.md"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   # Internal engineering brief — infra IDs, bug inventory, prospect names. Never serves.
   from = "/CC-BRIEF.md"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/mesh-registry.json"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/package.json"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/package-lock.json"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/deno.lock"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/.gitignore"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 
@@ -307,22 +324,22 @@
 # /senior-director-state/* and /backups/* already have force=true rules above.
 [[redirects]]
   from = "/aria-vault/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/documents/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/CLAUDE.md"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/ARIA-Vault-Backups/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 
@@ -379,7 +396,7 @@
   status = 200
 [[redirects]]
   from = "/studio"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
@@ -609,12 +626,12 @@
 # the stopgap; the binary also needs to come out of git (it ships in every deploy).
 [[redirects]]
   from = "/sentinel-binaries/ARIA-Sentinel-0.1.0-unsigned.exe"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 [[redirects]]
   from = "/public/sentinel-binaries/*"
-  to = "/index.html"
+  to = "/404.html"
   status = 404
   force = true
 
@@ -796,16 +813,23 @@
     X-Frame-Options = "SAMEORIGIN"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "interest-cohort=()"
+    # RUN-CU 2026-10-08: was only interest-cohort=(), which overrode the /* lock on every .html path.
+    # Merged value keeps microphone=(self) for ARIA tap-to-speak (/aria.html) and locks camera/geolocation.
+    Permissions-Policy = "microphone=(self), camera=(), geolocation=(self), interest-cohort=()"
 
 # Industry-tester SEC-1 fix (2026-06-23): add CSP + X-Frame + HSTS site-wide
 # (the existing for="/*.html" block doesn't match "/" so homepage was uncovered)
+# RUN-CU 2026-10-08: frame-src now also lists the Service Center portal origin
+# (https://ii-support-portal-wd05qh.abacusai.app) so the homepage/m.html modal can embed it the day it
+# answers again; today the pages detect that it does not and fall back to on-site paths.
 [[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "SAMEORIGIN"
-    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
-    Content-Security-Policy = "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https: wss:; frame-src 'self' https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; upgrade-insecure-requests"
+    # RUN-CU 2026-10-08: `preload` added (includeSubDomains was already present). The directive is inert
+    # until the domain is submitted at hstspreload.org — Ahmad's call, after confirming every subdomain is HTTPS-only.
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Content-Security-Policy = "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https: wss:; frame-src 'self' https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com https://ii-support-portal-wd05qh.abacusai.app; frame-ancestors 'self'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; upgrade-insecure-requests"
 
 # >>> BEGIN generated root-serving denies (scripts/gen-root-serving-denies.mjs)
 # Generated. Do not hand-edit — run scripts/gen-root-serving-denies.mjs.
