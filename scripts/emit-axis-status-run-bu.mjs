@@ -31,6 +31,11 @@ import { measureInProcess, measureCommitsAhead, declaredUnmeasurable } from "./l
 import { auditDeliveries, speakablePendingLine } from "./lib/pending-delivery.mjs";
 
 const root = process.cwd();
+// --shelf <dir>: where the delivery manifests live. Deliberately allowed to be OUTSIDE the checkout
+// (see scripts/pending-delivery-audit.mjs for why putting them inside it breaks 56 assertions).
+const argv = process.argv.slice(2);
+const shelfOpt = (() => { const i = argv.indexOf("--shelf"); return i >= 0 && argv[i + 1] ? argv[i + 1] : "senior-director-state/delivery"; })();
+const shelfDir = path.isAbsolute(shelfOpt) ? shelfOpt : path.join(root, shelfOpt);
 
 /* ── reading 1: the suite, run here, now ──────────────────────────────────────────────────────── */
 function runSuite(label) {
@@ -95,7 +100,7 @@ function readRemoteShas() {
 
 /* ── reading 3: the delivery shelf, and how long it has been waiting ──────────────────────────── */
 function readDeliveryManifests() {
-  const dir = path.join(root, "senior-director-state/delivery");
+  const dir = shelfDir;
   if (!fs.existsSync(dir)) return null;
   const out = [];
   for (const n of fs.readdirSync(dir)) {
@@ -160,7 +165,7 @@ const claims = {
   oldestPendingDeliveryDays: delivery.state === "not-taken"
     ? declaredUnmeasurable("oldestPendingDeliveryDays", {
         reason: "the delivery shelf lives on the operator volume and is not readable from this checkout",
-        source: "senior-director-state/delivery (absent here)",
+        source: shelfOpt + " (absent here)",
       })
     : measureInProcess({
         value: delivery.oldestPendingDays, kind: "count",

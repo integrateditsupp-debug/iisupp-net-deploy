@@ -25,9 +25,14 @@ const argv = process.argv.slice(2);
 const flag = (n) => argv.includes(n);
 const opt = (n, d) => { const i = argv.indexOf(n); return i >= 0 && argv[i + 1] ? argv[i + 1] : d; };
 
-const DELIVERY_DIR = "senior-director-state/delivery";
+// The shelf is normally inside the operator volume, but it must be readable from somewhere that is
+// NOT inside the checkout: placing it in the tree makes "is the operator record present?" answer yes
+// for every suite that asks, and 56 host-reading assertions then try to read records that are not
+// there. Found the hard way, by doing exactly that. --shelf keeps the reading and the tree separate.
+const DELIVERY_DIR = opt("--shelf", "senior-director-state/delivery");
 const REPORT_JSON = path.join(DELIVERY_DIR, "PENDING-DELIVERY.json");
 const REPORT_MD = path.join(DELIVERY_DIR, "PENDING-DELIVERY.md");
+const shelfDir = path.isAbsolute(DELIVERY_DIR) ? DELIVERY_DIR : path.join(root, DELIVERY_DIR);
 const maxAgeDays = Number(opt("--max-age", String(DEFAULT_MAX_AGE_DAYS)));
 
 /* ── the commit ids the shared line holds ─────────────────────────────────────────────────────── */
@@ -53,7 +58,7 @@ function readRemoteShas() {
 // tip. The library then classifies it `unverifiable` with a reason. Skipping it would silently
 // shrink the shelf, and a shelf that under-reports itself is the original defect wearing a hat.
 function readDeliveries() {
-  const dir = path.join(root, DELIVERY_DIR);
+  const dir = shelfDir;
   if (!fs.existsSync(dir)) return null;
   let names;
   try { names = fs.readdirSync(dir); } catch { return null; }
@@ -157,8 +162,8 @@ if (flag("--json")) {
 
 if (deliveries !== null) {
   try {
-    fs.mkdirSync(path.join(root, DELIVERY_DIR), { recursive: true });
-    fs.writeFileSync(path.join(root, REPORT_JSON), JSON.stringify(audit, null, 1) + "\n");
+    fs.mkdirSync(shelfDir, { recursive: true });
+    fs.writeFileSync(path.isAbsolute(REPORT_JSON) ? REPORT_JSON : path.join(root, REPORT_JSON), JSON.stringify(audit, null, 1) + "\n");
     const lines = [
       "# PENDING DELIVERY — how long verified work has been waiting on a click",
       "",
@@ -176,7 +181,7 @@ if (deliveries !== null) {
       "Written by `scripts/pending-delivery-audit.mjs`. It takes its own reading every run; no number here is typed by hand. A delivery is only called landed on positive evidence that the shared line holds its tip commit.",
       "",
     ];
-    fs.writeFileSync(path.join(root, REPORT_MD), lines.filter((l) => l !== "").join("\n") + "\n");
+    fs.writeFileSync(path.isAbsolute(REPORT_MD) ? REPORT_MD : path.join(root, REPORT_MD), lines.filter((l) => l !== "").join("\n") + "\n");
     console.log(`[pending-delivery] report written: ${REPORT_MD}`);
   } catch (err) {
     console.error(`[pending-delivery] report NOT written: ${String(err.message || err).split("\n")[0]}`);
