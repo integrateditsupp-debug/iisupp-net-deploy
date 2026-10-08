@@ -55,7 +55,10 @@
           steps: ['Tell ARIA your business, audience and the pages you need.', 'ARIA proposes a clean, elegant layout and copy.', 'Integrated IT Support Inc. builds, hosts and secures it.', 'Book a free scoping call at iisupp.net/book.'] },
         { when: ['book', 'automation', 'automate', 'tool', 'flight', 'travel', 'schedule'], cause: 'A booking or automation tool that saves you hours each week.',
           steps: ['Describe the task that takes too much time.', 'ARIA maps the workflow and the smallest tool that removes it.', 'Integrated IT Support Inc. builds and connects it to your existing apps.', 'Book a free scoping call at iisupp.net/book.'] }
-      ]
+      ],
+      // Added 2026-10-08: the Atelier topic shipped without an escalation line, so a "still not working"
+      // reply after a build answer could never reach the escalated stage (aria-brain-v2 S5 didn't-work chain).
+      escalate: 'If the idea is bigger than a chat can hold, hand it to Integrated IT Support Inc. — book a free scoping call at iisupp.net/book with your goal, who it is for, and what "done" looks like, and a human architect takes it from there.'
     },
     {
       id: 'outlook', label: 'Outlook won\'t open / crashing', tier: 'L1',
