@@ -1,11 +1,11 @@
 {
- "status": "active build — clean-up cycle: desktop checks all green; site suites green except environment-only readings",
- "milestone": "ARIA Sentinel now asks who is responsible before it acts: setup captures who to notify, how much it may fix alone, who approves and who gets the report; approvals can be answered from an email; notifications never carry device content; and voice is a real listen-answer-listen conversation on the desktop and at /aria.",
- "readiness": "Built and tested this cycle. 1284 of 1341 desktop checks pass, none failing. 57 read an operator-only record absent here and are reported as not taken. 144 of 144 site suites pass. Publishing to the live site stays a deliberate manual step; nothing from this cycle is live until that click.",
+ "status": "active build — joined line: desktop checks all green; site suites green",
+ "milestone": "The live human Aria voice and the AXIS executive assistant are now joined to the build line that asks who is responsible before ARIA Sentinel acts. Every check was taken on the joined line, not on either half alone; the five places they disagreed were fixed at the source, not hidden.",
+ "readiness": "Built and tested this cycle. 1284 of 1341 desktop checks pass, none failing. 57 read an operator-only record absent here and are reported as not taken. 145 of 145 site suites pass. Publishing to the live site stays a deliberate manual step; nothing from this cycle is live until that click.",
  "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build and is voice-operable. Sent: 0. Meetings 0, revenue none. Checks this cycle: 1284 of 1341 desktop checks pass, none failing. 57 read an operator-only record absent here and are reported as not taken. 144 of 144 site suites pass.",
+ "headline": "ARIA / AXIS is in active build and is voice-operable. Sent: 0. Meetings 0, revenue none. Checks this cycle: 1284 of 1341 desktop checks pass, none failing. 57 read an operator-only record absent here and are reported as not taken. 145 of 145 site suites pass.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
- "generatedAt": "2026-10-09T18:07:59.161Z",
+ "generatedAt": "2026-10-09T21:03:03.287Z",
  "schema": "axis-status/1",
  "public": true,
  "honest": true
