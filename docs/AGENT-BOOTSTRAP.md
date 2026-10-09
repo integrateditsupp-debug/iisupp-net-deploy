@@ -15,7 +15,9 @@ If a fact here is stale, fix it **here first**, then the file that disagrees.
   pages + the ARIA Atelier build skill in `aria-chat`).
 - Today's work: **`cc/run-cu-2026-10-08`** — Ahmad's long-lived local line (`cc/run-bh-2026-08-11`,
   stalled since 2026-08-13) was merged into the shared line in `fa88d34`, so local and remote are
-  reconciled on this one branch.
+  reconciled on this one branch. The cycle shipped as **CU0…CU5** on that branch (see RUN-CU BUILD
+  STATUS at the bottom); merging it to `main` and publishing are Ahmad's two clicks
+  (`AHMAD-MERGE-RUN-CU.cmd` on his machine stages the first).
 - **Dead / retired lines — do not watch, do not build on, do not "verify" against:**
   `merge-v2-to-main`, `cc/master-fix-2026-07-02`, `axis-command-center-v2`, `cc/run-bh-2026-08-11`.
   Docs that still name them (`docs/SYSTEM_AUDIT.md`, `docs/AXIS-CC-V2*.md`, the historical
@@ -67,22 +69,27 @@ Standing prohibition, same severity: **never mention Raymond James anywhere**, a
   2026-10-04 `main`), **ARIA web** at `/aria`, the Aperture/AXIS hub at `/aperture-learning.html`,
   the Growth Library, governance/trust pages, and the Netlify function surface under
   `netlify/functions/` (ARIA chat, lead capture, licensing, billing portal, M365 Graph, etc.).
-- **ARIA Sentinel: `0.1.16`** (`ARIA Sentinel/package.json`). A version bump is **pending** with this
-  cycle's Sentinel work — do not claim a new version until that bump lands.
+- **ARIA Sentinel: `0.2.0` on `cc/run-cu-2026-10-08`** (`ARIA Sentinel/package.json`); the installer
+  Ahmad's machine last built is still **0.1.16** until he runs `npm run package:win` from the merged line.
+  Release notes: `ARIA Sentinel/docs/RELEASE_NOTES_0.2.0.md`.
 - **The public Windows installer is HELD** on purpose (unsigned; pending an EV cert) — `netlify.toml`
   force-404s `/sentinel-binaries/*`. Any page implying "download it today" is a Rule 14 defect.
 - **Honesty backlog that is open, not fixed:** `docs/RUN-CU-2026-10-08-CLAIMS-FOR-AHMAD.md` lists the
   24/7 coverage claims, SLA promises and proof claims that **only Ahmad can verify**. The copy was
   deliberately *not* changed; it is his row-by-row keep / scope / soften call.
-- **In progress on `cc/run-cu-2026-10-08`** (other agents own these right now — do not edit their
-  files): baseline repair (brain build-topic escalation, `scripts/lib/job-registry.mjs` +
-  `scripts/job-watchdog.mjs` now tracked, an honest classifier floor); a functions security pass
-  across 47 files in `netlify/functions/` (auth gates, notify lib, user-data purge, the voice-mode
-  contract in `aria-chat`); a site honesty/perf pass (status page real-or-empty, icons/OG, Service
-  Center fallback, mobile intake, sitemap/robots/404/headers); and the **Sentinel build** — setup
-  wizard (identity, contacts, autonomy level, approver, report recipients, maintenance window), the
-  autonomous detect→notify→approve→fix→report flow, and the conversational voice loop (web + desktop).
-  Status of that work is **in progress**, not done — see §9 for the lead's close-out.
+- **Built on `cc/run-cu-2026-10-08`, NOT yet live** (nothing is live until Ahmad merges + publishes):
+  baseline repair (brain build-topic escalation, `scripts/lib/job-registry.mjs` + `scripts/job-watchdog.mjs`
+  tracked, honest classifier floor); the functions security pass (identity on account actions, fail-closed
+  gates, `lib/notify.mjs`, delete/export that reach the data, voice mode in `aria-chat`); the site
+  honesty/perf pass (status page real-or-empty, real icons/OG, Service Center fallback, mobile intake,
+  sitemap/robots/404/headers); **Sentinel 0.2.0** (setup wizard · autonomy levels · approvals · content-blind
+  notify · on-device voice conversation · the audit's safety fixes · six macOS user-level recipes); the
+  **web voice conversation** at `/aria`; and two new server endpoints `aria-sentinel-notify` +
+  `aria-sentinel-approval`. Verified by the suites below and by a real-browser (headless Chromium) run of
+  both the `/aria` voice loop and the 12-step Sentinel wizard. Env the live site still needs for the new
+  paths: `RESEND_API_KEY` + verified `RESEND_FROM`, `APERTURE_JWT_SECRET`, `INTERNAL_WEBHOOK_SECRET`,
+  `SENTINEL_APPROVAL_SECRET` (falls back to `SENTINEL_LICENSE_SECRET`), `ARIA_MODEL`; Twilio is **paid**
+  and stays dormant until Ahmad decides (`TWILIO_*`).
 
 ## 5 · Tests
 
@@ -95,15 +102,20 @@ node scripts/agent-preflight.mjs   # branch / HEAD / commits / feed age / NEEDS-
 `--all` **auto-discovers** `tests/*.test.mjs`; a new suite needs no registration. The hand-picked
 `GUARD` array in `scripts/run-tests.mjs` is deliberately small (AXIS shell + deploy surface only).
 
-**Measured on this clone, 2026-10-08: `all: 120/125 suites passed`.** The five reds are
-**environment-only** — they exercise Windows/desktop behaviour or a live feed that does not exist on a
-Linux clone. Do **not** "fix" them by deleting assertions, and do not count them as product defects:
+**Measured on this clone at the close of RUN-CU, 2026-10-08: site `all: 129/133 suites passed`;
+desktop registry (`ARIA Sentinel`, `node tests/run-all.mjs`) `1087 tests · 1030 pass · 0 fail · 57 not taken`,
+14 new suites registered and green.** The four site reds left are **environment-only** — they exercise
+Windows/desktop behaviour that does not exist on a Linux clone (the fifth, `axis-status-emitter`, went
+green when `scripts/emit-axis-status-run-cu.mjs` regenerated the public feed from this cycle's readings).
+Do **not** "fix" them by deleting assertions, and do not count them as product defects:
 
 - `tests/axis-app-detect.test.mjs` — probes Windows applications off-Windows.
 - `tests/axis-assistant-behaviors.test.mjs` — reads the AXIS brain vault at a Windows path.
 - `tests/axis-windows-traps.test.mjs` — Windows-specific traps.
 - `tests/axis-worker-offline.test.mjs` — needs the local worker.
-- `tests/axis-status-emitter.test.mjs` — red while `.well-known/axis/status.json` is stale.
+- `tests/axis-status-emitter.test.mjs` — red whenever `.well-known/axis/status.json` is older than 24 h;
+  regenerate it with a dated `scripts/emit-axis-status-run-<id>.mjs` (pattern: `emit-axis-status-run-cu.mjs`),
+  never by hand.
 
 Separately, assertions that read an **operator record** under `senior-director-state/` report
 **NOT TAKEN** on any machine that does not hold those records — never green, never red
@@ -127,6 +139,9 @@ operator machine; **unverified here** — this clone cannot reproduce it.
 | Per-agent run reports | `senior-director-state/autonomy/agent-reports/*.json` |
 | Today's fleet inventory | `senior-director-state/FLEET-REFRESH-2026-10-08.md` |
 | Repo-observer output | `.codex-observer/codex-playbook.md` |
+| Desktop-fleet refresh (SKILL.md sweep) | `scripts/refresh-scheduled-agents.mjs` (+ `AHMAD-REFRESH-SCHEDULED-AGENTS.cmd` on Ahmad's machine) |
+| Public AXIS feed regeneration | `scripts/emit-axis-status-run-cu.mjs` (measured, refuses a red build) |
+| RUN-CU changelogs | `docs/RUN-CU-2026-10-08-{FUNCTIONS,SITE,ARIA-VOICE}-CHANGELOG.md`, `docs/RUN-CU-2026-10-08-CLAIMS-FOR-AHMAD.md`, `ARIA Sentinel/docs/RELEASE_NOTES_0.2.0.md` |
 
 `senior-director-state/`, `aria-vault/`, `CLAUDE.md`, `AGENT_EXECUTION_NOTES.md`, `documents/` and the
 `*.ps1`/`*.cmd` helpers are **gitignored on purpose** (security lockdown 2026-07-01, `publish="."`).
@@ -187,23 +202,40 @@ Never claim the read you did not take.
    every shell-dependent lane silently no-ops and *green* test numbers are as untrustworthy as red ones.
 3. **Repo visibility.** The GitHub repo is public; `senior-director-state/`, `docs/`, `scripts/` are
    world-readable there even though the site 404s them. Flipping it private is one click.
-4. **The read-only "ARIA daily health & learning digest" task could not be created** by an agent
-   (permission). Its prompt is staged for Ahmad in `senior-director-state/FLEET-REFRESH-2026-10-08.md`.
-5. **The two v2 cloud tasks read `senior-director-state/AGENT-BOOTSTRAP.md`, which is gitignored** —
-   a fresh clone of `main` will not contain it. Either track that one file (a `.gitignore` negation)
-   or point the tasks at `docs/AGENT-BOOTSTRAP.md`, which is tracked. **Ahmad's call** — detail in
-   `senior-director-state/FLEET-REFRESH-2026-10-08.md` §1.
+4. ~~The read-only digest task could not be created~~ **Created 2026-10-08** by the lead: *ARIA daily
+   health & learning digest (read-only, v1)*, daily 06:41 Toronto, cloud, model `claude-fable-5-1`,
+   auto-approval. It replaces the disabled *ARIA daily autonomous build* (which pushed + published).
+5. ~~v2 cloud tasks read a gitignored bootstrap~~ **Resolved 2026-10-08**: both v2 tasks and the digest
+   read `docs/AGENT-BOOTSTRAP.md` (tracked). *Deliverability Guardian* moved to `claude-fable-5-1`.
+6. **The ~54 Cowork DESKTOP agents still carry their July instructions.** Nothing in the cloud can edit
+   `C:\Users\Ahmad Wasee\Documents\Claude\Scheduled\*\SKILL.md`. One click on Ahmad's machine —
+   `AHMAD-REFRESH-SCHEDULED-AGENTS.cmd` — runs `scripts/refresh-scheduled-agents.mjs`: a dated bootstrap
+   header on every task, dead-branch references → `main`, idempotent, prompt text untouched; add
+   `--model opus` (or another name) only if he wants the model pinned. Dry-run variant prints without writing.
+7. **Merge + publish RUN-CU** — `AHMAD-MERGE-RUN-CU.cmd` fast-forwards `main` to the verified branch
+   locally and pushes with his credentials; the Netlify publish remains his separate click. Until then the
+   live site serves the 2026-10-04 `main` and the two new Sentinel endpoints return 404.
 
-## RUN-CU BUILD STATUS (filled by the lead at close)
+## RUN-CU BUILD STATUS (filled by the lead at close, 2026-10-08 21:30 Toronto)
 
-<!-- Lead: replace this block at close of RUN-CU. Keep it honest — "in progress" until verified.
-     Baseline repair: …
-     Functions security pass (47 files): …
-     Site honesty / perf pass: …
-     Sentinel build (setup wizard · autonomous flow · voice loop): …
-     Sentinel version after bump: …
-     Test result at close (`npm run test:all`): …
-     What is still open: … -->
+| Slice | Status | Evidence |
+|---|---|---|
+| CU0 — baseline repair | **done** | aria-brain v2 252/252, matrix 431/431; axis-job-watchdog 16/16 on a clean clone; classifier floor moved with the measured figure written in-file |
+| CU1 — functions security pass (`netlify/functions/`, 54 files) | **done, needs env on Netlify** | `tests/function-gates`, `notify-lib`, `user-data-purge`, `aria-chat-voice-contract` green; `docs/RUN-CU-2026-10-08-FUNCTIONS-CHANGELOG.md` |
+| CU2 — site honesty / perf pass (31 files) | **done** | `site-status-honesty`, `site-icons-present` green; status page real-or-empty; `docs/RUN-CU-2026-10-08-SITE-CHANGELOG.md` |
+| CU3 — fleet bootstrap (this file, preflight, 13 workers, loops truth) | **done** | `tests/agent-preflight` 8/8 |
+| CU4 — Sentinel 0.2.0 (wizard · autonomy · approvals · notify · voice · safety fixes · macOS) + web `/aria` voice conversation + `aria-sentinel-notify` / `aria-sentinel-approval` | **done, not live** | registry 1030/0/57 with 14 new suites; real-browser smoke of the 12-step wizard and the `/aria` loop (headless Chromium) passed; `ARIA Sentinel/docs/RELEASE_NOTES_0.2.0.md`, `docs/RUN-CU-2026-10-08-ARIA-VOICE-CHANGELOG.md` |
+| CU5 — fleet refresh close-out | **done (cloud) · one click left (desktop)** | 3 cloud tasks current (2 updated, 1 created); desktop sweep script + test ready; public AXIS feed regenerated from measured readings |
 
-_Status at the time this bootstrap was written: **in progress on `cc/run-cu-2026-10-08`**, nothing
-from this cycle claimed as done, nothing pushed, nothing published._
+- **Sentinel version after bump:** `0.2.0` (package.json + lock regenerated; `npm ci` works again).
+- **Test result at close:** site `129/133` (4 environment-only reds: axis-app-detect, axis-assistant-behaviors,
+  axis-windows-traps, axis-worker-offline); desktop `1087 · 1030 pass · 0 fail · 57 not taken`.
+- **Still open (Ahmad):** merge + publish (`AHMAD-MERGE-RUN-CU.cmd`, then Netlify publish); Netlify env listed in
+  §4; flip the GitHub repo private; the desktop fleet one-click (§8/6); the sentinel-loop-watcher app grants or
+  its retirement in favour of the new read-only digest; the claims list in `docs/RUN-CU-2026-10-08-CLAIMS-FOR-AHMAD.md`;
+  Twilio (paid) yes/no; test the magic-link round trip once in production.
+- **Honesty note:** nothing from this cycle was tested on a live Windows or macOS machine; "done" above means the
+  automated suites, static gates and headless-browser runs passed. The first on-device run is Rule 16's next step.
+
+_Status at the time this bootstrap was last rewritten: **built and verified on `cc/run-cu-2026-10-08`,
+nothing pushed, nothing published.**_

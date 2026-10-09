@@ -1,5 +1,71 @@
 # NEEDS AHMAD
 
+> Rewritten 2026-10-08 (RUN-CU). Everything below the rule is history; the list that is live is this one.
+
+## 2026-10-08 · RUN-CU — the clean-up cycle: seven clicks, in order of value
+
+**1. Merge RUN-CU to `main` and push.** `cc/run-cu-2026-10-08` holds CU0…CU5 — the reconciled AXIS line,
+the baseline repair, the backend security pass, the site honesty pass, Sentinel 0.2.0, the `/aria` voice
+conversation, the fleet refresh. Verified: site suite 129/133 (4 environment-only), desktop registry
+1030 pass / 0 fail / 57 not taken, headless-Chromium smoke of the wizard and the voice loop. One click:
+`AHMAD-MERGE-RUN-CU.cmd` (fast-forwards local `main`, pushes with your credentials, deploys nothing).
+   - Category: merge + push
+   - Ahmad action: run the one-click, or say "merge it" in a session that has your credentials
+
+**2. Netlify publish.** Your separate, deliberate click after the merge. Until then the live site is the
+2026-10-04 `main`: the two new Sentinel endpoints (`aria-sentinel-notify`, `aria-sentinel-approval`) 404,
+`/aria` still runs the one-shot mic, the account endpoints still trust an email alone.
+   - Category: publish
+   - Ahmad action: publish, or hold
+
+**3. Netlify environment for the new paths** (all in Site settings → Environment variables):
+`RESEND_API_KEY` + a verified-domain `RESEND_FROM` (every customer email is undeliverable in the
+`onboarding@resend.dev` fallback mode); `APERTURE_JWT_SECRET` (magic links + 12-h session tokens);
+`INTERNAL_WEBHOOK_SECRET` (license minting + trace writes); `SENTINEL_APPROVAL_SECRET` (signed Approve/Deny
+links; falls back to `SENTINEL_LICENSE_SECRET`); `ARIA_MODEL` (without it every voice turn gets the
+offline-brain reply). Emergency toggle if a live customer flow breaks before the token flow is proven:
+`ARIA_ALLOW_EMAIL_ONLY_ACCOUNT_ACTIONS=1` (flip it back).
+   - Category: config
+   - Ahmad action: set the values
+
+**4. Flip the GitHub repo private.** `integrateditsupp-debug/iisupp-net-deploy` is public: strategy notes,
+lead names in `senior-director-state`-adjacent docs, operator logs — all world-readable even though the site
+404s them. GitHub → Settings → Danger zone → Change visibility. The three cloud tasks clone anonymously
+today; after the flip they need the repo attached with read access (one `add_repo` call in a session).
+   - Category: security
+   - Ahmad action: change visibility, then tell the next session so the tasks are re-pointed
+
+**5. Refresh the ~54 desktop agents.** `AHMAD-REFRESH-SCHEDULED-AGENTS.cmd` — puts the dated bootstrap
+header on every `Documents\Claude\Scheduled\*\SKILL.md`, rewrites dead-branch references to `main`,
+leaves each task's own prompt and model alone (`--model opus` to pin; dry-run variant prints only).
+   - Category: fleet
+   - Ahmad action: run the one-click
+
+**6. Twilio — paid, so yours.** SMS to device users and tech contacts stays **dormant** (shown as "not sent")
+until `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` / `TWILIO_PHONE_NUMBER` exist. Email + desktop notifications
+work without it. Case: ~$1–2 CAD/mo + per-message cents; it is the channel a business admin actually sees at
+2 a.m. Your decision, your card.
+   - Category: spend
+   - Ahmad action: approve or park
+
+**7. Verify once on real hardware (Rule 16).** Nothing this cycle ran on a live Windows or macOS machine.
+Build (`npm run package:win` from the merged line), install, walk the 12-step setup, trigger one detection,
+approve one fix from the email link, say "that's all" to the companion. Then the `sentinel-loop-watcher`:
+either grant it File Explorer / ARIA Sentinel / Command Prompt in its task settings, or retire it — the new
+read-only *ARIA daily health & learning digest* (06:41 daily, cloud) now covers the headless half.
+   - Category: verify
+   - Ahmad action: one session on the machine
+
+**Claims only you can verify** (copy was deliberately not changed): `docs/RUN-CU-2026-10-08-CLAIMS-FOR-AHMAD.md`.
+
+**What does NOT need you:** the stale public AXIS feed (regenerated from this cycle's own readings), the
+build-topic brain regression, the two never-committed AXIS modules, `npm ci` on Sentinel, the status page's
+invented numbers, the Service Center dead end, mobile intake, icons/OG, the 3 cloud scheduled tasks
+(2 updated to current branch + model, 1 created).
+
+---
+
+
 > Cleared 2026-08-12 — all items removed by Ahmad.
 
 ## 2026-08-12 · RUN-BO — one capability, one click

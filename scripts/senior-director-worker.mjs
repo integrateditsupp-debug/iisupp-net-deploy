@@ -8,7 +8,7 @@ import {
   LOCAL_ONLY_STAGED_REVIEW_FILES,
   approvalTextForReview
 } from './staged-review-files.mjs';
-import { publishAgentReport, runAutonomySupervisor, logBootstrapHeader } from './autonomy-supervisor-core.mjs';
+import { loadApprovalItemsOverride, publishAgentReport, runAutonomySupervisor, logBootstrapHeader } from './autonomy-supervisor-core.mjs';
 import { openAxisInbox, readAxisInbox, processAxisInbox, consumeAxisInbox } from './lib/axis-inbox.mjs';
 
 // AXIS approve-hop (vision-flaw-audit fix #2): each tick, pull the AXIS Command Center inbox, run the
@@ -82,6 +82,11 @@ const AGENT_QUEUE_FILE = path.join(STATE_DIR, 'codex-claude-queue.md');
 const OVERNIGHT_BRIEF_FILE = path.join(STATE_DIR, 'overnight-brief.md');
 const OPERATING_BOARD_FILE = path.join(STATE_DIR, 'director-operating-board.md');
 const APPROVALS_FILE = path.join(STATE_DIR, 'ceo-approval-required.md');
+// RUN-CU 2026-10-08 — the CEO approval items used to be hard-coded in buildOperatingBoard (June 2026 wording:
+// a Friday 2026-06-12 follow-up, a June send queue) and were re-published hourly as "Immediate Ahmad Actions
+// Still Open" four months later. They now come from a MAINTAINED file, one bullet per line; the hard-coded
+// list below is only the fallback when that file is absent, so nothing an older install relied on disappears.
+// (loader lives in autonomy-supervisor-core.mjs so tests can import it without starting this worker)
 const GROWTH_WORKBOOK_FILE = path.join(STATE_DIR, 'IIS_Growth_Engine.xlsx');
 const GROWTH_RESEARCH_NOTES_FILE = path.join(STATE_DIR, 'growth-research-notes.md');
 const MCP_SCAN_FILE = path.join(STATE_DIR, 'mcp-advantage-scan.json');
@@ -823,9 +828,13 @@ function formatLeadBullets(summary) {
   }).join('\n');
 }
 
-function buildOperatingBoard({ hb, repo, logSummary, leadSummary, recentNotes, growthNotes, mcpReport, cleanupBoard, retirementPlan, careReport }) {
+function buildOperatingBoard({ hb, repo, logSummary, leadSummary, recentNotes, growthNotes, mcpReport, cleanupBoard, retirementPlan, careReport, approvalItemsOverride = null }) {
   const changed = repo.status ? repo.status.split('\n').filter(Boolean).length : 0;
-  const approvalItems = [
+  const approvalItems = Array.isArray(approvalItemsOverride) && approvalItemsOverride.length ? [
+    ...approvalItemsOverride,
+    hb.openclawReadiness?.authExpired ? 'OpenClaw/Claude OAuth is expired; Ahmad or a signed-in desktop session may need to refresh auth.' : null,
+    changed > 120 ? `Repo has ${changed} changed files; deployment grouping should still be reviewed before any production publish.` : null,
+  ].filter(Boolean) : [
     'Direct-contact first-send queue: `WD Numeric Corporate Services`, `Tangs Accounting Services`, and `Global Health Physiotherapy Clinic` are already approved-to-transmit. Next live action is to send them when an email/contact surface is available.',
     'Jason Brown / Hines follow-up: approved for Friday, 2026-06-12 only if Jason has not replied first. Use `senior-director-state/hines-jason-brown-friday-send-checklist-2026-06-11.md`.',
     APPROVED_PUBLISH_SUMMARY,
@@ -951,6 +960,7 @@ async function runOperatingCycle(hb) {
     readTextTail(AGENT_RETIREMENT_PLAN_FILE, 5000),
     readTextTail(AGENT_CARE_REPORT_FILE, 4000)
   ]);
+  const approvalItemsOverride = await loadApprovalItemsOverride();
   const board = buildOperatingBoard({
     hb,
     repo,
@@ -961,7 +971,8 @@ async function runOperatingCycle(hb) {
     mcpReport,
     cleanupBoard,
     retirementPlan,
-    careReport
+    careReport,
+    approvalItemsOverride
   });
   await writeText(OPERATING_BOARD_FILE, board);
   await writeApprovals(board);

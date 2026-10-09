@@ -9,6 +9,20 @@ export const REPORTS_DIR = path.join(AUTONOMY_DIR, 'agent-reports');
 export const SUPERVISOR_STATE_FILE = path.join(AUTONOMY_DIR, 'supervisor-state.json');
 export const APPROVAL_INBOX_FILE = path.join(AUTONOMY_DIR, 'approval-inbox.json');
 export const APPROVAL_INBOX_MD_FILE = path.join(AUTONOMY_DIR, 'approval-inbox.md');
+// RUN-CU 2026-10-08 — the CEO approval items the senior-director worker publishes hourly used to be hard-coded
+// in that worker (June 2026 wording, re-published as "Immediate Ahmad Actions Still Open" four months on).
+// They now come from a MAINTAINED file, one bullet per line ("- …"); null when the file is absent or empty,
+// in which case the worker keeps its old built-in list — nothing an older install relied on disappears.
+export const CEO_APPROVAL_ITEMS_FILE = path.join(STATE_DIR, 'ceo-approval-items.md');
+export async function loadApprovalItemsOverride(file = CEO_APPROVAL_ITEMS_FILE) {
+  try {
+    const text = await fs.readFile(file, 'utf8');
+    const items = text.split(/\r?\n/).map((l) => l.trim()).filter((l) => l.startsWith('- ')).map((l) => l.slice(2).trim()).filter(Boolean);
+    return items.length ? items : null;
+  } catch {
+    return null;
+  }
+}
 export const MISSION_QUEUE_FILE = path.join(AUTONOMY_DIR, 'mission-queue.json');
 export const STANDING_ORDERS_FILE = path.join(AUTONOMY_DIR, 'standing-orders.md');
 export const EXECUTION_BOARD_FILE = path.join(STATE_DIR, 'autonomous-execution-board.md');

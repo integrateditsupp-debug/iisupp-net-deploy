@@ -59,7 +59,12 @@ export const COWORK_FLOOR = 'standard';
 // Requires a directive word before the name so a passing mention ("why is opus expensive?") does not
 // silently re-route the task.
 const MODEL_ALIASES = [
-  [/\bfable(\s*5)?\b/i, 'claude-fable-5'],
+  // RUN-CU 2026-10-08 — the current Fable is 5.1; "fable 5.1" / "fable five point one" resolve to it, and a
+  // bare "fable" now means the current one (the explicit "fable 5" still resolves to claude-fable-5).
+  [/\bfable\s*5[.\s-]?1\b/i, 'claude-fable-5-1'],
+  [/\bfable\s+five\s+point\s+one\b/i, 'claude-fable-5-1'],
+  [/\bfable\s*5\b/i, 'claude-fable-5'],
+  [/\bfable\b/i, 'claude-fable-5-1'],
   [/\bmythos(\s*5)?\b/i, 'claude-mythos-5'],
   [/\bopus\s*4[.\s-]?8\b/i, 'claude-opus-4-8'],
   [/\bopus\s*4[.\s-]?7\b/i, 'claude-opus-4-7'],

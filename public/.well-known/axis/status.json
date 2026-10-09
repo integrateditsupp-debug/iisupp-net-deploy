@@ -1,11 +1,11 @@
 {
- "status": "active build — every check green, and the shared line can now test itself",
- "milestone": "Fifty-six checks were failing on a clean copy of the shared line and none of them were the product: they read operator-internal records that exist only on the build machine. The runner now tells a failing check apart from a reading it cannot take here, and the two that were real problems were fixed rather than hidden.",
- "readiness": "Built and tested this cycle. 1030 of 1087 checks pass with none failing. 57 checks read an operator-internal record that is absent here; those are reported as not taken rather than as passes. The same suite taken with those records present runs every one of them for real and passes. Publishing to the live site stays a deliberate manual step.",
+ "status": "active build — clean-up cycle: desktop checks all green; site suites green except environment-only readings",
+ "milestone": "ARIA Sentinel now asks who is responsible before it acts: setup captures who to notify, how much it may fix alone, who approves and who gets the report; approvals can be answered from an email; notifications never carry device content; and voice is a real listen-answer-listen conversation on the desktop and at /aria.",
+ "readiness": "Built and tested this cycle. 1030 of 1087 desktop checks pass, none failing. 57 read an operator-only record absent here and are reported as not taken. 126 of 131 site suites pass (5 environment-only on this build host). Publishing to the live site stays a deliberate manual step; nothing from this cycle is live until that click.",
  "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build and is voice-operable. Sent: 0. Meetings 0, revenue none. Checks this cycle: 1030 of 1087 checks pass with none failing. 57 checks read an operator-internal record that is absent here; those are reported as not taken rather than as passes.",
+ "headline": "ARIA / AXIS is in active build and is voice-operable. Sent: 0. Meetings 0, revenue none. Checks this cycle: 1030 of 1087 desktop checks pass, none failing. 57 read an operator-only record absent here and are reported as not taken. 126 of 131 site suites pass (5 environment-only on this build host).",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
- "generatedAt": "2026-08-13T02:30:03.316Z",
+ "generatedAt": "2026-10-09T01:30:57.833Z",
  "schema": "axis-status/1",
  "public": true,
  "honest": true
