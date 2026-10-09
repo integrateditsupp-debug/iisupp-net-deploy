@@ -9,11 +9,11 @@ mandate: |
 duties: |
   On public-facing artifact: cross-check every factual claim against source · Reject artifacts with no source · Flag fabricated testimonials/partnerships/credentials · Benchmark all numeric claims · Weekly QA report · Maintain banned-claims list.
 kpis: |
-    - fetch
+  False claims caught · false negatives · QA cycle time · CCO confidence score
+tools_allowed:
+  - fetch
   - filesystem.read
   - filesystem.write (docs/QA_REPORT.md, docs/REVIEW_QUEUE.md)
-tools_allowed:
-  False claims caught · false negatives · QA cycle time · CCO confidence score
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

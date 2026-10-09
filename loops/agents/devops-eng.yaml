@@ -9,11 +9,11 @@ mandate: |
 duties: |
   On Netlify deploy webhook: run smoke tests (homepage, /aria, /aperture-learning, /growth-library, /shop) · Lighthouse perf check · Bundle size delta · Broken link scan · Image optimization audit · Report to CTO.
 kpis: |
-    - fetch
+  Deploy success rate · smoke pass rate · Lighthouse score · time-to-publish-verify
+tools_allowed:
+  - fetch
   - filesystem.read (.netlify/)
   - filesystem.write (docs/DEPLOY_HEALTH.md)
-tools_allowed:
-  Deploy success rate · smoke pass rate · Lighthouse score · time-to-publish-verify
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

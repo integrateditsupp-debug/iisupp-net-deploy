@@ -1,5 +1,6 @@
 const { checkRateLimit, rateLimitResponse, hashKey } = require('./_rate-limit');
 const { SALES_EMAIL, OWNER_EMAIL, SUPPORT_PHONE, SUPPORT_TEL } = require('./lib/contacts.cjs');
+const { handleCaptureGet } = require('./lib/capture-read.cjs');
 
 /**
  * aria-lead-capture — Capture a "talk to sales" lead from the /aria chat.
@@ -13,6 +14,10 @@ const { SALES_EMAIL, OWNER_EMAIL, SUPPORT_PHONE, SUPPORT_TEL } = require('./lib/
  *  BEFORE any email (pattern marketplace-request.mjs), mail goes through lib/notify.mjs, and when the owner
  *  alert could not be delivered the response says so — ok:false, stored:true, delivered:false — with the
  *  fallback email/phone, instead of "Lead captured" over a lost email. The success shape is unchanged.
+ *
+ *  2026-10-09 (small-tasks close-out, task 2): GET read path, admin-token gated (lib/capture-read.cjs).
+ *  GET ?since=<iso>&limit=<n> → { ok:true, count, items:[...] } newest first, capped at 200, 401/503 without
+ *  a valid token. The POST path below is unchanged.
  */
 exports.handler = async (event) => {
   const headers = {
@@ -22,6 +27,7 @@ exports.handler = async (event) => {
     'Content-Type': 'application/json'
   };
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
+  if (event.httpMethod === 'GET') return handleCaptureGet(event, { storeName: 'aria-leads', prefix: 'lead/', scope: 'aria-lead-capture' });
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'POST only' }) };
 
   const limit = checkRateLimit(event, { scope: 'aria-lead-capture', limit: 12, windowMs: 15 * 60 * 1000 });

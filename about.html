@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="index, follow, max-image-preview:standard">
+    <!-- 2026-10-09 (small-tasks close-out, task 3): description built from this page's own copy — no new claims. -->
+    <meta name="description" content="Integrated IT Support Inc., founded May 2023 by Ahmad W. after 15+ years inside RBC, Scotiabank, Ontario Health, the City of Toronto, IBM and Cavalluzzo LLP. Six Sigma and ITIL certified. Fewer things break, and the ones that do get fixed before they stop your team working.">
     <meta name="theme-color" content="#c5a059">
     <title>About Us | Integrated IT Support</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -80,7 +82,9 @@
             margin-bottom: 6px;
         }
 
-        .about-bio h3 {
+        /* 2026-10-09 (task 3): the four section titles are h2 now (the page had an h1 and then only h3s);
+           same rule, h2 added alongside h3 so nothing changes visually. */
+        .about-bio h2, .about-bio h3 {
             font-family: 'Cinzel', serif;
             font-size: 15px;
             font-weight: 700;
@@ -91,7 +95,7 @@
             border-left: 2px solid #c5a059;
             padding-left: 16px;
         }
-        .about-bio h3:not(:first-child) { margin-top: 44px; }
+        .about-bio h2:not(:first-child), .about-bio h3:not(:first-child) { margin-top: 44px; }
         .about-bio p {
             font-size: 13.5px;
             line-height: 1.9;
@@ -242,7 +246,7 @@
             .about-wrap { padding: 28px 18px; }
             .about-photo-frame { max-width: 300px; padding: 8px; }
             .about-photo-frame::after { inset: 8px; }
-            .about-bio h3 { font-size: 13px; letter-spacing: 0.22em; }
+            .about-bio h2, .about-bio h3 { font-size: 13px; letter-spacing: 0.22em; }
             .about-bio p { font-size: 12.5px; line-height: 1.8; }
         }
 
@@ -331,6 +335,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://iisupp.net/about">
   <meta property="og:title" content="About Us | Integrated IT Support">
+  <meta property="og:description" content="Integrated IT Support Inc., founded May 2023 by Ahmad W. after 15+ years inside RBC, Scotiabank, Ontario Health, the City of Toronto, IBM and Cavalluzzo LLP. Six Sigma and ITIL certified. Fewer things break, and the ones that do get fixed before they stop your team working.">
   <meta property="og:image" content="https://iisupp.net/icons/icon-512.png">
   <meta name="twitter:card" content="summary_large_image">
   <script type="application/ld+json">
@@ -361,7 +366,9 @@
     },
     "areaServed": [
       { "@type": "AdministrativeArea", "name": "Greater Toronto Area" },
-      { "@type": "AdministrativeArea", "name": "Ontario, Canada" }
+      { "@type": "AdministrativeArea", "name": "Durham Region" },
+      { "@type": "State", "name": "Ontario" },
+      { "@type": "Country", "name": "Canada" }
     ],
     "knowsAbout": ["Managed IT Services","IT Support","AI automation","Microsoft 365","Cybersecurity","Endpoint management"],
     "description": "Founder-led managed IT services and AI-powered IT support (ARIA) for small and mid-sized businesses, delivered with enterprise-tested methods."
@@ -489,12 +496,12 @@
                 </div>
 
                 <div class="about-bio">
-                    <h3 id="about-biography">Professional Biography</h3>
+                    <h2 id="about-biography">Professional Biography</h2>
                     <p>Over 15 years of hands-on experience inside the kinds of organizations most IT firms only hope to support: RBC, Scotiabank, Ontario Health, the City of Toronto, IBM, Cavalluzzo LLP, and other enterprise environments. Ahmad W., Founder &amp; CEO of Integrated IT Support Inc., built IIS from the inside out after operating at Team Lead, Major Incident Manager, and senior technical-services levels across financial, healthcare, public-sector, legal, and global enterprise operations.</p>
                     <p>That background includes close work around RBC capital-markets and other high-accountability programs, building a practical understanding of institutional culture, workflow discipline, process controls, and policy expectations. IIS does not borrow enterprise language for marketing; it applies enterprise-tested methods because its leadership has already worked under them in production.</p>
                     <p>The company also takes deliberate time to study the sectors it serves before taking work on, then carries those lessons into scoped, high-quality delivery for smaller teams and growing businesses. Since launching Integrated IT Support Inc. in May 2023, the standard has remained the same: controlled execution, clear accountability, and quality work without overpromising.</p>
 
-                    <h3 id="about-certifications">Certifications &amp; Methodology Mastery</h3>
+                    <h2 id="about-certifications">Certifications &amp; Methodology Mastery</h2>
                     <p style="margin-bottom: 4px;">Enterprise trust signals, earned in production &mdash; not on paper.</p>
                     <div class="cert-strip">
                         <div class="cert-chip">
@@ -516,7 +523,7 @@
                     </div>
                     <p style="margin-top: 20px;">Frameworks like Six Sigma / DMAIC, Kaizen, OKR, STAR, and After Action Review are not aspirational here &mdash; they are the operating history of the firm. What most providers study, IIS has executed against measurable outcomes for some of Canada&rsquo;s most demanding institutions.</p>
 
-                    <h3 id="about-track">Enterprise Track Record</h3>
+                    <h2 id="about-track">Enterprise Track Record</h2>
                     <p>Enterprise environments where the stakes are real, the margins for error are zero, and the outcome is measured in business continuity &mdash; not closed tickets.</p>
                     <div class="track-grid">
                         <div class="track-tile">
@@ -560,7 +567,7 @@
                         <p>We don&rsquo;t just fix problems &mdash; we ensure your operations run smoothly and consistently.</p>
                     </div>
 
-                    <h3 id="about-personal">Personal Bio</h3>
+                    <h2 id="about-personal">Personal Bio</h2>
                     <p>In today&rsquo;s AI-driven world, there are more tools than ever to succeed&mdash;but tools alone don&rsquo;t build success stories. Working with Integrated IT Support Inc. means having a dependable partner by your side&mdash;one that not only supports your IT needs but contributes to your long-term growth and resilience.</p>
                     <p>Success isn&rsquo;t reserved for those born with privilege. As nice as it may be to be privileged, having to work from the bottom up has its own story and respectable honor/rewards.</p>
                     <p>True character-developing success is built through persistence, experience, and overcoming challenges. Regardless of the path we&rsquo;re born with, if we decide to begin something new there will always be challenges alongside its rewards. While technology makes many things easier, there is still value in choosing the harder path&mdash;the one that creates meaningful progress, innovation, and stories worth telling.</p>

@@ -1,11 +1,12 @@
 // tests/ceo-approval-items-override.test.mjs — RUN-CU (2026-10-08).
-// The hourly senior-director worker publishes "Immediate Ahmad Actions Still Open" from a MAINTAINED file,
-// not from June-2026 literals in code. Absent/empty file → null (the worker keeps its built-in fallback).
+// The hourly senior-director worker publishes "Immediate Ahmad Actions Still Open" from a MAINTAINED file
+// under the operator record root, not from June-2026 literals in code. Absent/empty file → null (the worker
+// keeps its built-in fallback). Every read/write here goes to a scratch dir; the record root is never opened.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { makeScratchDir } from '../scripts/lib/scratch-dir.mjs';
-import { loadApprovalItemsOverride, CEO_APPROVAL_ITEMS_FILE } from '../scripts/autonomy-supervisor-core.mjs';
+import { loadApprovalItemsOverride, CEO_APPROVAL_ITEMS_FILE, STATE_DIR } from '../scripts/autonomy-supervisor-core.mjs';
 
 let n = 0; const ok = (name) => { n++; console.log(`  ok — ${name}`); };
 const tmp = makeScratchDir('ceo-items-');
@@ -26,9 +27,9 @@ const items = await loadApprovalItemsOverride(f);
 assert.deepEqual(items, ['Merge RUN-CU to `main` and push (one click: AHMAD-MERGE-RUN-CU.cmd).', 'Netlify publish.', 'Flip the GitHub repo private.']);
 ok('bullets parsed in order, prose ignored, CRLF tolerated');
 
-// 4. the default path is the operator record under senior-director-state
-assert.ok(/senior-director-state[\\/]ceo-approval-items\.md$/.test(CEO_APPROVAL_ITEMS_FILE), CEO_APPROVAL_ITEMS_FILE);
-ok('default path is senior-director-state/ceo-approval-items.md');
+// 4. the default path is the maintained file inside the operator record root (STATE_DIR), nowhere else
+assert.equal(CEO_APPROVAL_ITEMS_FILE, path.join(STATE_DIR, 'ceo-approval-items.md'));
+ok('default path is ceo-approval-items.md under the operator record root');
 
 // 5. the worker reads the override and no longer publishes the June literals when the file is present
 const worker = fs.readFileSync(new URL('../scripts/senior-director-worker.mjs', import.meta.url), 'utf8');

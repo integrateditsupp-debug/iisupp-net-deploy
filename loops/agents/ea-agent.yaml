@@ -9,11 +9,11 @@ mandate: |
 duties: |
   Every 30 min email triage (urgent/can-wait/info/archive) · Calendar conflict detection · Meeting prep packets · Follow-up tracking (15-min rule) · Reminder digests · Travel/logistics coordination.
 kpis: |
-    - gmail (read + draft only)
+  Inbox-zero rate · meeting prep coverage · follow-up SLA · CEO time saved/day
+tools_allowed:
+  - gmail (read + draft only)
   - calendar (read)
   - filesystem.write (outputs/ea/)
-tools_allowed:
-  Inbox-zero rate · meeting prep coverage · follow-up SLA · CEO time saved/day
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

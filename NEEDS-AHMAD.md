@@ -2,6 +2,13 @@
 
 > Rewritten 2026-10-08 (RUN-CU). Everything below the rule is history; the list that is live is this one.
 
+> **2026-10-09 (RUN-CU / CU6):** every item here that is dated or has a person waiting is now also a row in
+> `senior-director-state/CEO-CRITICAL-ITEMS.md` (the one CEO ledger, 16 open rows, 1 overdue), a **red event on
+> Ahmad's calendar** (today 16:00 the three clicks; 16:30 the outbound sends; Tue 10-13 the 141 Bay calls + the
+> decision block; Wed 10-14 portal logins; Thu 10-15 the Rule-16 hardware session; the Oct 12/19/26/27/29 deadlines)
+> and the **red digest email** sent 12:50 EDT. `node scripts/ceo-critical-items.mjs` prints the block any session
+> must put first. Policy: `aria-vault/01_Frontal/Policies/CEO-Critical-Items-Policy.md`.
+
 ## 2026-10-08 · RUN-CU — the clean-up cycle: seven clicks, in order of value
 
 **1. Merge RUN-CU to `main` and push.** `cc/run-cu-2026-10-08` holds CU0…CU5 — the reconciled AXIS line,

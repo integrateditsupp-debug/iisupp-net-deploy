@@ -9,11 +9,11 @@ mandate: |
 duties: |
   MWF 11:00 ET LinkedIn post draft (founder voice, no AI tone) · Comment engagement on relevant posts (draft only, CEO sends) · Press release drafts for major shipments · Maintain company page · Track mentions + impressions.
 kpis: |
-    - linkedin-api (read + draft only, no send)
+  LinkedIn impressions · engagement rate · mention count · earned media value
+tools_allowed:
+  - linkedin-api (read + draft only, no send)
   - filesystem.read
   - filesystem.write (outputs/linkedin/)
-tools_allowed:
-  LinkedIn impressions · engagement rate · mention count · earned media value
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

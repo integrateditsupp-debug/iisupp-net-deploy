@@ -20,7 +20,7 @@ running setup turns a channel on, and every channel reports exactly what it did.
 ## What you get
 
 - **A setup wizard that asks the right questions.** Six new steps after the original six: who you are
-  (personal, business, or an IT provider), who uses this device, who to call when something is wrong
+  (personal or business — the two identities `app-config.mjs` accepts), who uses this device, who to call when something is wrong
   (up to 12 technical contacts with roles), how much autonomy you want, who approves fixes and how long
   to wait, where reports go and how often, a maintenance window, and which channels to notify on.
   Everything is editable later under **Settings → Autonomy & contacts**. The old six steps and every

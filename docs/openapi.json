@@ -653,6 +653,61 @@
             "description": "Server error"
           }
         }
+      },
+      "get": {
+        "summary": "aria-contact-back Netlify function — admin-gated read path (2026-10-09): newest first, capped at 200, ?since=<iso>&limit=<n>",
+        "operationId": "get_aria_contact_back",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-contact-back.mjs",
+        "parameters": [
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ISO-8601 timestamp (or epoch ms); only records at or after it are returned"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            },
+            "description": "Lowers the 200 cap; never raises it"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{ ok:true, store, prefix, count, items:[...], newest_first:true, capped, since }",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unparseable since"
+          },
+          "401": {
+            "description": "Admin token missing or wrong (x-admin-token / Authorization: Bearer; query-string tokens are refused)"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "503": {
+            "description": "No admin token configured (fail-closed) or Blobs unavailable"
+          }
+        }
       }
     },
     "/.netlify/functions/aria-cost-attribution": {
@@ -1343,6 +1398,61 @@
             "description": "Server error"
           }
         }
+      },
+      "get": {
+        "summary": "aria-health-lead Netlify function — admin-gated read path (2026-10-09): newest first, capped at 200, ?since=<iso>&limit=<n>",
+        "operationId": "get_aria_health_lead",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-health-lead.mjs",
+        "parameters": [
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ISO-8601 timestamp (or epoch ms); only records at or after it are returned"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            },
+            "description": "Lowers the 200 cap; never raises it"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{ ok:true, store, prefix, count, items:[...], newest_first:true, capped, since }",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unparseable since"
+          },
+          "401": {
+            "description": "Admin token missing or wrong (x-admin-token / Authorization: Bearer; query-string tokens are refused)"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "503": {
+            "description": "No admin token configured (fail-closed) or Blobs unavailable"
+          }
+        }
       }
     },
     "/.netlify/functions/aria-inquiry": {
@@ -1571,6 +1681,61 @@
           },
           "500": {
             "description": "Server error"
+          }
+        }
+      },
+      "get": {
+        "summary": "aria-lead-capture Netlify function — admin-gated read path (2026-10-09): newest first, capped at 200, ?since=<iso>&limit=<n>",
+        "operationId": "get_aria_lead_capture",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-lead-capture.js",
+        "parameters": [
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ISO-8601 timestamp (or epoch ms); only records at or after it are returned"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            },
+            "description": "Lowers the 200 cap; never raises it"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{ ok:true, store, prefix, count, items:[...], newest_first:true, capped, since }",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unparseable since"
+          },
+          "401": {
+            "description": "Admin token missing or wrong (x-admin-token / Authorization: Bearer; query-string tokens are refused)"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "503": {
+            "description": "No admin token configured (fail-closed) or Blobs unavailable"
           }
         }
       }

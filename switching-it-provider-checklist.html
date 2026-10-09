@@ -245,9 +245,17 @@
     <p>Then you have found it now, on your own terms, with time to fix it — which is the entire point. Nothing on that list is unfixable, and most of it is paperwork rather than engineering. Work down the ordered list, top item first. If you want a second pair of hands on it, that is what we do; if you want to do it yourself, everything you need is on this page.</p>
   </details>
 
+  <!-- 2026-10-09 (small-tasks close-out, task 5): related free tools — additive -->
+  <h2>Related</h2>
+  <div class="related" style="background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px 22px;font-size:14.5px;color:rgba(255,255,255,.75)">
+    <a href="/windows-10-esu-oct-13-check.html" style="text-decoration:none;border-bottom:1px solid rgba(197,160,89,.35)">October 13, 2026 &mdash; Windows 10 ESU, Office 2021 and Windows Server 2012: the 6-question check</a> &middot;
+    <a href="/managed-it-cost-toronto.html" style="text-decoration:none;border-bottom:1px solid rgba(197,160,89,.35)">What managed IT actually costs</a> &middot;
+    <a href="/copilot-oversharing-check.html" style="text-decoration:none;border-bottom:1px solid rgba(197,160,89,.35)">Copilot oversharing check</a>
+  </div>
+
   <p class="disclaimer">
     <strong>Honesty note.</strong> This tool contains no benchmarks, no industry averages, no survey data and no statistics — because we will not publish numbers we have not measured ourselves. Your result is arithmetic on your own twelve answers, nothing more. It is a self-assessment and a preparation aid, not an audit, and it is not legal or contractual advice; your obligations to your current provider are governed by the agreement you signed, which you should read, and where the stakes are material, have a lawyer read. Microsoft 365 and Google Workspace are the products of their respective owners; Integrated IT Support Inc. is not affiliated with them.<br>
-    <span class="fresh">Integrated IT Support Inc. · Whitby, Ontario · Serving Durham Region and the GTA · Last reviewed 2026-07-14</span>
+    <span class="fresh">Integrated IT Support Inc. · Whitby, Ontario · Serving Durham Region and the GTA · Last reviewed 2026-07-14 · <span class="last-verified" data-last-verified="2026-10-08">Last verified 2026-10-08</span></span>
   </p>
 
   <div class="nav">
@@ -260,6 +268,25 @@
   </div>
 </div>
 
+<script>
+/* last-verified stamp (RUN-CU small-tasks close-out, task 6): ONE source of truth per page — the
+   data-last-verified attribute, set to the file's last commit date (git log -1 --format=%cs -- <file>),
+   never hand-typed in two places and never "today" unless the content was actually re-verified. The
+   script only renders what the attribute says plus "(n days ago)"; an invalid or future value is left
+   exactly as written so a defect stays visible instead of being painted over. */
+(function () {
+  var els = document.querySelectorAll('[data-last-verified]');
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i], v = el.getAttribute('data-last-verified') || '';
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) continue;
+    var t = Date.parse(v + 'T00:00:00Z');
+    if (isNaN(t)) continue;
+    var days = Math.floor((Date.now() - t) / 86400000);
+    if (days < 0) continue;
+    el.textContent = 'Last verified ' + v + ' (' + (days === 0 ? 'today' : days === 1 ? '1 day ago' : days + ' days ago') + ')';
+  }
+})();
+</script>
 <script>
 // 100% client-side. No network calls. No storage. Nothing leaves this browser.
 var QUESTIONS = [

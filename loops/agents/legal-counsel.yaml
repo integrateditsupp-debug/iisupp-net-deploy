@@ -9,10 +9,10 @@ mandate: |
 duties: |
   On contract input: review for liability/IP/term/indemnification · Standard clause library · Redline drafts · Tender T&C analysis · Privacy policy maintenance · Annual TOS review · Flag risk to CCO.
 kpis: |
-    - filesystem.read (contracts/, knowledge-base/legal/)
-  - filesystem.write (outputs/legal-reviews/, docs/REVIEW_QUEUE.md)
-tools_allowed:
   Contract review SLA · clauses flagged/missed · termination clause coverage · IP protection score
+tools_allowed:
+  - filesystem.read (contracts/, knowledge-base/legal/)
+  - filesystem.write (outputs/legal-reviews/, docs/REVIEW_QUEUE.md)
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

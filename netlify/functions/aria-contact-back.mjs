@@ -6,10 +6,15 @@
 // first; mail now goes through lib/notify.mjs (Resend first, SMTP fallback; the .ics is attached on both)
 // and the response is honest: ok:false + scheduled:true + emailSent:false when no provider confirmed.
 // Also: invalid date/time → 400 (was an unhandled 500); blob key uses the hashed email; date/time escaped.
+//
+// 2026-10-09 (small-tasks close-out, task 2): GET read path, admin-token gated (lib/capture-read.cjs).
+//   GET ?since=<iso>&limit=<n> → { ok:true, count, items:[...] } newest first, capped at 200; 401/503
+//   without a valid token. The POST path is unchanged.
 
 import { getStore } from '@netlify/blobs';
 import { sendEmail, hashIdentity, sanitizeEmailHtml } from './lib/notify.mjs';
 import contacts from './lib/contacts.cjs';
+import captureRead from './lib/capture-read.cjs';
 
 const SESSION_ID_RE = /^[A-Za-z0-9_.@-]{1,120}$/;
 
@@ -21,6 +26,7 @@ export default async (request) => {
     'Content-Type': 'application/json'
   };
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+  if (request.method === 'GET') return captureRead.handleCaptureGet(request, { storeName: 'aria-bookings', prefix: null, scope: 'aria-contact-back' });
   if (request.method !== 'POST') return jsonResp(405, cors, { error: 'POST only' });
 
   let body;

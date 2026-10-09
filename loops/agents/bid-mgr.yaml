@@ -9,11 +9,11 @@ mandate: |
 duties: |
   Fetch full solicitation page · Extract eval criteria + estimated value + required certs + deadline · IIS-fit score 0-100 from capability matrix · Brief summary in outputs/tender-briefs/ · Append to KB bit · Flag iis_fit >= 80 to AE.
 kpis: |
-    - fetch
+  Tenders enriched · iis_fit accuracy · time-to-brief · AE acceptance rate
+tools_allowed:
+  - fetch
   - filesystem.read (knowledge-base/capabilities/)
   - filesystem.write (outputs/tender-briefs/, aria_brain_pack/bits/)
-tools_allowed:
-  Tenders enriched · iis_fit accuracy · time-to-brief · AE acceptance rate
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

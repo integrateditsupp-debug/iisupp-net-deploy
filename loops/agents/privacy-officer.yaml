@@ -9,10 +9,10 @@ mandate: |
 duties: |
   Daily noon scan of data flows · PII inventory maintenance · Retention policy enforcement · DSR (data subject request) handling · PIA for new features · Annual privacy audit · Privacy training for human users.
 kpis: |
-    - filesystem.read
-  - filesystem.write (docs/PRIVACY_POSTURE.md, docs/REVIEW_QUEUE.md)
-tools_allowed:
   Privacy incidents (target 0) · DSR SLA · retention compliance · PIA coverage
+tools_allowed:
+  - filesystem.read
+  - filesystem.write (docs/PRIVACY_POSTURE.md, docs/REVIEW_QUEUE.md)
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

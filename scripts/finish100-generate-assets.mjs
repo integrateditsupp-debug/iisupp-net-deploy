@@ -135,6 +135,8 @@ async function writeOpenApi() {
     const publicPath = `/.netlify/functions/${name}`;
     const methods = new Set(['post']);
     if (['aria-white-label', 'aria-write-gate', 'aria-slack-install'].includes(name)) methods.add('get');
+    // 2026-10-09 (small-tasks close-out, task 2): the three capture endpoints gained an admin-gated GET read path.
+    if (['aria-lead-capture', 'aria-health-lead', 'aria-contact-back'].includes(name)) methods.add('get');
     paths[publicPath] = {};
     for (const method of methods) {
       paths[publicPath][method] = {

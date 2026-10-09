@@ -187,3 +187,37 @@ test('nothing is written and no network is reached — the preflight only reads'
     clean(dir);
   }
 });
+
+// ── RUN-CU / CU6 (2026-10-09): the CEO-critical ledger is the FIRST thing the preflight prints ──────
+test('the red CEO-critical block is rendered first, from a fixture ledger, and an absent ledger is said so', () => {
+  const dir = fixture({ generatedAt: NOW, needsAhmad: '## 2026-10-08 · x\n\n**1. y**\n' });
+  try {
+    // absent → present:false, the block says the ledger is missing, nothing throws
+    const none = M.ceoCritical(dir, new Date(NOW));
+    assert.equal(none.present, false);
+    assert.match(none.block, /ledger not found/);
+    // present → counted and classified; the rendered report starts with the block
+    const ledger = path.join(dir, M.CEO_CRITICAL_LEDGER_REL); // the record root is never named here
+    fs.mkdirSync(path.dirname(ledger), { recursive: true });
+    fs.writeFileSync(ledger, [
+      '# ledger', '', '## Open', '',
+      '| # | what | who is waiting | deadline | category | source file | one-click | found by · on | status |',
+      '|---|---|---|---|---|---|---|---|---|',
+      '| 1 | Sign the thing | a counterpart | **2026-10-07** | signature | `a.md` | none | Cowork · 2026-10-08 | open |',
+      '| 2 | Call someone back | a lead | not recorded | person-waiting | `b.md` | none | Cowork · 2026-10-08 | open |',
+      '', '## Closed', '(none yet)', '',
+    ].join('\n'));
+    const some = M.ceoCritical(dir, new Date(NOW));
+    assert.equal(some.present, true);
+    assert.equal(some.open, 2);
+    assert.equal(some.overdue, 1, 'Oct 7 is overdue on Oct 8');
+    assert.equal(some.personWaiting, 1);
+    const report = M.render(M.collect({ root: dir, now: new Date(NOW), branch: 'main' }));
+    assert.ok(report.startsWith('## 🔴 CEO-CRITICAL — 2 open · 1 overdue'), 'the block precedes the preflight header');
+    assert.ok(report.indexOf('🔴') < report.indexOf('── AGENT PREFLIGHT'));
+    const out = execFileSync(process.execPath, [SCRIPT, '--root', dir, '--branch', 'main', '--now', NOW], { encoding: 'utf8' });
+    assert.match(out.split('\n')[0], /^## 🔴 CEO-CRITICAL/, 'the CLI prints it first too');
+  } finally {
+    clean(dir);
+  }
+});

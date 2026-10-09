@@ -9,11 +9,11 @@ mandate: |
 duties: |
   Twice-daily Mon-Fri scan of git log · Classify commits by agent (Codex/Cowork/human) · Detect: churn spikes, new dirs, abandoned files, broken commit-message convention · Write delta report to outputs/codex-observer/playbook-delta.md · Flag drift to CTO.
 kpis: |
-    - bash (git log only)
+  Scan completion rate · delta accuracy · CTO action rate on flags
+tools_allowed:
+  - bash (git log only)
   - filesystem.read (.git/)
   - filesystem.write (outputs/codex-observer/, .codex-observer/)
-tools_allowed:
-  Scan completion rate · delta accuracy · CTO action rate on flags
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

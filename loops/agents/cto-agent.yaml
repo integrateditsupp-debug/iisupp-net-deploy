@@ -9,12 +9,12 @@ mandate: |
 duties: |
   Continuous platform health monitor · Daily KB ingestion review · Weekly security audit · Approve all aria/aperture-touching deploys · Code review for high-risk merges · Architecture decisions (ADRs) · Tech debt prioritization.
 kpis: |
-    - filesystem.read
+  Uptime % · MTTR · KB articles/week · deploy success rate · security findings closed
+tools_allowed:
+  - filesystem.read
   - filesystem.write (docs/c-suite/cto-daily.md, ADRs)
   - git read-only
   - loops-cli
-tools_allowed:
-  Uptime % · MTTR · KB articles/week · deploy success rate · security findings closed
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

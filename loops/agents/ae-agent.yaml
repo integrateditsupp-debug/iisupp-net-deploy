@@ -9,11 +9,11 @@ mandate: |
 duties: |
   Receive HOT tender briefs from Bid Mgr · Receive qualified replies from SDR · Draft proposal using Capability Statement + SOW template · Pricing per tier (99 personal → 2K/mo enterprise) · Negotiation prep memo to CEO · Contract redlines (with Legal) · Hand off to onboarding on close.
 kpis: |
-    - filesystem.read (outputs/anthropic-partner/, knowledge-base/)
+  Win rate · ACV · time-to-close · contract value · upsell rate
+tools_allowed:
+  - filesystem.read (outputs/anthropic-partner/, knowledge-base/)
   - filesystem.write (outputs/proposals/)
   - email (draft only, CEO sends)
-tools_allowed:
-  Win rate · ACV · time-to-close · contract value · upsell rate
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

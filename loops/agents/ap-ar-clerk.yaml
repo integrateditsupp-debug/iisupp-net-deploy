@@ -9,11 +9,11 @@ mandate: |
 duties: |
   Daily 21:00 ET pull AR aging from Stripe · Generate invoices via Stripe API (no auto-send) · Send to AE for client review · Track AP via vendor list · Alert CFO on 30/60/90-day buckets · Month-end AR/AP report.
 kpis: |
-    - stripe-api (read + draft only, no charge)
+  DSO · AR aging mix · AP on-time rate · invoice cycle time
+tools_allowed:
+  - stripe-api (read + draft only, no charge)
   - filesystem.read
   - filesystem.write (docs/financials/ar-aging.md)
-tools_allowed:
-  DSO · AR aging mix · AP on-time rate · invoice cycle time
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

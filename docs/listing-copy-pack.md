@@ -5,7 +5,7 @@ Copy from here. Never retype from memory — inconsistent name/address/phone (NA
 is the single fastest way to tank local search ranking and get a Google Business Profile
 flagged.
 
-Last updated: 2026-07-29
+Last updated: 2026-10-09 (§10 service-area list added; §1–§9 unchanged since 2026-07-29)
 
 ---
 
@@ -279,3 +279,27 @@ service provider serving businesses across the Greater Toronto Area.
 | Accepts government purchase orders | Yes |
 | Willing to subcontract to a prime | Yes |
 | Bonding capacity | *(none currently — answer "not applicable" for service-only bids)* |
+
+---
+
+## 10. Service area — for `areaServed`, "regions served" and coverage fields
+
+The sections above already state the coverage three ways — §3: "across the Greater Toronto Area
+and remotely nationwide" / "across Ontario"; §5: "IT support Durham Region", "managed service
+provider Ontario", "MSP Greater Toronto Area"; §9: "Remote nationwide; onsite Greater Toronto Area".
+This is the same fact as a list, so a form field and the site's JSON-LD carry exactly the same names:
+
+```
+Greater Toronto Area
+Durham Region
+Ontario
+Canada
+```
+
+How to read it: onsite across the Greater Toronto Area, with Durham Region (Whitby, ON) as the home
+region; remote support for the rest of Ontario and nationwide across Canada.
+
+Not a service area: the **United States**. "Accepts USD" (§9) is a payment term, not coverage. A
+listing or a page schema that says "United States" under area served is a defect — fix it before it
+propagates. The site's JSON-LD (`index.html`, `services.html`, `about.html`) is checked against this
+exact list by `tests/site-page-metadata.test.mjs`.

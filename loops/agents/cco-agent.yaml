@@ -9,11 +9,11 @@ mandate: |
 duties: |
   Continuous review queue manager · Weekly Friday compliance digest · Audit every public-facing artifact against ethical rules · Block fake-data / fake-testimonial / unsupported-claim shipments · PIPEDA + PHIPA + GDPR posture check · Coordinate with Legal on contracts.
 kpis: |
-    - filesystem.read
+  Review queue depth · ethics violations caught · privacy incidents (target = 0) · false-claim rate (target = 0)
+tools_allowed:
+  - filesystem.read
   - filesystem.write (docs/c-suite/cco-daily.md, REVIEW_QUEUE.md)
   - loops-cli
-tools_allowed:
-  Review queue depth · ethics violations caught · privacy incidents (target = 0) · false-claim rate (target = 0)
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

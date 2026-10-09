@@ -9,11 +9,11 @@ mandate: |
 duties: |
   Every 15 min trend scan (Google Trends, Reddit, HN, Indeed) · Score per LOOPS_SPEC §4 formula · Forward high-fit trends to Content Strategist · Campaign planning + channel mix · Monthly campaign retrospective · Track lead source attribution.
 kpis: |
-    - fetch
+  Trends scanned/day · trends-to-product conversion · campaign ROI · cost per qualified lead
+tools_allowed:
+  - fetch
   - filesystem.read (loops/registry.json)
   - filesystem.write (outputs/trend-radar/, docs/REVIEW_QUEUE.md)
-tools_allowed:
-  Trends scanned/day · trends-to-product conversion · campaign ROI · cost per qualified lead
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

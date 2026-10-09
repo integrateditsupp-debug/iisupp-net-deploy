@@ -791,6 +791,24 @@ const TESTS = [
   "./safety-fixes-cu4.test.mjs",
   "./voice-turns.test.mjs",
   "./voice-conversation-ui.test.mjs",
+  // (2026-10-09, reconciliation note) the same fourteen were registered a second time by the sandbox line
+  // that merged RUN-BW independently; that duplicate block was removed when both lines became this one —
+  // the RUN-CV / CV2 block above is the registration of record.
+  // RUN-CU small-tasks close-out (2026-10-09) — five repo-root suites, registered BY HAND after each was
+  // read and run standalone: the /health rewrite (task 1); the admin-gated GET read path on the three
+  // capture endpoints, proven against an in-memory Blobs store (task 2); about.html meta/h2, the
+  // areaServed-vs-copy-pack contract and the data-last-verified stamps (tasks 3/4/6); the sourced
+  // October-13-2026 Microsoft support-date page, every figure pinned to a cited value (task 5); the
+  // loops/agents kpis/tools_allowed shape (task 7). None reads the operator record root.
+  "../../tests/netlify-health-redirect.test.mjs",
+  "../../tests/capture-read-path.test.mjs",
+  "../../tests/site-page-metadata.test.mjs",
+  "../../tests/windows-10-esu-check-page.test.mjs",
+  "../../tests/loops-agents-yaml-shape.test.mjs",
+  // RUN-CU / CU6 (2026-10-09) — the CEO-critical ledger parser (one module reads CEO-CRITICAL-ITEMS.md;
+  // the hourly digest puts its red block first; `node scripts/ceo-critical-items.mjs` prints it for any
+  // chat). Fixture-only: the suite derives the default path from STATE_DIR and never opens the record root.
+  "../../tests/ceo-critical-items-ledger.test.mjs",
 ];
 
 // RUN-BJ / BJ1 (2026-08-12) — THE FLOOR THIS RUNNER NEVER HAD.

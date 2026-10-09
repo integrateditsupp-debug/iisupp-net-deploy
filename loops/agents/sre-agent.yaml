@@ -9,12 +9,12 @@ mandate: |
 duties: |
   Curl aperture-learning.html (200 + login form) every 30 min · Curl /aria (chat input + responds to 'hi') · On failure: trigger Netlify deploy restore via API to last known-good · Telegram alert to CEO · Daily uptime digest · Maintain runbook.
 kpis: |
-    - fetch
+  Uptime % (target 99.9) · MTTR · rollback success rate · HARD RULE breach count (target 0)
+tools_allowed:
+  - fetch
   - netlify-api (restoreSiteDeploy)
   - telegram.send
   - filesystem.write (docs/LOOPS_LEDGER.md, docs/UPTIME.md)
-tools_allowed:
-  Uptime % (target 99.9) · MTTR · rollback success rate · HARD RULE breach count (target 0)
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

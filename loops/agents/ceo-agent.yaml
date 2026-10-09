@@ -9,11 +9,11 @@ mandate: |
 duties: |
   Approve all spend > $0 · Approve human-review queue items · Set/update CURRENT_GOAL.md via /goal · Resolve drift flags from CoS · Final say on hire/fire of agents · Communicate vision to all C-suite · Sign contracts (high-risk action — human-only).
 kpis: |
-    - filesystem.read
+  Pipeline value · cash runway · ARR · client count · agent success rate · CEO hours saved
+tools_allowed:
+  - filesystem.read
   - filesystem.write (CURRENT_GOAL.md, CEO_BRIEF.md only)
   - loops-cli
-tools_allowed:
-  Pipeline value · cash runway · ARR · client count · agent success rate · CEO hours saved
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

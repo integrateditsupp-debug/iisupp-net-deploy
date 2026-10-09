@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>October 13, 2026 — Windows 10 ESU, Office 2021 and Windows Server 2012: Free 6-Question Check | IIS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="On October 13, 2026 the first paid year of Windows 10 Extended Security Updates ends for organizations, Office 2021 and Office LTSC 2021 reach end of support, and the last Windows Server 2012/R2 ESU year closes. Every date and price here is quoted from Microsoft's own lifecycle pages and linked. Free 6-question self-check — runs in your browser, nothing is sent anywhere, no signup.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://iisupp.net/windows-10-esu-oct-13-check.html">
+<meta property="og:title" content="October 13, 2026 — What stops getting patched, and what it costs if you wait">
+<meta property="og:description" content="Windows 10 ESU year one, Office 2021 and Windows Server 2012 all hit the same date. Every figure quoted from Microsoft's own pages. Free 6-question check, runs 100% in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://iisupp.net/windows-10-esu-oct-13-check.html">
+<meta property="og:image" content="https://iisupp.net/assets/aria-og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="October 13, 2026 — Windows 10 ESU, Office 2021, Windows Server 2012">
+<meta name="twitter:description" content="Every date and price quoted from Microsoft's own lifecycle pages. Free 6-question check. Nothing leaves your device.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#050505;color:#e8e8e8;line-height:1.6;padding:48px 20px;min-height:100vh}
+  .wrap{max-width:820px;margin:0 auto}
+  .crown{font-size:11px;letter-spacing:.22em;color:#c5a059;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+  h1{font-size:38px;font-weight:800;color:#fff;margin-bottom:10px;letter-spacing:-.02em;line-height:1.15}
+  h1 .gold{background:linear-gradient(135deg,#c5a059,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:italic}
+  p.sub{color:rgba(255,255,255,.65);font-size:16px;margin-bottom:14px}
+  .privacy-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.35);color:#7ee2a8;border-radius:999px;padding:8px 14px;font-size:12px;letter-spacing:.05em;margin-bottom:30px}
+  h2{font-size:22px;color:#fff;font-weight:700;margin:38px 0 12px;letter-spacing:-.01em}
+  h3{font-size:16px;color:#fff;font-weight:700;margin:22px 0 6px}
+  .lede{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-left:3px solid #c5a059;border-radius:10px;padding:20px 22px;color:rgba(255,255,255,.78);font-size:15px;margin-bottom:28px}
+  .facts{display:grid;grid-template-columns:1fr;gap:12px}
+  .fact{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px 22px}
+  .fact .when{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#c5a059;font-weight:700}
+  .fact .what{color:#fff;font-weight:700;font-size:17px;margin-top:4px}
+  .fact p{color:rgba(255,255,255,.74);font-size:14.5px;margin-top:8px}
+  .fact blockquote{margin:10px 0 0;padding:10px 14px;border-left:2px solid rgba(197,160,89,.5);color:rgba(255,255,255,.82);font-size:13.5px;background:rgba(197,160,89,.05);border-radius:0 8px 8px 0}
+  .fact .src{display:block;margin-top:8px;font-size:12px;color:rgba(255,255,255,.45);word-break:break-all}
+  .fact .src a{color:rgba(197,160,89,.85);text-decoration:none;border-bottom:1px solid rgba(197,160,89,.3)}
+  .form-card{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:26px;margin-bottom:16px}
+  .q{padding:16px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+  .q:last-child{border-bottom:none}
+  .q .qtext{display:block;color:#fff;font-size:15px;font-weight:600;margin-bottom:4px}
+  .q .qwhy{display:block;color:rgba(255,255,255,.45);font-size:12.5px;margin-bottom:10px}
+  .q select{width:100%;padding:11px 13px;background:#050505;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:14.5px;font-family:inherit}
+  .q select:focus{outline:2px solid #c5a059;outline-offset:1px;border-color:#c5a059}
+  button.calc{width:100%;padding:16px;background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505;border:none;border-radius:10px;font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin-top:14px;transition:transform .15s,box-shadow .2s}
+  button.calc:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(197,160,89,.3)}
+  button.calc:focus-visible{outline:2px solid #fff;outline-offset:2px}
+  .results{display:none;margin-top:26px}
+  .results.show{display:block}
+  .band{border-radius:14px;padding:26px;text-align:center;margin-bottom:20px;border:1px solid}
+  .band .label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px;opacity:.85}
+  .band .score{font-size:46px;font-weight:800;font-family:ui-monospace,monospace;line-height:1}
+  .band .verdict{font-size:15px;margin-top:10px;color:rgba(255,255,255,.85)}
+  .band.red{border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.07);color:#f87171}
+  .band.amber{border-color:rgba(234,179,8,.45);background:rgba(234,179,8,.07);color:#fbbf24}
+  .band.green{border-color:rgba(34,197,94,.45);background:rgba(34,197,94,.07);color:#22c55e}
+  .fixlist{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:24px;margin-bottom:16px}
+  .fixlist ol{margin:12px 0 0 20px;color:rgba(255,255,255,.8);font-size:14.5px}
+  .fixlist li{margin-bottom:12px}
+  .fixlist li b{color:#fff}
+  .none{color:rgba(255,255,255,.6);font-size:14.5px}
+  .cta-row{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;justify-content:center}
+  .btn{padding:13px 24px;border-radius:8px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;text-decoration:none;font-family:ui-monospace,monospace;display:inline-block;transition:transform .15s;border:none;cursor:pointer}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505}
+  .btn-ghost{background:transparent;color:#c5a059;border:1px solid rgba(197,160,89,.45)}
+  .week{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:24px}
+  .week ol{margin:8px 0 0 20px;color:rgba(255,255,255,.8);font-size:14.5px}
+  .week li{margin-bottom:12px}
+  .week li b{color:#fff}
+  details{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:16px 18px;margin-bottom:10px}
+  details summary{color:#fff;font-weight:600;font-size:15px;cursor:pointer}
+  details p{color:rgba(255,255,255,.72);font-size:14.5px;margin-top:10px}
+  .sources{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px 22px;font-size:13px;color:rgba(255,255,255,.7)}
+  .sources ol{margin:8px 0 0 20px}
+  .sources li{margin-bottom:8px;word-break:break-all}
+  .related{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px 22px;font-size:14.5px;color:rgba(255,255,255,.75)}
+  .related a{text-decoration:none;border-bottom:1px solid rgba(197,160,89,.35)}
+  a{color:#c5a059}
+  .disclaimer{color:rgba(255,255,255,.45);font-size:12px;margin-top:28px;line-height:1.6;border-top:1px solid rgba(255,255,255,.08);padding-top:18px}
+  .nav{text-align:center;margin-top:36px;color:rgba(255,255,255,.4);font-size:12.5px}
+  .nav a{color:rgba(255,255,255,.6);text-decoration:none;margin:0 8px}
+  .nav a:hover{color:#c5a059}
+  .fresh{color:rgba(255,255,255,.4);font-size:12px;margin-top:6px}
+  @media(max-width:640px){h1{font-size:29px}body{padding:32px 16px}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "datePublished": "2026-10-09",
+  "dateModified": "2026-10-09",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What happens on October 13, 2026?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Three Microsoft support dates land on the same day, according to Microsoft's own lifecycle pages. The first year of Windows 10 Extended Security Updates for organizations ends on October 13, 2026 (Year 2 ends October 12, 2027 and Year 3 ends October 10, 2028). Office 2021 and Office LTSC 2021 reach the end of support (Microsoft's tables show 10/14/2026 6:59:59 AM Pacific, which is the end of October 13 in Redmond's time zone). And the third and final Extended Security Update year for Windows Server 2012 and 2012 R2 ends. Windows 10 itself reached end of support on October 14, 2025."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much does Windows 10 ESU cost for a business?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Microsoft's Extended Security Updates page states that ESU for organizations can be purchased through the Microsoft Volume Licensing Program at $61 USD per device for Year One, that the price doubles every consecutive year for a maximum of three years, and that ESUs are cumulative — if you buy in Year Two you have to pay for Year One too. Microsoft does not print the Year Two or Year Three dollar figures on that page, so check Microsoft's page for the exact amount."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the consumer $30 ESU work for a business PC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Microsoft's consumer ESU page says the consumer programme can't be used in commercial scenarios and enrollment won't be offered for devices in kiosk mode or devices joined to an Active Directory domain or Microsoft Entra and/or enrolled in a Mobile Device Management solution; devices that are Microsoft Entra registered can use the consumer programme. The consumer options as published on 2026-10-09 are: no additional cost if you sync your PC settings, 1,000 Microsoft Rewards points, or a one-time purchase of $30 USD, with the licence usable on up to 10 devices, and the programme ends on October 12, 2027."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Will Windows 10 stop working on October 13, 2026?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Microsoft's ESU page says Windows 10 PCs will continue to work. What changes is whether they receive security updates: a PC without ESU stopped receiving them after October 14, 2025, and a PC on organization ESU needs the next ESU year purchased to keep receiving them after October 13, 2026."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this check send my information anywhere?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. The check runs entirely in your browser as static JavaScript. It makes no network calls, stores nothing, and requires no signup or email address to show your result."
+      }
+    }
+  ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&display=swap"><link rel="stylesheet" href="/assets/xo-elite-theme.css">
+  <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
+</head>
+<body>
+<div class="wrap">
+
+  <div class="crown">Free tool · Integrated IT Support Inc.</div>
+  <h1>October 13, 2026.<br>What stops getting <span class="gold">patched</span>, and what it costs if you wait.</h1>
+  <p class="sub">Three Microsoft support dates land on the same Tuesday: the first paid year of Windows 10 Extended Security Updates for organizations ends, Office 2021 reaches end of support, and the last Windows Server 2012 ESU year closes. Six questions tell you whether it touches you. Every date and dollar figure below is quoted from Microsoft's own lifecycle pages, each one linked.</p>
+  <div class="privacy-pill">Runs 100% in your browser · no network calls · no signup · nothing stored</div>
+<!-- iis-riskbar:start -->
+<div class="iis-riskbar" role="note" aria-label="Risk notice"><b>About this tool.</b> Your result is a general indication based only on what you enter here &mdash; it is not an audit, an assessment, or professional advice. Inputs and benchmarks may be out of date, so do your own due diligence and use the result <b>at your own risk</b>. Want a real assessment of your environment? Call <a href="tel:+16475813182">(647)&nbsp;581-3182</a>. <a href="/disclaimer.html">Full disclaimer</a>.</div>
+<!-- iis-riskbar:end -->
+
+  <div class="lede">
+    <strong>How to read this page.</strong> We publish nothing we cannot point at. Each fact card below quotes Microsoft's page and links to it, fetched on 2026-10-09. Where Microsoft does not print a figure &mdash; the Year-Two ESU price, for example &mdash; we say so and send you to Microsoft's page instead of guessing. Microsoft can change these pages; the links are there so you can check them yourself before you spend anything.
+  </div>
+
+  <h2>What Microsoft's own pages say</h2>
+  <div class="facts">
+
+    <div class="fact">
+      <div class="when">Already happened · October 14, 2025</div>
+      <div class="what">Windows 10 reached end of support</div>
+      <p>Microsoft's lifecycle page for Windows 10 Home and Pro:</p>
+      <blockquote>&ldquo;Windows 10 will reach end of support on October 14, 2025. The current version, 22H2, will be the final version of Windows 10, and all editions will remain in support with monthly security update releases through that date.&rdquo;</blockquote>
+      <p>What Microsoft stopped providing on that date, from its ESU page: technical support, feature updates or new features, and quality updates (including security and reliability fixes). Also from that page: &ldquo;Windows 10 PCs will continue to work&rdquo; &mdash; they keep running; they stop being patched.</p>
+      <span class="src">Source: <a href="https://learn.microsoft.com/en-us/lifecycle/products/windows-10-home-and-pro" rel="noopener">learn.microsoft.com/en-us/lifecycle/products/windows-10-home-and-pro</a> · <a href="https://learn.microsoft.com/en-us/windows/whats-new/extended-security-updates" rel="noopener">learn.microsoft.com/en-us/windows/whats-new/extended-security-updates</a></span>
+    </div>
+
+    <div class="fact">
+      <div class="when">October 13, 2026</div>
+      <div class="what">Windows 10 ESU for organizations &mdash; Year One ends, Year Two must be bought</div>
+      <p>Microsoft's lifecycle FAQ lists the three ESU years for Windows 10: Year 1 ends <strong>October 13, 2026</strong>, Year 2 ends <strong>October 12, 2027</strong>, Year 3 ends <strong>October 10, 2028</strong>. Eligible editions per that FAQ: &ldquo;Enterprise, Education, and Pro in Commercial use&rdquo;; devices must be running Windows 10, version 22H2.</p>
+      <blockquote>&ldquo;Extended Security Updates for organizations and businesses on Windows 10 can be purchased today through the Microsoft Volume Licensing Program, at $61 USD per device for Year One.&rdquo; &hellip; &ldquo;The price doubles every consecutive year, for a maximum of three years.&rdquo; &hellip; &ldquo;If you decide to purchase the program in Year Two, you have to pay for Year One too, as ESUs are cumulative.&rdquo;</blockquote>
+      <p><strong>Honesty note:</strong> Microsoft does not print the Year-Two or Year-Three dollar figure on that page. It says the price doubles; the exact amount, in USD or CAD, is something to check on Microsoft's page or with your licensing reseller before you budget. ESU is sold by the year, not in partial periods. Microsoft also lists Windows 10 virtual machines on Windows 365 and several Azure services as eligible for ESU at no additional cost.</p>
+      <span class="src">Source: <a href="https://learn.microsoft.com/en-us/lifecycle/faq/extended-security-updates" rel="noopener">learn.microsoft.com/en-us/lifecycle/faq/extended-security-updates</a> · <a href="https://learn.microsoft.com/en-us/windows/whats-new/extended-security-updates" rel="noopener">learn.microsoft.com/en-us/windows/whats-new/extended-security-updates</a></span>
+    </div>
+
+    <div class="fact">
+      <div class="when">Consumer programme · runs to October 12, 2027 (as published 2026-10-09)</div>
+      <div class="what">Windows 10 consumer ESU &mdash; and why it is not the answer for a business PC</div>
+      <p>Microsoft's consumer ESU page, as fetched on 2026-10-09, says you can enroll &ldquo;any time until the program ends on October 12, 2027&rdquo;, with three enrollment options: no additional cost if you are syncing your PC settings, 1,000 Microsoft Rewards points, or a one-time purchase of $30 USD; one licence covers up to 10 devices. It needs Windows 10 version 22H2 and a Microsoft account that is an administrator on the device.</p>
+      <blockquote>&ldquo;The consumer ESU program can&rsquo;t be used in commercial scenarios, and enrollment won&rsquo;t be offered for: Devices in kiosk mode. Devices joined to an Active Directory domain or Microsoft Entra and/or enrolled in a Mobile Device Management (MDM) solution. However, devices that are Microsoft Entra registered can use the Consumer ESU program.&rdquo;</blockquote>
+      <p>So a domain-joined or Intune-managed office PC is on the organization programme above, with its October 13, 2026 year boundary &mdash; not the $30 consumer one. If you were counting on the consumer option for a work fleet, that is the first thing to recheck.</p>
+      <span class="src">Source: <a href="https://www.microsoft.com/windows/extended-security-updates" rel="noopener">microsoft.com/windows/extended-security-updates</a></span>
+    </div>
+
+    <div class="fact">
+      <div class="when">October 13, 2026</div>
+      <div class="what">Office 2021 and Office LTSC 2021 reach end of support</div>
+      <p>Microsoft's lifecycle page for Office 2021 (Home and Business, Home and Business for Mac, Home and Student, Home and Student for Mac, Professional) shows a retirement date of <strong>10/14/2026 6:59:59 AM</strong> Pacific Time &mdash; that is the end of October 13, 2026 in Redmond&rsquo;s time zone. Office LTSC 2021 (Standard, Standard for Mac) shows the same mainstream end date. Neither page lists an Extended Security Update option.</p>
+      <p>Separately, Microsoft states that Microsoft 365 Apps (the subscription version) running on Windows 10 keep receiving security updates until <strong>October 10, 2028</strong>, and feature updates until Version 2608 is released &mdash; but with reduced support: if an issue occurs only on Windows 10, &ldquo;support will ask the customer to move to Windows 11.&rdquo;</p>
+      <span class="src">Source: <a href="https://learn.microsoft.com/en-us/lifecycle/products/office-2021" rel="noopener">learn.microsoft.com/en-us/lifecycle/products/office-2021</a> · <a href="https://learn.microsoft.com/en-us/lifecycle/products/office-ltsc-2021" rel="noopener">learn.microsoft.com/en-us/lifecycle/products/office-ltsc-2021</a> · <a href="https://learn.microsoft.com/en-us/microsoft-365-apps/end-of-support/windows-10-support" rel="noopener">learn.microsoft.com/en-us/microsoft-365-apps/end-of-support/windows-10-support</a></span>
+    </div>
+
+    <div class="fact">
+      <div class="when">October 13, 2026</div>
+      <div class="what">Windows Server 2012 and 2012 R2 &mdash; the last ESU year ends</div>
+      <p>Microsoft's lifecycle page for Windows Server 2012 shows extended support ending <strong>10/11/2023 6:59:59 AM</strong> Pacific (the FAQ states it plainly: &ldquo;Windows Server 2012 and 2012 R2 Extended Support ended on October 10, 2023&rdquo;), followed by three Extended Security Update years. Year 3 runs <strong>10/15/2025 8:00:00 AM to 10/14/2026 6:59:59 AM</strong> Pacific; the FAQ prints the Year 3 end as <strong>October 13, 2026</strong>. The FAQ describes ESU as security updates &ldquo;up to three years after the product&rsquo;s End of Extended Support date&rdquo; &mdash; there is no fourth year listed.</p>
+      <p>After that date a 2012 server is on a 14-year-old operating system with no update programme behind it. The usual places one hides: an old file server, a domain controller nobody wanted to touch, the box a line-of-business application was installed on in 2014, or a virtual machine that was &ldquo;going to be decommissioned&rdquo;.</p>
+      <span class="src">Source: <a href="https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2012" rel="noopener">learn.microsoft.com/en-us/lifecycle/products/windows-server-2012</a> · <a href="https://learn.microsoft.com/en-us/lifecycle/faq/extended-security-updates" rel="noopener">learn.microsoft.com/en-us/lifecycle/faq/extended-security-updates</a></span>
+    </div>
+
+  </div>
+
+  <h2>The 6-question check</h2>
+  <form class="form-card" id="chk">
+    <div id="qs"></div>
+    <button class="calc" type="submit">Show me where I stand</button>
+  </form>
+
+  <div class="results" id="res" role="status" aria-live="polite">
+    <div class="band" id="band">
+      <div class="label">October 13 exposure</div>
+      <div class="score" id="score">&mdash;</div>
+      <div class="verdict" id="verdict"></div>
+    </div>
+
+    <div class="fixlist">
+      <h3>What your answers point at &mdash; in this order</h3>
+      <div id="fixes"></div>
+    </div>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" href="/book.html">Have us do the inventory with you</a>
+      <a class="btn btn-ghost" href="/health-check.html">Free IT health check</a>
+      <a class="btn btn-ghost" href="/managed-it-cost-toronto.html">What managed IT costs here</a>
+    </div>
+  </div>
+
+  <h2>What to do this week</h2>
+  <div class="week">
+    <ol>
+      <li><b>Count.</b> Every Windows 10 PC (Settings &rarr; System &rarr; About, or run <code>winver</code>), every Office 2021 install (File &rarr; Account in Word shows the product name), every server still on Windows Server 2012 or 2012 R2 &mdash; including virtual machines and the ones nobody logs into. A list with a name against each row is the whole first step; most businesses have never written it down.</li>
+      <li><b>Split the Windows 10 list into &ldquo;can upgrade&rdquo; and &ldquo;cannot&rdquo;.</b> Microsoft&rsquo;s PC Health Check app reports whether a PC meets Windows 11 requirements. The ones that can: schedule the upgrade. The ones that cannot: a replacement date or an ESU decision, nothing else is a plan.</li>
+      <li><b>Decide ESU for the PCs you will still have after October 13, 2026.</b> Organization ESU is bought by the year through volume licensing, it is cumulative, and Microsoft says the price doubles each year &mdash; get the Year-Two figure in writing from Microsoft&rsquo;s page or your reseller before you commit. Personal devices that are not domain-joined or managed fall under the consumer programme, which Microsoft currently lists as running to October 12, 2027.</li>
+      <li><b>Office 2021: pick the replacement now, not in October.</b> Microsoft lists no ESU for Office 2021 or Office LTSC 2021. Move to a supported Office &mdash; Microsoft 365 Apps, or the current one-time-purchase release; check Microsoft&rsquo;s lifecycle page for its dates &mdash; and note that Microsoft 365 Apps on a Windows 10 PC are themselves on a reduced-support footing.</li>
+      <li><b>Windows Server 2012: treat it as a migration, with a date.</b> Nothing on Microsoft&rsquo;s page runs past October 13, 2026. Find out what actually depends on the box (shares, printers, the application, the domain role), then move it &mdash; to a current Windows Server, to the cloud service that replaced that function, or off entirely. A server that cannot be migrated by the date needs to be isolated from the internet and documented as a known risk, in writing, by someone with the authority to accept it.</li>
+      <li><b>Put the date in the calendar with an owner and a budget line.</b> October 13, 2026 is a Tuesday. If you carry cyber insurance or have compliance obligations, check whether your renewal questionnaire asks about unsupported software &mdash; it is cheaper to answer &ldquo;none&rdquo; than to explain.</li>
+      <li><b>Keep the sources.</b> The links on this page go to Microsoft&rsquo;s pages, not ours. Recheck them before any purchase; a snapshot is only as good as the day it was taken, and we would rather you see Microsoft&rsquo;s current page than trust ours.</li>
+    </ol>
+  </div>
+
+  <h2>Questions people ask us</h2>
+  <details>
+    <summary>Does Windows 10 stop working on October 13?</summary>
+    <p>No. Microsoft&rsquo;s own ESU page says &ldquo;Windows 10 PCs will continue to work.&rdquo; What changes is whether they receive security updates. A PC that was never enrolled in ESU stopped receiving them after October 14, 2025. A PC on organization ESU needs the next year purchased to keep receiving them after October 13, 2026. A PC on the consumer programme is, per Microsoft&rsquo;s current page, covered to October 12, 2027.</p>
+  </details>
+  <details>
+    <summary>Can I just put the $30 consumer ESU on our office PCs?</summary>
+    <p>Microsoft says no for the common office set-up: the consumer programme &ldquo;can&rsquo;t be used in commercial scenarios&rdquo;, and enrollment is not offered to devices joined to an Active Directory domain or Microsoft Entra, or enrolled in an MDM solution. Devices that are only Microsoft Entra <em>registered</em> can use it. If your PCs sign in with a company account and are managed, plan on the organization programme.</p>
+  </details>
+  <details>
+    <summary>What does ESU actually include?</summary>
+    <p>Microsoft&rsquo;s page: ESU &ldquo;enables PCs to continue to receive critical and important security updates through an annual subscription service after support ends.&rdquo; It does not include new features, customer-requested non-security updates, design change requests, or technical support &mdash; &ldquo;Microsoft will provide support for customers that encounter challenges related to the ESU&rdquo; itself, nothing more. It is a bridge, not a destination.</p>
+  </details>
+  <details>
+    <summary>Why is a Whitby IT company publishing Microsoft&rsquo;s dates?</summary>
+    <p>Because the three dates are spread across five Microsoft pages, and a business owner should not have to read all five to learn that a Tuesday in October has a cost attached. The page is free and works whether or not you ever call us. If your answer to all six questions is &ldquo;no, we are already done&rdquo;, that is a good outcome and you should keep whoever got you there.</p>
+  </details>
+  <details>
+    <summary>Does anything I type here leave my device?</summary>
+    <p>No. The page is static HTML and JavaScript. There is no form submission, no fetch call, no analytics on your answers, no email gate, and nothing is stored. You can disconnect from the internet and this page still works.</p>
+  </details>
+
+  <h2>Sources</h2>
+  <div class="sources">
+    All fetched on 2026-10-09. If a date or price on this page disagrees with Microsoft&rsquo;s page, Microsoft&rsquo;s page wins.
+    <ol>
+      <li>Windows 10 Home and Pro lifecycle &mdash; <a href="https://learn.microsoft.com/en-us/lifecycle/products/windows-10-home-and-pro" rel="noopener">https://learn.microsoft.com/en-us/lifecycle/products/windows-10-home-and-pro</a></li>
+      <li>Windows 10 Extended Security Updates (organizations) &mdash; <a href="https://learn.microsoft.com/en-us/windows/whats-new/extended-security-updates" rel="noopener">https://learn.microsoft.com/en-us/windows/whats-new/extended-security-updates</a></li>
+      <li>Lifecycle FAQ &mdash; Extended Security Updates (year boundaries for Windows 10 and Windows Server 2012/R2) &mdash; <a href="https://learn.microsoft.com/en-us/lifecycle/faq/extended-security-updates" rel="noopener">https://learn.microsoft.com/en-us/lifecycle/faq/extended-security-updates</a></li>
+      <li>Windows 10 Consumer Extended Security Updates &mdash; <a href="https://www.microsoft.com/windows/extended-security-updates" rel="noopener">https://www.microsoft.com/windows/extended-security-updates</a></li>
+      <li>Office 2021 lifecycle &mdash; <a href="https://learn.microsoft.com/en-us/lifecycle/products/office-2021" rel="noopener">https://learn.microsoft.com/en-us/lifecycle/products/office-2021</a></li>
+      <li>Office LTSC 2021 lifecycle &mdash; <a href="https://learn.microsoft.com/en-us/lifecycle/products/office-ltsc-2021" rel="noopener">https://learn.microsoft.com/en-us/lifecycle/products/office-ltsc-2021</a></li>
+      <li>Windows Server 2012 lifecycle &mdash; <a href="https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2012" rel="noopener">https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2012</a></li>
+      <li>Microsoft 365 Apps on Windows 10 after end of support &mdash; <a href="https://learn.microsoft.com/en-us/microsoft-365-apps/end-of-support/windows-10-support" rel="noopener">https://learn.microsoft.com/en-us/microsoft-365-apps/end-of-support/windows-10-support</a></li>
+    </ol>
+  </div>
+
+  <h2>Related</h2>
+  <div class="related">
+    <a href="/switching-it-provider-checklist.html">Switching IT providers &mdash; do you actually own your own IT?</a> &middot;
+    <a href="/managed-it-cost-toronto.html">What managed IT actually costs in Toronto</a> &middot;
+    <a href="/copilot-oversharing-check.html">Copilot oversharing check</a> &middot;
+    <a href="/health-check.html">60-second IT health check</a>
+  </div>
+
+  <div class="cta-row">
+    <a class="btn btn-primary" href="/book.html">Book a 20-minute review</a>
+    <a class="btn btn-ghost" href="tel:+16475813182">Call (647) 581-3182</a>
+  </div>
+
+  <p class="disclaimer">
+    <strong>Honesty note.</strong> This page contains no market statistics, no survey data and no figures of our own &mdash; every date and price is quoted from the Microsoft pages linked above, and where Microsoft does not print a figure we say so. Your result is arithmetic on your own six answers, nothing more; it is a self-assessment and a planning aid, not an audit, a licensing opinion or legal advice. Prices are Microsoft&rsquo;s published USD figures and may differ in CAD, by reseller and over time. Windows, Office, Microsoft 365, Microsoft Entra and Windows Server are Microsoft products; Integrated IT Support Inc. is not affiliated with Microsoft.<br>
+    <span class="fresh">Integrated IT Support Inc. · Whitby, Ontario · Serving Durham Region and the GTA · <span class="last-verified" data-last-verified="2026-10-09">Last verified 2026-10-09</span></span>
+  </p>
+
+  <div class="nav">
+    <a href="/index.html">Home</a> ·
+    <a href="/services.html">Services</a> ·
+    <a href="/managed-it-cost-toronto.html">What managed IT costs</a> ·
+    <a href="/switching-it-provider-checklist.html">Switching providers</a> ·
+    <a href="/trust.html">Trust</a> ·
+    <a href="/book.html">Talk to us</a>
+  </div>
+</div>
+
+<script>
+/* last-verified stamp (RUN-CU small-tasks close-out, task 6): ONE source of truth per page — the
+   data-last-verified attribute, set to the file's last commit date (git log -1 --format=%cs -- <file>),
+   never hand-typed in two places and never "today" unless the content was actually re-verified. The
+   script only renders what the attribute says plus "(n days ago)"; an invalid or future value is left
+   exactly as written so a defect stays visible instead of being painted over. */
+(function () {
+  var els = document.querySelectorAll('[data-last-verified]');
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i], v = el.getAttribute('data-last-verified') || '';
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) continue;
+    var t = Date.parse(v + 'T00:00:00Z');
+    if (isNaN(t)) continue;
+    var days = Math.floor((Date.now() - t) / 86400000);
+    if (days < 0) continue;
+    el.textContent = 'Last verified ' + v + ' (' + (days === 0 ? 'today' : days === 1 ? '1 day ago' : days + ' days ago') + ')';
+  }
+})();
+</script>
+<script>
+// 100% client-side. No network calls. No storage. Nothing leaves this browser.
+// Scoring is arithmetic on the six answers below — no benchmarks, no averages, no invented numbers.
+var QUESTIONS = [
+  {id:'win10', q:'Do you still have Windows 10 PCs in use?',
+   why:'Windows 10 reached end of support on October 14, 2025 (Microsoft lifecycle page). Without ESU, those PCs have not received security updates since.',
+   opts:[
+     ['None — every PC is on Windows 11 or newer', 0, null],
+     ['A few (1–5)', 2, ['Windows 10 PCs are still in use', 'List each one by name. For each: can it upgrade to Windows 11 (PC Health Check), is it enrolled in ESU, and if neither — what is its replacement date?']],
+     ['Many (6 or more)', 3, ['A Windows 10 fleet is still in use', 'This is a project, not a chore. Inventory first, then split into upgrade / replace / ESU-for-one-more-year, with a cost against each column before October 13, 2026.']],
+     ['I do not know', 3, ['Nobody knows how many Windows 10 PCs there are', 'That is the first finding. Settings → System → About on each machine, or ask whoever manages them for a device list with OS version. A count you do not have is a risk you cannot price.']]
+   ]},
+  {id:'esu', q:'Are those Windows 10 PCs enrolled in Extended Security Updates today — and which programme?',
+   why:'Organization ESU (volume licensing, Year 1 ends October 13, 2026, US$61 per device Year One, price doubles each year) and the consumer programme (Microsoft account, runs to October 12, 2027 per Microsoft) are different things.',
+   opts:[
+     ['Not applicable — no Windows 10 PCs', 0, null],
+     ['Yes — organization ESU through volume licensing', 1, ['Organization ESU Year One ends October 13, 2026', 'Year Two has to be purchased; Microsoft says the price doubles and that ESUs are cumulative. Get the Year-Two figure in writing now, or set a replacement date on or before October 13, 2026.']],
+     ['Yes — the consumer option (Microsoft account, settings sync / Rewards / US$30)', 2, ['Consumer ESU on work PCs needs a second look', 'Microsoft says the consumer programme cannot be used in commercial scenarios and is not offered to domain-joined, Entra-joined or MDM-enrolled devices. Confirm which of your PCs actually qualify; the rest belong on the organization programme.']],
+     ['No — not enrolled', 3, ['Unpatched Windows 10 PCs', 'Those PCs have had no security updates since October 14, 2025 (Microsoft). Decide this week: upgrade, replace, or enrol — and until then keep them off anything sensitive and behind a firewall that is actually configured.']],
+     ['I do not know', 3, ['ESU status is unknown', 'Check Settings → Update & Security → Windows Update on a Windows 10 PC, or ask your licensing reseller what was bought. "Probably" is not a patch status.']]
+   ]},
+  {id:'win11', q:'Do you know which of your Windows 10 PCs can upgrade to Windows 11?',
+   why:'Windows 11 has hardware requirements (TPM 2.0, a supported processor). Microsoft’s PC Health Check app reports eligibility per device.',
+   opts:[
+     ['Not applicable — no Windows 10 PCs', 0, null],
+     ['Yes — checked each one, the list is written down', 0, null],
+     ['Some are checked, some are not', 1, ['Half an upgrade list', 'Finish it. Every unchecked PC is a replacement you have not budgeted for or an upgrade you have not scheduled.']],
+     ['No', 2, ['No eligibility check has been done', 'Run Microsoft’s PC Health Check on each Windows 10 PC. The output splits your fleet into "upgrade" and "replace" — the two numbers that decide the budget.']],
+     ['I do not know', 2, ['Nobody has checked Windows 11 eligibility', 'Same action: PC Health Check on each machine, result written next to its name on the inventory.']]
+   ]},
+  {id:'office', q:'Do you run Office 2021 anywhere — the one-time-purchase kind (Home & Business, Professional, LTSC Standard)?',
+   why:'Office 2021 and Office LTSC 2021 reach end of support on October 13, 2026 (Microsoft lifecycle pages). Neither page lists an ESU option.',
+   opts:[
+     ['No — we are on Microsoft 365 Apps or another supported suite', 0, null],
+     ['Yes, on a few machines', 2, ['Office 2021 reaches end of support October 13, 2026', 'Word → File → Account shows the product name. Plan the move to a supported Office before the date; there is no ESU listed for Office 2021.']],
+     ['Yes, that is our standard', 3, ['Office 2021 is the company standard', 'This is a licensing decision with a deadline. Price Microsoft 365 Apps against the current one-time-purchase release (check Microsoft’s lifecycle page for its dates) and pick one before October.']],
+     ['I do not know', 2, ['Office version is unknown', 'Open Word, File → Account, read the product name. Takes thirty seconds per PC and ends the guessing.']]
+   ]},
+  {id:'server', q:'Do you still run Windows Server 2012 or 2012 R2 anywhere — a file server, a domain controller, an old application box, a forgotten VM?',
+   why:'Extended support ended October 10, 2023; the third and last ESU year ends October 13, 2026 (Microsoft lifecycle page and FAQ). No further year is listed.',
+   opts:[
+     ['No — nothing older than a supported Windows Server', 0, null],
+     ['Yes', 3, ['A Windows Server 2012 / 2012 R2 is still running', 'Find out what depends on it (shares, printers, the application, the domain role) and set a migration date before October 13, 2026. If it genuinely cannot move by then, isolate it from the internet and record the accepted risk in writing.']],
+     ['I think so, but I am not sure what it does', 3, ['A 2012-era server nobody understands', 'That is the most dangerous kind: it is still trusted by the network and nobody knows why. Log in, list its roles and shares, and find the owner of whatever still touches it.']],
+     ['I do not know', 3, ['Server inventory is unknown', 'Ask whoever manages your servers for a list with OS versions. If the answer takes more than a day, that is a finding in itself.']]
+   ]},
+  {id:'plan', q:'Is there a written plan — with an owner and a budget line — dated before October 13, 2026?',
+   why:'Everything above is cheaper in April than in October. A plan is a list of devices, a decision per device, a cost, a name and a date.',
+   opts:[
+     ['Yes — funded, with an owner and dates', 0, null],
+     ['Partly — we have talked about it', 2, ['A conversation is not a plan', 'Write it down this week: the inventory, a decision per device (upgrade / replace / ESU / migrate), a cost, a name and a date. One page is enough.']],
+     ['No', 3, ['No plan', 'Start with the count (step 1 above). The plan writes itself once the list exists; the hard part is the list.']],
+     ['I do not know', 3, ['Nobody owns this', 'Name an owner today, even if it is you. An unowned deadline is a missed one.']]
+   ]}
+];
+
+var qs = document.getElementById('qs');
+QUESTIONS.forEach(function (item, idx) {
+  var div = document.createElement('div');
+  div.className = 'q';
+  var sel = '<select id="q_' + item.id + '" name="' + item.id + '" aria-describedby="why_' + item.id + '">';
+  item.opts.forEach(function (o, i) { sel += '<option value="' + i + '">' + o[0] + '</option>'; });
+  sel += '</select>';
+  div.innerHTML = '<label class="qtext" for="q_' + item.id + '">' + (idx + 1) + '. ' + item.q + '</label>' +
+                  '<span class="qwhy" id="why_' + item.id + '">' + item.why + '</span>' + sel;
+  qs.appendChild(div);
+});
+
+document.getElementById('chk').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var total = 0, max = 0, findings = [];
+  QUESTIONS.forEach(function (item) {
+    var i = parseInt(document.getElementById('q_' + item.id).value, 10) || 0;
+    var o = item.opts[i];
+    var worst = 0; item.opts.forEach(function (x) { if (x[1] > worst) worst = x[1]; });
+    total += o[1]; max += worst;
+    if (o[1] > 0 && o[2]) findings.push({ pts: o[1], title: o[2][0], detail: o[2][1] });
+  });
+  findings.sort(function (a, b) { return b.pts - a.pts; });
+
+  var band = document.getElementById('band'), score = document.getElementById('score'), verdict = document.getElementById('verdict');
+  band.className = 'band';
+  score.textContent = total + ' / ' + max;
+  if (total === 0) {
+    band.classList.add('green');
+    verdict.textContent = 'Nothing on this page touches you on October 13, 2026. Keep the inventory current and whoever got you here.';
+  } else if (total <= 5) {
+    band.classList.add('amber');
+    verdict.textContent = 'A short list, not a crisis — but it has a date on it. Work the items below before October.';
+  } else {
+    band.classList.add('red');
+    verdict.textContent = 'October 13, 2026 lands on you in more than one place. Start with the count; the rest is ordered below.';
+  }
+
+  var fixes = document.getElementById('fixes');
+  if (!findings.length) {
+    fixes.innerHTML = '<p class="none">No open items from your answers.</p>';
+  } else {
+    var ol = '<ol>';
+    findings.forEach(function (f) { ol += '<li><b>' + f.title + '.</b> ' + f.detail + '</li>'; });
+    ol += '</ol>';
+    fixes.innerHTML = ol;
+  }
+  var res = document.getElementById('res');
+  res.classList.add('show');
+  res.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+</script>
+<!-- iis-fineprint:start -->
+<div class="iis-fineprint" role="note" aria-label="Site content disclaimer">
+  <div class="iis-fineprint__inner">
+    <span class="iis-fineprint__label">Disclaimer</span>
+    <p class="iis-fineprint__text">Content on iisupp.net and its sub-sites is general information only. Any troubleshooting step, instruction, tool, estimate or data taken from this site is <strong style="color:rgba(255,255,255,.5);font-weight:600">used at your own risk</strong>, and information may be out of date &mdash; please do your own due diligence before acting on it.</p>
+    <p class="iis-fineprint__text">No published guide can account for every factor in a live environment. If the system matters, don&rsquo;t guess &mdash; call <a href="tel:+16475813182">(647) 581-3182</a> and have it done safely. Full <a href="/disclaimer.html">disclaimer</a> &middot; <a href="/terms.html">terms</a> &middot; <a href="/governance/privacy">privacy</a>.</p>
+  </div>
+</div>
+<!-- iis-fineprint:end -->
+</body>
+</html>

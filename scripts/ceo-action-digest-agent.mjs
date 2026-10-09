@@ -9,6 +9,8 @@ import {
   LOCAL_ONLY_STAGED_REVIEW_FILES,
   approvalTextForReview
 } from './staged-review-files.mjs';
+// RUN-CU / CU6 (2026-10-09): the CEO-critical ledger goes at the TOP of every hourly digest, red.
+import { loadCriticalItems, renderCriticalBlock } from './lib/ceo-critical-items.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const STATE_DIR = path.join(ROOT, 'senior-director-state');
@@ -153,6 +155,11 @@ async function main() {
   const approvals = classifyApprovalQueue(approvalItems);
   const queueCount = approvals.sendNow.length + approvals.upcoming.length + approvals.publish.length + approvals.portal.length;
   const readyCount = approvals.sendNow.length + approvals.publish.length + approvals.portal.length;
+  // The ledger is human-maintained (CEO-CRITICAL-ITEMS.md); this agent only reads it. Absent → the block
+  // says so in red rather than going quiet, because a missing ledger is itself something Ahmad must know.
+  const critical = loadCriticalItems();
+  const criticalBlock = renderCriticalBlock(critical);
+  const criticalOverdue = critical.items.filter((item) => item.urgency === 'overdue').length;
 
   const normalizedApprovalMarkdown = `# CEO Approval Required
 
@@ -167,7 +174,9 @@ The Director may continue no-cost, reversible work that does not involve externa
 
 Updated: ${nowIso}
 
+${criticalBlock}
 Need-to-know:
+- CEO-critical items open: ${critical.items.length} (${criticalOverdue} overdue) — ledger: \`senior-director-state/CEO-CRITICAL-ITEMS.md\`
 - Approved CEO queue items tracked: ${queueCount}
 - Ready for CEO action when the live surface is available: ${readyCount}
 - Upcoming dated CEO actions: ${approvals.upcoming.length}
@@ -239,7 +248,9 @@ Result:
       queueItems: queueCount,
       readyActions: readyCount,
       upcomingActions: approvals.upcoming.length,
-      businessPrepItems: business.length
+      businessPrepItems: business.length,
+      criticalOpen: critical.items.length,
+      criticalOverdue
     },
     artifacts: [
       DIGEST_FILE,
@@ -248,6 +259,7 @@ Result:
     ],
     approvals: approvalItems,
     readyActions: [
+      critical.items.length ? `${critical.items.length} CEO-critical item(s) open, ${criticalOverdue} overdue — see the red block at the top of the digest.` : null,
       readyCount ? `${readyCount} CEO action(s) are ready when the live surface is available.` : null
     ].filter(Boolean),
     nextActions: [

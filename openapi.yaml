@@ -49,6 +49,27 @@ paths:
       responses:
         200: { description: Lead captured }
         400: { description: Validation error }
+    get:
+      tags: [leads]
+      summary: Read captured /aria sales leads (Blobs aria-leads, prefix lead/) (admin token gated, 2026-10-09) — newest first, capped at 200
+      security: [{ AdminToken: [] }]
+      parameters:
+        - name: since
+          in: query
+          required: false
+          schema: { type: string }
+          description: ISO-8601 timestamp (or epoch ms); only records at or after it are returned
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 200 }
+          description: Lowers the 200 cap; never raises it
+      responses:
+        200: { description: "{ ok:true, store, prefix, count, items:[...], newest_first:true, capped, since }" }
+        400: { description: Unparseable since }
+        401: { description: Admin token missing or wrong (X-Admin-Token or Authorization Bearer; query-string tokens are refused) }
+        429: { description: Rate limited }
+        503: { description: No admin token configured (fail-closed) or Blobs unavailable }
 
   /aria-warm-handoff:
     post:
@@ -321,6 +342,53 @@ paths:
     post:
       tags: [leads]
       summary: IT Health Check lead capture
+    get:
+      tags: [leads]
+      summary: Read captured IT Health Check leads (Blobs aria-leads, prefix health/) (admin token gated, 2026-10-09) — newest first, capped at 200
+      security: [{ AdminToken: [] }]
+      parameters:
+        - name: since
+          in: query
+          required: false
+          schema: { type: string }
+          description: ISO-8601 timestamp (or epoch ms); only records at or after it are returned
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 200 }
+          description: Lowers the 200 cap; never raises it
+      responses:
+        200: { description: "{ ok:true, store, prefix, count, items:[...], newest_first:true, capped, since }" }
+        400: { description: Unparseable since }
+        401: { description: Admin token missing or wrong (X-Admin-Token or Authorization Bearer; query-string tokens are refused) }
+        429: { description: Rate limited }
+        503: { description: No admin token configured (fail-closed) or Blobs unavailable }
+
+  /aria-contact-back:
+    post:
+      tags: [leads]
+      summary: Schedule an ARIA reconnect (booking persisted to Blobs aria-bookings, confirmation emailed)
+    get:
+      tags: [leads]
+      summary: Read captured reconnect bookings (Blobs aria-bookings) (admin token gated, 2026-10-09) — newest first, capped at 200
+      security: [{ AdminToken: [] }]
+      parameters:
+        - name: since
+          in: query
+          required: false
+          schema: { type: string }
+          description: ISO-8601 timestamp (or epoch ms); only records at or after it are returned
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 200 }
+          description: Lowers the 200 cap; never raises it
+      responses:
+        200: { description: "{ ok:true, store, prefix, count, items:[...], newest_first:true, capped, since }" }
+        400: { description: Unparseable since }
+        401: { description: Admin token missing or wrong (X-Admin-Token or Authorization Bearer; query-string tokens are refused) }
+        429: { description: Rate limited }
+        503: { description: No admin token configured (fail-closed) or Blobs unavailable }
 
   /aria-renewal-reminders:
     post:

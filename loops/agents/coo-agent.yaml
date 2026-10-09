@@ -9,11 +9,11 @@ mandate: |
 duties: |
   Read pipeline + tender match list daily · Approve outbound batches before send · Allocate SDR effort across verticals · Approve proposals before client send · Track time-to-proposal SLA · Coach reports on blockers · Weekly Monday forecast meeting to CEO.
 kpis: |
-    - filesystem.read
+  Win rate · pipeline value · time-to-proposal · meetings booked/week · lead-to-meeting rate
+tools_allowed:
+  - filesystem.read
   - filesystem.write (docs/c-suite/coo-daily.md)
   - loops-cli
-tools_allowed:
-  Win rate · pipeline value · time-to-proposal · meetings booked/week · lead-to-meeting rate
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

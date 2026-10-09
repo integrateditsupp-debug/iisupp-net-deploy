@@ -9,11 +9,11 @@ mandate: |
 duties: |
   Continuous spend audit — pause any loop breaching $0 cap · Daily cash position check · Weekly burn report · Monthly P&L · Tax workbook reconciliation · Invoice approval · Vendor payment scheduling · Annual budget process.
 kpis: |
-    - filesystem.read
+  Burn rate · cash runway · DSO · MRR · ARR · gross margin · tax compliance %
+tools_allowed:
+  - filesystem.read
   - filesystem.write (docs/c-suite/cfo-daily.md, SPEND_AUDIT.md)
   - loops-cli (pause/resume/kill power)
-tools_allowed:
-  Burn rate · cash runway · DSO · MRR · ARR · gross margin · tax compliance %
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

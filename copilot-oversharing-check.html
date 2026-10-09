@@ -169,7 +169,7 @@
 
   <p class="disclaimer">
     <strong>Honesty note.</strong> This tool contains no benchmarks, no industry averages and no statistics — because we will not publish numbers we have not measured. Your score is arithmetic on your own twelve answers, nothing more. It is a self-assessment, not an audit, and it is not legal, privacy-law or compliance advice. Microsoft 365, Copilot, SharePoint and Purview are Microsoft products; Integrated IT Support Inc. is not affiliated with Microsoft.<br>
-    <span class="fresh">Integrated IT Support Inc. · Whitby, Ontario · Last reviewed 2026-07-14</span>
+    <span class="fresh">Integrated IT Support Inc. · Whitby, Ontario · Last reviewed 2026-07-14 · <span class="last-verified" data-last-verified="2026-10-08">Last verified 2026-10-08</span></span>
   </p>
 
   <div class="nav">
@@ -182,6 +182,25 @@
   </div>
 </div>
 
+<script>
+/* last-verified stamp (RUN-CU small-tasks close-out, task 6): ONE source of truth per page — the
+   data-last-verified attribute, set to the file's last commit date (git log -1 --format=%cs -- <file>),
+   never hand-typed in two places and never "today" unless the content was actually re-verified. The
+   script only renders what the attribute says plus "(n days ago)"; an invalid or future value is left
+   exactly as written so a defect stays visible instead of being painted over. */
+(function () {
+  var els = document.querySelectorAll('[data-last-verified]');
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i], v = el.getAttribute('data-last-verified') || '';
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) continue;
+    var t = Date.parse(v + 'T00:00:00Z');
+    if (isNaN(t)) continue;
+    var days = Math.floor((Date.now() - t) / 86400000);
+    if (days < 0) continue;
+    el.textContent = 'Last verified ' + v + ' (' + (days === 0 ? 'today' : days === 1 ? '1 day ago' : days + ' days ago') + ')';
+  }
+})();
+</script>
 <script>
 // 100% client-side. No network calls. No storage. Nothing leaves this browser.
 var QUESTIONS = [

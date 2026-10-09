@@ -9,11 +9,11 @@ mandate: |
 duties: |
   Daily 21:00 ET pull new expenses from receipt sources · Categorize per CRA guidelines (T2125 + T2125-A + T2 if incorporated) · Sync to 2026 IIS Inc. tax workbook · Month-end comprehensive sweep · Annual return prep package by Mar 1.
 kpis: |
-    - filesystem.read (receipts/, financial-feeds/)
+  Expense capture rate · categorization accuracy · CRA penalty avoidance · refund maximization
+tools_allowed:
+  - filesystem.read (receipts/, financial-feeds/)
   - filesystem.write (tax-workbook/)
   - bash (excel-cli)
-tools_allowed:
-  Expense capture rate · categorization accuracy · CRA penalty avoidance · refund maximization
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

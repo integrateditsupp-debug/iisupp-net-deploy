@@ -9,11 +9,11 @@ mandate: |
 duties: |
   Daily content calendar review · Trend Radar input → content briefs · Brand voice audit weekly · Approve public-facing copy before publish · LinkedIn page strategy · Growth Library product roadmap · Demo gateway optimization.
 kpis: |
-    - filesystem.read
+  Content shipped/week · trend → product conversion · organic traffic · demo activations · CAC
+tools_allowed:
+  - filesystem.read
   - filesystem.write (docs/c-suite/cmo-daily.md, content drafts)
   - loops-cli
-tools_allowed:
-  Content shipped/week · trend → product conversion · organic traffic · demo activations · CAC
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

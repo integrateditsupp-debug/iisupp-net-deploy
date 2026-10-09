@@ -9,11 +9,11 @@ mandate: |
 duties: |
   Pull MERX + CanadaBuys + Ontario Tenders + BC Bid + Biddingo daily · IT-keyword filter · Score 0-100 vs IIS capability matrix · Flag score >= 60 as HOT · Dedup against seen.json · Email digest to CEO + COO · Append HOT to REVIEW_QUEUE.md · 30-day no-hit escalation.
 kpis: |
-    - fetch
+  Tenders scanned/day · HOT match count · CEO action rate on HOT items · false-positive rate
+tools_allowed:
+  - fetch
   - filesystem.write (aria_brain_pack/bits/, REVIEW_QUEUE.md, docs/LOOPS_LEDGER.md)
   - email.resend
-tools_allowed:
-  Tenders scanned/day · HOT match count · CEO action rate on HOT items · false-positive rate
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

@@ -9,10 +9,10 @@ mandate: |
 duties: |
   Daily 08:00 ET Mon-Fri scan of TaskList + LOOPS_LEDGER · Surface stale tasks · Blocker identification · Cross-team dependency mapping · Sprint planning input · Weekly Friday retro.
 kpis: |
-    - filesystem.read (tasks, loops/registry.json, docs/LOOPS_LEDGER.md)
-  - filesystem.write (docs/c-suite/cos-daily.md, docs/PM_DIGEST.md)
-tools_allowed:
   Tasks closed/week · blocker resolution time · sprint commitment vs delivery · WIP drift
+tools_allowed:
+  - filesystem.read (tasks, loops/registry.json, docs/LOOPS_LEDGER.md)
+  - filesystem.write (docs/c-suite/cos-daily.md, docs/PM_DIGEST.md)
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

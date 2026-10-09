@@ -9,10 +9,10 @@ mandate: |
 duties: |
   Daily 10:00 content calendar review · Trend Radar input → product briefs · Author Growth Library guides + AI agent kits + automation kits · Maintain editorial calendar · Weekly content audit · Approve back-jacket blurbs · Hand off to CCO for review before publish.
 kpis: |
-    - filesystem.read (knowledge-base/, aria_brain_pack/)
-  - filesystem.write (assets/iis-catalog.js, growth-library content, docs/REVIEW_QUEUE.md)
-tools_allowed:
   Articles shipped/week · GL revenue per content piece · time-to-publish · editorial drift
+tools_allowed:
+  - filesystem.read (knowledge-base/, aria_brain_pack/)
+  - filesystem.write (assets/iis-catalog.js, growth-library content, docs/REVIEW_QUEUE.md)
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

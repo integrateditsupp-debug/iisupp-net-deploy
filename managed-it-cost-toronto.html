@@ -63,6 +63,7 @@
   details p{color:rgba(255,255,255,.72);font-size:14.5px;margin-top:10px}
   a{color:#c5a059}
   .disclaimer{color:rgba(255,255,255,.45);font-size:12px;margin-top:28px;line-height:1.6;border-top:1px solid rgba(255,255,255,.08);padding-top:18px}
+  .fresh{color:rgba(255,255,255,.4);font-size:12px;margin-top:6px;display:block}
   .nav{text-align:center;margin-top:36px;color:rgba(255,255,255,.4);font-size:12.5px}
   .nav a{color:rgba(255,255,255,.6);text-decoration:none;margin:0 8px}
   .nav a:hover{color:#c5a059}
@@ -244,8 +245,17 @@
     <a class="btn btn-ghost" href="/copilot-oversharing-check.html">Copilot oversharing check</a>
   </div>
 
+  <!-- 2026-10-09 (small-tasks close-out, task 5): related free tools — additive -->
+  <h2>Related</h2>
+  <div class="related" style="background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px 22px;font-size:14.5px;color:rgba(255,255,255,.75)">
+    <a href="/windows-10-esu-oct-13-check.html" style="text-decoration:none;border-bottom:1px solid rgba(197,160,89,.35)">October 13, 2026 &mdash; Windows 10 ESU, Office 2021 and Windows Server 2012: the 6-question check</a> &middot;
+    <a href="/switching-it-provider-checklist.html" style="text-decoration:none;border-bottom:1px solid rgba(197,160,89,.35)">Switching IT providers &mdash; what do you own?</a> &middot;
+    <a href="/copilot-oversharing-check.html" style="text-decoration:none;border-bottom:1px solid rgba(197,160,89,.35)">Copilot oversharing check</a>
+  </div>
+
   <p class="disclaimer">
-    Every rate on this page is Integrated IT Support Inc.'s own published starting rate, in Canadian dollars, as shown on <a href="/services.html">iisupp.net/services</a>. Starting rates, not quotes — your final number depends on your environment and is confirmed in writing before any work begins. This page contains no market averages, no competitor pricing and no third-party statistics. The estimator is arithmetic on the values you type; it runs entirely in your browser, stores nothing and sends nothing. This is budgeting guidance, not a contract or a formal quote.
+    Every rate on this page is Integrated IT Support Inc.'s own published starting rate, in Canadian dollars, as shown on <a href="/services.html">iisupp.net/services</a>. Starting rates, not quotes — your final number depends on your environment and is confirmed in writing before any work begins. This page contains no market averages, no competitor pricing and no third-party statistics. The estimator is arithmetic on the values you type; it runs entirely in your browser, stores nothing and sends nothing. This is budgeting guidance, not a contract or a formal quote.<br>
+    <span class="fresh">Integrated IT Support Inc. · Whitby, Ontario · Serving Durham Region and the GTA · <span class="last-verified" data-last-verified="2026-10-08">Last verified 2026-10-08</span></span>
   </p>
 
   <p class="nav">
@@ -254,6 +264,25 @@
 
 </div>
 
+<script>
+/* last-verified stamp (RUN-CU small-tasks close-out, task 6): ONE source of truth per page — the
+   data-last-verified attribute, set to the file's last commit date (git log -1 --format=%cs -- <file>),
+   never hand-typed in two places and never "today" unless the content was actually re-verified. The
+   script only renders what the attribute says plus "(n days ago)"; an invalid or future value is left
+   exactly as written so a defect stays visible instead of being painted over. */
+(function () {
+  var els = document.querySelectorAll('[data-last-verified]');
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i], v = el.getAttribute('data-last-verified') || '';
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) continue;
+    var t = Date.parse(v + 'T00:00:00Z');
+    if (isNaN(t)) continue;
+    var days = Math.floor((Date.now() - t) / 86400000);
+    if (days < 0) continue;
+    el.textContent = 'Last verified ' + v + ' (' + (days === 0 ? 'today' : days === 1 ? '1 day ago' : days + ' days ago') + ')';
+  }
+})();
+</script>
 <script>
 (function () {
   var LO = 420, HI = 840;                 // published managed IT band, CAD / user / mo

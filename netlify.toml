@@ -54,6 +54,17 @@
   to = "/public/sentinel-binaries/:splat"
   status = 200
 
+# RUN-CU 2026-10-09 (small-tasks close-out): /health → the health function. The ARIA morning agent and
+# the uptime checks probe https://iisupp.net/health, which until now had no rule and answered 404 —
+# so the agent has reported the site DEGRADED off the wrong path (reported since 2026-07-28). A rewrite (200,
+# not a 301) keeps the short path and the function's JSON body. /health-check (the lead-magnet page)
+# is a different, exact-match rule further down and is untouched. Keep this above the 404 rules;
+# Netlify takes the first matching rule. Guarded by tests/netlify-health-redirect.test.mjs.
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/health"
+  status = 200
+
 # HELD — the public Windows download link is intentionally NOT live. Restore this block
 # only when the Authenticode EV cert is bought AND the installer is rebuilt from the
 # current source tree (shipped binary is v0.1.0, source is v0.1.16). Full restore steps:

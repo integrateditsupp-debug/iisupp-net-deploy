@@ -48,6 +48,25 @@ const BOOTSTRAP_CANDIDATES = Object.freeze([
 const STATUS_FEED = path.join('.well-known', 'axis', 'status.json');
 const RUN_STATS = path.join('tests', 'run-stats.json');
 const NEEDS_AHMAD = 'NEEDS-AHMAD.md';
+// RUN-CU / CU6 (2026-10-09): the CEO-critical ledger is read here too, so an agent that runs preflight
+// (every agent does) sees the red block before it does anything else. Read-only; absent → reported.
+import { loadCriticalItems, renderCriticalBlock } from './lib/ceo-critical-items.mjs';
+/** Ledger path relative to the repo root; exported so a fixture test can build it without naming the record root. */
+export const CEO_CRITICAL_LEDGER_REL = path.join('senior-director-state', 'CEO-CRITICAL-ITEMS.md');
+const CEO_CRITICAL = CEO_CRITICAL_LEDGER_REL;
+
+/** The CEO-critical ledger, classified at `now`. `{ present, open, overdue, block }`. */
+export function ceoCritical(root, now = new Date()) {
+  const loaded = loadCriticalItems(path.join(root, CEO_CRITICAL), now);
+  return {
+    present: !loaded.missing,
+    open: loaded.items.length,
+    overdue: loaded.items.filter((i) => i.urgency === 'overdue').length,
+    dueSoon: loaded.items.filter((i) => i.urgency === 'due-soon').length,
+    personWaiting: loaded.items.filter((i) => i.urgency === 'person-waiting').length,
+    block: renderCriticalBlock(loaded, { now }),
+  };
+}
 
 const repoRoot = () => path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -207,6 +226,7 @@ export function collect({ root, now = new Date(), branch = null } = {}) {
     statusFeed: statusFeedAge(base, now),
     runStats: runStatsSummary(base),
     needsAhmad: firstNeedsAhmadItems(base, 3),
+    ceoCritical: ceoCritical(base, now),
     paused: bootstrapPaused(base),
   };
 }
@@ -214,6 +234,12 @@ export function collect({ root, now = new Date(), branch = null } = {}) {
 export function render(r) {
   const L = [];
   const dash = (v) => (v === null || v === undefined ? '—' : v);
+  // The red block comes first — before the branch, before the commits — because it is the one thing an
+  // agent must carry into its reply (Ahmad, 2026-10-09: "always remind me ... put them in red text").
+  if (r.ceoCritical) {
+    L.push(r.ceoCritical.block.trimEnd());
+    L.push('');
+  }
   L.push('── AGENT PREFLIGHT ' + '─'.repeat(50));
   L.push(`taken at   ${r.takenAt}`);
   L.push(`root       ${r.root}`);

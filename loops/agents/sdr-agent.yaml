@@ -9,12 +9,12 @@ mandate: |
 duties: |
   Daily 08:30 ET prospect list pull (Apollo) · ICP filter + tier ranking · Personalize per vertical (accounting/law/health/RE/gov) · Value-pre-given email format · Schedule send via Gmail · Cadence groups 5+5 with 2h gap, 3min within · Reply triage.
 kpis: |
-    - apollo
+  Outbound sent/day · reply rate · meeting booked rate · sequence drop rate
+tools_allowed:
+  - apollo
   - gmail (draft + schedule send only)
   - filesystem.read (outputs/aria-outbound/)
   - filesystem.write
-tools_allowed:
-  Outbound sent/day · reply rate · meeting booked rate · sequence drop rate
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

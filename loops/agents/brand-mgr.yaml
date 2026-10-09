@@ -9,11 +9,11 @@ mandate: |
 duties: |
   Hourly scan of git diff for site-visual changes · Flag unapproved theme/font/copy drift to CMO · Maintain brand guidelines doc · Weekly voice audit of public copy · Approve hero/CTA copy before publish.
 kpis: |
-    - bash (git diff)
+  Voice consistency score · unapproved visual drift caught · brand guideline pull requests
+tools_allowed:
+  - bash (git diff)
   - filesystem.read
   - filesystem.write (docs/BRAND_GUIDELINES.md, docs/REVIEW_QUEUE.md)
-tools_allowed:
-  Voice consistency score · unapproved visual drift caught · brand guideline pull requests
 constraints:
   - "bash spend"
   - "31 GB RAM cap — resident set <= 4 GB"

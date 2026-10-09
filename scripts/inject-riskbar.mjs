@@ -99,6 +99,9 @@ export const TARGETS = [
     anchor: '<div class="privacy-pill">Runs 100% in your browser · no network calls · no signup · nothing stored</div>' },
   { file: 'switching-it-provider-checklist.html', kind: 'tool', where: 'after',
     anchor: '<div class="privacy-pill">Runs 100% in your browser · no network calls · no signup · nothing stored</div>' },
+  // 2026-10-09 (small-tasks close-out, task 5): the October 13, 2026 Microsoft support-date check.
+  { file: 'windows-10-esu-oct-13-check.html', kind: 'tool', where: 'after',
+    anchor: '<div class="privacy-pill">Runs 100% in your browser · no network calls · no signup · nothing stored</div>' },
 
   // --- money -------------------------------------------------------------
   { file: 'cost-calculator.html', kind: 'estimate', where: 'before',
