@@ -748,6 +748,24 @@ const TESTS = [
   // this manifest does not pick up new files and a suite running green while the count stands still is
   // the same lie in a nicer shirt.
   "../../tests/axis-jarvis-flow.test.mjs",
+  // RUN-CV / CV2 (2026-10-09, client-ready-flywheel) — the 14 site suites RUN-CU added, caught by
+  // RUN-BW's census gate the moment the two lines were reconciled. Each was READ and run standalone
+  // first (all pass: function-gates 81 checks, site-status-honesty 6, site-icons-present 4,
+  // agent-preflight 8, the rest 1 each) — registered after reading, not bulk-parked.
+  "../../tests/agent-preflight.test.mjs",
+  "../../tests/aria-chat-voice-contract.test.mjs",
+  "../../tests/aria-page-honesty.test.mjs",
+  "../../tests/aria-sentinel-approval.test.mjs",
+  "../../tests/aria-sentinel-notify.test.mjs",
+  "../../tests/aria-voice-conversation.test.mjs",
+  "../../tests/aria-web-session-id.test.mjs",
+  "../../tests/ceo-approval-items-override.test.mjs",
+  "../../tests/function-gates.test.mjs",
+  "../../tests/notify-lib.test.mjs",
+  "../../tests/refresh-scheduled-agents.test.mjs",
+  "../../tests/site-icons-present.test.mjs",
+  "../../tests/site-status-honesty.test.mjs",
+  "../../tests/user-data-purge.test.mjs",
   // STAGE-3 ARE — packets landed by Cowork run 113 (2026-07-21). Registered here because each packet's
   // run-all patch was cut against an older anchor; the suites themselves are unmodified from the packets.
   "./escalation-decision.test.mjs",
