@@ -49,7 +49,9 @@ const GUARD = [
 
 const files = all
   ? fs.readdirSync(path.join(ROOT, 'tests'))
-      .filter(f => f.endsWith('.test.mjs'))
+      // CV15 (2026-10-09): main's d712ed62/114ab5a7 shipped their suites as .test.cjs — a suffix this
+      // filter never matched, so `--all` silently skipped Ahmad's own new checks. Both kinds run now.
+      .filter(f => f.endsWith('.test.mjs') || f.endsWith('.test.cjs'))
       .sort()
       .map(f => path.join('tests', f))
   : GUARD;
