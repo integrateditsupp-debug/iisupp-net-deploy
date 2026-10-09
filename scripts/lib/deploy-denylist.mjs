@@ -32,6 +32,9 @@ export const DENY_PREFIXES = [
   "documents/",
   "ARIA-Vault-Backups/",
   "_vault-backups",
+  // RUN-CV / CV7 (2026-10-09): restore points hold .git packs, operator records and the vault — never tracked.
+  "_restore-points/",
+  "_retired-",
 ];
 
 /**

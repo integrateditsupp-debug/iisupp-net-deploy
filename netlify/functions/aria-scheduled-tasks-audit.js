@@ -6,24 +6,33 @@
 const fs = require('fs');
 const path = require('path');
 
+// 2026-10-09: this list MUST equal the real `export const config = { schedule }` of every *.mjs function —
+// tests/scheduled-tasks-audit-matches-config.test.mjs fails the build if it drifts (it had drifted on 12 rows).
 const SCHEDULED = [
-  { fn: 'aria-evolution-cron', schedule: '0 */6 * * *', purpose: 'self-learning loop' },
-  { fn: 'aria-governor-alert-cron', schedule: '0 9 * * *', purpose: 'daily LLM cost governor' },
-  { fn: 'aria-learning-cron', schedule: '0 */4 * * *', purpose: 'KB autonomous improvement' },
-  { fn: 'aria-lead-radar-cron', schedule: '0 8 * * *', purpose: 'gov tender hunt' },
-  // 2026-10-08: the schedule lives in aria-renewal-reminders-cron.mjs (the HTTP function never had one — it
-  // never ran). The heartbeat name stays 'aria-renewal-reminders' so cron-health keeps its history.
-  { fn: 'aria-renewal-reminders', schedule: '0 14 * * *', purpose: 'subscription renewal scan (via aria-renewal-reminders-cron.mjs)' },
-  { fn: 'aria-reverify-cron', schedule: '0 */6 * * *', purpose: 'KB verification' },
-  { fn: 'aria-self-audit-cron', schedule: '0 */12 * * *', purpose: 'platform self-audit' },
-  { fn: 'aria-uptime-probe', schedule: '*/5 * * * *', purpose: 'every 5 min uptime probe' },
-  { fn: 'aria-engagement-cron', schedule: '0 10 * * *', purpose: 'd1/d3/d7/d30/d90 drip' },
-  { fn: 'aria-winback-cron', schedule: '0 11 * * *', purpose: 'churned user re-engagement' },
-  { fn: 'aria-founder-digest', schedule: '0 12 * * *', purpose: '7am ET founder digest' },
-  { fn: 'aria-gap-detector-cron', schedule: '0 6 * * *', purpose: 'KB-gap clustering' },
   { fn: 'aria-backup-cron', schedule: '0 2 * * 0', purpose: 'weekly Sunday backup' },
+  { fn: 'aria-cron-health-monitor', schedule: '0 2 * * *', purpose: 'cron heartbeat check' },
+  { fn: 'aria-engagement-cron', schedule: '0 10 * * *', purpose: 'd1/d3/d7/d30/d90 drip' },
+  { fn: 'aria-evolution-cron', schedule: '0 12 * * *', purpose: 'self-learning loop' },
+  { fn: 'aria-founder-digest', schedule: '0 12 * * *', purpose: 'founder digest' },
+  { fn: 'aria-gap-detector-cron', schedule: '0 6 * * *', purpose: 'KB-gap clustering' },
+  { fn: 'aria-governor-alert-cron', schedule: '*/3 * * * *', purpose: 'LLM cost governor (emails only on breach)' },
+  { fn: 'aria-lead-radar-cron', schedule: '0 6 * * *', purpose: 'gov tender hunt' },
+  { fn: 'aria-learning-cron', schedule: '*/15 * * * *', purpose: 'KB autonomous improvement' },
+  { fn: 'aria-pipeline-weekly-report', schedule: '0 13 * * 1', purpose: 'weekly pipeline report' },
+  { fn: 'aria-renewal-reminders-cron', schedule: '0 14 * * *', purpose: 'subscription renewal scan' },
+  { fn: 'aria-retention-sweep-cron', schedule: '0 4 * * *', purpose: 'data retention sweep' },
+  { fn: 'aria-reverify-cron', schedule: '0 3 1,15 * *', purpose: 'KB verification' },
+  { fn: 'aria-self-audit-cron', schedule: '30 3 * * *', purpose: 'platform self-audit' },
   { fn: 'aria-self-eval-cron', schedule: '0 */6 * * *', purpose: 'ARIA scenario regression eval' },
-  { fn: 'senior-director-digest-cron', schedule: '0 6 * * *', purpose: 'CEO daily digest' }
+  { fn: 'aria-signup-health-cron', schedule: '0 14 * * *', purpose: 'signup funnel health' },
+  { fn: 'aria-sla-monitor-cron', schedule: '*/30 * * * *', purpose: 'SLA monitor' },
+  { fn: 'aria-tls-monitor-cron', schedule: '0 3 * * *', purpose: 'TLS expiry monitor' },
+  { fn: 'aria-uptime-probe', schedule: '*/5 * * * *', purpose: 'uptime probe' },
+  { fn: 'aria-winback-cron', schedule: '0 11 * * *', purpose: 'churned user re-engagement' },
+  { fn: 'bid-radar-cron', schedule: '0 11 * * 1-5', purpose: 'bid radar (weekdays)' },
+  { fn: 'ca-purge-cron', schedule: '*/5 * * * *', purpose: 'cache purge' },
+  { fn: 'forums-concierge-cron', schedule: '*/30 * * * *', purpose: 'forums concierge' },
+  { fn: 'senior-director-digest-cron', schedule: '0 13 * * *', purpose: 'CEO daily digest' }
 ];
 
 exports.handler = async (event) => {

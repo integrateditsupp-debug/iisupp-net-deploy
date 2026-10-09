@@ -110,6 +110,12 @@ _staged-cc-runs/
 _branch-src/
 _shipped-src/
 
+# Restore points (2026-10-09, RUN-CV / CV7) — full snapshots of the company's working state
+# (.git packs, untracked records, vault, staged runs, outputs). Never tracked, never served:
+# the 102 MB installer that reached GitHub in June is exactly what this rule prevents happening twice.
+_restore-points/
+_retired-*/
+
 # Generated outputs (2026-07-28) — 440 MB of run artifacts, drafts and prospect data.
 # publish="." serves every tracked file to the anonymous web; these must never be tracked.
 outputs/

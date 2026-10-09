@@ -945,6 +945,8 @@ const TESTS = [
   // ARIA web vision (STAGE 2 acceptance, offline, $0): the real retriever over the real KB diagnoses a
   // known screenshot, abstains on a low-confidence image, redacts PII/secrets before querying, and
   // honours the consent gate; the aria-vision-diagnose function end to end with a stubbed KB fetch.
+  // 2026-10-09: the audit endpoint's cron list must equal the real config.schedule values.
+  "../../tests/scheduled-tasks-audit-matches-config.test.mjs",
   // LAST on purpose: the handler suite deletes ANTHROPIC_API_KEY and ARIA_VISION_MODEL from this
   // process's env and does not put them back, so nothing may run after it.
   "../../tests/vision-diagnose.test.mjs",

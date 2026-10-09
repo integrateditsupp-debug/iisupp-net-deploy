@@ -299,3 +299,8 @@ Never claim the read you did not take.
 
 _Status at the time this bootstrap was last rewritten: **built and verified on `cc/run-cv-2026-10-09` (CV4, 2026-10-09),
 nothing pushed, nothing published.**_
+
+## Restore point RP1 (2026-10-09)
+- Whole-company snapshot: `_restore-points/2026-10-09-RP1/` (gitignored, force-404, denylisted). Read its `RESTORE.md`; verify with `sha256sum -c MANIFEST.sha256`.
+- Retired (moved, never deleted): `_retired-2026-10-09/` — 66 superseded `AHMAD-*.cmd` scripts; each row in `RETIRED-MANIFEST.md` has its `mv` restore command.
+- `aria-scheduled-tasks-audit.js` list now equals the real cron schedules (24); `tests/scheduled-tasks-audit-matches-config.test.mjs` fails on drift.
