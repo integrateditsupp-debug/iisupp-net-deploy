@@ -395,6 +395,11 @@
       audience: ['human', 'business'], cta: 'View inventory', url: '/services.html#inventory'
     },
     {
+      id: 'br-axis', section: 'tech-support', kind: 'subscription',
+      title: 'AXIS — AI Executive Assistant', blurb: 'Client follow-ups, leads, inbox, automations and approved work on your own PC. Includes Axis Local.',
+      audience: ['business'], cta: 'Meet AXIS', url: '/axis-assistant.html'
+    },
+    {
       id: 'br-aria', section: 'tech-support', kind: 'subscription',
       title: 'ARIA — AI IT Assistant', blurb: 'Always-on AI triage, fixes and escalation. Personal, Pro and Business tiers.',
       audience: ['human', 'business'], cta: 'See ARIA', url: '/aria.html'

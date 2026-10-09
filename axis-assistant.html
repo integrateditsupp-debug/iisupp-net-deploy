@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<meta name="theme-color" content="#c5a059">
+<title>AXIS AI Executive Assistant | Integrated IT Support</title>
+<meta name="description" content="AXIS runs the busy work of your business: client follow-ups, leads, inbox, invoices, automations and approved tasks on your own PC.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;900&display=swap');
+:root{--luxury-gold:linear-gradient(135deg,#b8954f 0%,#d8bd84 50%,#9c7322 100%)}
+*{box-sizing:border-box}body{font-family:'Inter',sans-serif;background:#050505;color:#fff;margin:0;overflow-x:hidden}
+h1,h2,h3,h4,.logo-text{font-family:'Cinzel',serif}a{text-decoration:none}
+.gold-text{color:transparent;background:var(--luxury-gold);-webkit-background-clip:text;background-clip:text}
+.eyebrow{font-size:8px;letter-spacing:.5em;text-transform:uppercase;color:#c5a059;font-weight:700;display:block}
+nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.05)}
+.nav-links{display:flex;gap:22px;font-size:9px;font-weight:700;letter-spacing:.4em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.nav-links a:hover{color:#c5a059}@media(max-width:900px){.nav-links{display:none}}
+.aud{font-size:8px;letter-spacing:.18em;text-transform:uppercase;padding:3px 8px;border-radius:3px;border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.6)}
+.aud-human{color:#9fe7c7;border-color:rgba(159,231,199,.3)}.aud-ai{color:#9ec5ff;border-color:rgba(158,197,255,.3)}.aud-business{color:#f1dca7;border-color:rgba(241,220,167,.3)}.aud-it{color:#e0a3ff;border-color:rgba(224,163,255,.3)}
+.c-btn{display:inline-flex;align-items:center;justify-content:center;padding:13px 22px;border:1px solid rgba(197,160,89,.45);background:rgba(197,160,89,.05);color:#c5a059;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border-radius:5px;cursor:pointer;transition:all .3s}
+.c-btn:hover{color:#f1dca7;border-color:rgba(197,160,89,.65)}.c-btn.solid{background:var(--luxury-gold);color:#1a1407;border-color:transparent}.c-btn.solid:hover{box-shadow:0 8px 22px rgba(184,149,79,.25)}.c-btn:disabled{opacity:.6;cursor:wait}
+/* shared catalog card (related) */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}@media(max-width:900px){.cat-grid{grid-template-columns:1fr}}
+.cat-card{position:relative;display:flex;flex-direction:column;gap:10px;background:linear-gradient(155deg,rgba(197,160,89,.04),rgba(255,255,255,.02) 60%,transparent);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:20px;overflow:hidden}
+.cat-card:hover{border-color:rgba(197,160,89,.5)}.cat-card .lock{position:absolute;top:12px;left:12px;color:rgba(197,160,89,.7);font-size:12px}
+.cat-card .c-top{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.cat-card .fmt{font-size:7.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-left:auto}
+.cat-card h4{font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin:2px 0 0}.cat-card .c-blurb{font-size:11px;color:rgba(255,255,255,.55);margin:0}
+.cat-card .c-media{margin:-20px -20px 4px;height:140px;overflow:hidden;background:#0a0a0a;border-bottom:1px solid rgba(197,160,89,.15)}.cat-card .c-media img{width:100%;height:100%;object-fit:cover}
+.cat-card.is-soon{opacity:.6;filter:grayscale(.5)}.cat-card .price.soon{color:#9aa3b8;background:none;-webkit-background-clip:initial;font-size:12px;text-transform:uppercase}.cat-card .price.quote{color:#d8bd84;background:none;-webkit-background-clip:initial;font-size:13px}
+.cat-card .c-inside{margin:0;padding-left:15px;color:rgba(255,255,255,.4);font-size:10px;line-height:1.7}
+.cat-card .c-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:6px}
+.cat-card .price{font-family:'Cinzel',serif;font-size:16px;color:transparent;background:var(--luxury-gold);-webkit-background-clip:text;background-clip:text}.cat-card .price.free{color:#9fe7c7;background:none;-webkit-background-clip:initial}
+.c-actions{display:flex;gap:6px}.cat-card .c-btn{padding:8px 12px;font-size:8px;letter-spacing:.18em}
+.hero-media-stack{position:relative;margin:0 0 24px;border:1px solid rgba(197,160,89,.18);border-radius:16px;overflow:hidden;background:linear-gradient(180deg,rgba(15,18,27,.86),rgba(7,8,11,.96));aspect-ratio:16/9}
+.hero-media-stack .promo-video,.hero-media-stack .slide-frame,.hero-media-stack .slide-frame img{position:absolute;inset:0;width:100%;height:100%}
+.hero-media-stack .promo-video{object-fit:cover;opacity:.5}
+.hero-media-stack .slide-frame{background:linear-gradient(180deg,rgba(6,9,18,.05),rgba(6,9,18,.55))}
+.hero-media-stack .slide-frame img{object-fit:cover;opacity:.96;transition:opacity .7s ease, transform 6s ease;transform:scale(1.02)}
+.hero-media-stack .media-pill{position:absolute;left:18px;bottom:18px;z-index:2;padding:8px 12px;border-radius:999px;border:1px solid rgba(241,220,167,.34);background:rgba(6,9,18,.66);color:#f1dca7;font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:700}
+@media(max-width:640px){nav{padding:14px 16px}nav>a{gap:10px!important;min-width:0}nav>a .logo-text{font-size:12px!important;letter-spacing:.16em!important;line-height:1.25}main#product{padding:116px 16px 70px!important}main#product h1{font-size:clamp(1.65rem,9vw,2.2rem)!important;line-height:1.12!important}main#product h2{font-size:1.35rem!important;line-height:1.25!important}main#product [style*="grid-template-columns:repeat(auto-fit"]{grid-template-columns:1fr!important;gap:10px!important}main#product [style*="padding:22px 24px"]{padding:18px 16px!important;border-radius:10px!important}.cat-card{padding:16px}.cat-card .c-media{margin:-16px -16px 4px;height:120px}.cat-card .c-top{gap:5px}.cat-card h4{font-size:12px;line-height:1.35}.cat-card .c-foot{align-items:flex-start;flex-direction:column}.cat-card .c-actions,.c-actions{width:100%;flex-direction:column}.c-btn{width:100%;min-height:42px;padding:12px 14px;font-size:9px;letter-spacing:.1em;text-align:center}.aud{font-size:7px;letter-spacing:.13em}.cat-card .fmt{margin-left:0}}
+</style>
+  <link rel="canonical" href="https://iisupp.net/axis-assistant">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://iisupp.net/axis-assistant">
+  <meta property="og:title" content="AXIS AI Executive Assistant | Integrated IT Support">
+  <meta property="og:image" content="https://iisupp.net/icons/icon-512.png">
+  <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="/assets/iis-motion.css?v=20260710L">
+  <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&display=swap"><link rel="stylesheet" href="/assets/xo-elite-theme.css">
+</head>
+<body>
+<nav>
+  <a href="/" style="display:flex;align-items:center;gap:14px;color:inherit"><div style="width:42px;height:42px;display:flex;align-items:center;justify-content:center;border:1px solid #c5a059;position:relative"><span style="color:#c5a059;font-weight:700;font-size:18px" class="logo-text">I</span></div><span style="font-size:15px;font-weight:700;letter-spacing:.26em;text-transform:uppercase" class="logo-text">Integrated IT Support</span></a>
+  <div class="nav-links"><a href="/shop.html">Shop</a><a href="/marketplace.html">Marketplace</a><a href="/growth-library.html">Growth Library</a><a href="/services.html">Services</a><a href="/aria.html">ARIA</a></div>
+</nav>
+
+<main id="product" style="max-width:1080px;margin:0 auto;padding:140px 24px 90px">
+<span class="eyebrow">AI Executive Assistant · Subscription</span>
+<h1 class="logo-text" style="font-size:clamp(2.2rem,5vw,3.6rem);line-height:1.05;margin:14px 0 16px">Meet <span class="gold-text">AXIS</span>.<br>Your business, handled.</h1>
+<p style="max-width:640px;color:rgba(255,255,255,.65);line-height:1.8;font-size:14px">AXIS is the AI executive assistant we use to run Integrated IT Support Inc. — now available for your business. It follows up with clients, finds new ones, keeps your inbox moving, tracks dates and invoices, and does approved work right on your computer.</p>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 46px"><a class="c-btn solid" href="/?contact=1&subject=AXIS%20Executive%20Assistant&desc=I%20want%20AXIS%20for%20my%20business.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20want%20AXIS%20to%20handle%20first%3A">Get AXIS for your business</a><a class="c-btn" href="/downloads/axis-local.zip" download>Download Axis Local</a></div>
+<div class="cat-grid"><div class="cat-card"><i class="fa-solid fa-comments" style="color:#c5a059;font-size:18px"></i><h4>Talks like a person</h4><p class="c-blurb">Warm, short, human replies in a natural voice — the same voice character as our ARIA concierge.</p></div><div class="cat-card"><i class="fa-solid fa-bullseye" style="color:#c5a059;font-size:18px"></i><h4>Brings in clients</h4><p class="c-blurb">Finds leads, drafts outreach and follow-ups. Nothing is sent to a new contact without your OK.</p></div><div class="cat-card"><i class="fa-solid fa-inbox" style="color:#c5a059;font-size:18px"></i><h4>Watches your inbox</h4><p class="c-blurb">Answers routine mail in a short, friendly style and holds anything sensitive for you.</p></div><div class="cat-card"><i class="fa-solid fa-rotate" style="color:#c5a059;font-size:18px"></i><h4>Automates the routine</h4><p class="c-blurb">Say “automate it” and it runs on schedule, emailing “Axis Needs your attention” only when needed.</p></div><div class="cat-card"><i class="fa-solid fa-desktop" style="color:#c5a059;font-size:18px"></i><h4>Works on your PC</h4><p class="c-blurb">Axis Local opens apps and files, builds documents and code, and runs commands only after you approve.</p></div><div class="cat-card"><i class="fa-solid fa-shield-halved" style="color:#c5a059;font-size:18px"></i><h4>Safe by design</h4><p class="c-blurb">No spending without approval, cost-aware model choice, private work folder, remove a PC any time.</p></div></div>
+<h2 style="font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:#f1dca7;margin:50px 0 14px">What you get</h2>
+<ul style="color:rgba(255,255,255,.65);line-height:2;font-size:13px;padding-left:18px"><li>AXIS console with Workspace, Automations, Approvals, Inbox, Brief and My PC</li><li>Axis Local for Windows and Mac (included download)</li><li>Setup of your mailboxes, lead source and approval rules</li><li>Ongoing tuning by Integrated IT Support — call (647) 581-3182</li></ul>
+<p style="color:rgba(255,255,255,.38);font-size:11px;margin-top:22px">AXIS works toward your goals and reports honestly; it does not guarantee revenue. Legal and tax items should be reviewed by a qualified professional.</p>
+</main>
+  <script src="/assets/iis-motion.js?v=20260710L" defer></script>
+<!-- iis-fineprint:start -->
+<div class="iis-fineprint" role="note" aria-label="Site content disclaimer">
+  <div class="iis-fineprint__inner">
+    <span class="iis-fineprint__label">Disclaimer</span>
+    <p class="iis-fineprint__text">Content on iisupp.net and its sub-sites is general information only. Any troubleshooting step, instruction, tool, estimate or data taken from this site is <strong style="color:rgba(255,255,255,.5);font-weight:600">used at your own risk</strong>, and information may be out of date &mdash; please do your own due diligence before acting on it.</p>
+    <p class="iis-fineprint__text">No published guide can account for every factor in a live environment. If the system matters, don&rsquo;t guess &mdash; call <a href="tel:+16475813182">(647) 581-3182</a> and have it done safely. Full <a href="/disclaimer.html">disclaimer</a> &middot; <a href="/terms.html">terms</a> &middot; <a href="/governance/privacy">privacy</a>.</p>
+  </div>
+</div>
+<!-- iis-fineprint:end -->
+</body>
+</html>

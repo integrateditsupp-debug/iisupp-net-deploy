@@ -45,6 +45,7 @@ YOU ARE ALSO AHMAD'S EXECUTIVE ASSISTANT for Integrated IT Support Inc. Focus no
 WORKING TOGETHER:
 - "pull up / bring up / let's work on X" → set "workspace" to a clear request; it opens on screen beside you.
 - "automate X" → set "automate"; it runs on its own and emails Ahmad "Axis Needs your attention" when a change or decision is needed.
+- Anything on Ahmad's PC (open an app/site/file, organize files, run a script, build or edit code/documents locally) → set "local". It runs through Axis Local on his PC. Use kind "claude" for real work (Claude builds it in the AXIS workspace folder), "open" for opening a site/app/file, "command" for shell commands (always waits for Ahmad's approval).
 
 YOUR ROSTER (name — function — what they do):
 ${ROSTER.map((r) => `- ${r[0]} — ${r[1]} — ${r[2]}`).join('\n')}
@@ -62,6 +63,7 @@ Respond with ONLY JSON, no markdown:
   "needsApproval": true if the action is irreversible/anomalous and must wait for Ahmad, else false,
   "workspace": "what to open/work on with Ahmad on screen, or null",
   "automate": {"title": "short name", "instructions": "what to do each run", "every_minutes": number} or null,
+ "local": {"kind": "claude"|"open"|"command", "title": "short name", "instructions": "what to do, or the URL/app/file to open, or the exact command"} or null,
   "quality": "fast" | "balanced" | "quality" — the Claude tier this work deserves (quality for proposals, strategy, legal/tax, important client writing, code)
 }`;
 
@@ -168,7 +170,7 @@ exports.handler = async (event) => {
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return json(200, { text: 'No API key is configured, so I have no reasoning brain. Set ANTHROPIC_API_KEY in Netlify. I answer from the board until then.', reason: 'no_key', routedAgent: null, intent: null, degraded: true });
+  // No Claude key: AXIS still answers through the XO bridge (Aria's brain) instead of going silent.
 
   const envModel = process.env.ARIA_MODEL;
   // Cost-aware routing: cheap model for quick chat, top model when the request deserves quality.
@@ -188,7 +190,10 @@ exports.handler = async (event) => {
   }
 
   try {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
+    const authB = (event.headers && (event.headers.authorization || event.headers.Authorization)) || '';
+    const viaBridge = () => require('./lib/axis-bridge.cjs').bridgeChat({ system: SYSTEM_PROMPT, messages: cleanMsgs, maxTokens: 900, auth: authB });
+    let bridged = null;
+    const r = !apiKey ? { ok: false, status: 401, text: async () => 'no key' } : await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
       body: JSON.stringify({ model, max_tokens: 900, system: SYSTEM_PROMPT, messages: cleanMsgs }),
@@ -212,16 +217,16 @@ exports.handler = async (event) => {
           const auth3 = (event.headers && (event.headers.authorization || event.headers.Authorization)) || '';
           if (!(await workerOnline({ origin: host3 ? `https://${host3}` : '', auth: auth3 }))) {
             reason = 'worker_offline';
-            text = 'My local worker is not running, so I cannot reach the plan you already pay for — '
-              + 'and the metered account behind it is empty. Start it with '
-              + '"node scripts/axis-brain-worker.mjs" and I am back. No top-up needed.';
+            text = 'I could not reach any of my brains just now. Open Axis Local on your PC (or install it from '
+              + 'iisupp.net/axis) and I am back.';
           }
         } catch (_) { /* keep the original diagnosis if the check itself fails */ }
       }
-      return json(200, { text, reason, routedAgent: null, intent: null, degraded: true });
+      bridged = await viaBridge();
+      if (!bridged) return json(200, { text, reason, routedAgent: null, intent: null, degraded: true });
     }
-    const data = await r.json();
-    const txt = (data.content && data.content[0] && data.content[0].text) || '';
+    const txt = bridged != null ? bridged
+      : await r.json().then((data) => (data.content && data.content[0] && data.content[0].text) || '');
     let parsed;
     try { parsed = JSON.parse(txt); }
     catch { parsed = { text: txt || 'Heard you.', routedAgent: null, intent: null, needsApproval: false }; }
@@ -237,6 +242,8 @@ exports.handler = async (event) => {
         title: String(parsed.automate.title || '').slice(0, 100), instructions: parsed.automate.instructions.slice(0, 2000),
         every_minutes: Number(parsed.automate.every_minutes) || 1440 } : null,
       quality: ['fast', 'balanced', 'quality'].includes(parsed.quality) ? parsed.quality : null,
+      local: parsed.local && ['claude', 'open', 'command'].includes(parsed.local.kind) && typeof parsed.local.instructions === 'string' ? {
+        kind: parsed.local.kind, title: String(parsed.local.title || '').slice(0, 100), instructions: parsed.local.instructions.slice(0, 4000) } : null,
       model,
     };
 
@@ -261,7 +268,7 @@ exports.handler = async (event) => {
         origin: host2 ? `https://${host2}` : '', auth: auth2 });
       out.learned = !!res.learned;
     } catch (_) { /* banking is best-effort; never fail a good answer over it */ }
-    out.brainTier = 'anthropic';
+    out.brainTier = bridged != null ? 'xo-bridge' : 'anthropic';
     return json(200, out);
   } catch (err) {
     console.error('[axis-director] error', err.message);

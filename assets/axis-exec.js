@@ -40,7 +40,7 @@
   const panel = document.createElement('aside');
   panel.className = 'axx'; panel.setAttribute('aria-label', 'AXIS workspace');
   panel.innerHTML = '<header><span class="t">AXIS · Working with you</span><button class="b" data-close>Close</button></header><nav>' +
-    ['work:Workspace', 'auto:Automations', 'apr:Approvals', 'inbox:Inbox', 'brief:Brief', 'setup:Connections'].map((x) => { const [k, l] = x.split(':'); return `<button data-tab="${k}">${l}</button>`; }).join('') +
+    ['work:Workspace', 'auto:Automations', 'apr:Approvals', 'pc:My PC', 'inbox:Inbox', 'brief:Brief', 'setup:Connections'].map((x) => { const [k, l] = x.split(':'); return `<button data-tab="${k}">${l}</button>`; }).join('') +
     '</nav><main></main>';
   document.body.append(launch, panel);
   const main = panel.querySelector('main');
@@ -56,6 +56,7 @@
     panel.querySelectorAll('nav button').forEach((b) => b.classList.toggle('on', b.dataset.tab === tab));
     main.innerHTML = '<p class="k">Loading…</p>';
     if (tab === 'work') return renderWork();
+    if (tab === 'pc') return renderPc();
     const s = await api('status');
     if (!s.ok) { main.innerHTML = `<p>${esc(s.error || 'Unavailable')}</p>`; return; }
     if (tab === 'auto') {
@@ -80,6 +81,26 @@
       main.innerHTML = `<div class="card">${line(i.claude, 'Claude')}${line(i.apollo, 'Apollo')}${line(i.email, 'Attention emails')}${i.mailboxes.map((m) => line(m.connected, m.address)).join('')}</div><div class="card"><p class="k">Claude models</p>Quick: ${esc(i.models.fast)}<br>Everyday: ${esc(i.models.balanced)}<br>Quality: ${esc(i.models.quality)}<br><span class="k">This month $${s.spend.usd.toFixed(2)} of $${i.monthlyCapUsd} cap · ${s.spend.calls} calls</span></div><button class="b" id="axxTest">Send test attention email</button>`;
       main.querySelector('#axxTest').onclick = async () => { const r = await api('attention.test'); alert(r.ok ? 'Sent.' : 'Not sent — check email setup.'); };
     }
+  }
+
+  async function renderPc() {
+    const l = await api('local.list');
+    if (!l.ok) { main.innerHTML = `<p>${esc(l.error || 'Unavailable')}</p>`; return; }
+    const online = (l.devices || []).some((d) => d.online);
+    const label = { queued: 'Waiting for PC', running: 'Working', done: 'Done', failed: 'Needs you', needs_approval: 'Needs your OK', declined: 'Declined' };
+    main.innerHTML = `<div class="card"><p class="k"><span class="dot ${online ? 'on' : ''}"></span>Axis Local ${online ? 'is running on your PC' : 'is not running'}</p>` +
+      (l.devices || []).map((d) => `<div>${esc(d.name)} · ${d.online ? 'online' : d.last_seen ? 'last seen ' + new Date(d.last_seen).toLocaleString() : 'never connected'} <button class="b" data-unpair="${d.id}">Remove</button></div>`).join('') +
+      `<div class="row"><a class="b" href="/downloads/axis-local.zip" download style="text-decoration:none">Download Axis Local</a><button class="b g" id="axxPair">Pair this PC</button></div><div id="axxKey"></div></div>` +
+      `<div class="card"><p class="k">Give your PC a task</p><textarea id="axxL" rows="3" placeholder="e.g. Build a one-page proposal for Smith Dental in Word format"></textarea><div class="row"><select id="axxLK" class="b"><option value="claude">Work on it (Claude)</option><option value="open">Open site / app / file</option><option value="command">Run a command (needs OK)</option></select><button class="b g" id="axxLGo">Send to PC</button></div></div>` +
+      (l.jobs || []).map((j) => `<div class="card"><p class="k">${esc(label[j.status] || j.status)} · ${esc(j.kind)}</p><b>${esc(j.title)}</b>${j.status === 'needs_approval' ? `<pre style="white-space:pre-wrap">${esc(j.instructions)}</pre><div class="row"><button class="b g" data-lok="${j.id}">Approve</button><button class="b" data-lno="${j.id}">Decline</button></div>` : ''}${j.output ? `<div class="doc" style="margin-top:6px">${md(j.output.slice(0, 3000))}</div>` : ''}</div>`).join('');
+    main.querySelector('#axxPair').onclick = async () => {
+      const r = await api('local.pair', { name: navigator.platform || 'My PC' });
+      main.querySelector('#axxKey').innerHTML = r.ok ? `<p>In Axis Local, run <b>pair</b> and paste this key (shown once):</p><input readonly value="${esc(r.key)}" onclick="this.select()">` : esc(r.error || 'Could not pair');
+    };
+    main.querySelector('#axxLGo').onclick = async () => { const v = main.querySelector('#axxL').value.trim(); if (!v) return; await api('local.enqueue', { kind: main.querySelector('#axxLK').value, instructions: v }); renderPc(); };
+    main.querySelectorAll('[data-lok],[data-lno]').forEach((b) => b.onclick = async () => { await api('local.decide', { id: b.dataset.lok || b.dataset.lno, decision: b.dataset.lok ? 'approve' : 'decline' }); renderPc(); });
+    main.querySelectorAll('[data-unpair]').forEach((b) => b.onclick = async () => { await api('local.unpair', { id: b.dataset.unpair }); renderPc(); });
+    clearTimeout(renderPc.t); renderPc.t = setTimeout(() => { if (tab === 'pc' && panel.classList.contains('open')) renderPc(); }, 8000);
   }
 
   async function renderWork() {
@@ -110,6 +131,7 @@
       if (/axis-director/.test(url) && res.ok) {
         res.clone().json().then(async (j) => {
           if (j?.automate?.instructions) { await api('tasks.create', j.automate); open('auto'); }
+          if (j?.local?.instructions) { await api('local.enqueue', { ...j.local, tier: j.quality || undefined }); open('pc'); }
           if (j?.workspace) {
             current = null; lastSay = 'Pulling it up…'; open('work');
             const r = await api('workspace.open', { request: j.workspace, tier: j.quality || undefined });

@@ -2,6 +2,7 @@
 // Workspace ("pull it up, let's work on it"), automations ("automate it"), approvals, Apollo leads,
 // inbox overview, daily brief, integration status. Spending always waits for Ahmad's approval.
 import { bearerFromEvent } from './_verify-bearer.cjs';
+import { createHash, randomBytes } from 'node:crypto';
 import {
   PERSONA, claude, pickTier, parseJSON, readJSON, writeJSON, id, now, requestApproval, apollo,
   integrationStatus, monthSpend, attention, esc,
@@ -19,6 +20,9 @@ Never invent client data, prices or figures; mark unknowns as [needs info].`;
 
 export default async (request) => {
   if (request.method !== 'POST') return json(405, { error: 'POST required' });
+  // Axis Local (the PC helper) authenticates with its paired device key, not a staff login.
+  const deviceKey = request.headers.get('x-axis-device') || '';
+  if (deviceKey) return localDevice(request, deviceKey);
   const auth = request.headers.get('authorization') || '';
   if (!bearerFromEvent({ headers: { authorization: auth } })) return json(401, { error: 'unauthorized' });
   let body;
@@ -113,6 +117,41 @@ export default async (request) => {
       return json(200, { ok: true, text: out.text });
     }
 
+    // ── Axis Local (PC helper) ───────────────────────────────────────────
+    if (action === 'local.pair') {
+      const key = 'axl_' + randomBytes(24).toString('base64url');
+      const devices = await readJSON('local-devices', []);
+      devices.unshift({ id: id('pc'), name: String(body.name || 'My PC').slice(0, 60), hash: sha(key), created_at: now(), last_seen: null });
+      await writeJSON('local-devices', devices.slice(0, 10));
+      return json(200, { ok: true, key });
+    }
+    if (action === 'local.enqueue') {
+      const kind = ['claude', 'open', 'command'].includes(body.kind) ? body.kind : 'claude';
+      const instructions = String(body.instructions || '').slice(0, 4000);
+      if (!instructions) return json(400, { error: 'instructions required' });
+      const jobs = await readJSON('local-jobs', []);
+      const job = { id: id('job'), kind, title: String(body.title || instructions.slice(0, 80)), instructions,
+        tier: pickTier(instructions, body.tier), status: kind === 'command' ? 'needs_approval' : 'queued', created_at: now(), output: null };
+      await writeJSON('local-jobs', [job, ...jobs].slice(0, 200));
+      return json(200, { ok: true, job });
+    }
+    if (action === 'local.list') {
+      const [jobs, devices] = await Promise.all([readJSON('local-jobs', []), readJSON('local-devices', [])]);
+      return json(200, { ok: true, jobs: jobs.slice(0, 40), devices: devices.map(({ hash, ...d }) => ({ ...d, online: !!d.last_seen && Date.now() - Date.parse(d.last_seen) < 90e3 })) });
+    }
+    if (action === 'local.decide') {
+      const jobs = await readJSON('local-jobs', []);
+      const j = jobs.find((x) => x.id === body.id);
+      if (!j || !['needs_approval', 'queued'].includes(j.status)) return json(404, { error: 'not waiting' });
+      j.status = body.decision === 'approve' ? 'queued' : 'declined'; j.decided_at = now();
+      await writeJSON('local-jobs', jobs);
+      return json(200, { ok: true, job: j });
+    }
+    if (action === 'local.unpair') {
+      await writeJSON('local-devices', (await readJSON('local-devices', [])).filter((d) => d.id !== body.id));
+      return json(200, { ok: true });
+    }
+
     if (action === 'attention.test') {
       const ok = await attention('Test from AXIS', `<p>${esc('This is how Axis will reach you when something needs a decision.')}</p>`);
       return json(200, { ok });
@@ -122,6 +161,34 @@ export default async (request) => {
     return json(200, { ok: false, error: e.message });
   }
 };
+
+const sha = (v) => createHash('sha256').update(String(v)).digest('hex');
+
+// Axis Local polling: heartbeat + next approved job, and result reporting. Device-key only.
+async function localDevice(request, key) {
+  const devices = await readJSON('local-devices', []);
+  const device = devices.find((d) => d.hash === sha(key));
+  if (!device) return json(401, { error: 'device not paired' });
+  let body = {};
+  try { body = await request.json(); } catch {}
+  device.last_seen = now(); device.platform = String(body.platform || device.platform || '').slice(0, 40);
+  await writeJSON('local-devices', devices);
+  const jobs = await readJSON('local-jobs', []);
+  if (body.action === 'local.result') {
+    const j = jobs.find((x) => x.id === body.id && x.status === 'running');
+    if (!j) return json(404, { error: 'unknown job' });
+    j.status = body.ok ? 'done' : 'failed'; j.output = String(body.output || '').slice(0, 20000); j.finished_at = now();
+    await writeJSON('local-jobs', jobs);
+    if (!body.ok) await attention(`Axis Local could not finish: ${j.title}`, `<p>${esc(j.output.slice(0, 800))}</p>`, `local-${j.id}`).catch(() => {});
+    return json(200, { ok: true });
+  }
+  // A job stuck "running" for 20 minutes is handed back so it is never silently lost.
+  for (const j of jobs) if (j.status === 'running' && Date.now() - Date.parse(j.started_at) > 20 * 60e3) j.status = 'queued';
+  const next = jobs.slice().reverse().find((x) => x.status === 'queued');
+  if (next) { next.status = 'running'; next.started_at = now(); next.device = device.id; }
+  await writeJSON('local-jobs', jobs);
+  return json(200, { ok: true, job: next ? { id: next.id, kind: next.kind, title: next.title, instructions: next.instructions, tier: next.tier } : null });
+}
 
 async function leadSearch(query) {
   const plan = parseJSON((await claude({

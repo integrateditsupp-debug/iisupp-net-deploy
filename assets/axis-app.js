@@ -2015,7 +2015,81 @@ function axisVoicesReady() {
   } catch { return Promise.resolve(); }
 }
 
+// ── Aria's voice for AXIS (2026-10-09, Ahmad: "update the voice to sound like Aria"). The same voice
+// character XO Elite uses, synthesized server-side as smooth MP3 and played gaplessly in order with the
+// next phrase pre-fetched. Browser speech is only the fallback when the voice service is unreachable.
+const ARIA_VOICE_URL = 'https://xoagency.lovable.app/api/public/axis-bridge';
+let ariaAudio = null, ariaGen = 0, ariaVoiceDown = 0;
+function ariaStop() {
+  ariaGen++;
+  if (ariaAudio) { try { ariaAudio.pause(); ariaAudio.src = ''; } catch {} ariaAudio = null; }
+}
+try {
+  if (window.speechSynthesis && !speechSynthesis.__ariaPatched) {
+    const origCancel = speechSynthesis.cancel.bind(speechSynthesis);
+    speechSynthesis.cancel = () => { ariaStop(); origCancel(); };
+    speechSynthesis.__ariaPatched = true;
+  }
+} catch {}
+function ariaChunks(text) {
+  const sentences = String(text).match(/[^.!?…]+[.!?…]+["')\]]*|\S[^.!?…]*$/g) || [text];
+  const out = []; let cur = '';
+  for (const raw of sentences) {
+    const t = raw.trim(); if (!t) continue;
+    const limit = out.length === 0 ? 140 : 420; // short first phrase = fast start
+    if (cur && (cur + ' ' + t).length > limit) { out.push(cur); cur = t; } else cur = cur ? cur + ' ' + t : t;
+  }
+  if (cur) out.push(cur);
+  return out;
+}
+function ariaFetch(part) {
+  return fetch(ARIA_VOICE_URL, {
+    method: 'POST', headers: { 'content-type': 'application/json', Authorization: 'Bearer ' + state.token },
+    body: JSON.stringify({ action: 'speech', text: part }),
+  }).then((r) => { if (!r.ok) throw new Error('voice ' + r.status); return r.blob(); })
+    .then((b) => URL.createObjectURL(b));
+}
 function axisSpeak(text) {
+  try {
+    if (!axisVoiceOn) return false;
+    const clean = axisHumanizeForSpeech(text);
+    if (!clean) return false;
+    if (!state.token || Date.now() < ariaVoiceDown) return axisSpeakBrowser(text);
+    try { window.speechSynthesis && speechSynthesis.cancel(); } catch {}
+    ariaStop();
+    const gen = ++ariaGen; const sgen = ++__speakGen;
+    const parts = ariaChunks(polishForSpeech(speechify(clean)));
+    const pending = parts.map(() => null);
+    const load = (i) => { if (i < parts.length && !pending[i]) pending[i] = ariaFetch(parts[i]); return pending[i]; };
+    axisSpokenNow = clean; setAxisState('speaking');
+    if (axisHandsFree) axisWakeResume(); else axisWakePause();
+    const finish = (natural) => {
+      if (gen !== ariaGen) return;
+      if (sgen === __speakGen && document.documentElement.dataset.axisState === 'speaking') setAxisState('idle');
+      axisSpokenNow = ''; axisWakeResume();
+      if (natural) { const done = __turnDone; __turnDone = null; if (sgen === __speakGen && done) { try { done(); } catch {} } }
+    };
+    const play = async (i) => {
+      if (gen !== ariaGen) return;
+      if (i >= parts.length) return finish(true);
+      let url;
+      try { url = await load(i); load(i + 1); }
+      catch (e) {
+        if (i === 0 && gen === ariaGen) { ariaVoiceDown = Date.now() + 60000; ariaGen++; axisSpeakBrowser(text); return; }
+        return finish(true);
+      }
+      if (gen !== ariaGen) { URL.revokeObjectURL(url); return; }
+      const a = new Audio(url); ariaAudio = a;
+      a.onended = () => { URL.revokeObjectURL(url); play(i + 1); };
+      a.onerror = () => { URL.revokeObjectURL(url); play(i + 1); };
+      a.play().catch(() => { URL.revokeObjectURL(url); if (i === 0) { ariaGen++; axisSpeakBrowser(text); } else finish(false); });
+    };
+    load(0); play(0);
+    return true;
+  } catch { return axisSpeakBrowser(text); }
+}
+
+function axisSpeakBrowser(text) {
   try {
     if (!axisVoiceOn || !window.speechSynthesis) return false;
     const clean = axisHumanizeForSpeech(text);
@@ -2024,7 +2098,7 @@ function axisSpeak(text) {
     // list arrive, then speak it properly. Re-entry is safe — the guard above is idempotent and
     // speechSynthesis.cancel() below still gives barge-in the last word.
     if (!(speechSynthesis.getVoices() || []).length) {
-      axisVoicesReady().then(() => { try { axisSpeak(text); } catch {} });
+      axisVoicesReady().then(() => { try { axisSpeakBrowser(text); } catch {} });
       return true;
     }
     speechSynthesis.cancel(); // barge-in: a new reply always interrupts the old one

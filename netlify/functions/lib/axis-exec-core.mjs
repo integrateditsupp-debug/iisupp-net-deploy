@@ -82,7 +82,13 @@ export const monthlyCap = () => Number(process.env.AXIS_MONTHLY_CAP_USD || 60);
 /** One Claude call. Falls back from quality→balanced when a model id is rejected. */
 export async function claude({ system = PERSONA, messages, tier = 'balanced', maxTokens = 1200, webSearch = false }) {
   const key = (process.env.ANTHROPIC_API_KEY || '').replace(/\\n|\s+$/g, '').trim();
-  if (!key) throw new Error('ANTHROPIC_API_KEY missing');
+  const backup = async (why) => {
+    const { default: bridge } = await import('./axis-bridge.cjs');
+    const text = await bridge.bridgeChat({ system, messages, maxTokens });
+    if (text == null) throw new Error(why);
+    return { text, tier: 'bridge', model: 'xo-bridge' };
+  };
+  if (!key) return backup('ANTHROPIC_API_KEY missing and backup brain unavailable');
   const spent = await monthSpend();
   if (spent.usd >= monthlyCap() && tier !== 'fast') tier = 'fast'; // stay inside the approved budget
   const body = { model: MODELS[tier](), max_tokens: maxTokens, system, messages };
@@ -95,7 +101,7 @@ export async function claude({ system = PERSONA, messages, tier = 'balanced', ma
   if (!r.ok) {
     const err = await r.text();
     if ((r.status === 404 || /model/i.test(err)) && tier !== 'balanced') return claude({ system, messages, tier: 'balanced', maxTokens, webSearch });
-    throw new Error(`Claude ${r.status}: ${err.slice(0, 200)}`);
+    return backup(`Claude ${r.status}: ${err.slice(0, 200)}`);
   }
   const j = await r.json();
   await addSpend(tier, j.usage);
