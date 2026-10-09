@@ -809,6 +809,18 @@ const TESTS = [
   // the hourly digest puts its red block first; `node scripts/ceo-critical-items.mjs` prints it for any
   // chat). Fixture-only: the suite derives the default path from STATE_DIR and never opens the record root.
   "../../tests/ceo-critical-items-ledger.test.mjs",
+  // RUN-CV / CV5 (2026-10-09; placed BEFORE the RUN-BX block so the vision suites stay last) — two fixes asked for repeatedly and never done. (A22) the opportunity
+  // engine's IT/MSP fit filter: "Flight Deck Lighting", "Water Supply", "Tree Inventory", "Lightning
+  // Protection" and "LiDAR" are parked with a written reason, MSP work is untouched, cameras/VoIP are
+  // kept but capped and labelled, a human override beats every keyword, nothing throws on a bad item;
+  // the worker's entry is guarded so importing it writes no state. (A6f) kb-pull paging that survives
+  // 504s: the export gains an additive `offset` (proven against an in-memory store), the puller starts
+  // at 300, halves with three jittered tries, fails loudly with the last status, stops after one page on
+  // a cursor-less server, and writes the same files — proven against a node:http fixture on 127.0.0.1
+  // and two end-to-end runs of the real script into a scratch root. Registered BY HAND after each was
+  // read and run standalone (fit filter 11 checks, paging 13 checks). Neither opens the record root.
+  "../../tests/opportunity-fit-filter.test.mjs",
+  "../../tests/kb-pull-paging.test.mjs",
   // RUN-BX (2026-10-09, cc/run-cv-2026-10-09) — the census's 70 `register-pending` suites, each READ and
   // run standalone from this runner's cwd on a clean extract (all 70 exit 0 here; site `--all` 142/142),
   // then probed for the one thing a standalone run cannot show: whether `await import()` into THIS
