@@ -71,7 +71,7 @@
       onAction: async (a) => {
         if (a.type === 'automate') { await api('tasks.create', { title: a.title, instructions: a.instructions, every_minutes: a.every_minutes || 1440 }); open('auto'); }
         if (a.type === 'local') { await api('local.enqueue', { kind: a.kind, title: a.title, instructions: a.instructions }); open('pc'); }
-        if (a.type === 'workspace') { current = null; lastSay = 'Pulling it up…'; open('work'); const r = await api('workspace.open', { request: a.instructions }); if (r.ok) { current = r.doc; lastSay = r.say || ''; } if (tab === 'work') renderWork(); }
+        if (a.type === 'workspace') { current = null; lastSay = 'Pulling it up…'; open('work'); const r = await api('workspace.open', { request: a.instructions }); if (r.ok) { current = r.doc; lastSay = r.say || ''; } else lastSay = r.error || 'The document could not be opened.'; if (tab === 'work') renderWork(); }
       },
     });
     try { window.speechSynthesis && speechSynthesis.cancel(); } catch {}
@@ -101,7 +101,7 @@
       main.querySelectorAll('[data-ok],[data-no]').forEach((b) => b.onclick = async () => { const idv = b.dataset.ok || b.dataset.no; const ed = main.querySelector(`[data-edit="${idv}"]`); await api('approvals.decide', { id: idv, decision: b.dataset.ok ? 'approve' : 'decline', edit: ed?.value }); render(); });
     }
     if (tab === 'inbox') {
-      main.innerHTML = '<p class="k">Recent inbox activity</p>' + ((await api('status')).attention || []).map((a) => `<div class="card">${esc(a.title)}<br><span class="k">${new Date(a.t).toLocaleString()}</span></div>`).join('') + '<p>Axis replies to routine mail on the main inbox and drafts anything sensitive into Approvals.</p>';
+      main.innerHTML = '<p class="k">Recent inbox activity</p>' + (s.attention || []).map((a) => `<div class="card">${esc(a.title)}<br><span class="k">${new Date(a.t).toLocaleString()}</span></div>`).join('') + '<p>Axis replies to routine mail on the main inbox and drafts anything sensitive into Approvals.</p>';
     }
     if (tab === 'brief') { const b = await api('brief'); main.innerHTML = `<div class="card doc">${md(b.text || b.error || '')}</div>`; }
     if (tab === 'setup') {
@@ -132,8 +132,10 @@
     clearTimeout(renderPc.t); renderPc.t = setTimeout(() => { if (tab === 'pc' && panel.classList.contains('open')) renderPc(); }, 8000);
   }
 
-  async function renderWork() {
-    const list = await api('workspace.list');
+  let recentDocs = [], workRevision = 0;
+  async function renderWork(refresh = true) {
+    const revision = ++workRevision;
+    const list = { docs: recentDocs };
     main.innerHTML = (lastSay ? `<p class="say">${esc(lastSay)}</p>` : '') +
       `<div class="card"><p class="k">${current ? esc(current.kind) + ' · working draft' : 'Pull something up'}</p>${current ? `<h3 style="margin:.2em 0">${esc(current.title)}</h3><div class="doc" id="axxDoc">${md(current.content)}</div>` : '<p>Ask Axis: “pull up my follow-ups for this week and let’s work on it.”</p>'}</div>` +
       `<div class="card"><input id="axxAsk" placeholder="${current ? 'Tell Axis what to change…' : 'What should Axis pull up?'}"><div class="row"><button class="b g" id="axxGo">${current ? 'Update' : 'Pull up'}</button>${current ? '<button class="b" id="axxEdit">Edit myself</button><button class="b" id="axxNew">New</button>' : ''}</div><div class="row" id="axxNext"></div></div>` +
@@ -149,6 +151,12 @@
     });
     main.querySelectorAll('[data-doc]').forEach((c) => c.onclick = async () => { const r = await api('workspace.get', { id: c.dataset.doc }); current = r.doc; lastSay = ''; renderWork(); });
     function showNext(next) { const n = main.querySelector('#axxNext'); (next || []).forEach((x) => { const b = document.createElement('button'); b.className = 'b'; b.textContent = x; b.onclick = () => go(x); n.appendChild(b); }); }
+    // Show the current work immediately; recent history must never block it.
+    if (refresh) api('workspace.list').then((r) => {
+      if (r.ok && revision === workRevision && tab === 'work') {
+        recentDocs = r.docs || []; renderWork(false);
+      }
+    }).catch(() => {});
   }
 
   // Watch AXIS chat replies: open the workspace or create automations when Axis decides to.
