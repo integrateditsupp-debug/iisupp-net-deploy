@@ -71,6 +71,36 @@ export function isLicensePathAllowed(pathname) {
   return LICENSE_OUTBOUND_PATHS.some((a) => p === a);
 }
 
+// RUN-CU / CU4 (2026-10-08) — the main-process SERVICE paths (Node fetch, invisible to session.webRequest
+// until src/main/outbound.mjs started recording them). Declared as an explicit class so the privacy verifier
+// can mark each one as expected, and so this list can only grow through a declared change WITH a test
+// (tests/outbound-declared.test.mjs asserts the class equals exactly this list). The 6-host telemetry
+// verifier (CAPTURE_HOST_ALLOWLIST) is UNCHANGED. Every payload on these paths is content-blind: catalog
+// ids, severities, counts, hashes — never log lines, paths, URLs, document text or usernames.
+export const SERVICE_OUTBOUND_PATHS = Object.freeze([
+  "/.netlify/functions/aria-sentinel-heartbeat",   // daily content-blind heartbeat (+ fleet kill directive)
+  "/.netlify/functions/sentinel-session-report",   // resolution email after a real verified fix
+  "/.netlify/functions/sentinel-resolve",          // server-side license resolve (raw key over this one POST only)
+  "/.netlify/functions/sentinel-crash",            // scrubbed crash records
+  "/aria-binary-update",                           // manual-update manifest (no hash; honest "manual" mode)
+  "/.netlify/functions/aria-kb-stats",             // ARIA tab learning stats (read-only)
+  "/.netlify/functions/aria-system-status",        // ARIA tab health (read-only)
+  "/.netlify/functions/aria-sentinel-notify",      // CU4 — email/SMS fan-out (titles/ids/severity only)
+  "/.netlify/functions/aria-sentinel-approval"     // CU4 — remote approve/deny status poll
+]);
+
+// True only for an explicitly-declared service path — every other iisupp.net path returns false.
+export function isServicePathAllowed(pathname) {
+  const p = String(pathname || "");
+  return SERVICE_OUTBOUND_PATHS.some((a) => p === a);
+}
+
+/** Every declared iisupp.net path class in one place (update · brain · license · service) — for the verifier rows. */
+export function isDeclaredPath(pathname) {
+  return isUpdatePathAllowed(pathname) || isBrainPathAllowed(pathname) || isLicensePathAllowed(pathname) || isServicePathAllowed(pathname)
+    || ALLOWED_OUTBOUND_PATHS.some((p) => p.path === String(pathname || ""));
+}
+
 export function hostAllowed(host) {
   const h = String(host || "").toLowerCase().replace(/:\d+$/, "");
   if (!h) return false;
@@ -105,13 +135,20 @@ export function classifyRequest(req = {}) {
     path = String(req.url || "");
   }
   const method = String(req.method || "GET").toUpperCase();
-  const payloadBytes = bodyToBytes(req.body);
+  // RUN-CU / CU4 — a main-process row (recorded by src/main/outbound.mjs at send time) arrives with its byte
+  // count + verdict already measured and NO body (bodies are never stored). Honour those instead of reading a
+  // body that is not there — otherwise a 900-byte POST would be shown as "0 B · none", which is a lie.
+  const precomputed = req.body === undefined && Number.isFinite(Number(req.payloadBytes));
+  const payloadBytes = precomputed ? Math.max(0, Number(req.payloadBytes)) : bodyToBytes(req.body);
   // A request with no body is content-blind by definition; one with a body must pass the leak check.
   let sanitizationStatus = "none";
   if (payloadBytes > 0) {
-    let safe = false;
-    try { safe = assertContentSafePayload(req.body); } catch { safe = false; }
-    sanitizationStatus = safe ? "clean" : "leak";
+    if (precomputed) sanitizationStatus = req.sanitizationStatus === "leak" ? "leak" : "clean";
+    else {
+      let safe = false;
+      try { safe = assertContentSafePayload(req.body); } catch { safe = false; }
+      sanitizationStatus = safe ? "clean" : "leak";
+    }
   }
   const allowlistMatch = hostAllowed(host);
   const matched = ALLOWED_OUTBOUND_PATHS.find((p) => p.host === host && p.path === path);
@@ -122,7 +159,10 @@ export function classifyRequest(req = {}) {
     payloadBytes,
     sanitizationStatus,
     allowlistMatch,
-    allowlistId: matched ? matched.id : null
+    allowlistId: matched ? matched.id : null,
+    declared: Boolean(matched) || (allowlistMatch && isDeclaredPath(path)),
+    source: req.source || "renderer",
+    identityFields: Number(req.identityFields) || 0 // configured account/recipient address fields in the body (not content)
   };
 }
 

@@ -24,6 +24,14 @@
   .small a{color:#c5a059}
   a.back{color:rgba(255,255,255,.5);font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none}
   a.back:hover{color:#f1dca7}
+  /* 2026-10-08 sign-in state (proof of mailbox ownership is required by the export/delete endpoints) */
+  .signin-state{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:rgba(255,255,255,.85)}
+  .signin-state .led{width:8px;height:8px;border-radius:50%;background:#6b6b6b;flex:0 0 auto}
+  .signin-state.on .led{background:#4ade80;box-shadow:0 0 8px #4ade80}
+  .signin-state button{padding:7px 12px;font-size:10px}
+  .aria-signin-status{font-size:12px;color:#f1dca7;min-height:1.2em;margin:10px 0 0}
+  .needs-signin{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.35);color:#fde68a;border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.5;margin-top:14px}
+  .needs-signin a{color:#f1dca7}
 </style>  <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&display=swap"><link rel="stylesheet" href="/assets/xo-elite-theme.css">
 </head>
@@ -32,6 +40,13 @@
   <a class="back" href="/">&larr; Back to home</a>
   <h1>Your data — <span class="gold">access &amp; deletion</span></h1>
   <p class="small">Aligned to PIPEDA Principle 9 (Individual Access) and GDPR right-to-erasure. Two tools below.</p>
+
+  <div class="card" id="signin-card">
+    <h2>0 · Prove it is your mailbox</h2>
+    <p class="small">Exports and deletions only run for a verified email: we send a one-time sign-in link (valid 15 minutes, no password). The link opens <a href="/aria">/aria</a> and signs you in for 12 hours on this browser; then come back here.</p>
+    <div class="signin-state" id="signin-state" aria-live="polite"><span class="led"></span><span id="signin-text">Checking sign-in…</span></div>
+    <div id="signin-form" style="margin-top:14px"></div>
+  </div>
 
   <div class="card">
     <h2>1 · Export everything ARIA has on you</h2>
@@ -57,8 +72,49 @@
   <p class="small" style="margin-top:24px">Questions? Privacy Officer: <a href="mailto:ahmad.wasee@iisupp.net">ahmad.wasee@iisupp.net</a> · See also <a href="/governance/privacy">Privacy Policy</a></p>
 </div>
 
+<script src="/assets/aria-account-auth.js?v=20261008"></script>
 <script>
 function $(id){return document.getElementById(id);}
+/* ---- 2026-10-08: sign-in (magic link) state + honest gating ------------------------------------------- */
+var AUTH = window.ariaAccountAuth || null;
+var signinUi = null;
+function renderSigninState(){
+  var st = $('signin-state'), txt = $('signin-text'), form = $('signin-form');
+  if (!AUTH){ st.classList.remove('on'); txt.textContent = 'Sign-in helper did not load — reload the page or call (647) 581-3182.'; return; }
+  var email = AUTH.getToken() ? AUTH.getEmail() : '';
+  if (email){
+    st.classList.add('on');
+    var exp = AUTH.tokenExpiry();
+    var left = exp ? Math.max(1, Math.round((exp - Date.now()) / 3600000)) : null;
+    txt.innerHTML = 'Signed in as <strong>' + esc(email) + '</strong>' + (left ? ' · valid about ' + left + ' h' : '') + ' ';
+    var out = document.createElement('button'); out.type = 'button'; out.textContent = 'Sign out'; out.className = 'danger';
+    out.addEventListener('click', function(){ AUTH.clearSession(); renderSigninState(); });
+    txt.appendChild(out);
+    form.innerHTML = '';
+    $('ex-email').value = $('ex-email').value || email;
+    $('del-email').value = $('del-email').value || email;
+  } else {
+    st.classList.remove('on');
+    txt.textContent = 'Not signed in — a sign-in link is required before export or deletion.';
+    signinUi = AUTH.mountSignIn(form, { returnTo: '/aria-data-export.html', intro: 'Enter the email you used with ARIA. We will email a one-time link.', inputClass: '', buttonClass: '', labelClass: '', textClass: 'small', statusClass: 'aria-signin-status', inputId: 'signin-email' });
+  }
+}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];});}
+function needsSignin(outEl, email, why){
+  outEl.style.display = 'block';
+  outEl.className = 'needs-signin';
+  outEl.textContent = (why || 'Sign-in link required.') + ' Use section 0 above' + (email ? ' with ' + email : '') + ' — nothing was exported or deleted.';
+  if (signinUi && email) signinUi.setEmail(email);
+  try { $('signin-card').scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+  var inp = $('signin-email'); if (inp) { try { inp.focus(); } catch (e) {} }
+}
+if (AUTH){
+  AUTH.consumeMagicLinkFromUrl().then(function(r){
+    renderSigninState();
+    if (r && r.attempted && !r.ok){ var st = $('signin-text'); st.textContent = (r.message || 'That sign-in link is invalid or expired.') + ' Request a new one below.'; }
+  });
+} else { renderSigninState(); }
+
 function clientSideDump(email){
   const dump = {};
   try {
@@ -75,16 +131,18 @@ function clientSideDump(email){
   return dump;
 }
 $('ex-btn').addEventListener('click', async () => {
-  const email = ($('ex-email').value || '').trim();
+  const email = ($('ex-email').value || '').trim().toLowerCase();
   if (!email) return;
+  $('ex-out').className = '';
+  if (!AUTH || !AUTH.hasValidToken(email)){ needsSignin($('ex-out'), email, 'Sign-in link required for ' + email + '.'); return; }
   $('ex-out').style.display = 'block'; $('ex-out').textContent = 'Loading...';
   try {
-    const r = await fetch('/.netlify/functions/aria-data-export', {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ email })
-    });
-    const j = await r.json();
-    j.client_side_dump = clientSideDump(email.toLowerCase());
+    // token travels as body.token (+ X-ARIA-Session-Token); a 401 comes back as needs_signin, never silently.
+    const res = await AUTH.postAccount('aria-data-export', { email });
+    if (res.needs_signin){ needsSignin($('ex-out'), email, res.message); renderSigninState(); return; }
+    if (!res.ok && res.status !== 200){ $('ex-out').textContent = 'Export failed (' + (res.error || res.status) + '). ' + (res.message || 'Try again or email ahmad.wasee@iisupp.net.'); return; }
+    const j = res.data || {};
+    j.client_side_dump = clientSideDump(email);
     const text = JSON.stringify(j, null, 2);
     $('ex-out').textContent = text;
     $('ex-dl').style.display = 'inline-block';
@@ -99,17 +157,17 @@ $('ex-btn').addEventListener('click', async () => {
   } catch (e) { $('ex-out').textContent = 'Error: ' + e.message; }
 });
 $('del-btn').addEventListener('click', async () => {
-  const email = ($('del-email').value || '').trim();
+  const email = ($('del-email').value || '').trim().toLowerCase();
   const confirm = ($('del-confirm').value || '').trim();
   if (!email || !confirm) return;
+  $('del-out').className = '';
+  if (!AUTH || !AUTH.hasValidToken(email)){ needsSignin($('del-out'), email, 'Sign-in link required before anything is deleted.'); return; }
   $('del-out').style.display = 'block'; $('del-out').textContent = 'Processing...';
   try {
-    const r = await fetch('/.netlify/functions/aria-account-delete', {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ email, confirm })
-    });
-    const j = await r.json();
-    $('del-out').textContent = JSON.stringify(j, null, 2);
+    const res = await AUTH.postAccount('aria-account-delete', { email, confirm });
+    if (res.needs_signin){ needsSignin($('del-out'), email, res.message); renderSigninState(); return; }
+    $('del-out').textContent = JSON.stringify(res.data || { ok: false, error: res.error, message: res.message }, null, 2);
+    if (res.ok) AUTH.clearSession();
   } catch (e) { $('del-out').textContent = 'Error: ' + e.message; }
 });
 </script>

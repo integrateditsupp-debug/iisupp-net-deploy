@@ -1,8 +1,19 @@
 // RUN 20 §4 — Tier-0 recipe contract: validation, content-blind dry-run preview, and audit shape.
 // Pure + node-safe; main.mjs wires the (still dry-run-default, user-confirmed) execution on top.
 import { TIER0, TIER0_RECIPES, TIER0_IDS, TIER0_ALLOWED_PREFIXES, TIER0_DENY, recipes } from "./catalog.mjs";
+// RUN-CU / CU4 (2026-10-08) — macOS user-level Tier-0 recipes live in their own catalog; the Windows set above is untouched.
+import { darwinRecipes, TIER0_DARWIN_RECIPES, TIER0_DARWIN_IDS, validateTier0Darwin, isAllowedTier0CommandDarwin } from "./catalog-darwin.mjs";
 
 export { TIER0, TIER0_RECIPES, TIER0_IDS, recipes };
+export { darwinRecipes, TIER0_DARWIN_RECIPES, TIER0_DARWIN_IDS, validateTier0Darwin, isAllowedTier0CommandDarwin };
+
+/** The Tier-0 catalog that applies on a platform: darwin → the macOS user-level set; everything else → Windows (unchanged). */
+export function tier0ForPlatform(platform) {
+  return String(platform || "") === "darwin" ? TIER0_DARWIN_RECIPES : TIER0_RECIPES;
+}
+
+/** True when `id` names a darwin Tier-0 recipe. */
+export function isDarwinTier0(id) { return Boolean(darwinRecipes[String(id || "")]); }
 
 const firstToken = (cmd) => String(cmd || "").trim().split(/\s+/)[0];
 
@@ -16,6 +27,7 @@ export function isAllowedTier0Command(cmd) {
 
 /** Validate a Tier-0 descriptor: safe flags + every command allowlisted. Returns {ok, errors[]}. */
 export function validateTier0(recipe) {
+  if (recipe && recipe.platform === "darwin") return validateTier0Darwin(recipe); // CU4 — darwin allowlist applies
   const errors = [];
   if (!recipe || recipe.tier !== TIER0) errors.push("not a tier-0 recipe");
   if (!recipe?.id || !recipe?.title) errors.push("missing id/title");
@@ -74,4 +86,13 @@ export function preview(recipe) {
   };
 }
 
-export function tier0ById(id) { return recipes[id] || null; }
+/**
+ * Look up a Tier-0 recipe. Windows ids resolve as before. With `platform === "darwin"` the macOS catalog is
+ * consulted FIRST (two ids — check-disk-space, flush-dns — exist in both catalogs, with platform-specific
+ * commands); without a platform the Windows catalog wins (unchanged behaviour), then darwin as a fallback.
+ */
+export function tier0ById(id, platform) {
+  const key = String(id || "");
+  if (platform === "darwin") return darwinRecipes[key] || recipes[key] || null;
+  return recipes[key] || darwinRecipes[key] || null;
+}

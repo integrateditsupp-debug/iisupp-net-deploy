@@ -48,6 +48,16 @@ contextBridge.exposeInMainWorld("sentinel", {
   completeOnboarding: () => ipcRenderer.invoke("sentinel:complete-onboarding"),
   completeSetup: (prefs) => ipcRenderer.invoke("setup:complete", prefs), // RUN 33-E — first-launch wizard
   reopenSetup: () => ipcRenderer.invoke("setup:reopen"),
+  // RUN-CU / CU4 — wizard v2 prefs (identity · contacts · autonomy · approver · reports · window · channels),
+  // approvals (approve replaces the countdown; deny never executes), the dry-run keep flag, a real test notification.
+  getSetup: () => ipcRenderer.invoke("setup:get"),
+  updateSetupPrefs: (partial) => ipcRenderer.invoke("setup:update-prefs", partial),
+  approveFix: (id) => ipcRenderer.invoke("sentinel:approve-fix", { id }),
+  denyFix: (id) => ipcRenderer.invoke("sentinel:deny-fix", { id }),
+  listApprovals: () => ipcRenderer.invoke("sentinel:list-approvals"),
+  setKeepDryRun: (on) => ipcRenderer.invoke("sentinel:set-keep-dry-run", on),
+  testNotification: () => ipcRenderer.invoke("sentinel:test-notification"),
+  voiceApprove: (recipeId) => ipcRenderer.invoke("sentinel:voice-approve", { recipeId }),
   runDiagnostic: () => ipcRenderer.invoke("sentinel:run-diagnostic"),
   privacyCapture: (windowMs) => ipcRenderer.invoke("sentinel:privacy-capture", windowMs),
   exportEvidence: () => ipcRenderer.invoke("sentinel:export-evidence"),

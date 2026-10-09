@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, Tray, ipcMain, nativeImage, shell, screen, session, globalShortcut, powerMonitor, clipboard } from "electron";
+import { app, BrowserWindow, Menu, Tray, ipcMain, nativeImage, shell, screen, session, globalShortcut, powerMonitor, clipboard, Notification } from "electron";
 import Store from "electron-store";
 import { exec, spawn } from "node:child_process";
 import { randomUUID, createHash } from "node:crypto";
@@ -32,8 +32,23 @@ import { createDetectionOrchestrator } from "../sub-agents/detection/index.mjs";
 import { loadCustomerConfig } from "../shared/customer-config.mjs";
 import { DEEP_LINK_SCHEME, parseSentinelDeepLink, validateResolveLink } from "../shared/deep-link.mjs"; // Slice C — web→Sentinel handoff
 import { ingest as ingestKb } from "../shared/kb-ingester.mjs";
-import { parsePolicyOverlay } from "../shared/policy.mjs";
+import { parsePolicyOverlay, isRecipeAllowedByPolicy } from "../shared/policy.mjs";
 import { parseControlPlaneKill, remediationDecision, blockedRecipeResult, KILL_HOTKEY, buildKillResult } from "../shared/kill-switch.mjs";
+// RUN-CU / CU4 (2026-10-08) — autonomy levels · approvals · notify · real restore points · evidence · bridge auth.
+import { normalizeSetupPrefs, updateSetupPrefs, resolveAutonomy, autonomyLevelToMode, AUTONOMY_LEVELS } from "../shared/app-config.mjs";
+import { decideExecution, describeDecision } from "../shared/approval-policy.mjs";
+import { checkMaintenanceWindow } from "./plan-maintenance-window.mjs";
+import { createApprovalsFlow } from "./approvals.mjs";
+import { createNotifyDispatcher, NOTIFY_ENDPOINT } from "./notify-dispatch.mjs";
+import { createOutbound } from "./outbound.mjs";
+import { platformCapabilities } from "../shared/notify-channels.mjs";
+import { RESTORE_COMMANDS, sequenceOf, verifyCreated, isThrottled } from "./restore-point.mjs";
+import { deriveControlOverrides, summarizeEvidence } from "../shared/compliance-evidence.mjs";
+import { isAllowedBridgeOrigin as bridgeOriginAllowed, isStateChangingRoute, sanitizeRunRecipeBody, scrubPublicState } from "../shared/bridge-auth.mjs";
+import { sealAuditKeyed, verifyAuditKeyed } from "../shared/audit-integrity.mjs";
+import { tier0ForPlatform, isDarwinTier0, TIER0_DARWIN_RECIPES } from "./recipes/tier-0/index.mjs";
+import { isYellowRecipe } from "../shared/recipe-runner.mjs";
+import { buildVoiceFixAnnouncement, deriveSpeak } from "../shared/voice-turns.mjs";
 import { registerWithFallback } from "../shared/hotkeys.mjs";
 import { normalizePrefs, addOptOut, resetOptOuts, normalizeExt } from "../shared/delete-confirm.mjs";
 // RUN 20 — system knowledge engine: inventory enumerator, Tier-0 recipes, symptom KB + doctor reasoner.
@@ -150,6 +165,10 @@ const store = new Store({
     incidents: [],
     transparencyLog: [],
     resolutionOutcomes: [],
+    // RUN-CU / CU4 — approvals ledger (pending + decided) + fixes queued to a maintenance window.
+    // (keepSystemFixesDryRun is deliberately NOT defaulted: undefined = "follow the mode", the RUN 29-A rule.)
+    approvals: [],
+    deferredFixes: [],
     serviceNow: {
       instanceUrl: "",
       caller: "",
@@ -194,6 +213,123 @@ let overlayPhysics = null;
 let overlayPhysicsTimer = null;
 let overlayLastTick = 0;
 let overlayActiveUntil = 0;
+
+// ── RUN-CU / CU4 (2026-10-08) — autonomy · approvals · notify plumbing ─────────────────────────────────────
+// Every main-process network call goes through ONE wrapper that records {host, path, method, bytes} into a
+// ring the privacy verifier merges (audit P1 #7) and refuses an off-allowlist host before a byte leaves.
+const outbound = createOutbound({});
+const APPROVAL_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-sentinel-approval";
+
+function readSetupConfigSafe() { try { return store.get("setupConfig") || null; } catch { return null; } }
+/** The sanitized Setup-wizard prefs (v1 + v2), defaults filled in. */
+function setupPrefsNow() { return normalizeSetupPrefs(readSetupConfigSafe()); }
+/** The autonomy level Sentinel honours right now (business clamp applied) + its mapped mode. */
+function autonomyNow() {
+  const prefs = setupPrefsNow();
+  const r = resolveAutonomy(prefs);
+  return { ...r, approverMode: (prefs.approver && prefs.approver.mode) || "self", mode: autonomyLevelToMode(r.level).mode, prefs };
+}
+/** sha256(licenseKey) — the device's content-blind identity for the notify/approval server; never the raw key. */
+function licenseKeyHash() {
+  const key = String((readLicense() || {}).key || "");
+  return /^[a-f0-9]{64}$/i.test(key) ? createHash("sha256").update(key).digest("hex") : "";
+}
+/** A stable per-device hash (never the raw hostname) for X-Sentinel-Device + the notify "device" field. */
+function deviceIdHash() {
+  try { return createHash("sha256").update(`${os.hostname()}::aria-sentinel-device`).digest("hex").slice(0, 32); } catch { return "device"; }
+}
+/** Honest, content-blind label for notifications: "Sam's Windows device" when the wizard captured a name. */
+function deviceLabelNow() {
+  const prefs = setupPrefsNow();
+  const first = String((prefs.deviceUser && prefs.deviceUser.name) || "").trim().split(/\s+/)[0].replace(/[^A-Za-z0-9'\-]/g, "").slice(0, 24);
+  const label = platformCapabilities(process.platform).label;
+  return first ? `${first}'s ${label} device` : `this ${label} device`;
+}
+/** Desktop (OS) notification — local, free, honest. Returns true only when one was actually shown. */
+function desktopNotify({ title, body } = {}) {
+  try {
+    if (!app.isReady() || !Notification.isSupported()) return false;
+    const n = new Notification({ title: String(title || "ARIA Sentinel").slice(0, 80), body: String(body || "").slice(0, 200), silent: false });
+    n.on("click", () => { try { showMainWindow("control-center"); } catch { /* best-effort */ } });
+    n.show();
+    return true;
+  } catch { return false; }
+}
+const notifyDispatcher = createNotifyDispatcher({
+  outbound,
+  endpoint: NOTIFY_ENDPOINT,
+  logEvent: (tag, text, extra) => logEvent(tag, text, extra),
+  prefs: setupPrefsNow,
+  desktopNotify,
+  deviceKeyHash: licenseKeyHash,
+  deviceId: deviceIdHash
+});
+/** Fire-and-forget notify; never throws into a caller. */
+function notifyEvent(event, ctx = {}, opts = {}) {
+  return notifyDispatcher.dispatch(event, { ...ctx, platform: process.platform, deviceLabel: deviceLabelNow() }, opts).catch(() => null);
+}
+const approvals = createApprovalsFlow({
+  store: { get: () => store.get("approvals") || [], set: (v) => store.set("approvals", v) },
+  log: (tag, text, extra) => logEvent(tag, text, extra),
+  prefs: setupPrefsNow,
+  uuid: randomUUID,
+  onChange: () => { try { broadcastState(); } catch { /* window may be gone */ } },
+  notify: (event, ctx) => notifyEvent(event, ctx),
+  // An approved fix runs through the SAME supervised pipeline (R11 → supervisor → policy → execute); the
+  // approval replaces the countdown, never the gates.
+  runner: ({ recipeId, approvalId, decidedBy, channel }) => runSupervisedFix({ recipeId, mode: "confirmed", approved: true, approvalId, source: `approval:${channel || "desktop"}`, risk: (recipeById(recipeId) || {}).risk || "medium", decidedBy })
+});
+let approvalPollTimer = null;
+function ensureApprovalPolling() {
+  if (approvalPollTimer) return;
+  approvalPollTimer = setInterval(() => { approvalTick().catch(() => undefined); }, 60 * 1000);
+  approvalPollTimer.unref?.();
+}
+/** Every 60s while anything is pending: expire overdue asks (per approver.onTimeout) + poll remote decisions. */
+async function approvalTick() {
+  try { await approvals.expire(Date.now()); } catch { /* expiry is best-effort */ }
+  const pending = approvals.pending();
+  if (!pending.length) { if (approvalPollTimer) { clearInterval(approvalPollTimer); approvalPollTimer = null; } return; }
+  const keyHash = licenseKeyHash();
+  if (!keyHash) return; // no license → no remote approvals (in-app only)
+  for (const a of pending.filter((p) => p.remoteId)) {
+    try {
+      // The server binds each ask to the device hash that raised it; the poll proves the same device is asking.
+      const res = await outbound.fetch(`${APPROVAL_ENDPOINT}?poll=1&id=${encodeURIComponent(a.remoteId)}`, { headers: { "x-sentinel-key": keyHash, "x-sentinel-device": deviceIdHash(), "user-agent": "aria-sentinel" }, signal: AbortSignal.timeout?.(8000) });
+      if (!res || !res.ok) continue;
+      const body = await res.json().catch(() => null);
+      if (body && (body.status === "approved" || body.status === "denied")) await approvals.mergeRemote(a.id, body);
+    } catch { /* offline → next tick */ }
+  }
+}
+/** The colour tier of a fix: Tier-0 catalog + green registry → green; yellow registry → yellow; red/unknown → red. */
+function recipeColor(recipeId) {
+  const id = String(recipeId || "");
+  if (resolveExecutorId(id) || tier0ById(id) || isDarwinTier0(id) || isGreenRecipe(id)) return "green";
+  if (isYellowRecipe(id)) return "yellow";
+  const r = recipeById(id);
+  if (!r) return "red";
+  if (r.risk === "green") return "green";
+  if (r.risk === "yellow" || r.risk === "orange") return "yellow";
+  return "red";
+}
+function recipeTitle(recipeId) {
+  const id = String(recipeId || "");
+  return (recipeById(id) || {}).title || (tier0ById(id, process.platform) || {}).title || id;
+}
+/** Maintenance-window verdict for an unattended run (strict: no window configured = not "within"). */
+function maintenanceWindowNow(recipeId) {
+  try { return checkMaintenanceWindow({ plan: { id: String(recipeId || "") }, windowConfig: setupPrefsNow().maintenanceWindow, now: new Date(), unattended: true }); }
+  catch { return { allowed: false, within: false, windowConfigured: false, nextWindowStart: null, reasons: ["window check failed"] }; }
+}
+/** Customer policy overlay business hours: open when unset; otherwise local hour within [start, end). */
+function businessHoursOpen(overlay, now = new Date()) {
+  const bh = overlay && overlay.business_hours;
+  if (!bh || !Number.isInteger(bh.start) || !Number.isInteger(bh.end)) return { open: true, configured: false };
+  const h = now.getHours();
+  const open = bh.start <= bh.end ? (h >= bh.start && h < bh.end) : (h >= bh.start || h < bh.end); // overnight window
+  return { open, configured: true, start: bh.start, end: bh.end };
+}
 
 // Slice C — register the aria-sentinel:// deep-link scheme so the web "Open with ARIA Sentinel" button can
 // hand a matched fix to the installed app. The link only ever carries a recipe id + an intent STRING —
@@ -264,8 +400,10 @@ function handleSentinelDeepLink(rawUrl) {
   // approve + the visible 10s countdown is the consent. We deliberately do NOT silently auto-fire from a browser
   // link even for green recipes (R8 trust boundary); runSupervisedFix already forbids Autonomous for resolve
   // actions. Restore point + Ctrl+Alt+K stay.
-  logEvent("RUN", `Deep-link resolve requested for ${parsed.recipeId}.`, { recipeId: parsed.recipeId });
-  try { runSupervisedFix({ recipeId: parsed.recipeId, mode: "confirmed", risk: (recipeById(parsed.recipeId)?.risk || "medium") }); }
+  // RUN-CU / CU4 (fix i) — source:"deep-link" makes runSupervisedFix create an APPROVAL record (Control Center →
+  // Approvals, plus the approvers' email) instead of ever executing straight from a browser link.
+  logEvent("RUN", `Deep-link resolve requested for ${parsed.recipeId} — queued for your approval.`, { recipeId: parsed.recipeId });
+  try { Promise.resolve(runSupervisedFix({ recipeId: parsed.recipeId, mode: "confirmed", source: "deep-link", risk: (recipeById(parsed.recipeId)?.risk || "medium") })).catch((e) => logEvent("ERROR", `Deep-link resolve failed: ${e?.message || e}`, { recipeId: parsed.recipeId })); }
   catch (e) { logEvent("ERROR", `Deep-link resolve failed: ${e?.message || e}`, { recipeId: parsed.recipeId }); }
 }
 
@@ -825,7 +963,8 @@ function getBlueprint(id) {
 }
 
 function listTier0Recipes() {
-  return TIER0_RECIPES.map((r) => previewTier0(r));
+  // RUN-CU / CU4 — the catalog that applies on THIS platform (macOS → the user-level darwin set; Windows unchanged).
+  return tier0ForPlatform(process.platform).map((r) => ({ ...previewTier0(r), platform: r.platform || "win32" }));
 }
 
 // Doctor reasoner: match symptom → rank causes against live context → surface anomalies. KNOWLEDGE +
@@ -870,7 +1009,7 @@ async function runUpdateCheck(reason = "manual") {
   const lic = readLicense() || {};
   const result = await checkForUpdate({
     fetchManifest: async () => {
-      const r = await fetch(`${UPDATE_MANIFEST_ENDPOINT}?license=${encodeURIComponent(lic.key || "")}&version=${SENTINEL_VERSION}`, { headers: { "user-agent": "aria-sentinel" } });
+      const r = await outbound.fetch(`${UPDATE_MANIFEST_ENDPOINT}?license=${encodeURIComponent(lic.key || "")}&version=${SENTINEL_VERSION}`, { headers: { "user-agent": "aria-sentinel" } });
       return r.status === 200 ? await r.text() : "";
     },
     installedVersion: SENTINEL_VERSION
@@ -902,8 +1041,15 @@ async function sendHeartbeat() {
     osBuild: os.release()
   });
   try {
-    await fetch(HEARTBEAT_ENDPOINT, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
+    const res = await outbound.fetch(HEARTBEAT_ENDPOINT, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
     logEvent("HEARTBEAT", "Daily heartbeat sent (content-blind).");
+    // RUN-CU / CU4 (audit P0 #2) — the heartbeat reply is the fleet control plane's second channel: a
+    // { killed, reason } directive here propagates without waiting for a manual "Update knowledge" click.
+    try {
+      const body = res && res.ok && typeof res.json === "function" ? await res.json().catch(() => null) : null;
+      const kill = parseControlPlaneKill(body);
+      if (kill.present) applyControlPlaneKill(kill.killed, kill.reason);
+    } catch { /* an unparseable reply never affects the kill state */ }
   } catch { /* offline is fine; next daily tick retries */ }
 }
 
@@ -1012,7 +1158,11 @@ function recentLog(n = 10) { return (store.get("transparencyLog") || []).slice(0
 function dashboardData() {
   const s = getState();
   const auditOk = !(s.auditIntegrity && s.auditIntegrity.ok === false);
-  const sources = { auditOk, privacyOk: !s.externalAiCalls, tier0Ok: !remediationKilled(), heartbeatOk: true };
+  // RUN-CU / CU4 — privacy is the MEASURED verifier verdict (a failed live capture), not "did the KB-first chain
+  // ever reach Anthropic": a novel question answered by the fallback is not a privacy incident. externalAiCalls
+  // is reported separately + honestly in getState().
+  const pc = lastPrivacyCapture || store.get("lastPrivacyCapture") || null;
+  const sources = { auditOk, privacyOk: !(pc && pc.pass === false), tier0Ok: !remediationKilled(), heartbeatOk: true };
   const log = store.get("transparencyLog") || [];
   const fixes = log.filter((e) => e.tag === "RUN").length;
   const pending = [];
@@ -1034,7 +1184,8 @@ function dashboardData() {
     metrics: { uptime7d: null, mttr: null, accuracy: null, breaches: 0, hoursSaved: vp.hoursSaved, dollarsSaved: vp.dollarsSaved, deflection: resolutionStatsNow().deflectionPct, version: SENTINEL_VERSION, updatePending: pending.some((p) => /Update/.test(p.text)) },
     pending,
     activity: recentLog(10),
-    trust: "🔒 Local processing · audit integrity verified · 0 outbound to non-allowlisted hosts last 24h · privacy verifier active · 100% sanitization"
+    // Rule 14 — the trust strip states what was measured, and says "not measured yet" when it was not.
+    trust: `🔒 Local processing · audit integrity ${auditOk ? "verified" : "NEEDS REVIEW"} · ${pc && pc.ts ? `privacy verifier ${pc.pass ? "PASS" : "REVIEW"} (${pc.disallowedHostCount || 0} off-allowlist, ${pc.leakingPayloadCount || 0} with content, last capture ${relativeAgo(pc.ts)})` : "privacy verifier not run yet — run Live capture (10s)"}${s.externalAiCalls ? " · Anthropic fallback used this session" : ""}`
   };
 }
 function relativeAgo(iso) { const t = Date.parse(iso); if (!t) return "just now"; const m = Math.round((Date.now() - t) / 60000); return m < 1 ? "just now" : m < 60 ? `${m}m ago` : `${Math.round(m / 60)}h ago`; }
@@ -1072,14 +1223,43 @@ function slaData() {
   };
 }
 
+// RUN-CU / CU4 (audit P0 #4) — the Compliance tab + the quarterly PDF read EVIDENCE, not literals. Every control
+// with a real local signal is measured right now; the rest are labelled capabilities; the privacy verdict is
+// the last live capture (or "not measured yet"), never a hardcoded pass.
+let signExecutableFlag = null;
+function buildIsSigned() {
+  if (signExecutableFlag != null) return signExecutableFlag;
+  try { const pkg = JSON.parse(fs.readFileSync(path.join(appRoot, "package.json"), "utf8")); signExecutableFlag = Boolean(pkg.build && pkg.build.win && pkg.build.win.signExecutable === true); }
+  catch { signExecutableFlag = false; }
+  return signExecutableFlag;
+}
+function complianceEvidenceNow() {
+  const sla = readSlaState();
+  return deriveControlOverrides({
+    auditIntegrity: store.get("auditIntegrity") || { ok: true },
+    auditSealKeyed: fs.existsSync(AUDIT_SEAL_FILE()),
+    lastPrivacyCapture: lastPrivacyCapture || store.get("lastPrivacyCapture") || null,
+    signExecutable: buildIsSigned(),
+    watchersRunning: Boolean(detectionOrchestrator) && !agentBlocked() && !store.get("ariaStopped"),
+    slaHasData: Boolean((sla.detections && sla.detections.length) || (sla.downtime && sla.downtime.length)),
+    setupCompleted: !shouldShowSetup(store.get("setupConfig")),
+    lastRetentionCleanup: store.get("lastRetentionCleanup") || null,
+    allowlistTestOk: null,
+    killed: remediationKilled(),
+    externalAiCalls: externalAiCallsNow()
+  });
+}
 function complianceData() {
   const s = getState();
+  const ev = complianceEvidenceNow();
   return {
     audit: { ok: !(s.auditIntegrity && s.auditIntegrity.ok === false), entries: (store.get("transparencyLog") || []).length, lastVerified: store.get("auditVerifiedAt") || "" },
-    privacy: { pass: true, allowlistOk: true, sanitization: 100, ts: store.get("lastPrivacyCapture")?.ts || "" },
+    privacy: ev.privacy, // { pass:true|false|null, allowlistOk, sanitization|null, ts, ageHours, evidenced, label }
     tier0: { blocked: (store.get("tier0Blocked") || 0), categories: [] },
     r11: r11EnforcementStatus(store.get("r11Attempts") || 0, new Date().toISOString()),
-    frameworks: compositeScores(),
+    frameworks: compositeScores(ev.overrides),
+    evidence: ev.evidence,
+    evidenceSummary: summarizeEvidence(ev.evidence),
     trust: trustPostureNow() // RUN-B B3 — honest trust/security surface (real-or-empty)
   };
 }
@@ -1097,6 +1277,9 @@ function reportData(now = Date.now()) {
     kpis: { incidents: perf.ai.diagnoses || 0, autoPct: perf.operational.autoPct, hoursSaved: vp.hoursSaved, dollarsSaved: vp.dollarsSaved, deflectionPct: vp.deflectionPct, resolved: vp.resolved, conversations: vp.conversations, accuracy: perf.ai.accuracy, breaches: (sla.breaches || []).length, uptime7d: sla.uptime.d7, mttr: perf.operational.mttr, version: SENTINEL_VERSION },
     sla: { composite: sla.compliance.composite, floor: sla.compliance.floor, breaches: (sla.breaches || []).length, categories: { uptime: `${sla.compliance.uptime}%`, met: sla.compliance.met ? "yes" : "no" } },
     compliance: { soc2: comp.frameworks.soc2, hipaa: comp.frameworks.hipaa, pipeda: comp.frameworks.pipeda, gdpr: comp.frameworks.gdpr },
+    // RUN-CU / CU4 — evidence + the measured privacy verdict so the PDF says "verified" only when it is.
+    evidence: comp.evidence,
+    privacy: comp.privacy,
     topIncidents: [], recurring: [], upcoming: ["Continue automated patching", "Quarterly SLA review"]
   };
 }
@@ -1142,18 +1325,67 @@ function setReportPrefs(prefs = {}) {
   return { ok: true, prefs: safe };
 }
 
+// RUN-CU / CU4 (audit P1 #9) — the 7-year audit floor is REAL now: rows that leave the hot in-store window are
+// appended to userData/audit/YYYY-MM.jsonl (one line per entry, same content-blind fields) before they are
+// trimmed, both here and in logEvent's 250-row cap. Nothing is dropped silently any more.
+const AUDIT_ARCHIVE_DIR = () => path.join(app.getPath("userData"), "audit");
+function archiveAuditRows(rows) {
+  const list = (Array.isArray(rows) ? rows : []).filter((e) => e && e.ts);
+  if (!list.length) return 0;
+  try {
+    fs.mkdirSync(AUDIT_ARCHIVE_DIR(), { recursive: true });
+    const byMonth = new Map();
+    for (const e of list) {
+      const month = String(e.ts).slice(0, 7) || "unknown";
+      byMonth.set(month, (byMonth.get(month) || "") + JSON.stringify({ ts: e.ts, tag: e.tag, text: e.text, recipeId: e.recipeId }) + "\n");
+    }
+    for (const [month, text] of byMonth) fs.appendFileSync(path.join(AUDIT_ARCHIVE_DIR(), `${month.replace(/[^0-9-]/g, "")}.jsonl`), text);
+    return list.length;
+  } catch { return 0; }
+}
+
 // Daily 02:00 retention cleanup — honors the retention table + legal-hold; never traverses R11 paths.
 function runRetentionCleanup() {
   const log = store.get("transparencyLog") || [];
   const items = log.map((e) => ({ class: "auditLog", ts: e.ts }));
   const plan = planCleanup(items, Date.now());
-  // Audit log: keep the hot 30-day window searchable (full purge only past the 7y floor — handled by plan).
+  // Audit log: keep the hot 30-day window in the store; older rows rotate to the monthly archive (7y floor —
+  // full purge only past it, handled by plan). CU4 fixed the former no-op filter (`>= cutoff || true`).
   const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
-  const trimmed = log.filter((e) => Date.parse(e.ts) >= cutoff || true).slice(0, 5000); // hot window cap (never drops < 7y here)
+  const hot = log.filter((e) => { const t = Date.parse(e && e.ts); return !Number.isFinite(t) || t >= cutoff; });
+  const cold = log.filter((e) => { const t = Date.parse(e && e.ts); return Number.isFinite(t) && t < cutoff; });
+  const archived = archiveAuditRows(cold);
+  const trimmed = hot.slice(0, 5000);
   store.set("transparencyLog", trimmed);
+  try { writeKeyedAuditSeal(trimmed); } catch { /* re-seal best-effort */ }
   store.set("lastRetentionCleanup", new Date().toISOString());
-  logEvent("RETENTION", `Cleanup pass: ${plan.delete.length} eligible, ${plan.excludedR11} R11-excluded, next ${nextCleanupAt()}.`);
-  return { ok: true, planned: plan.delete.length, excludedR11: plan.excludedR11 };
+  logEvent("RETENTION", `Cleanup pass: ${plan.delete.length} eligible, ${plan.excludedR11} R11-excluded, ${archived} row(s) rotated to the monthly audit archive, next ${nextCleanupAt()}.`);
+  return { ok: true, planned: plan.delete.length, excludedR11: plan.excludedR11, archived };
+}
+
+// RUN-CU / CU4 — aggregate report (daily/weekly per reportCadence): the local PDF stays on the device (the
+// existing report generator); the email/SMS carries only COUNTS for the period. Per-fix cadence sends on each
+// outcome instead (see afterFixOutcome). Runs on launch + hourly; sends at most once per period.
+function reportPeriodMs(cadence) { return cadence === "daily" ? 24 * 3600000 : cadence === "weekly" ? 7 * 24 * 3600000 : 0; }
+async function maybeSendAggregateReport(now = Date.now()) {
+  const prefs = setupPrefsNow();
+  const period = reportPeriodMs(prefs.reportCadence);
+  if (!period) return { sent: false, reason: "per-fix cadence" };
+  const last = Date.parse(store.get("lastAggregateReportAt") || "") || 0;
+  if (now - last < period) return { sent: false, reason: "not due" };
+  const since = last || (now - period);
+  const log = (store.get("transparencyLog") || []).filter((e) => { const t = Date.parse(e && e.ts); return Number.isFinite(t) && t >= since; });
+  const summary = {
+    period: prefs.reportCadence === "daily" ? "last 24 hours" : "last 7 days",
+    detections: log.filter((e) => e.tag === "DETECT").length,
+    fixes: log.filter((e) => e.tag === "RUN" && /^Executing/.test(e.text || "")).length,
+    failures: log.filter((e) => e.tag === "ERROR" && e.recipeId).length
+  };
+  store.set("lastAggregateReportAt", new Date(now).toISOString());
+  let pdf = null;
+  try { pdf = await generateReport({ quarterly: false }); } catch { pdf = null; } // local PDF stays local
+  const r = await notifyEvent("report", { title: "Sentinel report", summary });
+  return { sent: Boolean(r && (r.email.status === "sent" || r.sms.status === "sent" || r.desktop.shown)), summary, pdf: pdf && pdf.ok ? pdf.filename : null, result: r };
 }
 function scheduleDailyAt(hour, fn) {
   const tick = () => {
@@ -1504,7 +1736,7 @@ async function resolveLicenseOnline(key, email = "") {
   // mis-deployed endpoint. A timeout throws → enterLicense/refreshLicense treat it as offline (fail-closed).
   // SENTINEL TRIAL GATING 2026-07-02 — email lets the server resolve a per-customer Walk-Through entitlement
   // (looked up by email, never the shared plan key). Optional: a blank email just resolves the plan.
-  const res = await fetch(RESOLVE_ENDPOINT, {
+  const res = await outbound.fetch(RESOLVE_ENDPOINT, {
     method: "POST",
     headers: { "content-type": "application/json", "user-agent": "aria-sentinel" },
     body: JSON.stringify(email ? { key, email } : { key }),
@@ -1740,7 +1972,7 @@ async function sendResolutionEmail({ issueTitle, ticketRef, sessionId } = {}) {
     user: to ? { email: to } : {}
   };
   try {
-    const res = await fetch(RESOLUTION_EMAIL_ENDPOINT, {
+    const res = await outbound.fetch(RESOLUTION_EMAIL_ENDPOINT, {
       method: "POST",
       headers: { "content-type": "application/json", "user-agent": "aria-sentinel" },
       body: JSON.stringify(payload),
@@ -1888,7 +2120,7 @@ async function checkForUpdates() {
   // ("You're on 0.1.16 · manual updates for now"). A real manifest with a newer version still surfaces the
   // update. mode: "manual" | "ota" lets the renderer pick honest copy; ok stays true so it never reads as a failure.
   try {
-    const res = await fetch(UPDATE_ENDPOINT, { headers: { "user-agent": "aria-sentinel" }, signal: AbortSignal.timeout?.(8000) });
+    const res = await outbound.fetch(UPDATE_ENDPOINT, { headers: { "user-agent": "aria-sentinel" }, signal: AbortSignal.timeout?.(8000) });
     const latest = res && res.ok ? await res.json().catch(() => null) : null; // { version, downloadUrl } manifest
     if (!latest || !latest.version) return { ok: true, current: SENTINEL_VERSION, updateAvailable: false, mode: "manual" };
     return { ok: true, current: SENTINEL_VERSION, latest, updateAvailable: updateAvailable(SENTINEL_VERSION, latest), mode: "ota" };
@@ -2024,7 +2256,7 @@ async function sendAutoFixNotify(eventInput, opts = {}) {
     return { ok: false, dryRun: true, reason: "no_webhook" }; // nothing configured → send nothing
   }
   try {
-    await fetch(cfg.webhookUrl, {
+    await outbound.fetch(cfg.webhookUrl, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(built.payload)
@@ -2042,7 +2274,18 @@ function autonomousPaused() {
 }
 
 async function autoFireIfEligible(recipe, context = {}) {
-  if (store.get("mode") !== "autonomous" || autonomousPaused() || agentBlocked()) return;
+  // RUN-CU / CU4 — the autonomy level from the Setup wizard governs unattended fixes alongside the legacy mode:
+  // safe-auto / full-auto may act on their own (green only here; evaluateAutoFire keeps yellow out), observe and
+  // approve-first never do (approve-first turns the detection into an approval request instead).
+  const auto = autonomyNow();
+  const levelActs = auto.level === "safe-auto" || auto.level === "full-auto";
+  if (!(store.get("mode") === "autonomous" || levelActs) || autonomousPaused() || agentBlocked()) {
+    if (auto.level === "approve-first" && !agentBlocked() && !autonomousPaused()) {
+      approvals.request({ recipeId: recipe.id, title: recipe.title, color: recipeColor(recipe.id), tier: 2, requestedBy: "watcher", reason: "level-approve-first", source: "detection" });
+      ensureApprovalPolling();
+    }
+    return;
+  }
   const endpoint = os.hostname();
   const history = store.get("autoFireHistory") || [];
   const decision = evaluateAutoFire({
@@ -2056,6 +2299,15 @@ async function autoFireIfEligible(recipe, context = {}) {
     logEvent("AUTONOMOUS", `Auto-fix held for ${recipe.signal} (${decision.reason}); falling back to ${decision.fallback}.`, { recipeId: recipe.id });
     return;
   }
+  // The approval policy + the maintenance window (plan-maintenance-window.mjs, now wired) decide the disposition.
+  const color = recipeColor(recipe.id);
+  const win = maintenanceWindowNow(recipe.id);
+  const verdict = decideExecution({ level: auto.level, color, tier: vettedTierOf(recipe.id), approverMode: auto.approverMode, inWindow: win.within, hasRestorePoint: false, killed: remediationKilled(), blocked: agentBlocked() });
+  if (verdict.action !== "execute") {
+    logEvent("AUTONOMOUS", `Auto-fix for ${recipe.signal} → ${verdict.action} (${verdict.reason}).`, { recipeId: recipe.id });
+    if (verdict.action === "request-approval") { approvals.request({ recipeId: recipe.id, title: recipe.title, color, tier: vettedTierOf(recipe.id), requestedBy: "watcher", reason: verdict.reason, source: "detection" }); ensureApprovalPolling(); }
+    return;
+  }
   store.set("autoFireHistory", recordAutoFire(history, { recipeId: recipe.id }));
   const started = Date.now();
   const result = await runRecipe(recipe.id, { dryRun: false, confirmed: false });
@@ -2067,6 +2319,31 @@ async function autoFireIfEligible(recipe, context = {}) {
     durationMs: Date.now() - started,
     tier: "green"
   }).catch(() => undefined);
+  afterFixOutcome(recipe.id, result, { decision: verdict, source: "autonomous" });
+}
+
+/** Vetted tier (0/1/2) of a recipe from the recipe-history ledger. */
+function vettedTierOf(recipeId) {
+  try { const n = vettedCountOf(readRecipeHistory(), String(recipeId || "")); return n >= 100 ? 0 : n >= 10 ? 1 : 2; } catch { return 2; }
+}
+
+// RUN-CU / CU4 — after every execution outcome: failures notify immediately (always); successes notify per
+// reportCadence (per-fix now, daily/weekly folded into the aggregate). Dry-runs are reported as previews.
+function afterFixOutcome(recipeId, result, meta = {}) {
+  try {
+    const title = recipeTitle(recipeId);
+    const dryRun = Boolean(result && result.dryRun);
+    const failed = !result || result.ok === false;
+    const rp = result && result.restorePoint;
+    if (failed && !dryRun) {
+      notifyEvent("fix-failed", { title, recipeId, severity: recipeColor(recipeId), outcome: "failed", rolledBack: Boolean(result && result.rolledBack) });
+      return;
+    }
+    if (setupPrefsNow().reportCadence === "per-fix") {
+      notifyEvent("fix-executed", { title, recipeId, severity: recipeColor(recipeId), outcome: dryRun ? "previewed" : "applied", dryRun, verified: result && result.verified, restorePoint: rp ? rp.created === true : undefined });
+    }
+    // daily/weekly cadences: the outcome is already in the audit log, which the aggregate report summarizes.
+  } catch { /* reporting never affects the fix */ }
 }
 
 function openMacPermissions(pane = "fulldisk") {
@@ -2226,7 +2503,14 @@ function startActionCountdown({ recipeId, risk, onComplete }) {
  * executor. Nothing executes live by default: a fresh machine has 0 vetted runs (Tier-2, dry-run ON), so the
  * countdown completes into a dry-run. Low-risk action sentinels bypass the gate entirely.
  */
-function runSupervisedFix(payload = {}) {
+async function runSupervisedFix(payload = {}) {
+  // RUN-CU / CU4 (audit P0 #1) — LINE 1: a fleet/customer kill or a paused agent refuses to apply ANY change on
+  // this path too (it used to be checked only by the autonomous path). Detection + guidance keep working.
+  if (remediationKilled() || agentBlocked()) {
+    const reason = remediationKilled() ? (bridgeStatus.killReason || "remediation disabled") : "ARIA is paused on this device";
+    logEvent("KILL-SWITCH", `Supervised fix ${String(payload.recipeId || "(none)")} blocked: ${reason}.`, { recipeId: String(payload.recipeId || "") });
+    return { ...blockedRecipeResult(reason), verdict: "blocked", countdown: false, copy: describeDecision({ action: "blocked" }) };
+  }
   const recipeId = String(payload.recipeId || "");
   const pname = String(payload.processName || "");
   // 🔒 R11 — refuse anything referencing the off-limits folder up front.
@@ -2252,18 +2536,92 @@ function runSupervisedFix(payload = {}) {
   if (verdict.verdict === "veto") { writeRecipeHistory(recordOutcome(history, recipeId, "veto")); return { ok: false, verdict: "veto", reason: verdict.reason }; }
 
   const policy = executionPolicy({ vettedCount: vettedCountOf(history, recipeId), mode, dryRunCheckbox: store.get("keepSystemFixesDryRun"), supervisorVerdict: verdict.verdict });
+
+  // ── RUN-CU / CU4 (audit P1 #6) — the policy's outputs are ENFORCED, not just read ────────────────────────
+  if (!policy.allowed) {
+    logEvent("POLICY", `Fix ${recipeId} held by execution policy: ${policy.reason}`, { recipeId });
+    return { ok: false, verdict: "policy", reason: policy.reason, policy, countdown: false };
+  }
+  const overlay = store.get("policyOverlay") || null;
+  if (!isRecipeAllowedByPolicy(overlay, recipeId)) {
+    logEvent("POLICY", `Fix ${recipeId} disabled by customer policy overlay.`, { recipeId });
+    return { ok: false, verdict: "policy", reason: "This fix is disabled by your organization's policy.", policy, countdown: false };
+  }
+  const needsConfirm = Boolean(verdict.supervisorEvidence && verdict.supervisorEvidence.needsConfirm); // high-risk in Autonomous
+  const hours = businessHoursOpen(overlay, new Date());
+
+  // ── RUN-CU / CU4 — the approval policy decides execute / ask / notify-only / defer ────────────────────────
+  const title = recipeTitle(recipeId);
+  let color = recipeColor(recipeId);
+  if (needsConfirm && color === "green") color = "yellow"; // the supervisor flagged it high-risk: treat as yellow
+  const auto = autonomyNow();
+  const source = String(payload.source || "app");
+  const humanInitiated = !/^(detection|deep-link|bridge)/.test(source) && payload.approved !== true;
+  const approvedRecord = payload.approved === true && payload.approvalId ? approvals.byId(String(payload.approvalId)) : null;
+  const approved = Boolean(approvedRecord && approvedRecord.status === "approved" && approvedRecord.recipeId === recipeId);
+  let decision;
+  if (approved) {
+    decision = { action: "execute", reason: `approved-by-${approvedRecord.decidedBy || "person"}`, requiresRestorePoint: color === "yellow", notifyBefore: false, notifyAfter: true, level: auto.level, color };
+  } else if (source === "deep-link") {
+    // (audit P1 §8 / fix i) — a browser link NEVER executes instantly: it creates an approval the person clicks.
+    decision = { action: "request-approval", reason: "deep-link-requires-approval", requiresRestorePoint: color === "yellow", notifyBefore: true, notifyAfter: false, level: auto.level, color };
+  } else if (!hours.open) {
+    decision = { action: "request-approval", reason: "outside-business-hours", requiresRestorePoint: color === "yellow", notifyBefore: true, notifyAfter: false, level: auto.level, color };
+  } else {
+    let hasRestorePoint = false;
+    if (color === "yellow" && auto.level === "full-auto") {
+      const win = maintenanceWindowNow(recipeId);
+      if (win.within) { const rp = await recordRestorePoint(recipeId, `ARIA pre-fix ${title}`); hasRestorePoint = Boolean(rp && rp.created === true); }
+      decision = decideExecution({ level: auto.level, color, tier: policy.tier, approverMode: auto.approverMode, inWindow: win.within, hasRestorePoint, killed: remediationKilled(), blocked: agentBlocked() });
+      if (decision.action === "defer-window" && !win.windowConfigured) decision = { ...decision, action: "request-approval", reason: "no-maintenance-window" };
+      if (decision.action === "defer-window") decision = { ...decision, nextWindowStart: win.nextWindowStart ? win.nextWindowStart.toISOString() : null };
+    } else {
+      decision = decideExecution({ level: auto.level, color, tier: policy.tier, approverMode: auto.approverMode, inWindow: maintenanceWindowNow(recipeId).within, hasRestorePoint: false, killed: remediationKilled(), blocked: agentBlocked() });
+    }
+    // A person who clicked "Resolve it for me" on their OWN device (approver = self) IS the approver: the visible,
+    // abortable 10s countdown is that approval — exactly today's consent model. Admin/either approver modes
+    // still route to an approval request so the named approver decides.
+    if (decision.action === "request-approval" && humanInitiated && auto.approverMode === "self" && decision.reason !== "restore-point-unavailable") {
+      decision = { ...decision, action: "execute", reason: `${decision.reason}:self-approved-by-countdown`, notifyAfter: true, forceCountdown: true };
+    }
+  }
+  const copy = describeDecision(decision);
+  if (decision.action === "blocked") {
+    logEvent("KILL-SWITCH", `Fix ${recipeId} blocked (${decision.reason}).`, { recipeId });
+    return { ok: false, verdict: "blocked", reason: decision.reason, decision, policy, countdown: false, copy };
+  }
+  if (decision.action === "notify-only") {
+    logEvent("AUTONOMY", `Fix ${recipeId} not run — ${decision.reason} (${auto.level}). Nothing was changed.`, { recipeId });
+    notifyEvent("issue-detected", { title, recipeId, severity: color });
+    return { ok: false, verdict: "notify-only", reason: decision.reason, decision, policy, countdown: false, copy, level: auto.level };
+  }
+  if (decision.action === "request-approval") {
+    const apr = approvals.request({ recipeId, title, color, tier: policy.tier, detectionId: payload.detectionId, requestedBy: humanInitiated ? "user" : source, reason: decision.reason, source });
+    ensureApprovalPolling();
+    return { ok: true, verdict: "approval-requested", approvalId: apr.id, reused: Boolean(apr.reused), expiresAt: apr.expiresAt, decision, policy, countdown: false, copy, level: auto.level };
+  }
+  if (decision.action === "defer-window") {
+    const queued = { recipeId, title, color, queuedAt: new Date().toISOString(), nextWindowStart: decision.nextWindowStart || null };
+    store.set("deferredFixes", [queued, ...(store.get("deferredFixes") || []).filter((d) => d.recipeId !== recipeId)].slice(0, 50));
+    logEvent("AUTONOMY", `Fix ${recipeId} queued to the next maintenance window${queued.nextWindowStart ? ` (${queued.nextWindowStart})` : ""}.`, { recipeId });
+    return { ok: true, verdict: "deferred", nextWindowStart: queued.nextWindowStart, decision, policy, countdown: false, copy, level: auto.level };
+  }
+
   const execute = () => {
     // Pass the policy's resolved dry-run so a Tier-0 recipe the customer opted into actually runs live.
-    Promise.resolve(runRecipe(recipeId, { confirmed: true, dryRun: policy.dryRun }))
+    Promise.resolve(runRecipe(recipeId, { confirmed: true, dryRun: policy.dryRun, approvalId: approved ? approvedRecord.id : undefined }))
       .then((res) => {
         const ran = Boolean(res && res.ok && res.dryRun === false);
         writeRecipeHistory(recordOutcome(readRecipeHistory(), recipeId, ran ? "success" : "abort"));
+        afterFixOutcome(recipeId, res, { decision, source });
       })
       .catch(() => writeRecipeHistory(recordOutcome(readRecipeHistory(), recipeId, "abort")));
   };
-  if (!policy.requiresCountdown) { execute(); return { ok: true, verdict: verdict.verdict, countdown: false, policy }; }
+  // An approval REPLACES the countdown (the person already said yes); the supervisor's needsConfirm FORCES one.
+  const countdown = approved ? false : (policy.requiresCountdown || needsConfirm || decision.forceCountdown === true);
+  if (!countdown) { execute(); return { ok: true, verdict: verdict.verdict, countdown: false, policy, decision, approved, copy }; }
   startActionCountdown({ recipeId, risk: proposal.riskTier, onComplete: execute });
-  return { ok: true, verdict: verdict.verdict, countdown: true, seconds: COUNTDOWN_SECONDS, policy };
+  return { ok: true, verdict: verdict.verdict, countdown: true, seconds: COUNTDOWN_SECONDS, policy, decision, copy };
 }
 
 // RUN 23b — Tier-0 execution path. childProcesses-tracked PowerShell runner (so Ctrl+Alt+K kills it) + the
@@ -2283,9 +2641,48 @@ function tier0Run(command) {
   });
 }
 
+// RUN-CU / CU4 — macOS user-level Tier-0 runner: each command is spawned POSITIONALLY (argv array, no shell),
+// tracked for the kill-switch, 20s timeout, stdout never surfaced (counts/exit codes only — content-blind).
+function runDarwinArgv(argv) {
+  return new Promise((resolve) => {
+    if (process.platform !== "darwin" || !Array.isArray(argv) || !argv.length) return resolve({ exitCode: 1, ran: false });
+    let child;
+    try { child = spawn(argv[0], argv.slice(1), { stdio: ["ignore", "ignore", "ignore"], timeout: 20000 }); }
+    catch { return resolve({ exitCode: 1, ran: false }); }
+    childProcesses.add(child);
+    child.on("error", () => { childProcesses.delete(child); resolve({ exitCode: 1, ran: true }); });
+    child.on("close", (code) => { childProcesses.delete(child); resolve({ exitCode: code == null ? 1 : code, ran: true }); });
+  });
+}
+async function runDarwinTier0Fix(recipe, actualDryRun) {
+  logEvent("RUN", `${actualDryRun ? "Dry-run" : "Executing"} macOS Tier-0 ${recipe.id}`, { recipeId: recipe.id });
+  const steps = [];
+  if (actualDryRun) {
+    for (const c of recipe.commands) steps.push({ command: c, ok: true, dryRun: true });
+    return { ok: true, dryRun: true, recipe: { id: recipe.id, tier: "tier-0", platform: "darwin" }, outcome: "dry-run", steps, message: "Dry-run: no change was made on this Mac." };
+  }
+  let ok = true;
+  for (let i = 0; i < recipe.argv.length; i++) {
+    const r = await runDarwinArgv(recipe.argv[i]);
+    const stepOk = r.ran && r.exitCode === 0;
+    steps.push({ command: recipe.commands[i], ok: stepOk, exitCode: r.exitCode });
+    logEvent(stepOk ? "DONE" : "ERROR", `${recipe.commands[i].split(/\s+/)[0]}: ${stepOk ? "completed" : `exit ${r.exitCode}`}`, { recipeId: recipe.id });
+    if (!stepOk) { ok = false; break; }
+  }
+  return { ok, dryRun: false, recipe: { id: recipe.id, tier: "tier-0", platform: "darwin" }, outcome: ok ? (recipe.readOnly ? "no-op-neutral" : "success") : "fail", steps, message: ok ? (recipe.readOnly ? "Checked — read-only, nothing changed." : "Done.") : "A step did not complete; nothing further was changed." };
+}
+
 async function runTier0Fix(recipeId, options = {}) {
+  // RUN-CU / CU4 (audit P0 #1) — line 1: the fleet/customer kill switch and a paused agent cover THIS executor too.
+  if (remediationKilled() || agentBlocked()) {
+    const reason = remediationKilled() ? (bridgeStatus.killReason || "remediation disabled") : "ARIA is paused on this device";
+    logEvent("KILL-SWITCH", `Tier-0 fix ${recipeId} blocked: ${reason}.`, { recipeId });
+    return { ...blockedRecipeResult(reason), dryRun: true, recipe: { id: String(recipeId || ""), tier: "tier-0" }, outcome: "blocked", steps: [], message: "Fixes are paused on this device." };
+  }
   // Dry-run unless system fixes are enabled AND the global gate is off AND the caller didn't force dry-run.
   const actualDryRun = !allowSystemFixes || Boolean(store.get("dryRun")) || options.dryRun === true;
+  // macOS user-level Tier-0 (dry-run by default; no PowerShell engine involved).
+  if (process.platform === "darwin" && isDarwinTier0(recipeId)) return runDarwinTier0Fix(tier0ById(recipeId, "darwin"), actualDryRun);
   const result = await executeTier0(recipeId, {
     dryRun: actualDryRun,
     run: tier0Run,
@@ -2339,9 +2736,14 @@ function logEvent(tag, text, extra = {}) {
   const current = store.get("transparencyLog") || [];
   current.unshift(entry);
   const trimmed = current.slice(0, 250);
+  // RUN-CU / CU4 — rows pushed out of the 250-row hot window are archived (userData/audit/YYYY-MM.jsonl), never dropped.
+  if (current.length > 250) { try { archiveAuditRows(current.slice(250)); } catch { /* archive is best-effort */ } }
   store.set("transparencyLog", trimmed);
   // RUN 16 §H — re-seal the log on every write so the next session can detect off-app tampering.
   try { store.set("auditSeal", sealAudit(trimmed)); } catch { /* sealing must never block logging */ }
+  // RUN-CU / CU4 (audit P1 #9) — the KEYED seal (HMAC under appHmacKey()) lives in its own file; it is the one
+  // the startup verifier trusts. Written on every log write, same as the legacy seal.
+  try { writeKeyedAuditSeal(trimmed); } catch { /* sealing must never block logging */ }
   // RUN-E E1 — a real fix just landed in the audit log: stamp pilot TTFV (write-once; no-op for other tags).
   if (tag === "RUN") { try { maybeStampPilotTtfv(); } catch { /* TTFV must never block logging */ } }
   if (tag === "RUN") { try { maybeAutorunCaseStudy(); } catch { /* RUN-E E2 — proof autorun must never block logging */ } }
@@ -2352,11 +2754,27 @@ function logEvent(tag, text, extra = {}) {
 // RUN 16 §H — at session start, verify the persisted audit log against the seal written last session.
 // A mismatch means the on-disk log was edited/truncated/reordered while the app was closed → record a
 // SECURITY entry, surface it to the admin (state + tray), then re-baseline the seal to the current log.
+// RUN-CU / CU4 — the keyed seal file (separate from the electron-store log; HMAC under the per-install key).
+const AUDIT_SEAL_FILE = () => path.join(app.getPath("userData"), "audit-seal.json");
+function readKeyedAuditSeal() { try { return JSON.parse(fs.readFileSync(AUDIT_SEAL_FILE(), "utf8")); } catch { return null; } }
+function writeKeyedAuditSeal(log) {
+  const sealed = sealAuditKeyed(log, appHmacKey());
+  fs.mkdirSync(path.dirname(AUDIT_SEAL_FILE()), { recursive: true });
+  fs.writeFileSync(AUDIT_SEAL_FILE(), JSON.stringify(sealed));
+  return sealed;
+}
 function verifyAuditIntegrity() {
   const log = store.get("transparencyLog") || [];
   const sealed = store.get("auditSeal");
-  if (sealed && Array.isArray(sealed.chain)) {
-    const result = verifyAudit(log, sealed);
+  // RUN-CU / CU4 — the KEYED seal is authoritative. A non-empty log with NO keyed seal is trusted only when the
+  // legacy (unkeyed) seal still verifies — the one-time 0.1.x → 0.2.0 migration; otherwise "seal-missing" is a
+  // tamper finding (banner), never a silent re-baseline (audit P1 #9).
+  const keyed = readKeyedAuditSeal();
+  if (keyed || log.length) {
+    let result;
+    if (keyed) result = verifyAuditKeyed(log, keyed, appHmacKey());
+    else if (sealed && Array.isArray(sealed.chain)) { const legacy = verifyAudit(log, sealed); result = legacy.ok ? { ok: true, reason: "legacy-seal-migrated" } : legacy; }
+    else result = verifyAuditKeyed(log, null, appHmacKey()); // → "seal-missing" for a non-empty log
     if (!result.ok) {
       const finding = { ok: false, reason: result.reason, brokenAt: result.brokenAt, detectedAt: new Date().toISOString() };
       store.set("auditIntegrity", finding);
@@ -2365,16 +2783,34 @@ function verifyAuditIntegrity() {
       try { refreshTray(); } catch { /* tray may not exist yet at startup */ }
       return finding;
     }
+  } else if (sealed && Array.isArray(sealed.chain)) {
+    const result = verifyAudit(log, sealed);
+    if (!result.ok) {
+      const finding = { ok: false, reason: result.reason, brokenAt: result.brokenAt, detectedAt: new Date().toISOString() };
+      store.set("auditIntegrity", finding);
+      logEvent("SECURITY", `Audit log integrity check FAILED (${result.reason}) — tamper detected; admin alerted.`);
+      try { refreshTray(); } catch { /* tray may not exist yet at startup */ }
+      return finding;
+    }
   }
-  const ok = { ok: true, verifiedAt: new Date().toISOString() };
+  const ok = { ok: true, verifiedAt: new Date().toISOString(), keyed: true };
   store.set("auditIntegrity", ok);
-  // Baseline/refresh the seal (first run, or after a confirmed-clean verify).
+  store.set("auditVerifiedAt", ok.verifiedAt);
+  // Baseline/refresh both seals (first run, migration, or after a confirmed-clean verify).
   try { store.set("auditSeal", sealAudit(log)); } catch { /* non-fatal */ }
+  try { writeKeyedAuditSeal(log); } catch { /* non-fatal */ }
   return ok;
 }
 
+// RUN-CU / CU4 (fix j) — externalAiCalls reflects REALITY: true once this session's chat chain reached the
+// aria-chat (Anthropic) fallback for a novel question (recorded by chat()); false while every answer came
+// from the KB-first retrieval or the bundled local KB. Never a literal.
+let lastChatProvider = null; // { provider, action, anthropic, ts }
+function externalAiCallsNow() { return Boolean(lastChatProvider && lastChatProvider.anthropic === true); }
+
 function getState() {
   const pausedUntil = Number(store.get("pausedUntil") || 0);
+  const auto = autonomyNow();
   return {
     version: SENTINEL_VERSION,
     // F5 (2026-07-02) — dev-only affordances (e.g. "Simulate ARIA error") show ONLY in a dev run, never in the
@@ -2383,8 +2819,16 @@ function getState() {
     mode: store.get("mode"),
     dryRun: !allowSystemFixes || Boolean(store.get("dryRun")),
     systemFixesEnabled: allowSystemFixes,
-    externalAiCalls: false,
-    reasoningMode: "local-symbolic",
+    keepSystemFixesDryRun: store.get("keepSystemFixesDryRun") === true,
+    externalAiCalls: externalAiCallsNow(),
+    reasoningMode: externalAiCallsNow() ? "kb-first + anthropic fallback (used this session)" : "local-symbolic",
+    lastChatProvider: lastChatProvider ? { provider: lastChatProvider.provider, anthropic: Boolean(lastChatProvider.anthropic), ts: lastChatProvider.ts } : null,
+    // RUN-CU / CU4 — autonomy level + approvals + platform honesty + the wizard prefs (for Settings → Autonomy & contacts).
+    autonomy: { level: auto.level, clamped: auto.clamped, reason: auto.reason, mode: auto.mode, approverMode: auto.approverMode, levels: AUTONOMY_LEVELS },
+    approvals: approvals.forState(),
+    deferredFixes: (store.get("deferredFixes") || []).slice(0, 10),
+    platformCapabilities: platformCapabilities(process.platform),
+    setupPrefs: setupPrefsNow(),
     pausedUntil,
     paused: pausedUntil > Date.now(),
     killed: remediationKilled(),
@@ -2475,7 +2919,7 @@ function buildReports() {
     stopCodes: STOP_CODES.length,
     dryRun: !allowSystemFixes || Boolean(store.get("dryRun")),
     contentBlind: true,
-    externalAiCalls: false
+    externalAiCalls: externalAiCallsNow() // RUN-CU / CU4 — real, not a literal
   };
 }
 
@@ -2585,6 +3029,9 @@ function addDetection(recipe, context = {}) {
   logEvent("DETECT", `${recipe.signal}: ${recipe.title}`, { recipeId: recipe.id });
   // Tray reflects the new situation at a glance: a red recipe escalates, everything else is a detection.
   setAgentState(recipe.risk === "red" ? "escalation" : "detection");
+  // RUN-CU / CU4 — "who should know when something breaks": desktop/email/SMS per the wizard channels,
+  // deduped per issue for 6h, content-blind (catalog title + id + severity + platform only).
+  notifyEvent("issue-detected", { title: recipe.title, recipeId: recipe.id, severity: recipeColor(recipe.id), detectionId: detection.id });
   // Autonomous mode may auto-apply a green recipe — gated by the opt-in + cap/cooldown/fleet guards.
   autoFireIfEligible(recipe, context).catch(() => undefined);
   overlayActiveUntil = Date.now() + 8000; // run the globe at 60fps through the fix animation
@@ -2622,7 +3069,8 @@ async function selfDiagnose(reason = "manual") {
     check("overlay", Boolean(overlayWindow && !overlayWindow.isDestroyed()), "Top-center ARIA globe window is available."),
     check("main-window", Boolean(mainWindow && !mainWindow.isDestroyed()), "Settings window is available."),
     check("dry-run", !allowSystemFixes || Boolean(store.get("dryRun")), "System-changing actions remain gated."),
-    check("content-boundary", true, "Runtime is local-symbolic with external AI calls disabled.")
+    // RUN-CU / CU4 (fix j) — say what is true: the KB-first chain may reach the Anthropic fallback for a novel question.
+    check("content-boundary", true, externalAiCallsNow() ? "KB-first chain reached the Anthropic fallback this session (question text only; never logs/paths/docs)." : "No external AI call this session — answers came from the knowledge base / local KB.")
   ];
   store.set("systemChecks", checks);
   const ok = checks.every((item) => item.ok || item.severity === "warn");
@@ -2691,7 +3139,7 @@ async function detectIssue(input = {}) {
 async function runRecipe(recipeId, options = {}) {
   // RUN 23b — a Tier-0 id (direct or aliased) routes to the dedicated executor instead of the diagnostic
   // recipe registry. Still dry-run-gated by the same flags; the supervisor + countdown gate it upstream.
-  if (resolveExecutorId(recipeId)) return runTier0Fix(recipeId, options);
+  if (resolveExecutorId(recipeId) || (process.platform === "darwin" && isDarwinTier0(recipeId))) return runTier0Fix(recipeId, options);
   const recipe = recipeById(recipeId);
   if (!recipe) return { ok: false, error: "recipe_not_found" };
   const decision = remediationDecision({
@@ -2704,19 +3152,28 @@ async function runRecipe(recipeId, options = {}) {
     logEvent("KILL-SWITCH", `Recipe ${recipe.signal} blocked: ${decision.reason}.`, { recipeId });
     return { ...blockedRecipeResult(decision.reason), recipe: publicRecipe(recipe) };
   }
+  // RUN-CU / CU4 (audit P1 #6) — the customer policy overlay (recipes_disabled) is enforced on the direct path too.
+  if (!isRecipeAllowedByPolicy(store.get("policyOverlay") || null, recipeId)) {
+    logEvent("POLICY", `Recipe ${recipe.signal} disabled by customer policy overlay.`, { recipeId });
+    return { ok: false, error: "policy_disabled", reason: "This fix is disabled by your organization's policy.", recipe: publicRecipe(recipe) };
+  }
   const executionId = options.executionId || options.execution_id;
   const confirmed = options.confirmed === true;
   const core = async () => {
   const actualDryRun = !allowSystemFixes || Boolean(store.get("dryRun")) || options.dryRun !== false;
   setAgentState("fixing");
   const steps = [];
-  // A System Restore point is created before any change touches the machine. Yellow-tier recipes
-  // REQUIRE this to have happened before their actions are allowed to execute (see isActionExecutable).
+  // A System Restore point is created — and VERIFIED (sequence number increased) — before any change touches
+  // the machine. Yellow-tier recipes REQUIRE a real one before their actions may execute (isActionExecutable);
+  // a record alone no longer counts (audit P0 #3). Dry-runs never create one.
   let restorePoint = null;
-  if ((recipe.actions || []).some((a) => a.shell === "powershell")) {
-    restorePoint = recordRestorePoint(recipe.id, `ARIA pre-fix ${recipe.signal}`);
+  if (!actualDryRun && (recipe.actions || []).some((a) => a.shell === "powershell")) {
+    restorePoint = await recordRestorePoint(recipe.id, `ARIA pre-fix ${recipe.signal}`);
   }
-  const restorePointTaken = Boolean(restorePoint);
+  const restorePointTaken = Boolean(restorePoint && restorePoint.created === true);
+  if (!actualDryRun && isYellowRecipe(recipe.id) && !restorePointTaken) {
+    logEvent("RESTORE PT", `${recipe.signal}: restore point unavailable on this platform/account — yellow-tier actions stay in preview.`, { recipeId });
+  }
   logEvent("RUN", `${actualDryRun ? "Dry-run" : "Executing"} recipe ${recipe.signal}`, { recipeId });
   for (const action of recipe.actions || []) {
     const result = await runAction(action, actualDryRun, recipe.id, { confirmed, restorePointTaken });
@@ -2725,8 +3182,11 @@ async function runRecipe(recipeId, options = {}) {
     if (!result.ok) break;
   }
   // After a real (non-dry-run) execution of a cleared recipe, run a read-only verification probe.
-  if (!actualDryRun && isExecutableRecipe(recipe.id) && steps.every((s) => s.ok)) {
+  let verifiedFlag = null;
+  const liveSteps = steps.filter((s) => s.dryRun === false).length;
+  if (!actualDryRun && isExecutableRecipe(recipe.id) && steps.every((s) => s.ok) && liveSteps > 0) {
     const verified = await verifyRecipe(recipe.id);
+    verifiedFlag = Boolean(verified.ok);
     logEvent(verified.ok ? "DONE" : "REVIEW", `Verification for ${recipe.signal}: ${verified.ok ? "passed" : "inconclusive"}.`, { recipeId });
     // RUN-B B5 - a REAL applied+verified fix: show the under-globe "resolved | email sent | ticket ref"
     // confirmation (real email + real recorded ticket ref). Non-blocking; never fires on an unverified fix.
@@ -2737,13 +3197,21 @@ async function runRecipe(recipeId, options = {}) {
   refreshHealthScore();
   const ok = steps.every((step) => step.ok);
   setAgentState(ok ? "idle" : "escalation");
+  // Rule 14 — "live" only when at least one action really executed; a yellow fix held in preview for want of a
+  // restore point reports dryRun:true + says why, never "Fix applied".
+  const effectiveDryRun = actualDryRun || liveSteps === 0;
+  const heldForRestorePoint = !actualDryRun && liveSteps === 0 && isYellowRecipe(recipe.id) && !restorePointTaken;
   return {
     ok,
-    dryRun: actualDryRun,
+    dryRun: effectiveDryRun,
     recipe: publicRecipe(recipe),
     steps,
     restorePoint,
-    message: actualDryRun ? "Dry-run complete. No system changes were made." : recipe.success
+    restorePointTaken,
+    verified: verifiedFlag,
+    message: heldForRestorePoint
+      ? "Held in preview: a restore point is unavailable on this platform/account, so this yellow-tier fix was not applied."
+      : effectiveDryRun ? "Dry-run complete. No system changes were made." : recipe.success
   };
   };
   // Idempotency: a repeated execution_id returns the cached outcome instead of re-applying.
@@ -2869,6 +3337,7 @@ function decodeUploadBody(uploadData) {
 
 async function runPrivacyCapture(windowMs = 10000) {
   const captured = [];
+  const startedAt = Date.now(); // RUN-CU / CU4 — main-process (Node fetch) calls recorded by outbound.mjs are merged below
   let ses = null;
   try {
     ses = session.defaultSession;
@@ -2887,9 +3356,13 @@ async function runPrivacyCapture(windowMs = 10000) {
   if (ses) {
     try { ses.webRequest.onBeforeRequest(null); } catch { /* listener already cleared */ }
   }
+  // RUN-CU / CU4 (audit P1 #7) — the main process's own outbound calls during the window (heartbeat, notify,
+  // approval poll, license, update, brain) join the capture: byte counts + the content-blind verdict recorded at
+  // send time (bodies are never stored). Before this, Node fetch traffic was invisible to the verifier.
+  const mainRows = outbound.since(startedAt).map((r) => ({ url: r.url, method: r.method, payloadBytes: r.bytes, sanitizationStatus: r.bytes > 0 ? (r.bodySafe === false ? "leak" : "clean") : "none", identityFields: r.identityFields || 0, source: "main-process" }));
   // Declared inbound GET pulls — the baseline allow-listed rows (0 payload, content-blind).
   const baseline = EXPECTED_OUTBOUND_PATHS.map((p) => ({ url: `https://${p.host}${p.path}`, method: p.method }));
-  const extra = captured.filter((c) => {
+  const extra = [...captured, ...mainRows].filter((c) => {
     try {
       const u = new URL(c.url);
       return !baseline.some((b) => b.url === `${u.protocol}//${u.hostname}${u.pathname}`);
@@ -2902,6 +3375,7 @@ async function runPrivacyCapture(windowMs = 10000) {
     ...summary,
     windowMs,
     capturedLive: captured.length,
+    capturedMain: mainRows.length,
     ts: new Date().toISOString()
   };
   store.set("lastPrivacyCapture", lastPrivacyCapture);
@@ -3014,7 +3488,7 @@ async function updateKnowledge() {
     try {
       const headers = { "user-agent": `ARIA-Sentinel/${SENTINEL_VERSION}` };
       if (customerConfig?.customerId) headers["x-aria-customer"] = customerConfig.customerId;
-      const res = await fetch(item.endpoint, { headers });
+      const res = await outbound.fetch(item.endpoint, { headers });
       results.push({ id: item.id, ok: res.ok, status: res.status });
       // The recipes endpoint is the control plane: it may carry a global kill switch.
       if (item.id === "recipes" && res.ok) {
@@ -3084,16 +3558,26 @@ async function chat(message, context = {}) {
   const signature = sanitizeToSignature({ issue: message, ...context });
   const query = queryForSignature(signature);
   const localMatches = matchRecipes(query, { limit: 3 }).map((match) => ({ score: match.score, recipe: publicRecipe(match.recipe) }));
+  // RUN-CU / CU4 — multi-turn + voice: the caller (ARIA tab / companion voice loop) passes the recent turns and
+  // `voice:true`; the brain then returns speak / needs_input / listen / action. History is capped + scrubbed
+  // in buildChatRequest; the KB-first local path synthesizes `speak` itself (first two sentences, listen:true).
+  const voice = context && context.voice === true;
+  const history = Array.isArray(context && context.history) ? context.history : [];
   // RUN 15 §4 — desktop wraps the LIVE iisupp.net/aria brain. Try it first; degrade to local KB offline.
   const brain = await askAria(String(message || ""), {
     sessionId: store.get("chatSessionId") || null,
-    deviceId: os.hostname(),
+    deviceId: deviceIdHash(),                                 // RUN-CU / CU4 (fix j) — a hash, never the raw hostname
     licenseKey: (readLicense() || {}).key || "",
     platform: process.platform,                               // RUN 30 — real OS so the brain answers cross-platform
     tier: (licenseStatus() || {}).plan || "",
-    version: SENTINEL_VERSION
+    version: SENTINEL_VERSION,
+    messages: history,
+    voice,
+    fetchImpl: outbound.fetch                                 // RUN-CU / CU4 — recorded by the privacy ring
   });
   if (brain && !brain.offline && brain.reply) {
+    // (fix j) — remember which tier answered so getState().externalAiCalls / Health tell the truth.
+    lastChatProvider = { provider: "aria-brain", action: brain.action || null, anthropic: brain.action !== "kb-match", ts: new Date().toISOString() };
     if (brain.session_id) store.set("chatSessionId", brain.session_id);
     if (brain.kb_meta) { store.set("kbMeta", brain.kb_meta); broadcastState(); } // RUN 33-A — surface KB freshness to the top bar
     // F2 (2026-07-03) — the live aria-kb-query excerpt can arrive cut mid-line (e.g. the printer "Escalation
@@ -3118,8 +3602,9 @@ async function chat(message, context = {}) {
     const footerLine = footerMatch ? footerMatch[1] : "";
     text = shapeKbAnswerForEndUser(footerLine ? text.slice(0, footerMatch.index) : text) + footerLine;
     persistChatAsk(message, text, classifyAnswer({ provider: "aria-brain", action: brain.action || null })); // D2
-    return { ok: true, provider: "aria-brain", text, action: brain.action || null, kbMatch: brain.kb_match || null, kbMeta: brain.kb_meta || null, matches: localMatches };
+    return withVoice({ ok: true, provider: "aria-brain", text, action: brain.action || null, kbMatch: brain.kb_match || null, kbMeta: brain.kb_meta || null, matches: localMatches }, brain, voice);
   }
+  lastChatProvider = { provider: "local-kb", action: null, anthropic: false, ts: new Date().toISOString() };
   // Offline / unreachable → answer from the bundled cross-platform KB (RUN 30-B). ARIA is full cross-platform
   // tech support (Windows, macOS, iOS, iPadOS, Android, ChromeOS, Linux) — never the old Windows-only string.
   // A matching Sentinel recipe is offered alongside; otherwise the KB answer (or its cross-platform no-match) stands.
@@ -3129,7 +3614,7 @@ async function chat(message, context = {}) {
       ? `${kb.text}\n\nI also found a local Sentinel recipe that may help: ${localMatches[0].recipe.title} — I can dry-run it or show the steps.`
       : kb.text;
     persistChatAsk(message, text, classifyAnswer({ provider: "local-kb", matched: true })); // D2
-    return { ok: true, provider: "local-kb", text, signature, matched: true, matches: localMatches, offline: true, cost: "none" };
+    return withVoice({ ok: true, provider: "local-kb", text, signature, matched: true, matches: localMatches, offline: true, cost: "none" }, null, voice);
   }
   // P3 (2026-07-14) — tier 3: the shared TOPICS brain (v2.1) gives GUIDED, multi-turn, $0 help when the
   // bundled KB has no confident match. Skipped for a credential-retrieval refusal (that answer stands).
@@ -3138,7 +3623,7 @@ async function chat(message, context = {}) {
     try { topic = topicsAnswer(String(message || "")); } catch { topic = null; }
     if (topic && topic.text) {
       persistChatAsk(message, topic.text, classifyAnswer({ provider: "aria-topics", matched: true })); // D2
-      return { ok: true, provider: "aria-topics", text: topic.text, signature, matched: true, matches: localMatches, offline: true, cost: "none" };
+      return withVoice({ ok: true, provider: "aria-topics", text: topic.text, signature, matched: true, matches: localMatches, offline: true, cost: "none" }, null, voice);
     }
   }
   // No confident match at any offline tier → the KB no-match message (or the credential refusal) stands.
@@ -3146,7 +3631,67 @@ async function chat(message, context = {}) {
     ? `${kb.text}\n\nI also found a local Sentinel recipe that may help: ${localMatches[0].recipe.title} — I can dry-run it or show the steps.`
     : kb.text;
   persistChatAsk(message, text, classifyAnswer({ provider: "local-kb", matched: kb.matched })); // D2
-  return { ok: true, provider: "local-kb", text, signature, matched: kb.matched, matches: localMatches, offline: true, cost: "none" };
+  return withVoice({ ok: true, provider: "local-kb", text, signature, matched: kb.matched, matches: localMatches, offline: true, cost: "none" }, null, voice);
+}
+
+// RUN-CU / CU4 — voice fields on every chat reply: the brain's own speak/needs_input/listen/action when it sent
+// them (voice mode), else synthesized from the text (first two sentences; listen:true so the loop re-arms).
+// When the action is a sentinel-fix with a recipe hint, match it to a VETTED catalog recipe and announce the
+// gated offer; the fix itself still goes through runSupervisedFix + the approval policy — never here.
+function withVoice(reply, brain, voice) {
+  const vf = voiceFieldsFor(reply, brain, voice);
+  return { ...reply, ...vf };
+}
+function voiceFieldsFor(reply, brain, voice) {
+  const text = String((reply && reply.text) || "");
+  const b = brain || {};
+  const speak = typeof b.speak === "string" && b.speak.trim() ? b.speak.trim() : deriveSpeak(text);
+  const needsInput = typeof b.needs_input === "boolean" ? b.needs_input : true;
+  const listen = typeof b.listen === "boolean" ? b.listen : needsInput;
+  const action = normalizeChatAction(b.actionDetail || b.action, reply);
+  let fixOffer = null;
+  if (action.kind === "sentinel-fix" && action.recipeHint) {
+    const matched = matchVettedRecipe(action.recipeHint, reply && reply.matches);
+    fixOffer = matched
+      ? { recipeId: matched.id, title: matched.title, color: recipeColor(matched.id), announce: buildVoiceFixAnnouncement({ title: matched.title, platform: process.platform, color: recipeColor(matched.id) }) }
+      : null;
+  }
+  return { speak: fixOffer ? `${speak} ${fixOffer.announce}`.trim() : speak, needs_input: needsInput, listen: fixOffer ? true : listen, voiceAction: action, fixOffer, voice: Boolean(voice) };
+}
+// deriveSpeak() comes from ../shared/voice-turns.mjs — ONE rule for spoken text in main, the tab and the companion.
+function normalizeChatAction(action, reply) {
+  if (action && typeof action === "object") {
+    const kind = ["guide", "sentinel-fix", "escalate", "none"].includes(action.kind) ? action.kind : "none";
+    return { kind, recipeHint: action.recipeHint ? String(action.recipeHint).slice(0, 80) : null };
+  }
+  const a = typeof action === "string" ? action : (reply && reply.action) || "";
+  if (a === "escalate") return { kind: "escalate", recipeHint: null };
+  if (a === "kb-match" || a === "resolved" || a === "local-kb-only") return { kind: "guide", recipeHint: null };
+  return { kind: "none", recipeHint: null };
+}
+/** Match a recipe hint (id or words) to a recipe in the supervisor's VETTED catalog; null when nothing safe matches. */
+function matchVettedRecipe(hint, localMatches) {
+  const h = String(hint || "").toLowerCase().trim();
+  if (!h || isBlockedPath(h)) return null;
+  const vetted = supervisedVettedCatalog();
+  const direct = resolveExecutorId(h) || (vetted.has(h) ? h : null);
+  if (direct && (resolveExecutorId(direct) || vetted.has(direct))) return { id: resolveExecutorId(direct) || direct, title: recipeTitle(direct) };
+  const words = h.split(/[^a-z0-9]+/).filter((w) => w.length > 2);
+  const candidates = [
+    ...TIER0_RECIPES.map((r) => ({ id: r.id, title: r.title, blob: `${r.id} ${r.title} ${r.category || ""}`.toLowerCase() })),
+    ...(process.platform === "darwin" ? TIER0_DARWIN_RECIPES.map((r) => ({ id: r.id, title: r.title, blob: `${r.id} ${r.title} ${r.category || ""}`.toLowerCase() })) : []),
+    ...RECIPES.filter((r) => vetted.has(r.id)).map((r) => ({ id: r.id, title: r.title, blob: `${r.id} ${r.title} ${r.signal || ""}`.toLowerCase() }))
+  ];
+  let best = null, bestScore = 0;
+  for (const c of candidates) {
+    const score = words.filter((w) => c.blob.includes(w)).length;
+    if (score > bestScore) { best = c; bestScore = score; }
+  }
+  if (!best || bestScore < 2) { // a weak hint: fall back to the local KB match ONLY if it is vetted
+    const top = Array.isArray(localMatches) && localMatches[0] && localMatches[0].recipe;
+    return top && vetted.has(top.id) ? { id: top.id, title: top.title } : null;
+  }
+  return { id: best.id, title: best.title };
 }
 
 function queryForSignature(signature, rawSignal = "") {
@@ -3236,18 +3781,58 @@ export function applyPolicyOverlay(jsonString) {
   return overlay;
 }
 
-function recordRestorePoint(recipeId, name) {
+// RUN-CU / CU4 (audit P0 #3) — a restore point is REAL or it is honestly "unavailable". The wrapper runs
+// src/main/restore-point.mjs's commands through the childProcesses-tracked PowerShell runner and verifies by
+// OUTCOME (the restore-point sequence number must increase; Windows silently no-ops inside its 24h throttle).
+// Record fields: status ('created' | 'throttled-degraded' | 'unverified-degraded' | 'unavailable' | 'dry-run'),
+// created (true ONLY when verified), sequenceNumber, protection, line (the honest copy the UI shows).
+const RESTORE_POINT_REUSE_MS = 30 * 60 * 1000; // a verified point we made in the last 30 min protects the next fix too
+function restoreCopy(status, seq) {
+  switch (status) {
+    case "created": return `Restore point #${seq} created and verified — this fix can be undone from System Restore.`;
+    case "throttled-degraded": return "Windows already made a restore point in the last 24h and won't make another; the earlier point still protects this fix.";
+    case "unverified-degraded": return "Restore point could not be confirmed (System Restore needs administrator rights, or is turned off). Yellow-tier fixes stay in preview until one exists.";
+    case "dry-run": return "Dry run — no restore point and no changes were made.";
+    default: return "Restore point unavailable on this platform/account — yellow-tier fixes stay in preview.";
+  }
+}
+async function recordRestorePoint(recipeId, name) {
+  const now = Date.now();
+  const points = store.get("restorePoints") || [];
+  const recent = points.find((p) => p && p.created === true && !p.rolledBack && now - Date.parse(p.createdAt) < RESTORE_POINT_REUSE_MS);
+  if (recent) {
+    logEvent("RESTORE PT", `Reusing verified restore point #${recent.sequenceNumber} (made ${Math.round((now - Date.parse(recent.createdAt)) / 60000)} min ago) before ${recipeId || "fix"}.`, { snapshotId: recent.id, recipeId });
+    return { ...recent, reused: true };
+  }
+  let status = "unavailable", sequenceNumber = null;
+  if (process.platform !== "win32") status = "unavailable";
+  else if (!allowSystemFixes || Boolean(store.get("dryRun"))) status = "dry-run";
+  else if (isThrottled(Number(store.get("lastRestoreCheckpointTs") || 0), now)) status = "throttled-degraded";
+  else {
+    try {
+      const before = sequenceOf(await runPowerShell(RESTORE_COMMANDS.list, 30000));
+      await runPowerShell(RESTORE_COMMANDS.create, 120000);
+      const after = sequenceOf(await runPowerShell(RESTORE_COMMANDS.list, 30000));
+      if (verifyCreated(before, after)) { status = "created"; sequenceNumber = after; store.set("lastRestoreCheckpointTs", now); }
+      else status = "unverified-degraded";
+    } catch { status = "unverified-degraded"; }
+  }
+  const created = status === "created";
   const point = {
     id: randomUUID(),
     recipeId: recipeId || "",
     name: safeShortText(name, "ARIA pre-fix"),
-    createdAt: new Date().toISOString(),
-    rolledBack: false
+    createdAt: new Date(now).toISOString(),
+    rolledBack: false,
+    status,
+    created,
+    sequenceNumber,
+    protection: created ? "restore-point" : "journal-only",
+    line: restoreCopy(status, sequenceNumber)
   };
-  const points = store.get("restorePoints") || [];
   points.unshift(point);
   store.set("restorePoints", points.slice(0, 20));
-  logEvent("RESTORE PT", `Restore point created before ${recipeId || "fix"}.`, { snapshotId: point.id });
+  logEvent("RESTORE PT", created ? `Restore point #${sequenceNumber} created and verified before ${recipeId || "fix"}.` : `Restore point NOT created before ${recipeId || "fix"} (${status}): ${point.line}`, { snapshotId: point.id, recipeId, status });
   return point;
 }
 
@@ -3255,14 +3840,18 @@ function rollbackRestorePoint(snapshotId) {
   const points = store.get("restorePoints") || [];
   const point = points.find((p) => p.id === snapshotId);
   if (!point) return { ok: false, error: "snapshot_not_found" };
-  // MVP: we log the rollback intent + mark the point. Real System Restore invocation is a
-  // signed, elevated action gated behind ARIA_SENTINEL_ALLOW_SYSTEM_FIXES (see DO_BUY list).
+  // A real System Restore (Restore-Computer -RestorePoint N) restarts the machine and needs administrator
+  // rights — ARIA never restarts your machine on its own. We record the request + the exact point so a person
+  // can run it; a record that was never a verified checkpoint is reported as "nothing to roll back to".
   point.rolledBack = true;
   point.rolledBackAt = new Date().toISOString();
   store.set("restorePoints", points);
-  logEvent("RESTORE PT", `Roll back requested for restore point ${snapshotId.slice(0, 8)}.`, { snapshotId });
+  const real = point.created === true;
+  logEvent("RESTORE PT", real
+    ? `Roll back requested to verified restore point #${point.sequenceNumber} (run System Restore to apply; requires a restart).`
+    : `Roll back requested for ${snapshotId.slice(0, 8)} — no verified restore point exists for it (nothing to roll back to).`, { snapshotId });
   broadcastState();
-  return { ok: true, snapshot: point, dryRun: !allowSystemFixes || Boolean(store.get("dryRun")) };
+  return { ok: true, snapshot: point, real, dryRun: !allowSystemFixes || Boolean(store.get("dryRun")), message: real ? `Use System Restore → point #${point.sequenceNumber} to undo this fix (restart required).` : "No verified restore point exists for this fix, so there is nothing to roll back to." };
 }
 
 function ariaCallerId() {
@@ -3369,19 +3958,27 @@ function startBridge() {
       return;
     }
     try {
+      const url = new URL(req.url || "/", `http://127.0.0.1:${BRIDGE_PORT}`);
+      // RUN-CU / CU4 (audit P0 #5) — the pure bridge-auth policy: foreign origins are refused everywhere; an EMPTY
+      // origin (curl / any local process as the user) may only read /health, /state (scrubbed) and /dist-info;
+      // every POST needs an identified extension / loopback origin. The legacy check stays as a second gate.
+      const gate = bridgeOriginAllowed({ origin: req.headers.origin, method: req.method, pathname: url.pathname, port: BRIDGE_PORT });
+      if (!gate.ok) return sendJson(res, 403, { ok: false, error: gate.reason });
       if (!isAllowedBridgeOrigin(req)) {
         return sendJson(res, 403, { ok: false, error: "origin_blocked" });
       }
-      const url = new URL(req.url || "/", `http://127.0.0.1:${BRIDGE_PORT}`);
       if (req.method === "GET" && url.pathname === "/health") return sendJson(res, 200, { ok: true, app: "ARIA Sentinel", version: SENTINEL_VERSION });
-      if (req.method === "GET" && url.pathname === "/state") return sendJson(res, 200, getState());
+      // /state is the SCRUBBED public slice (no transparency log, no license key, no contacts, no prefs).
+      if (req.method === "GET" && url.pathname === "/state") return sendJson(res, 200, scrubPublicState(getState()));
       // RUN 23c — current dist .exe metadata for the admin console's 1-click publish (local, read-only).
       if (req.method === "GET" && url.pathname === "/dist-info") return sendJson(res, 200, readDistInfo());
       if (req.method === "POST" && url.pathname === "/signature") return sendJson(res, 200, { ok: true, signature: sanitizeToSignature(await readJson(req)) });
       if (req.method === "POST" && url.pathname === "/detect") return sendJson(res, 200, await detectIssue(await readJson(req)));
       if (req.method === "POST" && url.pathname === "/run-recipe") {
-        const body = await readJson(req);
-        return sendJson(res, 200, await runRecipe(body.recipeId, body));
+        // Routed through runSupervisedFix (R11 → supervisor → policy → approval/countdown); the caller's
+        // dryRun / confirmed flags are stripped by sanitizeRunRecipeBody — the bridge can ask, never force.
+        const body = sanitizeRunRecipeBody(await readJson(req));
+        return sendJson(res, 200, await runSupervisedFix({ ...body, mode: "confirmed", risk: (recipeById(body.recipeId) || {}).risk || "medium" }));
       }
       if (req.method === "POST" && url.pathname === "/incident") {
         const body = await readJson(req);
@@ -3484,6 +4081,15 @@ ipcMain.handle("sentinel:set-mode", (_event, mode, optIn) => {
   store.set("mode", mode);
   applyModeBehavior(mode);
   if (mode === "autonomous") logEvent("MODE", "Autonomous mode enabled via explicit opt-in.");
+  // RUN-CU / CU4 — keep the autonomy level in step with a manual Mode change (one truth, two controls):
+  // autonomous → full-auto · confirmed → safe-auto · manual → approve-first. Business clamp still applies.
+  try {
+    const levelFor = { autonomous: "full-auto", confirmed: "safe-auto", manual: "approve-first" }[mode];
+    const cur = setupPrefsNow();
+    if (levelFor && cur.autonomyLevel !== levelFor && !(mode === "manual" && cur.autonomyLevel === "observe")) {
+      store.set("setupConfig", updateSetupPrefs(readSetupConfig(), { autonomyLevel: levelFor, fullAutoUnderstood: mode === "autonomous" ? true : cur.fullAutoUnderstood === true }));
+    }
+  } catch { /* level sync is best-effort */ }
   refreshTray();
   broadcastState();
   return { ok: true, state: getState() };
@@ -3518,13 +4124,13 @@ ipcMain.handle("aria:status", async () => {
   // Control Center content-boundary and the D1 abstain behavior.
   const opts = { externalAiEnabled: getState().externalAiCalls === true };
   try {
-    const r = await fetch("https://iisupp.net/.netlify/functions/aria-system-status", { headers: { "user-agent": "aria-sentinel" }, signal: AbortSignal.timeout?.(8000) });
+    const r = await outbound.fetch("https://iisupp.net/.netlify/functions/aria-system-status", { headers: { "user-agent": "aria-sentinel" }, signal: AbortSignal.timeout?.(8000) });
     return { ok: r.ok, data: parseSystemStatus(r.ok ? await r.json() : null, opts) };
   } catch { return { ok: false, data: parseSystemStatus(null, opts) }; }
 });
 ipcMain.handle("aria:learning", async () => {
   try {
-    const r = await fetch("https://iisupp.net/.netlify/functions/aria-kb-stats", { headers: { "user-agent": "aria-sentinel" }, signal: AbortSignal.timeout?.(8000) });
+    const r = await outbound.fetch("https://iisupp.net/.netlify/functions/aria-kb-stats", { headers: { "user-agent": "aria-sentinel" }, signal: AbortSignal.timeout?.(8000) });
     const data = parseKbStats(r.ok ? await r.json() : null);
     if (data.generatedAt) store.set("lastKbSeen", data.generatedAt);
     return { ok: r.ok, data };
@@ -3668,20 +4274,86 @@ ipcMain.handle("sentinel:complete-onboarding", () => {
 });
 // RUN 33-E — first-launch Setup wizard. State lives in electron-store via the tested app-config helpers.
 function readSetupConfig() { return store.get("setupConfig") || defaultAppConfig(); }
+// RUN-CU / CU4 — apply the autonomy level onto the EXISTING mode machine. observe/approve-first → manual (with
+// notifications), safe-auto → confirmed, full-auto → autonomous ONLY with the explicit "I understand" opt-in
+// (canEnableAutonomous — the same guard the Mode modal uses); without it the level stays but the mode is
+// clamped to confirmed and the person is told. Returns what was actually applied (Rule 14).
+function applyAutonomyLevel(prefs, optIn = {}) {
+  const auto = resolveAutonomy(prefs);
+  const map = autonomyLevelToMode(auto.level);
+  let mode = map.mode;
+  let note = auto.clamped ? auto.reason : "";
+  if (mode === "autonomous" && !canEnableAutonomous(optIn)) { mode = "confirmed"; note = "Full-auto needs the explicit \"I understand\" opt-in — running as safe-auto (confirmed) until then."; }
+  store.set("mode", mode);
+  applyModeBehavior(mode);
+  refreshTray();
+  if (mode === "autonomous") logEvent("MODE", "Autonomous mode enabled via the Setup wizard's explicit opt-in (full-auto).");
+  logEvent("AUTONOMY", `Autonomy level ${auto.level}${auto.clamped ? " (clamped)" : ""} → mode ${mode}.${note ? " " + note : ""}`);
+  return { level: auto.level, mode, clamped: auto.clamped, note };
+}
 ipcMain.handle("setup:complete", (_event, prefs) => {
   const cfg = completeSetup(readSetupConfig(), prefs || {});
   store.set("setupConfig", cfg);
   // Apply the chosen default mode — but NEVER autonomous silently (that needs the explicit opt-in modal).
   const m = cfg.setup.prefs.mode;
   if (m === "manual" || m === "confirmed") { store.set("mode", m); applyModeBehavior(m); refreshTray(); }
+  // RUN-CU / CU4 — the v2 autonomy level (when the wizard set one) maps onto the mode, opt-in guarded.
+  let applied = null;
+  if (prefs && typeof prefs === "object" && "autonomyLevel" in prefs) applied = applyAutonomyLevel(cfg.setup.prefs, { understood: cfg.setup.prefs.fullAutoUnderstood === true });
   logEvent("SETUP", "Setup wizard completed.");
   broadcastState();
-  return { ok: true, setup: cfg.setup };
+  return { ok: true, setup: cfg.setup, applied };
 });
 ipcMain.handle("setup:reopen", () => {
   store.set("setupConfig", reopenSetup(readSetupConfig()));
   broadcastState();
   return { ok: true };
+});
+// RUN-CU / CU4 — read the sanitized wizard prefs (v1 + v2) + the resolved autonomy, and update them later from
+// Settings → Autonomy & contacts (partial updates merge; everything re-sanitized; mode re-mapped when the level changes).
+ipcMain.handle("setup:get", () => ({ ok: true, prefs: setupPrefsNow(), autonomy: autonomyNow(), platformCapabilities: platformCapabilities(process.platform) }));
+ipcMain.handle("setup:update-prefs", (_event, partial) => {
+  const cfg = updateSetupPrefs(readSetupConfig(), partial || {});
+  store.set("setupConfig", cfg);
+  let applied = null;
+  if (partial && typeof partial === "object" && ("autonomyLevel" in partial || "techContacts" in partial || "identity" in partial)) {
+    applied = applyAutonomyLevel(cfg.setup.prefs, { understood: cfg.setup.prefs.fullAutoUnderstood === true });
+  }
+  logEvent("SETUP", `Autonomy & contacts updated (${Object.keys(partial || {}).filter((k) => k !== "fullAutoUnderstood").join(", ") || "no fields"}).`);
+  broadcastState();
+  return { ok: true, prefs: cfg.setup.prefs, autonomy: autonomyNow(), applied };
+});
+// RUN-CU / CU4 — approvals: approve runs the fix through the supervised pipeline with the approval in place of
+// the countdown; deny records the decision and NEVER executes. Both are gated under Control Center in the renderer.
+ipcMain.handle("sentinel:approve-fix", async (_event, payload) => {
+  const id = String((payload && payload.id) || payload || "");
+  const r = await approvals.approve(id, { decidedBy: "self", channel: "desktop" });
+  broadcastState();
+  return r;
+});
+ipcMain.handle("sentinel:deny-fix", async (_event, payload) => {
+  const id = String((payload && payload.id) || payload || "");
+  const r = await approvals.deny(id, { decidedBy: "self", channel: "desktop" });
+  broadcastState();
+  return r;
+});
+ipcMain.handle("sentinel:list-approvals", () => approvals.forState());
+// RUN-CU / CU4 (fix f) — the "Keep fixes in dry-run" checkbox finally has a writer. true = always preview;
+// false = live (still gated); unset = follow the mode (RUN 29-A default).
+ipcMain.handle("sentinel:set-keep-dry-run", (_event, on) => {
+  if (on === null || on === undefined) store.delete("keepSystemFixesDryRun"); else store.set("keepSystemFixesDryRun", Boolean(on));
+  logEvent("POLICY", on === null || on === undefined ? "Dry-run keep flag cleared (follows the mode)." : `Keep system fixes in dry-run: ${Boolean(on) ? "ON (preview only)" : "OFF (live, gated)"}.`);
+  broadcastState();
+  return { ok: true, keepSystemFixesDryRun: store.get("keepSystemFixesDryRun") };
+});
+// RUN-CU / CU4 — voice "yes" from the companion / ARIA tab: approves the matching pending ask (in-app channel).
+ipcMain.handle("sentinel:voice-approve", async (_event, payload) => {
+  const recipeId = String((payload && payload.recipeId) || "");
+  const pending = approvals.pending().find((a) => a.recipeId === recipeId);
+  if (!pending) return { ok: false, reason: "no-pending-approval" };
+  const r = await approvals.approve(pending.id, { decidedBy: "self", channel: "voice" });
+  broadcastState();
+  return r;
 });
 ipcMain.handle("sentinel:ingest-kb", (_event, file) => ingestKnowledgeFile(file || {}));
 // RUN 19 §4 — triple-confirm delete prefs (per-ext opt-out).
@@ -3711,7 +4383,10 @@ ipcMain.handle("sentinel:kill-switch", () => activateKillSwitch());
 ipcMain.handle("sentinel:get-system-context", () => getSystemContext({}));
 ipcMain.handle("sentinel:refresh-system-context", () => getSystemContext({ force: true }));
 ipcMain.handle("sentinel:list-tier0", () => listTier0Recipes());
-ipcMain.handle("sentinel:preview-tier0", (_event, id) => { const r = tier0ById(id); return r ? previewTier0(r) : { ok: false, error: "not_found" }; });
+ipcMain.handle("sentinel:preview-tier0", (_event, id) => { const r = tier0ById(id, process.platform); return r ? previewTier0(r) : { ok: false, error: "not_found" }; });
+// RUN-CU / CU4 — send a real test notification through every configured channel and report what happened
+// (desktop shown / email sent|dormant|failed / sms sent|dormant|failed). Nothing is ever claimed "sent" unless it was.
+ipcMain.handle("sentinel:test-notification", async () => notifyEvent("issue-detected", { title: "Test notification from ARIA Sentinel", recipeId: "sentinel-test", severity: "green" }, { force: true }));
 ipcMain.handle("sentinel:list-blueprints", () => listBlueprints());
 ipcMain.handle("sentinel:get-blueprint", (_event, id) => getBlueprint(id));
 ipcMain.handle("sentinel:diagnose", (_event, message) => runDiagnose(message));
@@ -3752,7 +4427,14 @@ ipcMain.handle("sentinel:abort-countdown", () => { const n = countdownManager.ab
 ipcMain.handle("sentinel:get-walkthrough", () => { const t = pendingWalkthrough; pendingWalkthrough = null; return t; });
 // P1 routing — is this recipe a vetted/bound Tier-0 action that can safely auto-apply? Single source of truth so
 // the renderer routes unvetted recipes to the Walk-through tab (never a dead "Resolve" that can't apply anything).
-ipcMain.handle("sentinel:is-vetted", (_event, recipeId) => ({ vetted: Boolean(resolveExecutorId(String(recipeId || ""))) }));
+// RUN-CU / CU4 (fix k) — platform-aware: Windows = the 5 PowerShell executor bindings; macOS = the user-level darwin
+// Tier-0 set; anywhere else nothing is vetted to auto-apply (the renderer routes to the guided walk-through).
+ipcMain.handle("sentinel:is-vetted", (_event, recipeId) => {
+  const id = String(recipeId || "");
+  if (process.platform === "darwin") return { vetted: isDarwinTier0(id), platform: "darwin" };
+  if (process.platform === "win32") return { vetted: Boolean(resolveExecutorId(id)), platform: "win32" };
+  return { vetted: false, platform: process.platform, reason: "no fix engine on this platform — guided only" };
+});
 // Allowlist for shell.openExternal. The companion's `open` steps open the user's BROWSER to an OFFICIAL vendor
 // site (their pricing / sign-up) — this is the USER's click launching their own browser, NOT an app network
 // call and NOT an account/payment action by the agent (those stay the user's, always). Host-anchored so only
@@ -3864,8 +4546,16 @@ if (hasSingleInstanceLock) {
     healStartupIfNeeded().catch(() => undefined);
     runUpdateCheck("launch").catch(() => undefined);
     sendHeartbeat().catch(() => undefined);
+    // RUN-CU / CU4 (audit P0 #2) — the control plane (fleet kill directive) is read at LAUNCH and every 24h, not
+    // only when someone clicks "Update knowledge". The heartbeat reply is parsed for {killed} as well.
+    updateKnowledge().catch(() => undefined);
     setInterval(updateTick, 60 * 60 * 1000).unref?.(); // hourly: advance strikes + take AUTO opportunities
-    setInterval(() => { runUpdateCheck("daily").catch(() => undefined); sendHeartbeat().catch(() => undefined); healStartupIfNeeded().catch(() => undefined); }, 24 * 60 * 60 * 1000).unref?.();
+    setInterval(() => { runUpdateCheck("daily").catch(() => undefined); sendHeartbeat().catch(() => undefined); healStartupIfNeeded().catch(() => undefined); updateKnowledge().catch(() => undefined); }, 24 * 60 * 60 * 1000).unref?.();
+    // RUN-CU / CU4 — approvals: expire overdue asks + poll remote decisions while anything is pending; aggregate
+    // report (daily/weekly per reportCadence) on launch + hourly.
+    if (approvals.pending().length) ensureApprovalPolling();
+    setTimeout(() => maybeSendAggregateReport().catch(() => undefined), 20 * 1000).unref?.();
+    setInterval(() => maybeSendAggregateReport().catch(() => undefined), 60 * 60 * 1000).unref?.();
     try { powerMonitor.on("resume", () => runUpdateCheck("wake").catch(() => undefined)); } catch { /* powerMonitor may be unavailable */ }
     // RUN 22 — daily 02:00 data-retention cleanup + quarterly report on a quarter-start launch.
     scheduleDailyAt(2, runRetentionCleanup);

@@ -63,6 +63,7 @@
           <button class="nav-item" data-tab="settings"><span class="nav-dot"></span>Settings<span class="nav-caret">▸</span></button>
           <div class="nav-sub" data-sub="settings">
             <a href="#mode" data-anchor="mode">Mode</a>
+            <a href="#autonomy" data-anchor="autonomy">Autonomy &amp; contacts</a>
             <a href="#hotkeys" data-anchor="hotkeys">Hotkeys</a>
             <a href="#troubleshoot" data-anchor="troubleshoot">Troubleshoot</a>
             <a href="#support" data-anchor="support">Support</a>
@@ -108,8 +109,14 @@
             </div>
             <form class="aria-chat-composer" id="ariaChatForm">
               <textarea id="ariaChatInput" placeholder="Ask ARIA anything…" rows="1"></textarea>
+              <!-- RUN-CU / CU4 — on-device voice: the mic shows ONLY when the bundled local model exists (never a cloud recognizer). -->
+              <button class="aria-chat-mic" id="ariaChatMic" type="button" title="Talk to ARIA (voice stays on your device)" hidden>🎤</button>
               <button class="aria-chat-send" id="ariaChatSend" type="submit">Send →</button>
             </form>
+            <div class="aria-chat-voicebar" id="ariaChatVoiceBar" hidden>
+              <label class="aria-chat-voicetoggle"><input type="checkbox" id="ariaVoiceConversation" /> <span>Voice conversation — keep listening after each answer (say "that's all" to stop)</span></label>
+              <span class="aria-chat-voicestatus" id="ariaVoiceStatus"></span>
+            </div>
             <div class="aria-chat-statusline">Answer chain: <b>KB-first</b> ($0) · <b>Anthropic</b> fallback · <b>local KB</b> offline · <span id="ariaChatChunks">203 chunks</span></div>
           </section>
 
@@ -240,6 +247,18 @@
             </div>
             <p id="selfHealHeadline" class="note"></p>
             <div id="systemChecks" class="health-list"></div>
+          </section>
+          <!-- RUN-CU / CU4 — Approvals: fixes waiting for a yes (approve = run through the gated pipeline, deny = nothing runs). -->
+          <section class="panel" id="approvalsPanel">
+            <div class="panel-actions">
+              <div><p class="eyebrow">Approvals</p><h2>Fixes waiting for your yes</h2></div>
+              <span id="approvalsCount" class="chip amber" hidden>0 pending</span>
+            </div>
+            <p class="note" id="approvalsNote">Nothing is waiting. When ARIA needs a yes before a fix — your autonomy level says "ask", a yellow-tier change, a link from the web — it shows up here and in your email.</p>
+            <div id="approvalsList" class="health-list"></div>
+            <h3 style="margin-top:14px">Recent decisions</h3>
+            <div id="approvalsDecided" class="log-list"></div>
+            <div id="deferredFixes" class="health-list" hidden></div>
           </section>
         </section>
 
@@ -571,8 +590,89 @@
               <button class="mode-row" data-mode="autonomous"><span class="radio"></span><span><strong>Autonomous</strong><em>LIVE - OPT-IN</em><small>ARIA may fast-path proven low-risk fixes after the supervisor clears them; higher-risk fixes still stop for approval.</small></span></button>
             </div>
             <!-- RUN 33 PIVOT — dry-run checkbox removed; the chosen Mode governs preview-vs-execute (Manual previews; Confirmed/Autonomous execute after supervisor + countdown + kill-switch). -->
+            <!-- RUN-CU / CU4 — the "keep in dry-run" safety finally has a writer (sentinel:set-keep-dry-run). Unchecked = follow the mode. -->
+            <label class="toggle-row keep-dryrun-row" style="display:flex;align-items:center;gap:10px;margin-top:12px">
+              <input id="keepDryRunToggle" type="checkbox" />
+              <span>Keep every system fix in preview (dry-run) — show me what would change, change nothing</span>
+            </label>
+            <p class="note" id="platformModeNote" hidden></p>
           </section>
           <!-- RUN 34-2 — the redundant Settings "Ask ARIA" box was removed; ARIA Chat lives only in the ARIA tab. -->
+
+          <!-- ## Autonomy & contacts (RUN-CU / CU4) — edits the same prefs the Setup wizard v2 collects (setup:update-prefs). -->
+          <div class="merge-head" id="autonomy">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Autonomy &amp; contacts</p><h2>Autonomy &amp; contacts</h2><p class="merge-sub">Who uses this device · who hears when something breaks · how much Sentinel fixes on its own · who approves · who gets the report · when maintenance can run</p></div>
+          </div>
+          <section class="panel" id="autonomyPanel">
+            <p class="eyebrow">How much should Sentinel fix on its own</p>
+            <h2>Autonomy level</h2>
+            <p class="note" id="autonomyCurrent">Loading…</p>
+            <div class="autonomy-cards" id="autonomyCards"></div>
+            <label class="setup-check" id="fullAutoUnderstoodRow" hidden><input type="checkbox" id="fullAutoUnderstood" /> I understand Full-auto applies green and yellow fixes inside my maintenance window without asking first (a restore point is required for yellow).</label>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">Who uses this device</p>
+            <h2>Identity</h2>
+            <div class="settings-grid-main">
+              <label class="field">This device is used for <select id="identityKind"><option value="personal">Personal</option><option value="business">Business</option></select></label>
+              <label class="field">Organization (business only) <input id="identityOrg" type="text" placeholder="Acme Dental" maxlength="80" /></label>
+              <label class="field">Your name <input id="deviceUserName" type="text" placeholder="Sam" maxlength="80" /></label>
+              <label class="field">Your email <input id="deviceUserEmail" type="email" placeholder="sam@company.com" /></label>
+              <label class="field">Your mobile (optional) <input id="deviceUserPhone" type="tel" placeholder="+1 416 555 0100" /></label>
+              <label class="toggle-row" style="display:flex;align-items:center;gap:10px"><input id="deviceUserSms" type="checkbox" /> <span>Text me when something breaks (needs a mobile number)</span></label>
+            </div>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">Who should know when something breaks</p>
+            <h2>Tech contacts</h2>
+            <p class="note">One per line: <code>name, email, phone, role</code> — role is <b>admin</b>, <b>it-lead</b> or <b>approver</b>. A business device needs at least one before Sentinel will fix anything on its own.</p>
+            <textarea id="techContacts" rows="3" placeholder="Jordan Lee, jordan@company.com, +1 416 555 0101, admin"></textarea>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">Who approves a fix before it runs</p>
+            <h2>Approver</h2>
+            <div class="settings-grid-main">
+              <label class="field">Who can say yes <select id="approverMode"><option value="self">Me, on this device</option><option value="admin">A tech contact / approver email</option><option value="either">Either</option></select></label>
+              <label class="field">Approver emails (comma-separated) <input id="approverContacts" type="text" placeholder="it@company.com" /></label>
+              <label class="field">Wait for an answer (minutes, 5–1440) <input id="approverTimeout" type="number" min="5" max="1440" value="30" /></label>
+              <label class="field">If nobody answers in time <select id="approverOnTimeout"><option value="skip">Skip the fix (tell me)</option><option value="proceed-green-only">Go ahead with green (low-risk) fixes only</option></select></label>
+            </div>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">Who gets the report</p>
+            <h2>Reports</h2>
+            <div class="settings-grid-main">
+              <label class="field">Recipients (email or phone, comma-separated) <input id="reportRecipients" type="text" placeholder="owner@company.com, +1 416 555 0102" /></label>
+              <label class="field">How often <select id="reportCadence"><option value="per-fix">After every fix</option><option value="daily">Daily summary</option><option value="weekly">Weekly summary</option></select></label>
+            </div>
+            <p class="note">The full PDF stays on this device (Reports tab). Email and text carry counts and titles only — never log lines, file paths or document text.</p>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">When can maintenance run</p>
+            <h2>Maintenance window</h2>
+            <div class="settings-grid-main">
+              <label class="field">Days <select id="mwDays"><option value="daily">Every day</option><option value="weekdays">Weekdays</option><option value="weekends">Weekends</option></select></label>
+              <label class="field">Starts at (24h, local) <input id="mwStart" type="time" value="02:00" /></label>
+              <label class="field">Lasts (minutes, 15–1440) <input id="mwDuration" type="number" min="15" max="1440" value="120" /></label>
+              <label class="toggle-row" style="display:flex;align-items:center;gap:10px"><input id="mwEnabled" type="checkbox" /> <span>Full-auto may apply yellow-tier fixes only inside this window</span></label>
+            </div>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">How you want to hear about it</p>
+            <h2>Channels</h2>
+            <div class="button-row">
+              <label class="toggle-row" style="display:flex;align-items:center;gap:8px"><input id="chDesktop" type="checkbox" checked /> <span>Desktop notification</span></label>
+              <label class="toggle-row" style="display:flex;align-items:center;gap:8px"><input id="chEmail" type="checkbox" checked /> <span>Email</span></label>
+              <label class="toggle-row" style="display:flex;align-items:center;gap:8px"><input id="chSms" type="checkbox" /> <span>Text message (SMS)</span></label>
+            </div>
+            <p class="note" id="smsHonestyNote">Text messages need the SMS provider to be set up on the server; until then they are reported as “not sent — provider not configured”, never as sent.</p>
+            <div class="button-row" style="margin-top:12px">
+              <button id="saveAutonomyPrefs" class="primary">Save</button>
+              <button id="testNotification" class="ghost">Send a test notification</button>
+              <span id="autonomyPrefsStatus" class="note"></span>
+            </div>
+          </section>
 
           <!-- ## Hotkeys (merged from the Hotkeys tab) -->
           <div class="merge-head" id="hotkeys">

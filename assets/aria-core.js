@@ -568,6 +568,21 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
 
   // Conversation memory for multi-turn helpdesk chat
   const ariaChatHistory = [];
+  // 2026-10-08: per-tab session id so aria-chat can keep server-side context for THIS tab only (the server
+  // trusts /^[A-Za-z0-9_-]{16,80}$/ and nothing else). sessionStorage → never shared across tabs.
+  function ariaWebSessionId() {
+    const KEY = 'aria_web_session_id';
+    let id = '';
+    try { id = sessionStorage.getItem(KEY) || ''; } catch (_) {}
+    if (!/^[A-Za-z0-9_-]{16,80}$/.test(id)) {
+      let rnd = '';
+      try { if (window.crypto && typeof window.crypto.randomUUID === 'function') rnd = window.crypto.randomUUID(); } catch (_) {}
+      if (!rnd) { const chars = '0123456789abcdefghijklmnopqrstuvwxyz'; for (let i = 0; i < 24; i++) rnd += chars[Math.floor(Math.random() * 36)]; }
+      id = 'web-' + rnd;
+      try { sessionStorage.setItem(KEY, id); } catch (_) {}
+    }
+    return id;
+  }
 
   async function buildTechSupport(q) {
     // 1. Try Knowledge Base first (instant, no AI cost)
@@ -591,7 +606,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       const res = await fetch("/.netlify/functions/aria-chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: ariaChatHistory }),
+        body: JSON.stringify({ messages: ariaChatHistory, sessionId: ariaWebSessionId() }),
       });
       if (!res.ok) throw new Error("Status " + res.status);
       const data = await res.json();

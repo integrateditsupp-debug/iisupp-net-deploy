@@ -15,6 +15,7 @@ import * as PerformanceTab from "./tabs/performance.mjs";
 import * as SlaTab from "./tabs/sla.mjs";
 import * as ComplianceTab from "./tabs/compliance.mjs";
 import * as ReportsTab from "./tabs/reports.mjs";
+import { createVoiceConversation } from "./voice-conversation.mjs"; // RUN-CU / CU4 — on-device multi-turn voice (ARIA tab 🎤)
 
 let state;
 let sentinel;
@@ -56,6 +57,7 @@ const TAB_REDIRECTS = {
   entra: { tab: "integrations", anchor: "entra-section" },
   remote: { tab: "integrations", anchor: "remote-section" },
   mode: { tab: "settings", anchor: "mode" },
+  autonomy: { tab: "settings", anchor: "autonomy" }, // RUN-CU / CU4 — Autonomy & contacts (wizard v2 prefs)
   hotkeys: { tab: "settings", anchor: "hotkeys" },
   troubleshoot: { tab: "settings", anchor: "troubleshoot" },
   support: { tab: "settings", anchor: "support" },
@@ -136,6 +138,8 @@ function runTabLoaders(target) {
   if (target === "compliance-privacy") loadCompliance();
   if (target === "system") { loadSystemContext(); loadBlueprints(); }
   if (target === "settings") loadUpdatesPanel();
+  if (target === "settings") loadAutonomyPrefs(); // RUN-CU / CU4 — Autonomy & contacts form
+  if (target === "control-center") renderApprovals(state); // RUN-CU / CU4 — Approvals section (pending + last 10 decided)
   if (target === "integrations") { loadIntegrations(); loadIncidents(); } // Integrations tab — status grid + ServiceNow incidents
   if (target === "recipes") renderTier0();
   if (target === "reports") loadReports();
@@ -275,13 +279,19 @@ async function resolveViaSupervisor(recipeId, risk, statusEl) {
     if (!r || r.ok === false) {
       if (r?.error === "r11_blocked") statusEl.textContent = "1 personal folder excluded — fix blocked by privacy rule.";
       else if (r?.verdict === "veto") statusEl.textContent = `Held by the safety supervisor: ${r.reason || "vetoed"}.`;
+      else if (r?.copy) statusEl.textContent = r.copy; // RUN-CU / CU4 — notify-only / blocked / policy verdicts, in plain words
       else statusEl.textContent = "Couldn't start this fix.";
     } else if (r.countdown) {
       statusEl.textContent = `Applying in ${r.seconds || 10}s — cancel from the countdown, or press Ctrl+Alt+K to abort.`;
     } else if (r.bypass) {
       statusEl.textContent = "Low-risk action acknowledged.";
+    } else if (r.verdict === "approval-requested") {
+      statusEl.textContent = "Waiting for approval — see Control Center → Approvals (and your email).";
+    } else if (r.verdict === "deferred") {
+      statusEl.textContent = r.copy || "Queued for your next maintenance window.";
     } else {
-      statusEl.textContent = r.policy && r.policy.dryRun === false ? "Fix applied (reversible — see Restore points)." : "Previewed safely (dry-run). Enable live fixes to apply.";
+      // RUN-CU / CU4 (Rule 14) — never "applied" before it ran: the audit log + restore-point record carry the truth.
+      statusEl.textContent = r.policy && r.policy.dryRun === false ? (r.copy || "Running now — the verified outcome lands in Dashboard → Activity.") : "Previewed safely (dry-run). Enable live fixes to apply.";
     }
   }
   return r;
@@ -414,6 +424,7 @@ function wireActions() {
   wireRun22();
   wireRun23e();
   wireLockedTabOverlay(); // SENTINEL TRIAL GATING 2026-07-02 — locked-tab upsell overlay + buy path
+  wireAutonomyPrefs();    // RUN-CU / CU4 — Settings → Autonomy & contacts + keep-dry-run + test notification
 
   bindClick("showGlobe", (button) => runAction(button, () => sentinel.showGlobe()));
   bindClick("pauseOneHour", (button) => runAction(button, () => sentinel.setPaused(HOUR_MS)));
@@ -538,9 +549,82 @@ function renderState(next) {
   renderSecurityBanner(state);
   renderRun19(state);
   renderRun21(state);
+  renderApprovals(state);        // RUN-CU / CU4 — approvals (Control Center) refresh on every state push
+  renderAutonomyBadge(state);    // RUN-CU / CU4 — current level + keep-dry-run checkbox
+  renderPlatformHonesty(state);  // RUN-CU / CU4 (fix k) — detect-only / guided relabels where no fix engine exists
   maybeShowOnboarding(state);
   maybeShowSetupWizard(state); // RUN 33-E
   maybeShowWhatsNew(state);
+}
+
+// ===== RUN-CU / CU4 — approvals · autonomy level · platform honesty =====
+function approvalWhen(iso) { const t = Date.parse(iso || ""); if (!Number.isFinite(t)) return ""; const m = Math.round((t - Date.now()) / 60000); return m > 0 ? `waits ${m} min` : "expiring"; }
+function renderApprovals(next) {
+  const list = qs("#approvalsList"), decided = qs("#approvalsDecided"), count = qs("#approvalsCount"), note = qs("#approvalsNote"), deferred = qs("#deferredFixes");
+  if (!list || !decided) return;
+  const a = (next && next.approvals) || { pending: [], decided: [], pendingCount: 0 };
+  const pending = Array.isArray(a.pending) ? a.pending : [];
+  if (count) { count.hidden = pending.length === 0; count.textContent = `${pending.length} pending`; }
+  if (note) note.hidden = pending.length > 0;
+  list.innerHTML = pending.map((p) => `
+    <div class="approval-row" data-approval="${escapeHtml(p.id)}">
+      <div><strong><span class="approval-color ${escapeHtml(p.color || "yellow")}"></span>${escapeHtml(p.title || p.recipeId)}</strong>
+        <small>${escapeHtml(p.recipeId)} · ${escapeHtml(p.color || "yellow")} tier · asked by ${escapeHtml(p.requestedBy || "sentinel")} (${escapeHtml(p.reason || p.source || "")}) · ${escapeHtml(approvalWhen(p.expiresAt))}</small></div>
+      <div class="button-row">
+        <button class="primary" data-approve="${escapeHtml(p.id)}">Approve</button>
+        <button class="ghost" data-deny="${escapeHtml(p.id)}">Deny</button>
+      </div>
+    </div>`).join("");
+  qsa("[data-approve]").forEach((b) => b.addEventListener("click", () => runAction(b, async () => {
+    const r = await sentinel.approveFix?.(b.dataset.approve);
+    showToast(r && r.ok ? { title: "Approved", body: r.result && r.result.copy ? r.result.copy : "Running through the gated pipeline now." } : { title: "Couldn't approve", body: (r && r.reason) || "Already decided or expired.", danger: true });
+    return r;
+  })));
+  qsa("[data-deny]").forEach((b) => b.addEventListener("click", () => runAction(b, async () => {
+    const r = await sentinel.denyFix?.(b.dataset.deny);
+    showToast(r && r.ok ? { title: "Denied", body: "Nothing was changed." } : { title: "Couldn't deny", body: (r && r.reason) || "Already decided or expired.", danger: true });
+    return r;
+  })));
+  const dec = Array.isArray(a.decided) ? a.decided : [];
+  decided.innerHTML = dec.length ? dec.map((d) => `<div class="approval-decided"><b>${escapeHtml(d.status)}</b> · ${escapeHtml(d.title || d.recipeId)} · by ${escapeHtml(d.decidedBy || "—")} via ${escapeHtml(d.channel || "—")} · ${escapeHtml(new Date(d.decidedAt || d.createdAt).toLocaleString())}</div>`).join("") : `<p class="note">No decisions yet.</p>`;
+  const df = (next && next.deferredFixes) || [];
+  if (deferred) { deferred.hidden = df.length === 0; deferred.innerHTML = df.map((d) => `<div class="health-row"><span>queued</span><strong>${escapeHtml(d.title || d.recipeId)}</strong><em>${d.nextWindowStart ? "next window " + escapeHtml(new Date(d.nextWindowStart).toLocaleString()) : "waiting for a maintenance window"}</em></div>`).join(""); }
+}
+const AUTONOMY_CARDS = [
+  { id: "observe", label: "Observe", consequence: "I find it, I tell you, I touch nothing." },
+  { id: "safe-auto", label: "Safe-auto", consequence: "I fix the safe things myself and tell you after." },
+  { id: "approve-first", label: "Approve-first", consequence: "I ask before every fix." },
+  { id: "full-auto", label: "Full-auto", consequence: "I fix green and yellow inside your maintenance window and report." }
+];
+function autonomyCardsHtml(selected, idPrefix = "autonomy") {
+  return AUTONOMY_CARDS.map((c) => `<button type="button" class="autonomy-card${c.id === selected ? " selected" : ""}" data-${idPrefix}-level="${c.id}"><b>${escapeHtml(c.label)}</b><span>${escapeHtml(c.consequence)}</span><em>${c.id === "full-auto" ? "needs opt-in + restore point" : c.id === "observe" ? "nothing ever changes" : c.id === "safe-auto" ? "green only · tells you after" : "every fix waits for a yes"}</em></button>`).join("");
+}
+function renderAutonomyBadge(next) {
+  const cur = qs("#autonomyCurrent");
+  const a = next && next.autonomy;
+  if (cur && a) {
+    const card = AUTONOMY_CARDS.find((c) => c.id === a.level) || AUTONOMY_CARDS[2];
+    cur.textContent = `Now: ${card.label} — ${card.consequence}${a.clamped ? ` (${a.reason})` : ""} · runs as ${a.mode} mode · approver: ${a.approverMode}.`;
+    cur.classList.toggle("clamped", Boolean(a.clamped));
+  }
+  const keep = qs("#keepDryRunToggle");
+  if (keep && next) keep.checked = next.keepSystemFixesDryRun === true;
+}
+// (fix k) — where no fix engine exists (macOS = user-level only · phones/tablets/ChromeOS/Linux = guided), every
+// control stays, the words change: "Resolve it for me" reads "Guide me (detect-only here)" and the Mode panel says so.
+function renderPlatformHonesty(next) {
+  const caps = next && next.platformCapabilities;
+  if (!caps) return;
+  const note = qs("#platformModeNote");
+  const guidedOnly = caps.fix !== true;
+  if (note) { note.hidden = !guidedOnly; note.textContent = guidedOnly ? `On ${caps.label}: ${caps.copy} Fix modes above apply only where a fix engine exists; here ARIA detects and guides.` : ""; }
+  document.body.classList.toggle("platform-guided-only", guidedOnly);
+  document.body.classList.toggle("platform-limited-fix", caps.fix === "limited");
+  if (guidedOnly) {
+    qsa("[data-resolve-fix], .aria-chat-resolve-btn:not(.ghost)").forEach((b) => { if (!b.dataset.relabeled) { b.dataset.relabeled = "1"; b.textContent = caps.fix === "limited" ? "Resolve (user-level) / guide me" : "Guide me (detect-only here)"; } });
+    const tier0Note = qs("#tier0List")?.closest(".panel")?.querySelector(".note");
+    if (tier0Note && !tier0Note.dataset.platformNote) { tier0Note.dataset.platformNote = "1"; tier0Note.textContent += ` On ${caps.label}: ${caps.copy}`; }
+  }
 }
 
 function renderKillBanner(next) {
@@ -2157,7 +2241,23 @@ function initAriaChat() {
     // TASK 4 — the one intentional difference from web: Sentinel can RESOLVE it on this device. The chip runs
     // the matched fix through the gated control plane (Confirmed-grade, never autonomous, countdown + kill-switch).
     appendResolveChip(bubble, question);
+    // RUN-CU / CU4 — the brain offered a VETTED fix by name (voice/chat action sentinel-fix): one honest button
+    // that goes through the same gated pipeline + approval policy; the status line says exactly what happened.
+    if (res && res.fixOffer && res.fixOffer.recipeId) appendFixOffer(bubble, res.fixOffer);
     appendConfidenceAndFeedback(bubble, res, question);
+  }
+  function appendFixOffer(bubble, offer) {
+    const wrap = document.createElement("div"); wrap.className = "aria-chat-resolve aria-chat-fixoffer";
+    const btn = document.createElement("button"); btn.type = "button"; btn.className = "aria-chat-resolve-btn"; btn.textContent = `Approve: ${offer.title || offer.recipeId}`;
+    const st = document.createElement("span"); st.className = "aria-chat-resolve-status"; st.textContent = offer.announce || "";
+    btn.addEventListener("click", async () => {
+      btn.disabled = true; st.textContent = "Asking the safety gate…";
+      try {
+        const fix = await window.sentinel.supervisedFix({ recipeId: offer.recipeId, mode: "confirmed", source: "chat" });
+        st.textContent = !fix || fix.ok === false ? (fix && fix.copy) || (fix && fix.reason) || "Couldn't start the fix." : fix.countdown ? `Applying in ${fix.seconds || 10}s — cancel from the countdown, or Ctrl+Alt+K.` : fix.verdict === "approval-requested" ? "Waiting for approval (Control Center → Approvals)." : fix.copy || "Done.";
+      } catch { st.textContent = "Couldn't resolve right now."; btn.disabled = false; }
+    });
+    wrap.append(btn, st); bubble.appendChild(wrap);
   }
   // Under every answer, present TWO clear Sentinel-only paths (P1): "Walk me through it" (opens the Walk-through
   // tab in GUIDE mode — safe, changes nothing) and "Resolve it for me" (the gated apply flow). A matched recipe
@@ -2205,10 +2305,13 @@ function initAriaChat() {
         }
         const fix = await window.sentinel.supervisedFix({ recipeId, mode: "confirmed" });
         if (!fix || fix.ok === false) {
-          st.textContent = fix?.error === "r11_blocked" ? "1 personal folder excluded." : fix?.verdict === "veto" ? `Held by safety supervisor: ${fix.reason || "vetoed"}.` : "Couldn't start the fix.";
+          st.textContent = fix?.error === "r11_blocked" ? "1 personal folder excluded." : fix?.verdict === "veto" ? `Held by safety supervisor: ${fix.reason || "vetoed"}.` : fix?.copy || "Couldn't start the fix.";
         } else if (fix.countdown) {
           st.textContent = `Applying in ${fix.seconds || 10}s — cancel from the countdown, or Ctrl+Alt+K to abort.`;
-        } else if (fix.policy && fix.policy.dryRun === false) { st.textContent = "Fix applied (reversible — see Restore points)."; }
+        } else if (fix.verdict === "approval-requested") { st.textContent = "Waiting for approval — see Control Center → Approvals (and your email)."; }
+        else if (fix.verdict === "deferred") { st.textContent = fix.copy || "Queued for your next maintenance window."; }
+        // RUN-CU / CU4 (Rule 14) — the fix runs asynchronously; say "running" and let the audit log + restore point record speak.
+        else if (fix.policy && fix.policy.dryRun === false) { st.textContent = fix.copy || "Running now — the verified outcome lands in Dashboard → Activity; a restore point is recorded only when one was really created."; }
         else { st.textContent = "Previewed safely (dry-run)."; }
       } catch { st.textContent = "Couldn't resolve right now."; btn.disabled = false; }
     });
@@ -2274,23 +2377,104 @@ function initAriaChat() {
   }
   input.addEventListener("input", () => { input.style.height = "auto"; input.style.height = Math.min(140, input.scrollHeight) + "px"; });
   input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
+  // RUN-CU / CU4 — the tab keeps its own turn history (last 12) and sends it with every ask, so a follow-up
+  // ("and the printer?") lands in context. Typed and spoken turns share ONE history.
+  const turns = [];
+  const remember = (role, content) => { turns.push({ role, content: String(content || "").slice(0, 2000) }); while (turns.length > 12) turns.shift(); };
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const msg = input.value.trim();
     if (!msg || !window.sentinel || !window.sentinel.chat) return;
     row("me", msg); input.value = ""; input.style.height = "auto"; send.disabled = true; input.disabled = true;
     const r = thinking();
-    try { fill(r, await window.sentinel.chat(msg, {}), msg); }
+    try { const res = await window.sentinel.chat(msg, { history: turns.slice() }); remember("user", msg); if (res && res.text) remember("assistant", res.text); fill(r, res, msg); }
     catch (err) { r.querySelector(".aria-chat-bubble").textContent = "Something went wrong reaching ARIA. Please try again."; }
     finally { send.disabled = false; input.disabled = false; input.focus(); scrollEnd(); }
   });
+
+  // ── RUN-CU / CU4 — 🎤 voice in the tab: on-device STT (bundled Vosk model) + narration; the mic shows ONLY
+  // when the local model exists (never a cloud recognizer). "Voice conversation" keeps listening after each
+  // answer until you say "that's all". A fix the brain offers is approved by your spoken "yes" through the
+  // SAME gated pipeline as the Resolve chip — never executed from here.
+  const mic = qs("#ariaChatMic"), voiceBar = qs("#ariaChatVoiceBar"), convoToggle = qs("#ariaVoiceConversation"), vstatus = qs("#ariaVoiceStatus");
+  const canMic = typeof navigator !== "undefined" && navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+  if (mic && canMic && window.sentinel.voskModelUrl) {
+    window.sentinel.voskModelUrl().then((u) => { if (u) { mic.hidden = false; if (voiceBar) voiceBar.hidden = false; } }).catch(() => undefined);
+    let pendingRow = null;
+    const convo = createVoiceConversation({
+      voskModelUrl: () => window.sentinel.voskModelUrl(),
+      chat: (text, ctx) => window.sentinel.chat(text, { ...ctx, history: turns.slice() }),
+      supervisedFix: (p) => window.sentinel.supervisedFix(p),
+      voiceApprove: (recipeId) => window.sentinel.voiceApprove?.(recipeId),
+      platform: state && state.platform,
+      setGlobeState: () => {},
+      onStatus: (st) => {
+        mic.classList.toggle("listening", st === "listening"); mic.classList.toggle("speaking", st === "speaking");
+        if (vstatus) vstatus.textContent = st === "listening" ? "Listening… (on this device)" : st === "thinking" ? "Thinking…" : st === "speaking" ? "Speaking — tap 🎤 to interrupt" : "";
+        if (st === "thinking" && !pendingRow) pendingRow = thinking();
+      },
+      onTranscript: ({ who, text }) => {
+        if (!text) return;
+        if (who === "me") { const el = row("me", text); el.classList.add("voice"); remember("user", text); }
+        else if (who === "aria") { if (pendingRow) { pendingRow.querySelector(".aria-chat-bubble").textContent = text; pendingRow.classList.add("voice"); pendingRow = null; } else row("aria", text).classList.add("voice"); remember("assistant", text); }
+        else if (vstatus) vstatus.textContent = text;
+      }
+    });
+    // Single-turn by default (one question, one spoken answer); the toggle turns it into a conversation.
+    mic.addEventListener("click", async () => {
+      if (convo.isActive()) { await convo.globeTap(); return; }
+      const r = await convo.start();
+      if (!r || r.ok === false) { mic.hidden = true; if (voiceBar) voiceBar.hidden = true; }
+    });
+    convoToggle?.addEventListener("change", () => { if (!convoToggle.checked && convo.isActive() && convo.state() !== "listening") convo.stop(); });
+    // When the conversation toggle is OFF, end after the first spoken answer (the loop re-arms only when ON).
+    let lastState = "idle";
+    const observer = setInterval(() => {
+      const st = convo.state();
+      if (st !== lastState) {
+        if (lastState === "speaking" && st === "listening" && convoToggle && !convoToggle.checked) convo.stop();
+        lastState = st;
+      }
+    }, 250);
+    window.addEventListener("beforeunload", () => clearInterval(observer));
+  }
 }
 
 // RUN 33-E — first-launch Setup wizard (6 steps). Shows once on a fresh install (state.setupNeeded) or when
 // re-run from Settings; collects prefs and persists via sentinel.completeSetup. The state machine + never-replay
 // invariant live in app-config.mjs (tested). Setup must never replay after completion.
 let setupShown = false;
-const setupPrefs = { mode: "manual", landOnAria: false, kbNotifications: true, trayIcon: true };
+// RUN-CU / CU4 — wizard v2 prefs live beside the v1 four (sanitized in main by app-config.mjs; this is just the form state).
+const setupPrefs = {
+  mode: "manual", landOnAria: false, kbNotifications: true, trayIcon: true,
+  identity: { kind: "personal", orgName: "" },
+  deviceUser: { name: "", email: "", phone: "", smsOptIn: false },
+  techContacts: [],
+  autonomyLevel: "safe-auto",
+  fullAutoUnderstood: false,
+  approver: { mode: "self", contacts: [], timeoutMinutes: 30, onTimeout: "skip" },
+  reportRecipients: [],
+  reportCadence: "weekly",
+  maintenanceWindow: { enabled: false, windows: [] },
+  notifyChannels: { desktop: true, email: true, sms: false }
+};
+// Pure parsers shared by the wizard + the Settings form (one line per contact: "name, email, phone, role").
+function parseContactLines(text) {
+  return String(text || "").split(/\r?\n/).map((l) => l.trim()).filter(Boolean).map((l) => {
+    const parts = l.split(",").map((p) => p.trim());
+    const email = parts.find((p) => /@/.test(p)) || "";
+    const phone = parts.find((p) => /^\+?[0-9()\-\s.]{7,20}$/.test(p)) || "";
+    const role = parts.map((p) => p.toLowerCase()).find((p) => ["admin", "it-lead", "approver"].includes(p)) || "admin";
+    const name = parts.find((p) => p && p !== email && p !== phone && !["admin", "it-lead", "approver"].includes(p.toLowerCase())) || "";
+    return { name, email, phone, role };
+  });
+}
+function parseRecipientList(text) {
+  return String(text || "").split(/[,\n;]/).map((p) => p.trim()).filter(Boolean).map((p) => (/@/.test(p) ? { email: p, phone: "" } : { email: "", phone: p }));
+}
+function contactLinesText(list) { return (list || []).map((c) => [c.name, c.email, c.phone, c.role].filter(Boolean).join(", ")).join("\n"); }
+function recipientListText(list) { return (list || []).map((r) => r.email || r.phone).filter(Boolean).join(", "); }
+function mwFrom(prefs) { const w = (prefs.maintenanceWindow && prefs.maintenanceWindow.windows && prefs.maintenanceWindow.windows[0]) || {}; return { days: typeof w.days === "string" ? w.days : "daily", start: w.start || "02:00", durationMin: w.durationMin || 120, enabled: Boolean(prefs.maintenanceWindow && prefs.maintenanceWindow.enabled) }; }
 const SETUP_STEPS = [
   { kicker: "Welcome", title: "ARIA Sentinel — your AI IT assistant", body: () => `<p class="setup-lead">Resident IT support that answers from the knowledge base first (free), and only calls the reasoning model for novel questions. Let's get you set up in a few steps.</p>` },
   { kicker: "License", title: "Activate or start a trial", body: () => `<p class="setup-lead">Paste a license key, or start a free 12-hour Pro trial — you can do this anytime from Settings.</p><input id="setupLicense" placeholder="Paste license key (optional)" autocomplete="off" />` },
@@ -2299,7 +2483,32 @@ const SETUP_STEPS = [
     <label class="setup-radio"><input type="radio" name="setupMode" value="confirmed" ${setupPrefs.mode === "confirmed" ? "checked" : ""}/> <b>Confirmed</b> — execute after a 10s countdown</label>` },
   { kicker: "ARIA Chat", title: "ARIA Chat", body: () => `<p class="setup-lead">ARIA Chat lives in the ARIA tab (left panel) — or press Ctrl+Alt+A anytime.</p><label class="setup-check"><input type="checkbox" id="setupLand" ${setupPrefs.landOnAria ? "checked" : ""}/> Open the ARIA tab when Sentinel starts</label>` },
   { kicker: "Notifications", title: "Notifications", body: () => `<label class="setup-check"><input type="checkbox" id="setupKbNotif" ${setupPrefs.kbNotifications ? "checked" : ""}/> Tell me when ARIA learns new fixes</label><label class="setup-check"><input type="checkbox" id="setupTray" ${setupPrefs.trayIcon ? "checked" : ""}/> Show the system-tray icon</label>` },
-  { kicker: "Done", title: "You're all set", body: () => `<p class="setup-lead">ARIA Sentinel is ready. Open the Dashboard to see status, the ARIA tab to chat, or the Learning sub-section to see what ARIA knows.</p>` }
+  { kicker: "Done", title: "You're all set", body: () => `<p class="setup-lead">ARIA Sentinel is ready. Open the Dashboard to see status, the ARIA tab to chat, or the Learning sub-section to see what ARIA knows.</p><p class="setup-lead">A few more questions tell ARIA who to keep informed and how much to do on its own.</p>` },
+  // ── RUN-CU / CU4 — wizard v2 steps, APPENDED after the original six (ids above are untouched) ──
+  { kicker: "Who uses this device", title: "Who uses this device", id: "setup-identity", body: () => `<p class="setup-lead">ARIA uses this to know who to tell when something breaks. Nothing here leaves the device except to send you those notifications.</p>
+    <label class="setup-radio"><input type="radio" name="setupIdentity" value="personal" ${setupPrefs.identity.kind === "personal" ? "checked" : ""}/> <b>Personal</b> — it's my device; I decide</label>
+    <label class="setup-radio"><input type="radio" name="setupIdentity" value="business" ${setupPrefs.identity.kind === "business" ? "checked" : ""}/> <b>Business</b> — an IT contact should know too</label>
+    <span class="setup-field-label">Organization (business only)</span><input id="setupOrg" type="text" value="${escapeHtml(setupPrefs.identity.orgName)}" placeholder="Acme Dental" />
+    <div class="setup-grid"><div><span class="setup-field-label">Your name</span><input id="setupUserName" type="text" value="${escapeHtml(setupPrefs.deviceUser.name)}" placeholder="Sam" /></div><div><span class="setup-field-label">Your email</span><input id="setupUserEmail" type="email" value="${escapeHtml(setupPrefs.deviceUser.email)}" placeholder="sam@company.com" /></div></div>
+    <span class="setup-field-label">Your mobile (optional)</span><input id="setupUserPhone" type="tel" value="${escapeHtml(setupPrefs.deviceUser.phone)}" placeholder="+1 416 555 0100" />
+    <label class="setup-check"><input type="checkbox" id="setupUserSms" ${setupPrefs.deviceUser.smsOptIn ? "checked" : ""}/> Text me when something breaks</label>` },
+  { kicker: "Who should know", title: "Who should know when something breaks", id: "setup-contacts", body: () => `<p class="setup-lead">Tech contacts get the same honest note you do: what broke, which vetted fix exists, what happened. One per line — <b>name, email, phone, role</b> (admin · it-lead · approver).${setupPrefs.identity.kind === "business" ? " A business device needs at least one before ARIA fixes anything on its own." : ""}</p>
+    <textarea id="setupTechContacts" placeholder="Jordan Lee, jordan@company.com, +1 416 555 0101, admin">${escapeHtml(contactLinesText(setupPrefs.techContacts))}</textarea>` },
+  { kicker: "Autonomy", title: "How much should Sentinel fix on its own", id: "setup-autonomy", body: () => `<p class="setup-lead">Pick one. Each card says exactly what ARIA will and won't touch. Red-tier issues always wait for a person, whatever you choose.</p>
+    <div class="autonomy-cards">${autonomyCardsHtml(setupPrefs.autonomyLevel, "setup")}</div>
+    <label class="setup-check" id="setupFullAutoRow" ${setupPrefs.autonomyLevel === "full-auto" ? "" : "hidden"}><input type="checkbox" id="setupFullAutoUnderstood" ${setupPrefs.fullAutoUnderstood ? "checked" : ""}/> I understand Full-auto applies green and yellow fixes inside my maintenance window without asking first.</label>` },
+  { kicker: "Approver", title: "Who approves a fix before it runs", id: "setup-approver", body: () => `<p class="setup-lead">When ARIA needs a yes, who gives it? Approvals show up in Control Center and by email; a fix never runs until someone says yes.</p>
+    <span class="setup-field-label">Who can say yes</span><select id="setupApproverMode"><option value="self" ${setupPrefs.approver.mode === "self" ? "selected" : ""}>Me, on this device</option><option value="admin" ${setupPrefs.approver.mode === "admin" ? "selected" : ""}>A tech contact / approver email</option><option value="either" ${setupPrefs.approver.mode === "either" ? "selected" : ""}>Either</option></select>
+    <span class="setup-field-label">Approver emails (comma-separated)</span><input id="setupApproverContacts" type="text" value="${escapeHtml((setupPrefs.approver.contacts || []).join(", "))}" placeholder="it@company.com" />
+    <div class="setup-grid"><div><span class="setup-field-label">Wait for an answer (minutes)</span><input id="setupApproverTimeout" type="number" min="5" max="1440" value="${Number(setupPrefs.approver.timeoutMinutes) || 30}" /></div><div><span class="setup-field-label">If nobody answers</span><select id="setupApproverOnTimeout"><option value="skip" ${setupPrefs.approver.onTimeout === "skip" ? "selected" : ""}>Skip the fix, tell me</option><option value="proceed-green-only" ${setupPrefs.approver.onTimeout === "proceed-green-only" ? "selected" : ""}>Go ahead with green only</option></select></div></div>` },
+  { kicker: "Reports", title: "Who gets the report", id: "setup-reports", body: () => `<p class="setup-lead">The full PDF stays on this device. Email and text carry counts and titles only — never log lines, file paths or document text.</p>
+    <span class="setup-field-label">Recipients (email or phone, comma-separated)</span><input id="setupReportRecipients" type="text" value="${escapeHtml(recipientListText(setupPrefs.reportRecipients))}" placeholder="owner@company.com" />
+    <span class="setup-field-label">How often</span><select id="setupReportCadence"><option value="per-fix" ${setupPrefs.reportCadence === "per-fix" ? "selected" : ""}>After every fix</option><option value="daily" ${setupPrefs.reportCadence === "daily" ? "selected" : ""}>Daily summary</option><option value="weekly" ${setupPrefs.reportCadence === "weekly" ? "selected" : ""}>Weekly summary</option></select>
+    <div class="setup-grid"><label class="setup-check"><input type="checkbox" id="setupChDesktop" ${setupPrefs.notifyChannels.desktop ? "checked" : ""}/> Desktop notifications</label><label class="setup-check"><input type="checkbox" id="setupChEmail" ${setupPrefs.notifyChannels.email ? "checked" : ""}/> Email</label><label class="setup-check"><input type="checkbox" id="setupChSms" ${setupPrefs.notifyChannels.sms ? "checked" : ""}/> Text (SMS)</label></div>` },
+  { kicker: "Maintenance", title: "When can maintenance run", id: "setup-window", body: () => { const mw = mwFrom(setupPrefs); return `<p class="setup-lead">Full-auto applies yellow-tier fixes only inside this window; everything else waits for a yes. Leave it off and yellow fixes always ask.</p>
+    <label class="setup-check"><input type="checkbox" id="setupMwEnabled" ${mw.enabled ? "checked" : ""}/> Use a maintenance window</label>
+    <div class="setup-grid"><div><span class="setup-field-label">Days</span><select id="setupMwDays"><option value="daily" ${mw.days === "daily" ? "selected" : ""}>Every day</option><option value="weekdays" ${mw.days === "weekdays" ? "selected" : ""}>Weekdays</option><option value="weekends" ${mw.days === "weekends" ? "selected" : ""}>Weekends</option></select></div><div><span class="setup-field-label">Starts at (local)</span><input id="setupMwStart" type="time" value="${escapeHtml(mw.start)}" /></div></div>
+    <span class="setup-field-label">Lasts (minutes, 15–1440)</span><input id="setupMwDuration" type="number" min="15" max="1440" value="${Number(mw.durationMin) || 120}" />`; } }
 ];
 let setupStep = 0;
 function maybeShowSetupWizard(state) {
@@ -2312,25 +2521,114 @@ function captureSetupStep() {
   const land = qs("#setupLand"); if (land) setupPrefs.landOnAria = land.checked;
   const kb = qs("#setupKbNotif"); if (kb) setupPrefs.kbNotifications = kb.checked;
   const tray = qs("#setupTray"); if (tray) setupPrefs.trayIcon = tray.checked;
+  // RUN-CU / CU4 — v2 steps (each capture is a no-op when its fields are not on screen).
+  const idk = qs('input[name="setupIdentity"]:checked'); if (idk) setupPrefs.identity.kind = idk.value;
+  const org = qs("#setupOrg"); if (org) setupPrefs.identity.orgName = org.value.trim();
+  const un = qs("#setupUserName"); if (un) setupPrefs.deviceUser.name = un.value.trim();
+  const ue = qs("#setupUserEmail"); if (ue) setupPrefs.deviceUser.email = ue.value.trim();
+  const up = qs("#setupUserPhone"); if (up) setupPrefs.deviceUser.phone = up.value.trim();
+  const us = qs("#setupUserSms"); if (us) setupPrefs.deviceUser.smsOptIn = us.checked;
+  const tc = qs("#setupTechContacts"); if (tc) setupPrefs.techContacts = parseContactLines(tc.value);
+  const fau = qs("#setupFullAutoUnderstood"); if (fau) setupPrefs.fullAutoUnderstood = fau.checked;
+  const am = qs("#setupApproverMode"); if (am) setupPrefs.approver.mode = am.value;
+  const ac = qs("#setupApproverContacts"); if (ac) setupPrefs.approver.contacts = ac.value.split(",").map((s) => s.trim()).filter(Boolean);
+  const at = qs("#setupApproverTimeout"); if (at) setupPrefs.approver.timeoutMinutes = Number(at.value) || 30;
+  const ao = qs("#setupApproverOnTimeout"); if (ao) setupPrefs.approver.onTimeout = ao.value;
+  const rr = qs("#setupReportRecipients"); if (rr) setupPrefs.reportRecipients = parseRecipientList(rr.value);
+  const rc = qs("#setupReportCadence"); if (rc) setupPrefs.reportCadence = rc.value;
+  const cd = qs("#setupChDesktop"); if (cd) setupPrefs.notifyChannels.desktop = cd.checked;
+  const ce = qs("#setupChEmail"); if (ce) setupPrefs.notifyChannels.email = ce.checked;
+  const cs = qs("#setupChSms"); if (cs) setupPrefs.notifyChannels.sms = cs.checked;
+  const mwe = qs("#setupMwEnabled");
+  if (mwe) {
+    const w = { days: qs("#setupMwDays")?.value || "daily", start: qs("#setupMwStart")?.value || "02:00", durationMin: Number(qs("#setupMwDuration")?.value) || 120 };
+    setupPrefs.maintenanceWindow = { enabled: mwe.checked, windows: [w] };
+  }
 }
 function renderSetupStep() {
   const s = SETUP_STEPS[setupStep]; if (!s) return;
   setText("setupKicker", s.kicker); setText("setupTitle", s.title);
-  const body = qs("#setupBody"); if (body) body.innerHTML = s.body();
+  const body = qs("#setupBody"); if (body) { body.innerHTML = s.body(); body.dataset.step = s.id || `setup-v1-${setupStep}`; }
   const dots = qs("#setupDots"); if (dots) dots.innerHTML = SETUP_STEPS.map((_, i) => `<span class="onboard-dot${i === setupStep ? " active" : ""}"></span>`).join("");
   const back = qs("#setupBack"); if (back) back.style.visibility = setupStep === 0 ? "hidden" : "visible";
   const next = qs("#setupNext"); if (next) next.textContent = setupStep === SETUP_STEPS.length - 1 ? "Finish" : "Next";
+  // RUN-CU / CU4 — autonomy cards select on click; Full-auto reveals its "I understand" line (never silent).
+  qsa("[data-setup-level]").forEach((card) => card.addEventListener("click", () => {
+    setupPrefs.autonomyLevel = card.dataset.setupLevel;
+    qsa("[data-setup-level]").forEach((c) => c.classList.toggle("selected", c === card));
+    const row = qs("#setupFullAutoRow"); if (row) row.hidden = setupPrefs.autonomyLevel !== "full-auto";
+  }));
 }
 function initSetupWizard() {
   bindClick("setupBack", () => { captureSetupStep(); if (setupStep > 0) { setupStep--; renderSetupStep(); } });
   bindClick("setupNext", async () => {
     captureSetupStep();
     if (setupStep < SETUP_STEPS.length - 1) { setupStep++; renderSetupStep(); return; }
-    try { await sentinel.completeSetup?.({ ...setupPrefs }); } catch (e) { /* persistence best-effort */ }
+    try {
+      const r = await sentinel.completeSetup?.({ ...setupPrefs });
+      if (r && r.applied && r.applied.note) showToast({ title: "Autonomy", body: r.applied.note });
+    } catch (e) { /* persistence best-effort */ }
     const modal = qs("#setupWizard"); if (modal) modal.hidden = true;
     if (setupPrefs.landOnAria) activateTab("aria");
   });
   bindClick("reRunSetup", async () => { try { await sentinel.reopenSetup?.(); setupShown = false; } catch (e) {} });
+}
+
+// ===== RUN-CU / CU4 — Settings → Autonomy & contacts (edits the SAME prefs the wizard collects; setup:update-prefs) =====
+let autonomyFormLevel = "safe-auto";
+async function loadAutonomyPrefs() {
+  try {
+    const r = await sentinel.getSetup?.();
+    const p = (r && r.prefs) || {};
+    autonomyFormLevel = p.autonomyLevel || "safe-auto";
+    const cards = qs("#autonomyCards"); if (cards) cards.innerHTML = autonomyCardsHtml(autonomyFormLevel, "autonomy");
+    const fa = qs("#fullAutoUnderstoodRow"); if (fa) fa.hidden = autonomyFormLevel !== "full-auto";
+    const fau = qs("#fullAutoUnderstood"); if (fau) fau.checked = p.fullAutoUnderstood === true;
+    qsa("[data-autonomy-level]").forEach((card) => card.addEventListener("click", () => {
+      autonomyFormLevel = card.dataset.autonomyLevel;
+      qsa("[data-autonomy-level]").forEach((c) => c.classList.toggle("selected", c === card));
+      if (fa) fa.hidden = autonomyFormLevel !== "full-auto";
+    }));
+    const set = (id, v) => { const el = qs(`#${id}`); if (el) el.value = v == null ? "" : String(v); };
+    const chk = (id, v) => { const el = qs(`#${id}`); if (el) el.checked = Boolean(v); };
+    set("identityKind", (p.identity || {}).kind || "personal"); set("identityOrg", (p.identity || {}).orgName);
+    set("deviceUserName", (p.deviceUser || {}).name); set("deviceUserEmail", (p.deviceUser || {}).email); set("deviceUserPhone", (p.deviceUser || {}).phone); chk("deviceUserSms", (p.deviceUser || {}).smsOptIn);
+    set("techContacts", contactLinesText(p.techContacts));
+    set("approverMode", (p.approver || {}).mode || "self"); set("approverContacts", ((p.approver || {}).contacts || []).join(", ")); set("approverTimeout", (p.approver || {}).timeoutMinutes || 30); set("approverOnTimeout", (p.approver || {}).onTimeout || "skip");
+    set("reportRecipients", recipientListText(p.reportRecipients)); set("reportCadence", p.reportCadence || "weekly");
+    const mw = mwFrom(p); set("mwDays", mw.days); set("mwStart", mw.start); set("mwDuration", mw.durationMin); chk("mwEnabled", mw.enabled);
+    chk("chDesktop", (p.notifyChannels || {}).desktop !== false); chk("chEmail", (p.notifyChannels || {}).email !== false); chk("chSms", (p.notifyChannels || {}).sms === true);
+    if (r && r.autonomy) renderAutonomyBadge({ autonomy: r.autonomy, keepSystemFixesDryRun: state && state.keepSystemFixesDryRun });
+  } catch (e) { reportRendererError(e, "autonomy-prefs"); }
+}
+function wireAutonomyPrefs() {
+  bindClick("saveAutonomyPrefs", (b) => runAction(b, async () => {
+    const partial = {
+      identity: { kind: qs("#identityKind")?.value, orgName: qs("#identityOrg")?.value },
+      deviceUser: { name: qs("#deviceUserName")?.value, email: qs("#deviceUserEmail")?.value, phone: qs("#deviceUserPhone")?.value, smsOptIn: qs("#deviceUserSms")?.checked },
+      techContacts: parseContactLines(qs("#techContacts")?.value),
+      autonomyLevel: autonomyFormLevel,
+      fullAutoUnderstood: Boolean(qs("#fullAutoUnderstood")?.checked),
+      approver: { mode: qs("#approverMode")?.value, contacts: String(qs("#approverContacts")?.value || "").split(",").map((s) => s.trim()).filter(Boolean), timeoutMinutes: Number(qs("#approverTimeout")?.value), onTimeout: qs("#approverOnTimeout")?.value },
+      reportRecipients: parseRecipientList(qs("#reportRecipients")?.value),
+      reportCadence: qs("#reportCadence")?.value,
+      maintenanceWindow: { enabled: Boolean(qs("#mwEnabled")?.checked), windows: [{ days: qs("#mwDays")?.value || "daily", start: qs("#mwStart")?.value || "02:00", durationMin: Number(qs("#mwDuration")?.value) || 120 }] },
+      notifyChannels: { desktop: Boolean(qs("#chDesktop")?.checked), email: Boolean(qs("#chEmail")?.checked), sms: Boolean(qs("#chSms")?.checked) }
+    };
+    const r = await sentinel.updateSetupPrefs?.(partial);
+    const st = qs("#autonomyPrefsStatus");
+    if (st) st.textContent = r && r.ok ? `Saved · level ${r.autonomy ? r.autonomy.level : autonomyFormLevel}${r.applied && r.applied.note ? " — " + r.applied.note : ""}` : "Couldn't save.";
+    await loadAutonomyPrefs();
+    return r;
+  }));
+  bindClick("testNotification", (b) => runAction(b, async () => {
+    const r = await sentinel.testNotification?.();
+    const st = qs("#autonomyPrefsStatus");
+    // Rule 14 — report exactly what happened per channel; "dormant" reads as NOT sent.
+    if (st) st.textContent = r ? `Desktop: ${r.desktop && r.desktop.shown ? "shown" : "not shown (" + ((r.desktop && r.desktop.reason) || "unsupported") + ")"} · Email: ${(r.email && r.email.status) || "skipped"}${r.email && r.email.status === "dormant" ? " (not sent — no email provider on the server)" : r.email && r.email.reason ? " (" + r.email.reason + ")" : ""} · SMS: ${(r.sms && r.sms.status) || "skipped"}${r.sms && r.sms.status === "dormant" ? " (not sent — SMS provider not configured)" : r.sms && r.sms.reason ? " (" + r.sms.reason + ")" : ""}` : "No result.";
+    return r;
+  }));
+  bindChange("keepDryRunToggle", (input) => sentinel.setKeepDryRun?.(input.checked ? true : null));
 }
 
 // RUN 33 Phase 2 — fill the ARIA tab's data sub-sections (Learning/Health/Memory/Agents). All data is parsed +

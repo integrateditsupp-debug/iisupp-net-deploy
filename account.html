@@ -35,21 +35,62 @@
         <p class="f100-small">Billing portal, invoice PDF, data export, delete request, plan change, and seat-management paths are mapped to existing functions.</p>
       </aside>
     </section>
+    <!-- 2026-10-08: the account endpoints now require proof of mailbox ownership (magic-link / session token). -->
+    <section class="f100-grid two" id="account-signin">
+      <article class="f100-card">
+        <h2>Sign in with a one-time link</h2>
+        <p>Billing portal, invoices, plan changes, exports and deletion only run for a verified email. We email a sign-in link (valid 15 minutes, no password); it opens <a href="/aria">/aria</a>, signs you in for 12 hours on this browser, and you come back here.</p>
+        <div class="f100-band"><span class="f100-status warn" id="acct-signin-status">Checking sign-in…</span><p class="f100-small" id="acct-signin-detail">Nothing is unlocked until the emailed link is clicked.</p></div>
+        <div id="acct-signin-form"></div>
+      </article>
+      <article class="f100-card">
+        <h2>Billing email</h2>
+        <label class="f100-label" for="acct-email">Email the actions below act on</label>
+        <input class="f100-input" id="acct-email" type="email" autocomplete="email" placeholder="you@company.com">
+        <p class="f100-small">Must match the signed-in email — the server checks the token's email against this address on every call.</p>
+        <div class="f100-output" id="acct-out" role="status" aria-live="polite" style="margin-top:8px;font-size:13px"></div>
+      </article>
+    </section>
     <section class="f100-grid">
       <article class="f100-card">
         <h2>Billing portal</h2>
-        <p>Routes customers to the existing billing function. No payment action is taken from this static page.</p>
-        <a class="f100-button primary" href="/.netlify/functions/aria-billing-portal">Open billing portal</a>
+        <p>Opens your Stripe billing portal (update card, see plan, cancel) for the verified email. No payment action is taken from this page.</p>
+        <a class="f100-button primary" href="/.netlify/functions/aria-billing-portal" data-account-action="billing-portal" role="button">Open billing portal</a>
       </article>
       <article class="f100-card">
         <h2>Invoices</h2>
-        <p>Customers can request PDF invoice download by authenticated billing email through <code>aria-invoice-download</code>.</p>
-        <a class="f100-button" href="/.netlify/functions/aria-invoice-download">Invoice function</a>
+        <p>Lists your last invoices (hosted link + PDF) for the verified billing email through <code>aria-invoice-download</code>.</p>
+        <a class="f100-button" href="/.netlify/functions/aria-invoice-download" data-account-action="invoices" role="button">List my invoices</a>
+        <div id="acct-invoices" class="f100-small" style="margin-top:10px"></div>
       </article>
       <article class="f100-card">
         <h2>Privacy controls</h2>
         <p>Export and deletion flows are covered by <code>aria-data-export</code> and <code>aria-account-delete</code>.</p>
         <a class="f100-button" href="/aria-data-export.html">Data export</a>
+      </article>
+    </section>
+    <section class="f100-grid two">
+      <article class="f100-card">
+        <h2>Change plan</h2>
+        <p>Moves the active subscription to another tier mid-cycle (Stripe prorates). Requires the verified billing email.</p>
+        <label class="f100-label" for="acct-tier">New tier</label>
+        <select class="f100-select" id="acct-tier">
+          <option value="personal">Personal</option>
+          <option value="pro">Pro</option>
+          <option value="small_business">Small business</option>
+          <option value="mid_size">Mid-size</option>
+          <option value="enterprise">Enterprise</option>
+        </select>
+        <button class="f100-button" type="button" data-account-action="plan-change">Stage plan change</button>
+      </article>
+      <article class="f100-card">
+        <h2>What a sign-in link protects</h2>
+        <ul class="f100-checklist">
+          <li>Opening someone else's billing portal with just their address.</li>
+          <li>Listing or downloading another customer's invoices.</li>
+          <li>Changing or cancelling a plan that is not yours.</li>
+          <li>Exporting or deleting another person's data.</li>
+        </ul>
       </article>
     </section>
     <section class="f100-grid two">
@@ -70,6 +111,79 @@
     <p class="f100-footer">Integrated IT Support Inc. Account Command Center. This page stages account work only; it does not make irreversible provider changes.</p>
   </main>
   <script src="/assets/aria-i18n-page-copy.js"></script>
+  <script src="/assets/aria-account-auth.js?v=20261008"></script>
+  <script>
+  /* 2026-10-08 — account actions post with proof (body.token) and show an honest "sign-in link required" state. */
+  (function(){
+    var AUTH = window.ariaAccountAuth; if (!AUTH) return;
+    function $(id){ return document.getElementById(id); }
+    function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];}); }
+    var signin = null;
+    function paint(){
+      var email = AUTH.getToken() ? AUTH.getEmail() : '';
+      var st = $('acct-signin-status'), det = $('acct-signin-detail'), form = $('acct-signin-form');
+      if (email){
+        st.className = 'f100-status'; st.textContent = 'Signed in · ' + email;
+        var exp = AUTH.tokenExpiry(); det.textContent = exp ? 'Valid about ' + Math.max(1, Math.round((exp - Date.now())/3600000)) + ' h on this browser.' : 'Valid on this browser.';
+        form.innerHTML = '<p><button class="f100-button" type="button" id="acct-signout">Sign out</button></p>';
+        $('acct-signout').addEventListener('click', function(){ AUTH.clearSession(); paint(); });
+        if (!$('acct-email').value) $('acct-email').value = email;
+      } else {
+        st.className = 'f100-status warn'; st.textContent = 'Not signed in';
+        det.textContent = 'Nothing is unlocked until the emailed link is clicked.';
+        signin = AUTH.mountSignIn(form, { returnTo: '/account.html', inputClass: 'f100-input', buttonClass: 'f100-button primary', labelClass: 'f100-label', textClass: 'f100-small', statusClass: 'f100-small', inputId: 'acct-signin-email', intro: 'Enter your billing email. We email a one-time link.' });
+      }
+    }
+    function out(html){ $('acct-out').innerHTML = html; }
+    function needSignin(email, why){
+      out('<strong>Sign-in link required.</strong> ' + esc(why || 'This action needs a verified email.') + ' Use the sign-in card' + (email ? ' with ' + esc(email) : '') + ' — nothing was changed.');
+      if (signin && email) signin.setEmail(email);
+      try { $('account-signin').scrollIntoView({ behavior:'smooth', block:'start' }); } catch(e){}
+    }
+    async function run(action){
+      var email = ($('acct-email').value || '').trim().toLowerCase();
+      if (!email){ out('Enter the billing email first.'); $('acct-email').focus(); return; }
+      if (!AUTH.hasValidToken(email)) return needSignin(email, 'No sign-in token for ' + email + '.');
+      out('Working…');
+      var res;
+      if (action === 'billing-portal'){
+        res = await AUTH.postAccount('aria-billing-portal', { email, return_url: location.origin + '/account.html' });
+        if (res.needs_signin) return needSignin(email, res.message);
+        if (res.ok && res.data && res.data.url){ out('Billing portal ready — <a href="' + esc(res.data.url) + '" target="_blank" rel="noopener">open it</a> (Stripe-hosted, expires shortly).'); return; }
+        out('Could not open the portal: ' + esc((res.data && (res.data.message || res.data.error)) || res.error || res.status) + '.'); return;
+      }
+      if (action === 'invoices'){
+        res = await AUTH.postAccount('aria-invoice-download', { email });
+        if (res.needs_signin) return needSignin(email, res.message);
+        var list = res.data && (res.data.invoices || res.data.list || []);
+        if (res.ok && Array.isArray(list)){
+          $('acct-invoices').innerHTML = list.length ? '<ul class="f100-checklist">' + list.slice(0,12).map(function(i){ return '<li>' + esc(i.number || i.invoice_id || i.id || 'invoice') + (i.amount_paid != null ? ' · ' + esc(i.amount_paid) + ' ' + esc(String(i.currency || '').toUpperCase()) : '') + (i.status ? ' · ' + esc(i.status) : '') + (i.hosted_invoice_url ? ' · <a href="' + esc(i.hosted_invoice_url) + '" target="_blank" rel="noopener">view</a>' : '') + (i.invoice_pdf ? ' · <a href="' + esc(i.invoice_pdf) + '" target="_blank" rel="noopener">PDF</a>' : '') + '</li>'; }).join('') + '</ul>' : 'No invoices found for ' + esc(email) + '.';
+          out('Invoice list loaded.'); return;
+        }
+        out('Could not list invoices: ' + esc((res.data && (res.data.message || res.data.error)) || res.error || res.status) + '.'); return;
+      }
+      if (action === 'plan-change'){
+        var tier = $('acct-tier').value;
+        if (!confirm('Change the plan for ' + email + ' to "' + tier + '"? Stripe will prorate the difference.')) { out('Plan change cancelled.'); return; }
+        res = await AUTH.postAccount('aria-plan-change', { email, new_tier: tier });
+        if (res.needs_signin) return needSignin(email, res.message);
+        if (res.ok){ out('Plan change accepted: ' + esc(JSON.stringify(res.data && (res.data.subscription || res.data) || {}).slice(0, 400))); return; }
+        out('Plan change failed: ' + esc((res.data && (res.data.message || res.data.error)) || res.error || res.status) + '.'); return;
+      }
+    }
+    document.addEventListener('click', function(e){
+      var el = e.target.closest('[data-account-action]');
+      if (!el) return;
+      e.preventDefault();   // the href stays as the function reference; the action POSTs with proof instead of a GET 405
+      run(el.getAttribute('data-account-action'));
+    });
+    AUTH.consumeMagicLinkFromUrl().then(function(r){
+      paint();
+      if (r && r.attempted && !r.ok) out(esc(r.message || 'That sign-in link is invalid or expired.') + ' Request a new one.');
+      if (r && r.ok) out('Signed in as ' + esc(r.email) + '.');
+    });
+  })();
+  </script>
 <!-- iis-fineprint:start -->
 <div class="iis-fineprint" role="note" aria-label="Site content disclaimer">
   <div class="iis-fineprint__inner">

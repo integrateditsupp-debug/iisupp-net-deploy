@@ -60,7 +60,10 @@ export const KILL_TOAST = "ARIA terminated · last action undone";
 export function pickUndoTarget(restorePoints = []) {
   const list = Array.isArray(restorePoints) ? restorePoints : [];
   // restorePoints are stored newest-first; pick the first that has not already been rolled back.
-  return list.find((p) => p && p.id && !p.rolledBack) || null;
+  // RUN-CU / CU4 (2026-10-08) — a record that carries a verification verdict (`created`, from the real
+  // restore-point wrapper) is an undo target ONLY when created === true. Legacy records without the field
+  // keep the original behaviour (Rule 15), so nothing that worked before stops working.
+  return list.find((p) => p && p.id && !p.rolledBack && p.created !== false) || null;
 }
 
 /**

@@ -730,6 +730,23 @@ const TESTS = [
   "./unbound-recipe-walkthrough.test.mjs",
   "./plan-maintenance-window.test.mjs",
   "./goal-probe-grade.test.mjs",
+  // RUN-CU / CU4 (2026-10-08, cc/run-cu-2026-10-08) — setup wizard v2 (identity, contacts, autonomy level,
+  // approver, reports, maintenance window), the approval-policy truth table, the in-app + remote approvals
+  // flow, content-blind notifications over the declared outbound class, evidence-derived compliance,
+  // the local-bridge origin policy, the macOS user-level Tier-0 catalog, the CU4 safety fixes, and the
+  // on-device voice conversation loop. Registered BY HAND (this manifest never picks up new files).
+  "./setup-wizard-v2.test.mjs",
+  "./approval-policy.test.mjs",
+  "./approvals-flow.test.mjs",
+  "./notify-channels.test.mjs",
+  "./notify-dispatch.test.mjs",
+  "./outbound-declared.test.mjs",
+  "./compliance-evidence.test.mjs",
+  "./bridge-auth.test.mjs",
+  "./tier-0-darwin.test.mjs",
+  "./safety-fixes-cu4.test.mjs",
+  "./voice-turns.test.mjs",
+  "./voice-conversation-ui.test.mjs",
 ];
 
 // RUN-BJ / BJ1 (2026-08-12) — THE FLOOR THIS RUNNER NEVER HAD.

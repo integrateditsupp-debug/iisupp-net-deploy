@@ -22,8 +22,35 @@ export function nextEscalationTier(current) {
 // context by sessionId) — NOT a `prompt` string. platform/tier/source/version are carried so the brain can
 // answer for the user's real OS (Windows/macOS/iOS/iPadOS/Android/Linux), not Windows-only. Headers keep
 // device/license. Sending the wrong shape here is what made every desktop Ask-ARIA call 400 → canned string.
+// RUN-CU / CU4 (2026-10-08) — multi-turn + voice. `ctx.messages` (prior turns, {role, content}) are sent ahead of
+// the new prompt so the brain keeps the thread across a spoken conversation; capped at the last 12 and R11-scrubbed.
+// `ctx.voice === true` asks aria-chat for speak / needs_input / listen / action (its VOICE MODE contract).
+export const HISTORY_MAX_TURNS = 12;
+export function normalizeHistory(messages) {
+  const list = Array.isArray(messages) ? messages : [];
+  const out = [];
+  for (const m of list) {
+    if (!m || typeof m !== "object") continue;
+    const role = m.role === "assistant" || m.role === "aria" ? "assistant" : m.role === "user" || m.role === "me" ? "user" : null;
+    const content = scrubR11(String(m.content == null ? m.text : m.content) || "").trim().slice(0, 2000);
+    if (!role || !content) continue;
+    out.push({ role, content });
+  }
+  return out.slice(-HISTORY_MAX_TURNS);
+}
+
 export function buildChatRequest(prompt, ctx = {}) {
   const platform = ctx.platform || (typeof process !== "undefined" && process.platform) || "";
+  const history = normalizeHistory(ctx.messages);
+  const body = {
+    messages: [...history, { role: "user", content: String(prompt || "") }],
+    sessionId: ctx.sessionId || null,
+    source: "sentinel-desktop",
+    platform,
+    tier: String(ctx.tier || ""),
+    version: String(ctx.version || "")
+  };
+  if (ctx.voice === true) body.voice = true;
   return {
     url: CHAT_ENDPOINT,
     method: "POST",
@@ -32,14 +59,7 @@ export function buildChatRequest(prompt, ctx = {}) {
       "X-Sentinel-Device": String(ctx.deviceId || ""),
       "X-Sentinel-License": String(ctx.licenseKey || "")
     },
-    body: JSON.stringify({
-      messages: [{ role: "user", content: String(prompt || "") }],
-      sessionId: ctx.sessionId || null,
-      source: "sentinel-desktop",
-      platform,
-      tier: String(ctx.tier || ""),
-      version: String(ctx.version || "")
-    })
+    body: JSON.stringify(body)
   };
 }
 
@@ -95,8 +115,16 @@ export async function askAria(prompt, ctx = {}) {
     const data = (res && typeof res.json === "function" ? await res.json() : res) || {};
     const reply = String(data.text || data.reply || "");      // aria-chat returns `text`
     if (!reply) return offline();                             // empty brain reply → local KB
-    const action = data.escalate ? "escalate" : (data.resolved ? "resolved" : (data.action || null));
-    return { reply, session_id: data.sessionId || data.session_id || ctx.sessionId || null, action, offline: false };
+    // RUN-CU / CU4 — in voice mode aria-chat's `action` is an OBJECT {kind, recipeHint}; keep the string `action`
+    // contract for every existing caller and expose the object as `actionDetail` + the voice fields.
+    const actionObj = data.action && typeof data.action === "object" ? data.action : null;
+    const action = data.escalate ? "escalate" : (data.resolved ? "resolved" : (actionObj ? (actionObj.kind || null) : (data.action || null)));
+    const voice = {};
+    if (typeof data.speak === "string") voice.speak = scrubR11(data.speak).slice(0, 600);
+    if (typeof data.needs_input === "boolean") voice.needs_input = data.needs_input;
+    if (typeof data.listen === "boolean") voice.listen = data.listen;
+    if (actionObj) voice.actionDetail = { kind: String(actionObj.kind || "none"), recipeHint: actionObj.recipeHint ? scrubR11(String(actionObj.recipeHint)).slice(0, 80) : null };
+    return { reply, session_id: data.sessionId || data.session_id || ctx.sessionId || null, action, offline: false, ...voice };
   } catch {
     return offline();
   }

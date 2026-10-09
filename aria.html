@@ -912,6 +912,18 @@
     max-width:560px;margin-top:14px;
   }
   .voice-tags{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+  /* 2026-10-08 voice conversation controls (additive) */
+  .voice-controls{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+  .voice-state-pill[data-state="listening"]{color:var(--gold-bright);border-color:var(--border-glow)}
+  .voice-state-pill[data-state="thinking"]{color:var(--cream-2)}
+  .voice-state-pill[data-state="speaking"]{color:var(--green);border-color:rgba(109,186,133,.45)}
+  .voice-state-pill[data-state="ended"],.voice-state-pill[data-state="idle"]{color:var(--muted)}
+  .voice-end-btn{color:var(--cream-2)}
+  .voice-end-btn:focus-visible,#muteBtn:focus-visible,#micBtn:focus-visible{outline:2px solid var(--gold-bright);outline-offset:3px}
+  .voice-caption{margin-top:12px;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;line-height:1.55;color:var(--muted);max-width:560px}
+  .transcript-row.system .transcript-msg{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.06em}
+  .transcript-row.system .transcript-who{color:var(--muted)}
+  .voice-chat-note{margin-top:10px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--muted);line-height:1.5}
   .waveform{display:flex;align-items:flex-end;gap:3px;height:46px;width:160px}
   .waveform span{
     flex:1;background:linear-gradient(180deg,var(--gold-bright),var(--gold-soft));
@@ -929,6 +941,7 @@
   }
   .ops-banner > div:first-child{grid-column:1 / -1}
   .ops-banner .title{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:6px;font-weight:500}
+  .ops-banner .ops-sample-note{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin:-2px 0 8px;line-height:1.5}
   .ops-banner .head{font-family:var(--serif);font-size:22px;color:var(--cream-2);font-weight:500}
   .ops-banner .head em{font-style:italic;color:var(--gold-bright);font-weight:500}
   .ops-stat{text-align:right}
@@ -1932,7 +1945,7 @@
           </div>
           <div class="url">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
-            <span id="urlText">aria.iisupp.net/session/2861</span>
+            <span id="urlText">aria.iisupp.net/session/------</span>
           </div>
           <div class="iis-chip">
             <div class="iis-mark">
@@ -1954,7 +1967,7 @@
           <button type="button" id="ariaLogoutBtn" class="aria-logout-btn" title="Log out and re-enter">Log out</button>
 
         <div class="browser-body" id="chatBody">
-          <div class="session-meta" id="sessionMeta">SESSION · #2861 · L1 · INCIDENT</div>
+          <div class="session-meta" id="sessionMeta">SESSION · #------ · L1 · INCIDENT</div>
           <div id="chatMessages">
             <!-- intro -->
             <div class="aria-block fade-in" id="introBlock">
@@ -1982,8 +1995,8 @@
 
         <div class="chat-dock">
           <div class="input-row">
-            <input id="askInput" placeholder="Ask ARIA anything…" autocomplete="off" />
-            <button class="send-btn" id="sendBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+            <input id="askInput" placeholder="Ask ARIA anything…" autocomplete="off" aria-label="Ask ARIA" />
+            <button class="send-btn" id="sendBtn" aria-label="Send" title="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
           </div>
           <div class="history-bar">
             <button class="history-toggle" id="historyToggle">HISTORY <span class="count" id="historyCount">0</span><span class="caret">▾</span></button>
@@ -2015,6 +2028,11 @@
             <span class="pill">TONE · WARM</span>
             <span class="pill">PACE · 92 WPM</span>
           </div>
+          <div class="voice-controls" id="voiceControls">
+            <span class="pill voice-state-pill" id="voiceStatePill" aria-live="polite" data-state="idle">VOICE · IDLE</span>
+            <button type="button" class="btn-ghost voice-end-btn" id="voiceEndBtn" aria-label="End the voice conversation (Escape also ends it)">End voice</button>
+          </div>
+          <div class="voice-caption" id="voiceCaption">Speech recognition is provided by your browser (Chrome/Edge send audio to the browser vendor); the conversation goes to ARIA.</div>
         </div>
       </div>
     </div>
@@ -2025,6 +2043,7 @@
         <div class="ops-banner">
           <div>
             <div class="title">ARIA DEMO OPERATIONS VIEW</div>
+            <div class="ops-sample-note" id="opsSampleNote">Sample data for demonstration — the figures below are illustrative, not measured from live systems.</div>
             <div class="head"><em id="opsResolved">4,218</em> guided support paths prepared for review.</div>
           </div>
           <div class="ops-stat"><div class="lbl">DEMO STATUS</div><div class="val" id="opsUptime">Ready</div></div>
@@ -2102,8 +2121,8 @@
     <div id="rightDefault" style="display:flex;flex-direction:column;flex:1;min-height:0">
      <div class="aria-section">
       <div class="live-row">
-        <div class="live-label"><span class="dot"></span>LIVE ACTIVITY</div>
-        <div class="live-meta">Worldwide · <span id="updatedAgo">Updated 0s ago</span></div>
+        <div class="live-label"><span class="dot"></span>SIMULATED DEMO FEED</div>
+        <div class="live-meta">Worldwide · <span id="updatedAgo" title="These counters are an animated illustration, not measured data">Sample figures · not live</span></div>
       </div>
 
       <div class="stats-top">
@@ -2133,7 +2152,7 @@
 
       <div class="speak-area">
         <div class="speak-label" id="speakLabel">Tap to speak</div>
-        <button class="mic-btn" id="micBtn" title="Tap to speak"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v3M8 22h8"/></svg></button>
+        <button class="mic-btn" id="micBtn" title="Tap to speak" type="button" aria-label="Tap to speak — start a voice conversation with ARIA" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v3M8 22h8"/></svg></button>
       </div>
 
      </div><!-- /.aria-section -->
@@ -2277,7 +2296,7 @@
       </div>
       <div class="voice-bottom-bar">
         <div style="display:flex;gap:6px"><span class="pill">SENTIMENT · CALM ↑</span><span class="pill">CLARITY · 98%</span></div>
-        <button class="mute-btn" id="muteBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v3M8 22h8"/></svg><span>Mute</span></button>
+        <button class="mute-btn" id="muteBtn" type="button" aria-label="Mute the microphone and end the voice conversation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v3M8 22h8"/></svg><span>Mute</span></button>
       </div>
     </div>
   </aside>
@@ -2707,9 +2726,9 @@ function tweenCounters(){
     const els = document.querySelectorAll(`[data-counter="${k}"]`);
     els.forEach(el => { el.textContent = c.v.toFixed(1); });
   }
-  const ago = Math.floor((Date.now() - lastUpdate) / 1000);
-  const el = document.getElementById('updatedAgo');
-  if (el) el.textContent = `Updated ${ago}s ago`;
+  // 2026-10-08 (audit #6): the feed is a random walk, so it no longer claims "Updated Ns ago". The label is
+  // static ("Sample figures · not live") and lastUpdate is kept only for the walk cadence.
+  void lastUpdate;
 }
 
 setInterval(updateTargets, 2200);
@@ -2957,8 +2976,43 @@ refreshStatus();
 setInterval(refreshStatus, 22000);
 
 /* ============== CONVERSATION STATE + HISTORY ============== */
+/* Per-tab web session id (2026-10-08, audit §6/§8). The chat used to post the constant 'web-2861' for every
+   visitor, so the server-side conversation context bled turns between strangers; aria-chat now only trusts an
+   id matching /^[A-Za-z0-9_-]{16,80}$/. One id per browser TAB: crypto.randomUUID() (fallback: 24 random
+   base36 chars), kept in sessionStorage so a reload keeps its own context — never localStorage, so tabs never
+   share it. The SAME id goes to aria-chat (typed + voice) and to aria-session-memory. */
+const WEB_SESSION_KEY = 'aria_web_session_id';
+function makeWebSessionId(){
+  let rnd = '';
+  try { if (window.crypto && typeof window.crypto.randomUUID === 'function') rnd = window.crypto.randomUUID(); } catch(_) {}
+  if (!rnd){
+    const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+    let bytes = null;
+    try { if (window.crypto && window.crypto.getRandomValues){ bytes = new Uint8Array(24); window.crypto.getRandomValues(bytes); } } catch(_) {}
+    for (let i = 0; i < 24; i++) rnd += chars[bytes ? bytes[i] % 36 : Math.floor(Math.random() * 36)];
+  }
+  return 'web-' + rnd;
+}
+function getWebSessionId(){
+  let id = '';
+  try { id = sessionStorage.getItem(WEB_SESSION_KEY) || ''; } catch(_) {}
+  if (!/^[A-Za-z0-9_-]{16,80}$/.test(id)){
+    id = makeWebSessionId();
+    try { sessionStorage.setItem(WEB_SESSION_KEY, id); } catch(_) {}
+  }
+  return id;
+}
+function rotateWebSessionId(){
+  const id = makeWebSessionId();
+  try { sessionStorage.setItem(WEB_SESSION_KEY, id); } catch(_) {}
+  return id;
+}
+/* Short, human-readable tail of the id for the SESSION · #… labels (the full id is what the server sees). */
+function sessionLabel(){ return String((state && state.sessionId) || '').replace(/^web-/, '').replace(/-/g, '').slice(-6).toUpperCase() || '------'; }
+window.ariaWebSessionId = getWebSessionId;
+
 const state = {
-  sessionId: 2861,
+  sessionId: getWebSessionId(),
   thread: [],            // { role:'you'|'aria', html }
   lastIntent: null,
   introCleared: false,
@@ -2972,6 +3026,11 @@ const state = {
   sessionStart: Date.now(),
   satisfactionShown: false,
 };
+/* Stamp the real per-tab session label into the chrome (the markup carries a neutral placeholder). */
+try {
+  const _sm = document.getElementById('sessionMeta'); if (_sm) _sm.textContent = `SESSION · #${sessionLabel()} · L1 · INCIDENT`;
+  const _ut = document.getElementById('urlText'); if (_ut) _ut.textContent = `aria.iisupp.net/session/${sessionLabel()}`;
+} catch(_) {}
 
 /* ============== LEARNING LOOP — email queued unknowns to IIS ============== */
 function flushUnknowns(){
@@ -3006,7 +3065,7 @@ async function askAriaLLM(text){
     const res = await fetch('/.netlify/functions/aria-chat', {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({ messages: state.llmHistory, sessionId: 'web-' + state.sessionId })
+      body: JSON.stringify({ messages: state.llmHistory, sessionId: state.sessionId })
     });
     if (!res.ok) throw new Error('status ' + res.status);
     const data = await res.json();
@@ -4154,7 +4213,7 @@ function setTierBand(text, intent){
   // drive the full Aperture scenario band + left-rail panels (defined below)
   if (typeof window.renderApScenario === 'function') window.renderApScenario(c, displayIntent, text);
   const meta = document.getElementById('sessionMeta');
-  if (meta) meta.textContent = `SESSION · #${(state && state.sessionId) || 2861} · ${c.tier} · ${c.scope ? 'ESCALATED' : 'INCIDENT'}`;
+  if (meta) meta.textContent = `SESSION · #${sessionLabel()} · ${c.tier} · ${c.scope ? 'ESCALATED' : 'INCIDENT'}`;
 }
 
 const SNAPSHOT_FIRST_STEP = {
@@ -4314,9 +4373,9 @@ function likelyCauseSummary(intent){
 
 /* ============== RENDER FUNCTIONS ============== */
 function newSession(){
-  state.sessionId++;
-  document.getElementById('sessionMeta').textContent = `SESSION · #${state.sessionId} · ${window._ariaTier || 'L1'} · INCIDENT`;
-  document.getElementById('urlText').textContent = `aria.iisupp.net/session/${state.sessionId}`;
+  state.sessionId = rotateWebSessionId();   // a new incident = a new server-side context (the old counter did the same)
+  document.getElementById('sessionMeta').textContent = `SESSION · #${sessionLabel()} · ${window._ariaTier || 'L1'} · INCIDENT`;
+  document.getElementById('urlText').textContent = `aria.iisupp.net/session/${sessionLabel()}`;
 }
 
 function renderTechnical(intent, userText){
@@ -4535,8 +4594,8 @@ function renderArticle(insight){
   const node = appendMessage(html);
   // wire back
   node.querySelectorAll('[data-back-chat]').forEach(b => b.addEventListener('click', () => {
-    document.getElementById('urlText').textContent = `aria.iisupp.net/session/${state.sessionId}`;
-    document.getElementById('sessionMeta').textContent = `SESSION · #${state.sessionId} · ${window._ariaTier || 'L1'} · INCIDENT`;
+    document.getElementById('urlText').textContent = `aria.iisupp.net/session/${sessionLabel()}`;
+    document.getElementById('sessionMeta').textContent = `SESSION · #${sessionLabel()} · ${window._ariaTier || 'L1'} · INCIDENT`;
     node.remove();
   }));
   node.querySelectorAll('[data-share-article]').forEach(b => b.addEventListener('click', () => {
@@ -5396,7 +5455,7 @@ const views = ['chat','voice','ops'];
 const topbarTexts = {
   chat: 'SUPPORT · ENTERPRISE · TIER ONE',
   voice: 'VOICE INTERACTION · SUITE 14',
-  ops: 'ENTERPRISE OPERATIONS · LIVE',
+  ops: 'DEMO OPERATIONS VIEW (SAMPLE DATA)',
 };
 function showView(name){
   views.forEach(v => document.getElementById('view-' + v).classList.toggle('active', v === name));
@@ -5407,40 +5466,63 @@ function showView(name){
 }
 
 /* ============== VOICE MODE ============== */
+/* 2026-10-08 (audit #6 + voice packet): the scripted canned ARIA reply with its fake 00:04/00:11 stamps is gone. enterVoice() now hands the view to the real conversation loop (assets/aria-voice-conversation.js
+   via the glue below): the initial text, if any, becomes the first user turn and is sent to aria-chat; every
+   stamp comes from the live conversation clock. Without the engine (no Web Speech API, or ?voice=oneshot) the
+   view says so honestly and typing keeps working. */
 let voiceTimer = null, voiceSeconds = 0;
+const VOICE_COMMAND_RE = /^(?:please\s+)?(?:voice mode|switch to voice|use voice|voice chat)(?:\s*(?:please|now))?[.!]*$/i;
+/* "switch to voice" is a command, not a question for ARIA; anything longer rides along as the first turn. */
+function voiceSeedText(text){
+  const t = String(text || '').trim();
+  if (!t || VOICE_COMMAND_RE.test(t)) return '';
+  return t;
+}
+function voiceClock(ms){
+  const total = Math.max(0, Math.floor((typeof ms === 'number' ? ms : voiceSeconds * 1000) / 1000));
+  const m = String(Math.floor(total / 60)).padStart(2,'0');
+  const s = String(total % 60).padStart(2,'0');
+  return `${m}:${s}`;
+}
 function enterVoice(initialText){
   showView('voice');
   voiceSeconds = 0;
   if (voiceTimer) clearInterval(voiceTimer);
+  document.getElementById('voiceTimer').textContent = '00:00';
   voiceTimer = setInterval(() => {
     voiceSeconds++;
-    const m = String(Math.floor(voiceSeconds / 60)).padStart(2,'0');
-    const s = String(voiceSeconds % 60).padStart(2,'0');
-    document.getElementById('voiceTimer').textContent = `${m}:${s}`;
+    document.getElementById('voiceTimer').textContent = voiceClock();
   }, 1000);
 
   const transcript = document.getElementById('transcriptList');
   transcript.innerHTML = '';
-  if (initialText){
-    addTranscript('YOU','00:04', initialText, false);
-    setTimeout(() => {
-      const reply = "I see what's going on. May I take a quick look on your behalf?";
-      addTranscript('ARIA','00:11', reply, true);
-      document.getElementById('voiceQuote').textContent = '"' + reply + '"';
-    }, 900);
-  } else {
-    document.getElementById('voiceQuote').textContent = '"Listening — say what\'s on your mind."';
-  }
+  document.getElementById('voiceQuote').textContent = '"Listening — say what\'s on your mind."';
   document.getElementById('micBtn').classList.add('recording');
   document.getElementById('speakLabel').textContent = 'ARIA is listening';
+
+  const seed = voiceSeedText(initialText);
+  const glue = window.__ariaVoiceGlue;
+  if (glue && glue.available()){
+    glue.begin(seed);
+    return;
+  }
+  // Fallback path (one-shot recognition, or no Web Speech API at all): real rows only, nothing invented.
+  if (seed) addTranscript('YOU', voiceClock(), seed, false);
+  if (!(window.SpeechRecognition || window.webkitSpeechRecognition)){
+    document.getElementById('voiceQuote').textContent = '"Voice input isn\'t supported in this browser — typing works."';
+    document.getElementById('speakLabel').textContent = 'Tap to speak';
+    document.getElementById('micBtn').classList.remove('recording');
+    addTranscript('SYSTEM', voiceClock(), 'Voice input is not supported in this browser. Type your question in the chat — ARIA still answers, and replies can be read aloud.', false, 'system');
+  }
 }
 
-function addTranscript(who, ts, msg, isAria){
+function addTranscript(who, ts, msg, isAria, kind){
   const row = document.createElement('div');
-  row.className = 'transcript-row fade-in' + (isAria ? ' aria' : '');
-  row.innerHTML = `<div class="transcript-who">${who}<span class="ts">${ts}</span></div><div class="transcript-msg">${escapeHTML(msg)}</div>`;
+  row.className = 'transcript-row fade-in' + (isAria ? ' aria' : '') + (kind ? ' ' + kind : '');
+  row.innerHTML = `<div class="transcript-who">${escapeHTML(who)}<span class="ts">${escapeHTML(ts)}</span></div><div class="transcript-msg">${escapeHTML(msg)}</div>`;
   document.getElementById('transcriptList').appendChild(row);
   document.getElementById('transcriptList').scrollTop = 1e6;
+  return row;
 }
 
 /* ============== SPEECH ============== */
@@ -5469,7 +5551,7 @@ function ensureRecognition(){
     document.getElementById('voiceQuote').textContent = '"' + text + '"';
     if (e.results[e.results.length-1].isFinal){
       const final = text.trim();
-      if (final){ addTranscript('YOU','--:--', final, false); void submitAsk(final); showView('chat'); }
+      if (final){ addTranscript('YOU', voiceClock(), final, false); void submitAsk(final); showView('chat'); }
     }
   };
   recognition.onend = () => {
@@ -5575,6 +5657,11 @@ async function runPrimaryResearchPreflight(v){
 
 async function submitAsk(text){
   let v = text == null ? askInput.value.trim() : String(text).trim();
+  // 2026-10-08: while a voice conversation is live, typed text joins THAT conversation (ARIA replies by voice
+  // and the chat mirrors it). Every other time this is the unchanged typed path.
+  if (v && window.__ariaVoiceGlue && window.__ariaVoiceGlue.isActive()){
+    if (window.__ariaVoiceGlue.submitTyped(v)){ askInput.value = ''; return; }
+  }
   const classifiedIntent = typeof classify === 'function' ? classify(v) : 'default';
   const carryIntent = window.__ARIA_DIAGNOSTIC_PREVIEW__ && state.lastIntent && state.lastIntent !== 'default'
     ? state.lastIntent
@@ -5606,17 +5693,32 @@ sendBtn.addEventListener('click', () => void submitAsk()); // pass no arg → su
 askInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') void submitAsk(); });
 
 document.getElementById('micBtn').addEventListener('click', () => {
+  // 2026-10-08: tap-to-speak starts the CONVERSATION when the engine is available (continuous recognition);
+  // a second tap ends it. The original one-shot path below stays as the fallback for browsers without
+  // continuous recognition and for ?voice=oneshot / localStorage aria_voice_engine=oneshot.
+  const glue = window.__ariaVoiceGlue;
+  if (glue && glue.available()){
+    if (glue.isActive()) glue.end('mic');
+    else enterVoice('');
+    return;
+  }
   const r = ensureRecognition();
   if (!r){ enterVoice(''); return; }
   if (recognizing){ r.stop(); }
   else { enterVoice(''); try{ r.start(); recognizing = true; }catch(e){} }
 });
 document.getElementById('muteBtn').addEventListener('click', () => {
+  if (window.__ariaVoiceGlue && window.__ariaVoiceGlue.isActive()) window.__ariaVoiceGlue.end('mute');
   showView('chat');
   if (voiceTimer) clearInterval(voiceTimer);
   if (recognition && recognizing) recognition.stop();
   document.getElementById('micBtn').classList.remove('recording');
+  document.getElementById('micBtn').setAttribute('aria-pressed', 'false');
   document.getElementById('speakLabel').textContent = 'Tap to speak';
+});
+document.getElementById('voiceEndBtn').addEventListener('click', () => {
+  if (window.__ariaVoiceGlue && window.__ariaVoiceGlue.isActive()) window.__ariaVoiceGlue.end('button');
+  else document.getElementById('muteBtn').click();
 });
 
 /* helpers */
@@ -5661,7 +5763,11 @@ if ('speechSynthesis' in window){
 
 document.addEventListener('keydown', (e) => {
   if (e.key === '/' && document.activeElement !== askInput){ e.preventDefault(); askInput.focus(); }
-  if (e.key === 'Escape') showView('chat');
+  if (e.key === 'Escape'){
+    // Escape ends a live voice conversation (the glue also stops recognition + speech), then returns to chat.
+    if (window.__ariaVoiceGlue && window.__ariaVoiceGlue.isActive()) window.__ariaVoiceGlue.end('escape');
+    showView('chat');
+  }
 });
 
 /* auto-fire test suite when ?test=1 in URL — Ahmad watches, doesn't input */
@@ -5692,6 +5798,258 @@ if (_prefill){
   }, 1000);
 }
 
+</script>
+
+<!-- 2026-10-08 — conversational voice engine (state machine, no DOM). Identical copy is unit-tested under node. -->
+<script src="/assets/aria-voice-conversation.js?v=20261008" defer></script>
+<script>
+/* ============== VOICE CONVERSATION GLUE (2026-10-08) ==============
+   Wires assets/aria-voice-conversation.js into THIS page: the existing #view-voice / #voiceQuote / #transcriptList /
+   #voiceTimer / #micBtn / #muteBtn elements, the chat view (every voice turn is mirrored as a normal message so the
+   written steps stay readable), the existing "Get a human" control (action.kind === 'escalate') and the existing
+   ARIA Sentinel CTA (action.kind === 'sentinel-fix' — we never pretend to run anything from the web).
+   Honesty: rows carry real clock stamps; failure states say exactly what failed; nothing is scripted. */
+(function(){
+  var engine = null;          // live AriaVoiceConversation instance (one per conversation)
+  var returnFocusTo = null;   // element to focus again when the conversation ends
+  var trapHandler = null;
+  var SENTINEL_LINE = 'On a computer with ARIA Sentinel I can run that fix for you — want the download link?';
+  var HANDOFF_LINE = 'I have put the Get a human button in the chat — tap it and Ahmad is paged with this conversation.';
+
+  function lib(){ return window.AriaVoiceConversation || null; }
+  function $(id){ return document.getElementById(id); }
+  function forcedOneShot(){
+    try { return /[?&]voice=oneshot\b/.test(location.search) || localStorage.getItem('aria_voice_engine') === 'oneshot'; }
+    catch(_) { return false; }
+  }
+  function available(){
+    var L = lib();
+    if (!L || forcedOneShot()) return false;
+    return L.isSupported(window) && L.supportsContinuous(window);
+  }
+  function isActive(){ return !!engine && engine.isActive(); }
+  function clock(){ return voiceClock(engine ? engine.elapsedMs() : undefined); }
+  function text(el, v){ if (el) el.textContent = v; }
+  function quote(v){ text($('voiceQuote'), '"' + String(v || '').replace(/"/g, '”') + '"'); }
+
+  var STATE_LABEL = { idle:'VOICE · IDLE', listening:'LISTENING', thinking:'THINKING…', speaking:'ARIA SPEAKING', ended:'VOICE ENDED' };
+  var SPEAK_LABEL = { listening:'ARIA is listening', thinking:'ARIA is thinking…', speaking:'ARIA is speaking', ended:'Tap to speak', idle:'Tap to speak' };
+  function paintState(st, meta){
+    var pill = $('voiceStatePill');
+    if (pill){ pill.textContent = STATE_LABEL[st] || st.toUpperCase(); pill.setAttribute('data-state', st); }
+    text($('speakLabel'), SPEAK_LABEL[st] || 'Tap to speak');
+    var mic = $('micBtn');
+    if (mic){
+      mic.classList.toggle('recording', st === 'listening');
+      mic.setAttribute('aria-pressed', (st === 'listening' || st === 'thinking' || st === 'speaking') ? 'true' : 'false');
+    }
+    var meta2 = $('callerMeta');
+    if (meta2) text(meta2, st === 'ended' ? 'LOCAL SESSION · ENDED' : 'LOCAL SESSION · ' + (STATE_LABEL[st] || st.toUpperCase()));
+    if (st === 'listening') quote(meta && meta.bargeIn ? 'Go ahead — I stopped talking.' : 'Listening — say what\'s on your mind.');
+    if (st === 'thinking') quote('Thinking it through…');
+  }
+
+  var ERROR_COPY = {
+    'unsupported':         'Voice input isn\'t supported in this browser — typing works.',
+    'mic-denied':          'Microphone access was blocked. Allow the mic for iisupp.net in your browser\'s site settings, or keep typing.',
+    'no-microphone':       'No microphone was found on this device — typing works.',
+    'recognition-network': 'Speech recognition could not reach its service (it runs through your browser vendor) — typing works.',
+    'recognition-error':   'Speech recognition stopped unexpectedly — tap the mic to try again, or type.',
+    'recognition-failed':  'Speech recognition could not start in this browser — typing works.',
+    'server':              'I couldn\'t reach ARIA just now. Your words are in the chat — try again in a moment, or type.',
+    'no-fetch':            'This browser cannot reach ARIA\'s service — typing works.'
+  };
+  var END_COPY = {
+    'resolved':'ARIA marked this resolved', 'end-phrase':'you ended it', 'escape':'Escape', 'mic':'mic tapped', 'mute':'mute',
+    'button':'End voice', 'silence':'no speech for two turns', 'degraded':'ARIA\'s brain is temporarily unreachable',
+    'awaiting-typed-input':'ARIA is waiting for a typed answer', 'mic-denied':'microphone blocked', 'unsupported':'not supported here',
+    'server-error':'ARIA could not be reached', 'recognition-network':'speech service unreachable', 'no-microphone':'no microphone',
+    'recognition-error':'speech recognition stopped', 'recognition-failed':'speech recognition could not start', 'stopped':'stopped'
+  };
+
+  function esc(v){ return escapeHTML(String(v == null ? '' : v)); }
+  function chatNote(html){
+    try { appendTransientMessage('<div class="voice-chat-note">' + html + '</div>'); } catch(_) {}
+  }
+  function mirrorAssistant(data, meta){
+    var body = esc(String(data.text || data.reply || meta.speakText || '')).replace(/\n/g, '<br>');
+    var extras = '';
+    if (Array.isArray(data.suggestions) && data.suggestions.length){
+      extras += '<div class="followup-row" style="margin-top:10px">' + data.suggestions.slice(0,3).map(function(sg){
+        return '<button class="followup-chip" data-voice-followup="' + esc(sg) + '">' + esc(sg) + '</button>';
+      }).join('') + '</div>';
+    }
+    if (meta.action && meta.action.kind === 'sentinel-fix'){
+      extras += '<div class="aria-text" style="margin-top:10px">' + esc(SENTINEL_LINE)
+        + ' <button class="btn-ghost" type="button" data-voice-sentinel="' + esc(meta.action.recipeHint || '') + '" style="margin-left:6px">ARIA Sentinel options</button></div>';
+    }
+    if (meta.action && meta.action.kind === 'escalate' || data.escalate){
+      extras += '<div class="aria-text" style="margin-top:10px;color:var(--gold-bright)">Want a person? Use <strong>Get a human</strong> below, call <a class="aria-result-link" href="tel:+16475813182">647-581-3182</a>, or type <em>talk to a live agent</em>.</div>';
+    }
+    if (data.degraded) extras += '<div class="voice-chat-note">ARIA\'s reasoning brain was temporarily unreachable — this is the honest fallback reply, not a diagnosis.</div>';
+    appendMessage(ariaBubble('', body + extras));
+  }
+  function showHandoffControls(){
+    var b = $('ariaHandoffBtn');
+    if (b){ b.classList.add('show'); try { b.scrollIntoView({ block:'nearest' }); } catch(_) {} }
+  }
+
+  /* Focus: the voice panel's operable controls (End voice in the view, Mute in the rail). Tab cycles between them
+     while the conversation is live; Escape ends it (handled by the main keydown listener via end('escape')). */
+  function focusables(){
+    return [$('voiceEndBtn'), $('muteBtn')].filter(function(el){ return el && el.offsetParent !== null; });
+  }
+  function installTrap(){
+    removeTrap();
+    trapHandler = function(e){
+      if (e.key !== 'Tab' || !isActive()) return;
+      var list = focusables();
+      if (!list.length) return;
+      var i = list.indexOf(document.activeElement);
+      if (i === -1 && !($('view-voice') && $('view-voice').contains(document.activeElement)) && !($('rightVoice') && $('rightVoice').contains(document.activeElement))) return;
+      e.preventDefault();
+      var next = e.shiftKey ? (i <= 0 ? list.length - 1 : i - 1) : (i === -1 || i >= list.length - 1 ? 0 : i + 1);
+      list[next].focus();
+    };
+    document.addEventListener('keydown', trapHandler, true);
+  }
+  function removeTrap(){ if (trapHandler){ document.removeEventListener('keydown', trapHandler, true); trapHandler = null; } }
+
+  function build(){
+    var L = lib();
+    return L.createVoiceConversation({
+      SpeechRecognition: window.SpeechRecognition || window.webkitSpeechRecognition,
+      speechSynthesis: window.speechSynthesis,
+      SpeechSynthesisUtterance: window.SpeechSynthesisUtterance,
+      fetch: window.fetch ? window.fetch.bind(window) : null,
+      navigator: navigator,
+      lang: navigator.language || 'en-US',
+      sessionId: function(){ return state.sessionId; },
+      history: (state.llmHistory || []).slice(-12),
+      beforeSpeak: function(){ window.__ariaVoiceMode = true; },   // aria-v04-ext gates TTS behind this flag
+      pickVoice: function(voices){
+        return voices.find(function(v){ return /Microsoft\s+(Aria|Jenny|Sonia|Libby).*Natural|Google\s+US\s+English|Samantha/i.test(v.name || ''); }) || null;
+      },
+      augmentSpeak: function(speak, ctx){
+        if (ctx.action && ctx.action.kind === 'sentinel-fix') return speak + ' ' + SENTINEL_LINE;
+        if (ctx.action && ctx.action.kind === 'escalate') return speak + ' ' + HANDOFF_LINE;
+        return speak;
+      },
+      onState: paintState,
+      onInterim: function(t){ if (t) quote(t); },
+      onUserTurn: function(t, meta){
+        addTranscript('YOU', voiceClock(meta.elapsedMs), t, false);
+        appendMessage(youBubble(t));
+        try { if (window.ariaSessionMemory) window.ariaSessionMemory.trackTurn('user', t); } catch(_) {}
+      },
+      onAssistantTurn: function(data, meta){
+        addTranscript('ARIA', voiceClock(meta.elapsedMs), meta.speakText, true);
+        quote(meta.speakText);
+        mirrorAssistant(data, meta);
+        try { if (window.ariaSessionMemory) window.ariaSessionMemory.trackTurn('assistant', String(data.text || meta.speakText || '')); } catch(_) {}
+      },
+      onAction: function(action){
+        if (action.kind === 'escalate') showHandoffControls();
+      },
+      onHistory: function(h){ state.llmHistory = h.slice(); },
+      onEmptyTurn: function(n){
+        addTranscript('SYSTEM', clock(), n === 1 ? 'No speech heard — still listening for one more turn.' : 'No speech heard.', false, 'system');
+      },
+      onError: function(code){
+        var msg = ERROR_COPY[code] || 'Voice stopped: ' + code + '. Typing works.';
+        quote(msg);
+        addTranscript('SYSTEM', clock(), msg, false, 'system');
+        chatNote(esc(msg));
+      },
+      onEnd: function(reason){
+        var why = END_COPY[reason] || reason;
+        addTranscript('SYSTEM', clock(), 'Voice ended · ' + why, false, 'system');
+        if (voiceTimer){ clearInterval(voiceTimer); voiceTimer = null; }
+        removeTrap();
+        paintState('ended', { reason: reason });
+        if (reason === 'awaiting-typed-input') quote('ARIA is waiting for a typed answer — use the chat box.');
+        else if (reason === 'resolved') quote('Glad that is sorted. Tap the mic any time.');
+        chatNote('Voice conversation ended (' + esc(why) + '). Everything said is above; tap the mic to talk again.');
+        // Back to the chat (the voice view has no input box); return focus where it came from.
+        setTimeout(function(){
+          if (isActive()) return;              // a new conversation started meanwhile
+          showView('chat');
+          var target = returnFocusTo && document.contains(returnFocusTo) ? returnFocusTo : $('micBtn');
+          try { target && target.focus(); } catch(_) {}
+          returnFocusTo = null;
+        }, 900);
+      }
+    });
+  }
+
+  function begin(seed){
+    if (!available()) return false;
+    if (engine && engine.isActive()) engine.stop('restart');
+    engine = build();
+    window.__ariaVoiceMode = true;
+    returnFocusTo = document.activeElement && document.activeElement !== document.body ? document.activeElement : $('micBtn');
+    installTrap();
+    var started = engine.start(seed || '');
+    if (started){
+      addTranscript('SYSTEM', clock(), 'Voice conversation started · recognition by your browser · replies from ARIA', false, 'system');
+      setTimeout(function(){ var b = $('voiceEndBtn'); if (b && isActive()) { try { b.focus(); } catch(_) {} } }, 60);
+    }
+    return started;
+  }
+  function end(reason){ if (engine) engine.stop(reason || 'stopped'); }
+  function submitTyped(t){ return isActive() ? engine.submitText(t) : false; }
+
+  // Voice-reply suggestion chips + the Sentinel options button inside mirrored replies.
+  document.addEventListener('click', function(e){
+    var chip = e.target.closest('[data-voice-followup]');
+    if (chip){
+      var t = chip.getAttribute('data-voice-followup') || '';
+      if (isActive()) submitTyped(t); else handleUserInput(t);
+      return;
+    }
+    var sb = e.target.closest('[data-voice-sentinel]');
+    if (sb){
+      var hint = sb.getAttribute('data-voice-sentinel') || state.lastIntent || 'voice';
+      if (typeof openResolveModal === 'function') openResolveModal(hint, null);
+      else window.open('/downloads/', '_blank', 'noopener');
+    }
+  });
+
+  window.__ariaVoiceGlue = { available: available, isActive: isActive, begin: begin, end: end, submitTyped: submitTyped, engine: function(){ return engine; } };
+})();
+</script>
+
+<!-- 2026-10-08 — account sign-in: the emailed magic link lands on /aria?magic=<token>. Verify it, keep the 12-hour
+     session token (localStorage aria_session_token, the site convention), strip the token from the URL, and say so. -->
+<script defer src="/assets/aria-account-auth.js?v=20261008"></script>
+<script>
+(function(){
+  function toast(html){
+    var t = document.createElement('div');
+    t.id = 'ariaMagicSignin';
+    t.setAttribute('role', 'status');
+    t.style.cssText = 'position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9600;background:linear-gradient(165deg,rgba(10,8,5,.97),rgba(20,15,8,.97));border:1px solid rgba(197,160,89,.55);border-radius:14px;padding:14px 22px;color:#f1dca7;font-family:Inter,sans-serif;font-size:13px;box-shadow:0 22px 50px rgba(0,0,0,.6);display:flex;align-items:center;gap:12px;max-width:min(560px,calc(100vw - 32px))';
+    t.innerHTML = html + '<button type="button" aria-label="Dismiss" style="background:none;border:0;color:rgba(255,255,255,.6);font-size:18px;cursor:pointer;margin-left:6px">&times;</button>';
+    t.querySelector('button').addEventListener('click', function(){ t.remove(); });
+    document.body.appendChild(t);
+    setTimeout(function(){ if (t.parentNode) t.remove(); }, 20000);
+  }
+  function esc(v){ return String(v == null ? '' : v).replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+  function run(){
+    var A = window.ariaAccountAuth;
+    if (!A || !/[?&](magic|token)=/.test(location.search)) return;
+    A.consumeMagicLinkFromUrl().then(function(r){
+      if (!r || !r.attempted) return;
+      if (r.ok){
+        var back = r.returnTo ? ' <a href="' + esc(r.returnTo) + '" style="color:#f1dca7;font-weight:600">Continue to ' + esc(r.returnTo) + ' &rarr;</a>' : ' <a href="/account.html" style="color:#f1dca7;font-weight:600">Account &rarr;</a>';
+        toast('<span><strong style="color:#fff">Signed in as ' + esc(r.email) + '</strong> &middot; valid about 12 hours on this browser.' + back + '</span>');
+      } else {
+        toast('<span><strong style="color:#fff">Sign-in link not accepted.</strong> ' + esc(r.message || 'It is invalid or expired.') + ' <a href="/account.html" style="color:#f1dca7;font-weight:600">Request a new one &rarr;</a></span>');
+      }
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
 </script>
 
 <script>
@@ -5951,21 +6309,21 @@ if (_prefill){
 @media(max-width:520px){#ariaLeadModal .alm-row{grid-template-columns:1fr}}
 </style>
 <button id="ariaLeadBtn" type="button" onclick="document.getElementById('ariaLeadModal').classList.add('open')">Talk to sales</button>
-<div id="ariaLeadModal" role="dialog" aria-modal="true">
+<div id="ariaLeadModal" role="dialog" aria-modal="true" aria-labelledby="alm-title">
   <div class="alm-card">
-    <button class="alm-close" aria-label="Close" onclick="document.getElementById('ariaLeadModal').classList.remove('open')">x</button>
-    <h3>Talk to <span class="gold">Ahmad</span> directly</h3>
+    <button class="alm-close" aria-label="Close" type="button" onclick="document.getElementById('ariaLeadModal').classList.remove('open')">x</button>
+    <h3 id="alm-title">Talk to <span class="gold">Ahmad</span> directly</h3>
     <p>Founder of Integrated IT Support. Same-day reply, usually within hours.</p>
     <form id="almForm" novalidate>
       <div class="alm-row">
-        <div><label>Name</label><input id="alm-name" type="text" required></div>
-        <div><label>Company</label><input id="alm-company" type="text"></div>
+        <div><label for="alm-name">Name</label><input id="alm-name" type="text" required autocomplete="name"></div>
+        <div><label for="alm-company">Company</label><input id="alm-company" type="text" autocomplete="organization"></div>
       </div>
       <div class="alm-row">
-        <div><label>Work email</label><input id="alm-email" type="email" required></div>
-        <div><label>Phone (optional)</label><input id="alm-phone" type="tel"></div>
+        <div><label for="alm-email">Work email</label><input id="alm-email" type="email" required autocomplete="email"></div>
+        <div><label for="alm-phone">Phone (optional)</label><input id="alm-phone" type="tel" autocomplete="tel"></div>
       </div>
-      <label>What do you need?</label>
+      <label for="alm-msg">What do you need?</label>
       <textarea id="alm-msg"></textarea>
       <button class="alm-submit" type="submit">Send to Ahmad &rarr;</button>
       <div class="alm-status" id="alm-status"></div>
@@ -5976,6 +6334,24 @@ if (_prefill){
 (function(){
 setTimeout(function(){var b=document.getElementById('ariaLeadBtn');if(b)b.classList.add('show');},60000);
 setInterval(function(){if(document.querySelector('.aria-locked-overlay')){var b=document.getElementById('ariaLeadBtn');if(b)b.classList.add('show');}},3000);
+/* 2026-10-08 accessibility (audit §6): the dialog is labelled (aria-labelledby="alm-title"), opening moves focus
+   to the first field, Tab is trapped inside while open, Escape CLOSES the modal (it used to switch the chat view
+   underneath) and focus returns to the opener. Works for every opener because it watches the `open` class. */
+(function(){
+  var modal=document.getElementById('ariaLeadModal');if(!modal||!window.MutationObserver)return;
+  var opener=null,wasOpen=false;
+  function focusable(){return Array.prototype.filter.call(modal.querySelectorAll('button,[href],input,textarea,select,[tabindex]:not([tabindex="-1"])'),function(el){return !el.disabled&&el.offsetParent!==null;});}
+  function onOpen(){opener=document.activeElement&&document.activeElement!==document.body?document.activeElement:document.getElementById('ariaLeadBtn');var first=document.getElementById('alm-name')||focusable()[0];setTimeout(function(){try{first&&first.focus();}catch(e){}},30);}
+  function onClose(){var t=opener&&document.contains(opener)?opener:document.getElementById('ariaLeadBtn');opener=null;try{t&&t.focus();}catch(e){}}
+  new MutationObserver(function(){var open=modal.classList.contains('open');if(open&&!wasOpen)onOpen();if(!open&&wasOpen)onClose();wasOpen=open;}).observe(modal,{attributes:true,attributeFilter:['class']});
+  document.addEventListener('keydown',function(e){
+    if(!modal.classList.contains('open'))return;
+    if(e.key==='Escape'){e.preventDefault();e.stopPropagation();modal.classList.remove('open');return;}
+    if(e.key==='Tab'){var list=focusable();if(!list.length)return;var i=list.indexOf(document.activeElement);
+      if(e.shiftKey&&(i<=0)){e.preventDefault();list[list.length-1].focus();}
+      else if(!e.shiftKey&&(i===-1||i===list.length-1)){e.preventDefault();list[0].focus();}}
+  },true);
+})();
 var form=document.getElementById('almForm');if(!form)return;
 form.addEventListener('submit',async function(e){
 e.preventDefault();

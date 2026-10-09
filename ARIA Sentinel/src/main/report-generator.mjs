@@ -20,13 +20,43 @@ export function reportFilename(license, q) {
 
 const esc = (v) => sanitizeText(String(v == null ? "" : v)).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
+// RUN-CU / CU4 (2026-10-08, audit P0 #4) — the trust lines are EVIDENCE when the caller supplies it
+// (data.evidence / data.privacy from compliance-evidence.mjs): "verified" is written only when the signal
+// says so, "not evidenced" otherwise. Without evidence data (legacy callers/tests) the original line stands.
+export function trustLines(data = {}) {
+  const ev = data.evidence;
+  const pv = data.privacy;
+  if (!ev || typeof ev !== "object") {
+    return ["Audit integrity verified · privacy verifier active · 100% sanitization · R11 private folder never touched."];
+  }
+  const audit = ev["CC4.1"];
+  const auditLine = audit ? (audit.met ? "Audit integrity: verified" : `Audit integrity: NOT evidenced (${audit.detail || "check failed"})`) : "Audit integrity: not measured";
+  const privacyLine = pv && pv.pass === true && pv.evidenced ? `Privacy verifier: measured PASS (${pv.sanitization == null ? "--" : pv.sanitization + "%"} sanitization)`
+    : pv && pv.pass === false ? "Privacy verifier: measured REVIEW — see the capture rows"
+      : `Privacy verifier: not evidenced — ${(pv && pv.label) || "no live capture yet"}`;
+  const signed = ev["CC8.1"];
+  const signedLine = signed ? (signed.met ? "Updates: code-signed installer" : "Updates: installer is UNSIGNED (not evidenced)") : "Updates: not measured";
+  const counts = Object.values(ev).reduce((acc, e) => { acc[e.kind] = (acc[e.kind] || 0) + 1; return acc; }, {});
+  return [
+    auditLine,
+    privacyLine,
+    signedLine,
+    `Controls: ${counts.measured || 0} measured on this device · ${counts["not-evidenced"] || 0} not evidenced · ${counts.capability || 0} shipped capabilities (not measured here) · R11 private folder never touched.`
+  ];
+}
+
 /** Auto-generated 3-line executive summary (template — NO LLM call). */
 export function executiveSummary(data = {}) {
   const k = data.kpis || {};
+  const ev = data.evidence && typeof data.evidence === "object" ? data.evidence : null;
+  const pv = data.privacy || null;
+  const third = ev
+    ? `${ev["CC4.1"] && ev["CC4.1"].met ? "Audit integrity verified" : "Audit integrity not evidenced"}, privacy verifier ${pv && pv.pass === true && pv.evidenced ? "passing (measured)" : pv && pv.pass === false ? "needs review (measured)" : "not measured yet"}, and the protected private folder was never accessed (R11 enforced).`
+    : `Audit integrity verified, privacy verifier passing, and the protected private folder was never accessed (R11 enforced).`;
   return [
     `ARIA Sentinel resolved ${k.incidents ?? 0} incidents this quarter, ${k.autoPct == null ? "--" : k.autoPct + "%"} automatically, saving ~${k.hoursSaved == null ? "--" : k.hoursSaved} hours of L1 effort.${k.deflectionPct == null ? "" : ` ${k.deflectionPct}% of issues were resolved first-touch${k.dollarsSaved == null ? "" : ` (~$${Number(k.dollarsSaved).toLocaleString("en-US")} of L1 effort avoided)`}.`}`,
     `SLA compliance held at ${data.sla?.composite == null ? "--" : data.sla.composite + "%"} against a ${data.sla?.floor == null ? "--" : data.sla.floor + "%"} contractual floor, with ${data.sla?.breaches ?? 0} breach(es).`,
-    `Audit integrity verified, privacy verifier passing, and the protected private folder was never accessed (R11 enforced).`
+    third
   ];
 }
 
@@ -42,7 +72,7 @@ export function buildSections(data = {}) {
     { id: "compliance", title: "Compliance posture", rows: Object.entries(data.compliance || {}).map(([fw, s]) => ({ label: esc(fw.toUpperCase()), value: esc(`${s.score}/100 (${s.badge})`) })) },
     { id: "recurring", title: "Recurring issues + recommended fixes", rows: (data.recurring || []).map((r) => ({ label: esc(r.issue), value: esc(r.fix) })) },
     { id: "upcoming", title: "Next-quarter upcoming work", lines: (data.upcoming || []).map(esc) },
-    { id: "trust", title: "Trust", lines: ["Audit integrity verified · privacy verifier active · 100% sanitization · R11 private folder never touched."] }
+    { id: "trust", title: "Trust", lines: trustLines(data) }
   ];
 }
 

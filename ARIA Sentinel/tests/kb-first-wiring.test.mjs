@@ -99,5 +99,37 @@ t();
 }
 t();
 
-assert.equal(n, 7, "7 KB-first test groups");
-console.log(`kb-first-wiring test passed (${n} groups · confident hit skips Anthropic · low-conf/no-match/timeout/no-excerpt fall through · R11 scrub · inclusive threshold ${KB_CONFIDENCE_MIN}).`);
+// 8 — RUN-CU / CU4: multi-turn history + voice contract. buildChatRequest sends prior turns (last 12, R11-scrubbed,
+//     user/assistant only) ahead of the prompt and `voice: true` ONLY when asked; askAria surfaces aria-chat's
+//     speak / needs_input / listen / action{kind, recipeHint} as actionDetail while keeping the string `action`.
+{
+  const { buildChatRequest, normalizeHistory, HISTORY_MAX_TURNS } = await import("../src/shared/aria-brain-client.mjs");
+  assert.equal(HISTORY_MAX_TURNS, 12);
+  const big = Array.from({ length: 30 }, (_, i) => ({ role: i % 2 ? "assistant" : "user", content: `turn ${i}` }));
+  const hist = normalizeHistory([...big, { role: "system", content: "ignored" }, { role: "user", content: "  " }]);
+  assert.equal(hist.length, 12, "history capped at the last 12 turns"); assert.equal(hist[0].content, "turn 18");
+  assert.deepEqual(normalizeHistory([{ role: "me", text: "C:\\Users\\bob\\Private pics and Vids\\x" }, { role: "aria", text: "ok" }]).map((m) => m.role), ["user", "assistant"], "renderer who→role mapped");
+  assert.doesNotMatch(JSON.stringify(normalizeHistory([{ role: "user", content: "see C:\\Users\\bob\\Private pics and Vids\\x" }])), /private\s+pics|C:\\\\Users/i, "R11 scrub applies to history");
+  const plain = JSON.parse(buildChatRequest("hello", { messages: [{ role: "user", content: "a" }, { role: "assistant", content: "b" }] }).body);
+  assert.deepEqual(plain.messages, [{ role: "user", content: "a" }, { role: "assistant", content: "b" }, { role: "user", content: "hello" }], "history precedes the new prompt");
+  assert.equal("voice" in plain, false, "typed asks do not set voice");
+  const voiced = JSON.parse(buildChatRequest("hello", { voice: true, platform: "darwin" }).body);
+  assert.equal(voiced.voice, true); assert.equal(voiced.platform, "darwin"); assert.deepEqual(voiced.messages, [{ role: "user", content: "hello" }]);
+  // the reply: voice fields pass through (scrubbed), action object → string action + actionDetail
+  const fetchImpl = async (url) => {
+    if (String(url).includes("aria-kb-query")) return { ok: true, json: async () => ({ match: false }) };
+    return { ok: true, json: async () => ({ text: "I can restart the print spooler here.", speak: "I can restart the spooler. Say yes.", needs_input: true, listen: true, action: { kind: "sentinel-fix", recipeHint: "restart print spooler C:\\Users\\bob\\x" }, sessionId: "v1" }) };
+  };
+  const r = await askAria("printer stuck", { fetchImpl, voice: true });
+  assert.equal(r.action, "sentinel-fix", "string action kept for every existing caller");
+  assert.equal(r.speak, "I can restart the spooler. Say yes."); assert.equal(r.needs_input, true); assert.equal(r.listen, true);
+  assert.equal(r.actionDetail.kind, "sentinel-fix"); assert.match(r.actionDetail.recipeHint, /^restart print spooler/); assert.doesNotMatch(r.actionDetail.recipeHint, /C:\\Users/, "recipeHint R11-scrubbed");
+  assert.equal(r.session_id, "v1");
+  // a plain (non-voice) reply carries NO voice fields — nothing invented
+  const r2 = await askAria("printer stuck", { fetchImpl: makeFetch({ kb: { match: false } }).fetchImpl });
+  assert.equal("speak" in r2, false); assert.equal("listen" in r2, false); assert.equal("actionDetail" in r2, false);
+}
+t();
+
+assert.equal(n, 8, "8 KB-first test groups");
+console.log(`kb-first-wiring test passed (${n} groups · confident hit skips Anthropic · low-conf/no-match/timeout/no-excerpt fall through · R11 scrub · inclusive threshold ${KB_CONFIDENCE_MIN} · CU4 history + voice contract).`);

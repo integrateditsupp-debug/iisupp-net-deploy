@@ -14,7 +14,8 @@ assert.equal(fresh.setup.prefs.mode, "manual", "Manual recommended default");
 assert.equal(fresh.setup.prefs.kbNotifications, true);
 assert.equal(fresh.setup.prefs.trayIcon, true);
 assert.equal(fresh.setup.prefs.landOnAria, false, "auto-land on ARIA defaults OFF");
-assert.equal(SETUP_TOTAL_STEPS, 6);
+// RUN-CU / CU4 — wizard v2 APPENDS 6 steps after the original 6 (12 total); the v1 six are intact (SETUP_V1_STEPS).
+assert.equal(SETUP_TOTAL_STEPS, 12);
 t();
 
 // 2 — stepping through advances and auto-completes at the final step.

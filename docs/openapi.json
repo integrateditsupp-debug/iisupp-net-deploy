@@ -4171,14 +4171,14 @@
         }
       }
     },
-    "/.netlify/functions/aria-winback-cron": {
+    "/.netlify/functions/aria-winback-draft": {
       "post": {
-        "summary": "aria-winback-cron Netlify function",
-        "operationId": "post_aria_winback_cron",
+        "summary": "aria-winback-draft Netlify function (draft-only churn / win-back playbook; renamed from aria-winback-cron.js on 2026-10-08)",
+        "operationId": "post_aria_winback_draft",
         "tags": [
           "netlify-functions"
         ],
-        "x-netlify-function-file": "aria-winback-cron.js",
+        "x-netlify-function-file": "aria-winback-draft.js",
         "requestBody": {
           "required": false,
           "content": {

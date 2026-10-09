@@ -1,5 +1,6 @@
 import { COMPANION_MENU, getFlow, flowStep, resolveStep, stepKey, isStepAnswered, listFlows, autoRunAction, flowStepTag } from "../shared/walkthrough-steps.mjs";
 import { createLocalStt } from "./local-stt.mjs"; // TRUE on-device offline STT (Vosk) — no cloud, no audio egress
+import { createVoiceConversation } from "./voice-conversation.mjs"; // RUN-CU / CU4 — multi-turn voice loop (shared with the ARIA tab)
 
 // Keep the overlay renderable long enough to surface bridge failure, but never pretend fixes ran.
 const sentinel = window.sentinel || {
@@ -25,7 +26,8 @@ const sentinel = window.sentinel || {
   copyText: async () => ({ ok: false, error: "bridge_unavailable" }),
   supervisedFix: async () => ({ ok: false, error: "bridge_unavailable", reason: "Desktop bridge unavailable." }),
   diagnose: async () => ({ ok: false, error: "bridge_unavailable" }),
-  isVettedRecipe: async () => ({ vetted: false })
+  isVettedRecipe: async () => ({ vetted: false }),
+  voiceApprove: async () => ({ ok: false, error: "bridge_unavailable" }) // RUN-CU / CU4
 };
 let currentDetection = null;
 let wiggledThisSession = false;
@@ -72,9 +74,13 @@ function pickNarrationVoice() {
     || null;
 }
 
+// RUN-CU / CU4 — an optional one-shot "narration finished" hook so the multi-turn voice loop can re-arm the mic
+// exactly when ARIA stops talking (set by narrateWithEnd; fired on end/error, or immediately when nothing is spoken).
+let narrateEndHook = null;
+function fireNarrateEnd() { const h = narrateEndHook; narrateEndHook = null; if (h) { try { h(); } catch { /* loop callback must not break narration */ } } }
 function narrate(text) {
-  if (typeof speechSynthesis === "undefined") return; // no TTS here → stay silent, screen text is the source
-  if (narrationMuted || !text || !text.trim()) return;
+  if (typeof speechSynthesis === "undefined") return false; // no TTS here → stay silent, screen text is the source
+  if (narrationMuted || !text || !text.trim()) return false;
   try {
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text.trim());
@@ -85,8 +91,17 @@ function narrate(text) {
     u.onstart = () => setGlobeState("speaking");
     u.onend = () => setGlobeState("idle");
     u.onerror = () => setGlobeState("idle");
+    u.addEventListener("end", fireNarrateEnd);
+    u.addEventListener("error", fireNarrateEnd);
     speechSynthesis.speak(u);
-  } catch { /* on-device TTS is best-effort; it never blocks the visible card */ }
+    return true;
+  } catch { return false; /* on-device TTS is best-effort; it never blocks the visible card */ }
+}
+/** narrate() + an onEnd callback (fires right away when muted / no TTS, so a conversation never stalls). */
+function narrateWithEnd(text, opts) {
+  narrateEndHook = (opts && opts.onEnd) || null;
+  const spoke = narrate(text);
+  if (!spoke) fireNarrateEnd();
 }
 
 // Speak EXACTLY what is on the card — read the rendered lead/sub text, never a separate script (Rule 14).
@@ -221,6 +236,7 @@ sentinel.getState().then((state) => {
 
 document.getElementById("overlayGlobe").addEventListener("click", async () => {
   // Voice ASK in progress → a globe tap controls it: listening → stop + answer; speaking → stop.
+  if (voiceConvo.isActive()) { await voiceConvo.globeTap(); return; } // RUN-CU / CU4 — multi-turn loop owns the tap
   if (voiceActive) { await stopVoiceAndAnswer(); return; }
   if (typeof speechSynthesis !== "undefined" && speechSynthesis.speaking) { cancelVoice(); return; }
   if (currentDetection) {
@@ -352,6 +368,10 @@ async function startVoiceAsk() {
   const canMic = typeof navigator !== "undefined" && navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
   const modelUrl = canMic ? await (sentinel.voskModelUrl?.() ?? null) : null;
   if (!modelUrl) { setGlobeState("idle"); openCompanion(); return; } // no on-device model → typeable menu (never cloud)
+  // RUN-CU / CU4 — MULTI-TURN by default: the shared conversation loop owns the mic (ON only while listening,
+  // released on stop), shows each heard utterance before sending it, narrates the reply, and re-arms when the
+  // brain says listen:true. "that's all" / "stop" / "thank you, bye" end it. The one-shot path below is kept.
+  if (VOICE_MULTI_TURN) { await voiceConvo.start(); return; }
   voiceText = "";
   setGlobeState("listening");
   try {
@@ -379,6 +399,38 @@ function cancelVoice() {
 }
 overlaySpeakBtn?.addEventListener("click", () => { startVoiceAsk(); });
 
+// ── RUN-CU / CU4 — multi-turn voice conversation under the globe ────────────────────────────────────────────
+// The transcript (both sides) renders in the ONE card as it happens, so the person can see exactly what was
+// heard and what ARIA said. A fix ARIA offers is approved by a spoken "yes" through the gated pipeline
+// (supervisedFix → approval → sentinel:voice-approve) and the real outcome is narrated — never "fixed" unless it ran.
+const VOICE_MULTI_TURN = true;
+const voiceTranscript = [];
+function renderVoiceView() {
+  const wrap = el("div", "companion-transcript");
+  if (!voiceTranscript.length) wrap.appendChild(el("div", "t-status", "Listening… say what's going on. Tap the globe when you're done talking."));
+  for (const t of voiceTranscript.slice(-12)) wrap.appendChild(el("div", t.who === "me" ? "t-me" : t.who === "aria" ? "t-aria" : "t-status", t.text));
+  companionBody.appendChild(wrap);
+  const row = el("div", "companion-actions");
+  const endBtn = el("button", "cbtn ghost"); endBtn.type = "button"; endBtn.textContent = "End conversation";
+  endBtn.addEventListener("click", () => { voiceConvo.stop(); });
+  row.appendChild(endBtn); companionBody.appendChild(row);
+}
+function showVoiceTranscript() {
+  if (!comp || !(topView() && topView().kind === "voice")) { comp = { answers: {}, stack: [{ kind: "voice" }] }; setMode("companion"); }
+  renderCompanion();
+}
+const voiceConvo = createVoiceConversation({
+  voskModelUrl: () => Promise.resolve(sentinel.voskModelUrl?.() ?? null),
+  chat: (text, ctx) => sentinel.chat?.(text, ctx),
+  supervisedFix: (p) => sentinel.supervisedFix(p),
+  voiceApprove: (recipeId) => sentinel.voiceApprove(recipeId),
+  narrate: (text, opts) => narrateWithEnd(text, opts),
+  cancelNarration: () => { if (typeof speechSynthesis !== "undefined") { try { speechSynthesis.cancel(); } catch { /* ignore */ } } fireNarrateEnd(); },
+  setGlobeState: (st) => setGlobeState(st),
+  onStatus: (st) => { if (st === "idle" && comp && topView() && topView().kind === "voice") { voiceTranscript.length = 0; comp = null; setMode("globe"); } },
+  onTranscript: ({ who, text }) => { if (!text) return; voiceTranscript.push({ who, text }); while (voiceTranscript.length > 24) voiceTranscript.shift(); showVoiceTranscript(); }
+});
+
 function renderCompanion() {
   if (!comp || !companionBody) return;
   clearAutoTimer(); // each render re-arms auto-run only where appropriate (renderFlowStep decides)
@@ -390,6 +442,7 @@ function renderCompanion() {
   else if (view.kind === "fix") renderFix();
   else if (view.kind === "fix-result") renderFixResult(view); // async; lead/sub are appended synchronously first
   else if (view.kind === "flow") renderFlowStep(view);
+  else if (view.kind === "voice") renderVoiceView(); // RUN-CU / CU4 — live transcript of the voice conversation
   // NARRATION: speak the same visible card text after it renders (guarded + muteable inside narrate()).
   speakCurrentCard();
 }
