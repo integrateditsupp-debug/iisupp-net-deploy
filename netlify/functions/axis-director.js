@@ -126,6 +126,13 @@ exports.handler = async (event) => {
     ? [...body.messages].reverse().find((m) => m && m.role === 'user' && typeof m.content === 'string')
     : null;
   const askText = lastUser ? String(lastUser.content).slice(0, 4000) : '';
+  // Explicit workspace work bypasses recall and offline-worker chat, not approvals.
+  const { workspaceIntent } = require('./lib/axis-workspace-intent.cjs');
+  const workspace = workspaceIntent(askText);
+  if (workspace) return json(200, {
+    text: 'Opening your workspace.', workspace,
+    routedAgent: null, intent: null, needsApproval: false,
+  });
   // The conversation travels WITH the question. This used to collapse body.messages down to the
   // last user turn before the cascade, so "remove it" reached the Max plan as a two-word orphan and
   // the model rightly said it had no idea which list Ahmad meant (2026-08-12) — while the metered
