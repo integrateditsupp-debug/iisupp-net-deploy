@@ -36,7 +36,7 @@
 
   const launch = document.createElement('div');
   launch.className = 'axx-launch'; launch.hidden = true;
-  launch.innerHTML = '<button data-tab="work">Workspace</button><button data-tab="auto">Automations</button><button data-tab="apr">Approvals</button>';
+  launch.innerHTML = '<button data-live>Talk to Axis</button><button data-tab="work">Workspace</button><button data-tab="auto">Automations</button><button data-tab="apr">Approvals</button>';
   const panel = document.createElement('aside');
   panel.className = 'axx'; panel.setAttribute('aria-label', 'AXIS workspace');
   panel.innerHTML = '<header><span class="t">AXIS · Working with you</span><button class="b" data-close>Close</button></header><nav>' +
@@ -49,7 +49,26 @@
   const open = (t) => { tab = t || tab; panel.classList.add('open'); render(); };
   panel.querySelector('[data-close]').onclick = () => panel.classList.remove('open');
   panel.querySelector('nav').onclick = (e) => { const t = e.target.closest('[data-tab]'); if (t) open(t.dataset.tab); };
-  launch.onclick = (e) => { const t = e.target.closest('[data-tab]'); if (t) open(t.dataset.tab); };
+  launch.onclick = (e) => { if (e.target.closest('[data-live]')) return liveToggle(); const t = e.target.closest('[data-tab]'); if (t) open(t.dataset.tab); };
+  // Live two-way voice: the same human Aria voice as XO Elite, speaking as Axis. Tasks it sets up
+  // (workspace, automations, PC jobs) are created here with Ahmad's own login.
+  let live = null;
+  function liveToggle() {
+    const btn = launch.querySelector('[data-live]');
+    if (!window.AriaLiveCall) { btn.textContent = 'Voice unavailable'; return; }
+    live = live || window.AriaLiveCall('axis', {
+      token: () => localStorage.getItem(TOKEN_KEY) || '',
+      onState: (st) => { btn.textContent = st === 'connecting' ? 'Connecting…' : st === 'live' ? 'End call' : 'Talk to Axis'; btn.classList.toggle('g', st !== 'idle'); },
+      onError: (m) => { btn.textContent = 'Talk to Axis'; lastSay = m; },
+      onAction: async (a) => {
+        if (a.type === 'automate') { await api('tasks.create', { title: a.title, instructions: a.instructions, every_minutes: a.every_minutes || 1440 }); open('auto'); }
+        if (a.type === 'local') { await api('local.enqueue', { kind: a.kind, title: a.title, instructions: a.instructions }); open('pc'); }
+        if (a.type === 'workspace') { current = null; lastSay = 'Pulling it up…'; open('work'); const r = await api('workspace.open', { request: a.instructions }); if (r.ok) { current = r.doc; lastSay = r.say || ''; } if (tab === 'work') renderWork(); }
+      },
+    });
+    try { window.speechSynthesis && speechSynthesis.cancel(); } catch {}
+    live.toggle();
+  }
   setInterval(() => { launch.hidden = !localStorage.getItem(TOKEN_KEY) || document.getElementById('login')?.offsetParent != null; }, 1500);
 
   async function render() {
