@@ -10,6 +10,32 @@ const TESTS = [
   // Registered by hand: RUN-AW recorded that this manifest does not pick up new files, and a suite
   // running green outside the count is the same lie in a nicer shirt.
   "../../tests/plumbing-commit-denylist.test.mjs",
+  // SUITE CENSUS 2026-10-08 (RUN-BW / BW1) — the guard on this array itself. `TESTS` is
+  // hand-maintained, which means a suite file on disk that nobody typed here is not red, not
+  // incomplete, and not counted: it is invisible. Counted for the first time this cycle: 443 suite
+  // files on disk against 375 registered, and 65 of the 70 unregistered ones PASS when invoked by
+  // hand — live guards running outside every count the programme has published. This suite fails
+  // red unless every unregistered file carries a recorded verdict with a real reason, and unless
+  // every deferred verdict is still inside its clock. Registered by hand, like the rest, because
+  // a census running outside the count it takes would be the same lie in a nicer shirt.
+  "../../tests/suite-registry-census.test.mjs",
+  // PENDING DELIVERY AGE 2026-10-08 (RUN-BU / BU1) — the fifty-six-day class. A batch verified in
+  // August was staged behind a one-click push, reported truthfully as "waiting" by every cycle after
+  // it, and sat off the shared line for fifty-six days because no cycle computed HOW LONG it had been
+  // waiting. This asserts the computation that was missing, and its honesty rules: landing claimed
+  // only on evidence, an unreadable shelf never reported as an empty one, "cannot tell" never folded
+  // into either count, and no pending age of zero standing in for "nothing pending".
+  "../../tests/pending-delivery-age.test.mjs",
+  // SUITE CENSUS 2026-10-08 (RUN-BV / BV1) — the harness grading itself. RUN-BU's own verification
+  // read `# tests 1086 · # fail 0` on a clean clone and `# tests 1103 · # fail 0` on the same commit
+  // one `npm install` later: seventeen assertions never attempted, with a clean bill of health beside
+  // them, because `${total}/${total} suites green` counted only the suites we got to. This asserts
+  // the separation that fixes it — a suite that loaded and failed is RED, a suite blocked by a
+  // DECLARED-but-absent package is INCOMPLETE and unjudged, a suite blocked by an UNDECLARED package
+  // is RED, and the word green is never printed over a denominator that quietly shrank.
+  // Registered by hand, like its predecessors: a guard running outside the count it guards is the
+  // same lie in a nicer shirt.
+  "../../tests/suite-census.test.mjs",
   // SERVING-LAYER LOCKDOWN 2026-07-02 — live-probe logic (git-state tests can't see the serving layer).
   "../../tests/probe-deploy-safety.test.mjs",
   // CLONE PREP 2026-08-06 (salvaged from cc/axis-feed-2026-08-04, which is otherwise superseded by
@@ -788,7 +814,9 @@ for (const spec of TESTS) {
     results.push({ spec, ok: true });
   } catch (err) {
     const msg = (err && err.message) ? err.message : String(err);
-    results.push({ spec, ok: false, err: msg });
+    // RUN-BV: the ERROR OBJECT is kept, not only its message. `err.code` is what tells a missing
+    // package apart from a module that threw while evaluating, and stringifying first threw it away.
+    results.push({ spec, ok: false, err: msg, error: err });
     if (bail) { console.error(`✗ ${spec}\n${(err && err.stack) || err}`); process.exit(1); }
   }
 }
@@ -809,24 +837,76 @@ const loadReds = results.filter((r) => !r.ok);
 // folded together with `process.exitCode` so an assertion failure can never again be summarised away.
 // Load failures are still reported separately, because "did not load" and "loaded and failed" are
 // different facts and collapsing them would hide which one happened.
+// RUN-BV 2026-10-08 — THE DENOMINATOR COULD SHRINK WITHOUT SAYING SO, AND DID.
+//
+// The block above fixed a harness that reported green before its assertions ran. It left a second,
+// quieter version of the same lie: `${total}/${total} suites green`, where `total` is however many
+// suites we got to. That expression can only ever print N/N — it asserts nothing. This cycle a clean
+// clone of the shared line reported `# tests 1086 · # fail 0` because two suites could not load
+// (`@netlify/blobs`, a package THE ROOT MANIFEST ALREADY DECLARES, simply was not installed). One
+// npm install later the identical tree on the identical commit reported `# tests 1103 · # fail 0`.
+// Seventeen assertions were never attempted, `# fail 0` was true both times, and the only trace of
+// the difference was two lines of stderr near the top of a forty-second log.
+//
+// So the verdict now comes from `scripts/lib/suite-census.mjs`, which holds two facts apart that
+// were being collapsed:
+//
+//   * a suite that LOADED and failed  -> RED. The source is wrong.
+//   * a suite that could not load because a DECLARED package is absent -> INCOMPLETE. Unjudged.
+//
+// Both exit non-zero. Neither is ever called green. INCOMPLETE names the package, the manifest that
+// declares it, and the install command, so an operator is not sent hunting for a defect that is not
+// there — and a suite whose missing package NO manifest declares stays RED, because something
+// importing what nothing installs is a real defect.
+//
+// `registered` is TESTS.length — what we were asked to run — and is kept separate from what we
+// achieved, so the printed fraction can actually be wrong and therefore actually means something.
+
+// Imported in the same dynamic style the rest of this file uses — the suite list above must stay the
+// first thing a reader meets, so nothing is hoisted to the top of the file.
+const fs = await import("node:fs").then((m) => m.default);
+const path = await import("node:path").then((m) => m.default);
+const { fileURLToPath } = await import("node:url");
+const { takeCensus, censusReport } = await import("../../scripts/lib/suite-census.mjs");
+
+/** package name -> the manifest (repo-relative) that declares it. Read once, from the real tree. */
+function declaredPackagesFrom(repoRoot, manifestPaths) {
+  const declared = {};
+  for (const rel of manifestPaths) {
+    const abs = path.join(repoRoot, rel);
+    try {
+      const pkg = JSON.parse(fs.readFileSync(abs, "utf8"));
+      const names = Object.keys({ ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) });
+      for (const name of names) if (!(name in declared)) declared[name] = rel;
+    } catch {
+      // An unreadable manifest declares nothing we can prove. Every package then classifies as a
+      // defect rather than as an environment gap — the safe direction: it over-reports red, never green.
+    }
+  }
+  return declared;
+}
+
+const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
+const DECLARED_PACKAGES = declaredPackagesFrom(REPO_ROOT, ["package.json", "ARIA Sentinel/package.json"]);
+
 let summarised = false;
 process.on("beforeExit", () => {
   if (summarised) return;
   summarised = true;
   const assertionsFailed = process.exitCode !== undefined && process.exitCode !== 0;
-  const total = results.length;
-  if (loadReds.length) {
-    console.error(`\n${loadReds.length} suite(s) FAILED TO LOAD:`);
-    for (const r of loadReds) console.error(`  ✗ ${r.spec} — ${String(r.err).split("\n")[0]}`);
+  const census = takeCensus({
+    registered: TESTS.length,
+    loadFailures: loadReds.map((r) => ({ spec: r.spec, err: r.error !== undefined ? r.error : r.err })),
+    assertionsFailed,
+    declaredPackages: DECLARED_PACKAGES,
+  });
+  const report = censusReport(census).join("\n");
+  if (census.verdict === "green") {
+    console.log("\n" + report);
+    console.log("ARIA Sentinel test suite passed.");
+  } else {
+    console.error("\n" + report);
   }
-  if (assertionsFailed) {
-    console.error(`\nSUITE RED — at least one assertion failed. ${total} suite file(s) were run; the ` +
-      `per-test output above names the failures. A green count is deliberately NOT printed here, because ` +
-      `a passing-suite number next to a failing assertion is the lie this harness once told.`);
-    return;
-  }
-  if (loadReds.length) { process.exitCode = 1; return; }
-  console.log(`\n${total}/${total} suites green.`);
-  console.log("ARIA Sentinel test suite passed.");
+  process.exitCode = census.exitCode;
 });
 if (bail && loadReds.length) process.exit(1);
