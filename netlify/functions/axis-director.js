@@ -222,8 +222,9 @@ exports.handler = async (event) => {
           const auth3 = (event.headers && (event.headers.authorization || event.headers.Authorization)) || '';
           if (!(await workerOnline({ origin: host3 ? `https://${host3}` : '', auth: auth3 }))) {
             reason = 'worker_offline';
-            text = 'I could not reach any of my brains just now. Open Axis Local on your PC (or install it from '
-              + 'iisupp.net/axis) and I am back.';
+            text = 'I could not reach any of my brains just now. This is not a billing problem, so no top-up is needed. '
+              + 'Open Axis Local on your PC (or install it from iisupp.net/axis), or start the brain worker '
+              + '(node scripts/axis-brain-worker.mjs), and I am back.';
           }
         } catch (_) { /* keep the original diagnosis if the check itself fails */ }
       }

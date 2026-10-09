@@ -24,6 +24,14 @@
 // `/ARIA Sentinel/*` redirect, so it never serves.
 export const SENTINEL_PREFIX = "ARIA Sentinel/";
 
+// RUN-CV / CV10 (2026-10-09): customer-facing launchers that ship INSIDE a public download are product,
+// not operator scripts. Exact paths only — never a prefix — so a stray operator .cmd next to them is
+// still refused. apps/axis-local/start-windows.bat is the Windows launcher packed in
+// downloads/axis-local.zip (main 80f5cf12); it carries no secret and no operator path.
+export const CUSTOMER_LAUNCHERS = new Set([
+  "apps/axis-local/start-windows.bat",
+]);
+
 // backups/ is deliberately NOT denied: main legitimately tracks 7 code-backup files there (no PII),
 // already force-404'd live via `/backups/*`.
 export const DENY_PREFIXES = [
@@ -55,6 +63,7 @@ export function denylistViolation(file) {
   if (f.startsWith(SENTINEL_PREFIX)) return false;
 
   if (f === "CLAUDE.md" || f.endsWith("/CLAUDE.md")) return { file: f, rule: "CLAUDE.md is operator instruction, never shipped" };
+  if (CUSTOMER_LAUNCHERS.has(f)) return false;
   if (/\.(cmd|bat|ps1)$/i.test(f)) return { file: f, rule: "operator script (.cmd/.bat/.ps1) outside the Sentinel product tree" };
   if (f.toLowerCase().endsWith(".tar.gz")) return { file: f, rule: "archive (.tar.gz) — never shipped" };
   return false;

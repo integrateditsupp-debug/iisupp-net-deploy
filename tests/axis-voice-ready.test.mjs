@@ -35,8 +35,11 @@ let n = 0; const ok = (m) => { n++; if (m) console.log('  ok —', m); };
 {
   assert.ok(/function axisVoicesReady\(/.test(code), 'axisVoicesReady is missing');
   assert.ok(/voiceschanged/.test(code), 'nothing listens for the voice list to arrive');
-  // The guard must sit INSIDE axisSpeak, before the utterance is built.
-  const start = code.indexOf('function axisSpeak(text) {');
+  // The guard must sit INSIDE the speechSynthesis speaker, before the utterance is built.
+  // Since 80f5cf12 (live human Aria voice) axisSpeak streams the server voice first and falls back to
+  // axisSpeakBrowser — the only path that touches speechSynthesis, so that is where the guard must live.
+  const fnName = code.includes('function axisSpeakBrowser(text) {') ? 'axisSpeakBrowser' : 'axisSpeak';
+  const start = code.indexOf(`function ${fnName}(text) {`);
   assert.ok(start > 0, 'axisSpeak not found');
   const head = code.slice(start, code.indexOf('speechSynthesis.cancel()', start));
   assert.ok(/getVoices\(\) \|\| \[\]\)\.length/.test(head),

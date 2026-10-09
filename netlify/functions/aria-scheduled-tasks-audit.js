@@ -29,6 +29,7 @@ const SCHEDULED = [
   { fn: 'aria-tls-monitor-cron', schedule: '0 3 * * *', purpose: 'TLS expiry monitor' },
   { fn: 'aria-uptime-probe', schedule: '*/5 * * * *', purpose: 'uptime probe' },
   { fn: 'aria-winback-cron', schedule: '0 11 * * *', purpose: 'churned user re-engagement' },
+  { fn: 'axis-exec-cron', schedule: '*/10 * * * *', purpose: 'AXIS exec tick (approved sends, automations, inbox watch, research)' },
   { fn: 'bid-radar-cron', schedule: '0 11 * * 1-5', purpose: 'bid radar (weekdays)' },
   { fn: 'ca-purge-cron', schedule: '*/5 * * * *', purpose: 'cache purge' },
   { fn: 'forums-concierge-cron', schedule: '*/30 * * * *', purpose: 'forums concierge' },
