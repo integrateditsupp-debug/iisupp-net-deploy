@@ -2495,6 +2495,7 @@ function axisMicError(e) {
 
 // Push-to-talk, shared by the dock and the public panel (one mic at a time).
 function axisMicToggle(micId = 'axisMic', inputId = 'axisInput', send = axisSend, auto = false) {
+  axisMicAutoOpen = !!auto;
   if (state.token && window.axisLiveToggle) {
     axisHandsFree = false;
     axisWakePause();
@@ -2505,7 +2506,6 @@ function axisMicToggle(micId = 'axisMic', inputId = 'axisInput', send = axisSend
     window.axisLiveToggle();
     return;
   }
-  axisMicAutoOpen = !!auto;
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { axisMicNote('Voice input needs Chrome or Edge — this browser has no speech recognition.'); return; }
   if (axisListening) { try { axisRec && axisRec.stop(); } catch {} return; }
