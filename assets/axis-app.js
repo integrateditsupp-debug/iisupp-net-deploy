@@ -2051,6 +2051,9 @@ function ariaFetch(part) {
 }
 function axisSpeak(text) {
   try {
+    // The live receiver is the only speaker during a call. Polling/legacy replies must not
+    // start another voice or cancel the current sentence.
+    if (window.axisLiveActive) return false;
     if (!axisVoiceOn) return false;
     const clean = axisHumanizeForSpeech(text);
     if (!clean) return false;
@@ -2251,6 +2254,16 @@ function axisMicError(e) {
 
 // Push-to-talk, shared by the dock and the public panel (one mic at a time).
 function axisMicToggle(micId = 'axisMic', inputId = 'axisInput', send = axisSend, auto = false) {
+  if (state.token && window.axisLiveToggle) {
+    axisHandsFree = false;
+    axisWakePause();
+    if (axisRec) { axisRec.onend = null; axisRec.onresult = null; try { axisRec.abort(); } catch {} }
+    axisListening = false;
+    ariaStop();
+    try { window.speechSynthesis && speechSynthesis.cancel(); } catch {}
+    window.axisLiveToggle();
+    return;
+  }
   axisMicAutoOpen = !!auto;
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { axisMicNote('Voice input needs Chrome or Edge — this browser has no speech recognition.'); return; }
@@ -2409,7 +2422,7 @@ function axisWakePause() { axisWakeArmed = false; try { axisWakeRec && axisWakeR
 // InvalidStateError in Chrome, and the old catch{} swallowed it — so after AXIS spoke its
 // "hands-free on" confirmation (which pauses the listener), the wake word was dead until a manual
 // mic press created a new instance. That is exactly the "does not listen until I press record" bug.
-function axisWakeResume() { if (axisHandsFree && !axisWakeArmed && !axisListening) axisWakeStart(); }
+function axisWakeResume() { if (!window.axisLiveActive && axisHandsFree && !axisWakeArmed && !axisListening) axisWakeStart(); }
 
 // Self-heal: browsers stop a continuous recognizer on their own schedule, and a dropped one used to
 // stay dropped. This re-arms whenever hands-free is on but nothing is listening.
@@ -2515,6 +2528,7 @@ function axisBargeIn() {
 
 // Spoken + keyboard kill-switch. Aborts speech, the mic, the pending turn, and any unconfirmed route.
 function axisStandDown() {
+  window.axisLiveStop?.();
   try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch {}
   try { axisRec && axisRec.abort(); } catch {}
   __turnDone = null; axisPendingRoute = null; axisSpokenTurn = false;

@@ -58,7 +58,15 @@
     if (!window.AriaLiveCall) { btn.textContent = 'Voice unavailable'; return; }
     live = live || window.AriaLiveCall('axis', {
       token: () => localStorage.getItem(TOKEN_KEY) || '',
-      onState: (st) => { btn.textContent = st === 'connecting' ? 'Connecting…' : st === 'live' ? 'End call' : 'Talk to Axis'; btn.classList.toggle('g', st !== 'idle'); },
+      onState: (st) => {
+        window.axisLiveActive = st !== 'idle';
+        btn.textContent = st === 'connecting' ? 'Connecting…' : st === 'stopping' ? 'Ending…' : st === 'live' ? 'End call' : 'Talk to Axis';
+        btn.classList.toggle('g', st !== 'idle');
+        for (const id of ['axisMic', 'axisDirectorMic']) {
+          const mic = document.getElementById(id);
+          if (mic) { mic.setAttribute('aria-pressed', String(st !== 'idle')); mic.title = st === 'idle' ? 'Talk to Axis' : 'End call'; }
+        }
+      },
       onError: (m) => { btn.textContent = 'Talk to Axis'; lastSay = m; },
       onAction: async (a) => {
         if (a.type === 'automate') { await api('tasks.create', { title: a.title, instructions: a.instructions, every_minutes: a.every_minutes || 1440 }); open('auto'); }
@@ -69,6 +77,8 @@
     try { window.speechSynthesis && speechSynthesis.cancel(); } catch {}
     live.toggle();
   }
+  window.axisLiveToggle = liveToggle;
+  window.axisLiveStop = () => live?.stop();
   setInterval(() => { launch.hidden = !localStorage.getItem(TOKEN_KEY) || document.getElementById('login')?.offsetParent != null; }, 1500);
 
   async function render() {
