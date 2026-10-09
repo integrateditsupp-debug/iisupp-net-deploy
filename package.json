@@ -60,6 +60,7 @@
     "nodemailer": "^6.9.16",
     "pdf-parse": "^2.4.5",
     "pdfkit": "^0.19.1",
-    "stripe": "^17.0.0"
+    "stripe": "^17.0.0",
+    "imapflow": "^1.0.171"
   }
 }
