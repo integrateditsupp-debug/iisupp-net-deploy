@@ -62,6 +62,12 @@ const SKIP_DIR_ANY_DEPTH = new Set([
   ".netlify",         // Netlify build/bundle output — generated, never authored, never served as pages
   ".codex-temp-cdp",  // agent scratch directory
   ".cache",
+  // RUN-CV / CV6 (2026-10-09): Claude Code / Cowork agent worktrees live at `.claude/worktrees/<agent>/` INSIDE
+  // the repo, each a full second copy of the tree. Measured: two of them turned this guard red with six
+  // "dead links" that were the worktrees' own backups/ and docs/held-releases/ pages — pages the top-level
+  // SKIP list already excludes at the root but not one directory down. Nothing under `.claude/` is served
+  // (netlify.toml force-404s every dot-directory), so it is never a funnel surface.
+  ".claude",
 ]);
 function walk(d, acc) {
   for (const e of fs.readdirSync(d, { withFileTypes: true })) {

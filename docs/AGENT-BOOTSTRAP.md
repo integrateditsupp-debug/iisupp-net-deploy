@@ -148,8 +148,15 @@ log in `docs/RUN-CU-2026-10-09-SMALL-TASKS-CHANGELOG.md`.
 
 **Re-measured 2026-10-09 17:25Z on the reconciled line `cc/run-cv-2026-10-09` at CV4** (RUN-CU CU0…CU5 +
 the desktop flywheel's RUN-BW merge as CV1 + CV2/CV3 + this close-out): site `all: 142/142 suites passed`;
-desktop registry `408 of 408 suites taken — all green · 1178 tests · 1121 pass · 0 fail · 57 not taken`
-(`scripts/emit-axis-status-run-cv.mjs` took both readings and regenerated the feed from them). Two lines had
+desktop registry `408 of 408 suites taken — all green · 1178 tests · 1121 pass · 0 fail · 57 not taken`.
+**Then at CV6 (18:10Z), after RUN-BX registered the census's 53 registrable suites (17 exempt with the deciding
+line each, 0 pending — the 2026-10-22 clock cannot fire) and CV5 added the opportunity-engine fit filter and
+kb-pull paging suites:** site `all: 144/144`; desktop registry `463 of 463 suites taken — all green · 1341 tests ·
+1284 pass · 0 fail · 57 not taken` (`scripts/emit-axis-status-run-cv.mjs` took both readings and regenerated the
+feed from them). Two harness lessons from CV6, both fixed: a Claude Code agent worktree under `.claude/worktrees/`
+is a second copy of the tree and turned `funnel-link-guard` red (now skipped at any depth); and the registry prints
+`# fail 0` when a suite FAILS TO LOAD, so both emitters now refuse on the runner's `SUITE RED` / `FAILED TO LOAD`
+headline, not only on the TAP counter. Two lines had
 merged RUN-BW independently on 2026-10-09 — the sandbox (`8647ad2` on `cc/run-cu-2026-10-08`) and the desktop
 flywheel (`71ac6bf` on `cc/run-cv-2026-10-09`) — with the same resolutions; the sandbox's duplicate merge
 commit and its second registration of the same 14 suites were dropped, and `ceo-approval-items-override`
@@ -277,6 +284,7 @@ Never claim the read you did not take.
 | CU3 — fleet bootstrap (this file, preflight, 13 workers, loops truth) | **done** | `tests/agent-preflight` 8/8 |
 | CU4 — Sentinel 0.2.0 (wizard · autonomy · approvals · notify · voice · safety fixes · macOS) + web `/aria` voice conversation + `aria-sentinel-notify` / `aria-sentinel-approval` | **done, not live** | registry 1030/0/57 with 14 new suites; real-browser smoke of the 12-step wizard and the `/aria` loop (headless Chromium) passed; `ARIA Sentinel/docs/RELEASE_NOTES_0.2.0.md`, `docs/RUN-CU-2026-10-08-ARIA-VOICE-CHANGELOG.md` |
 | CU5 — fleet refresh close-out | **done (cloud) · one click left (desktop)** | 3 cloud tasks current (2 updated, 1 created); desktop sweep script + test ready; public AXIS feed regenerated from measured readings |
+| RUN-BX + CV5 + CV6 (2026-10-09) — census registration · opportunity-engine IT/MSP fit filter + kb-pull paging · harness hardening | **done** | 53 suites registered after each was read, run standalone and import-probed; 17 exempt with file:line reasons (14 call `process.exit` and would kill the in-process registry — a one-line follow-up each); `scripts/opportunity-quality-gate-agent.mjs` `itFit()` parks non-IT tenders with a written reason, human overrides win (`tests/opportunity-fit-filter` 11 checks); `scripts/kb-pull.mjs` pages at 300 with bounded halving retries, `aria-kb-export` gains additive `offset` (`tests/kb-pull-paging` 13 checks, node:http fixture); `.claude/` skipped by the link guard; emitters refuse on SUITE RED |
 | CV4 (2026-10-09, on `cc/run-cv-2026-10-09`) — small-tasks close-out + the CEO-critical channel + line reconciliation | **done** | RUN-BW merge kept as the flywheel's `71ac6bf` (the sandbox's duplicate `8647ad2` dropped), both harness gates green; `/health` redirect, admin-gated GET read path on 3 capture endpoints, about.html meta/h2, areaServed = GTA/Durham/Ontario/Canada, `windows-10-esu-oct-13-check.html` (sourced), data-last-verified on 3 answer pages, 27 agent YAMLs un-swapped + guard; `scripts/lib/ceo-critical-items.mjs` + CLI + digest wiring + `tests/ceo-critical-items-ledger`; vault: 2 policies, 4 procedures, the ledger; 11 red calendar events + the first digest email sent 2026-10-09 |
 
 - **Sentinel version after bump:** `0.2.0` (package.json + lock regenerated; `npm ci` works again).

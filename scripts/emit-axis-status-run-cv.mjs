@@ -45,7 +45,12 @@ function readRegistry() {
   const out = run('npm', ['test'], path.join(root, 'ARIA Sentinel'));
   const num = (key) => { const m = out.match(new RegExp(`^# ${key} (\\d+)$`, 'm')); return m ? Number(m[1]) : null; };
   const r = { takenAt: new Date().toISOString(), tests: num('tests'), pass: num('pass'), fail: num('fail'), skipped: num('skipped'),
-    failedToLoad: (out.match(/^\s*✗ \.\/(\S+)/gm) || []).map((l) => l.replace(/^\s*✗ \.\//, '')) };
+    failedToLoad: (out.match(/^\s*[✗x] \.\/(\S+)/gm) || []).map((l) => l.replace(/^\s*[✗x] \.\//, '')),
+    // RUN-CV / CV6 (2026-10-09): the registry prints `# fail 0` even when a suite FAILED TO LOAD — the load
+    // failure is not a node:test assertion, so it never reaches the TAP counters, and the runner says it with a
+    // plain "x", not "✗". Measured: a tree that was SUITE RED (funnel-link-guard refused to load) read
+    // `# fail 0` here and would have been published as green. The headline the runner prints is the verdict.
+    suiteRed: /^SUITE RED\b/m.test(out) || /FAILED TO LOAD/.test(out) };
   if (r.tests === null || r.fail === null) throw new Error('RUN-CV emit REFUSED: the registry reading produced no parsable summary. A reading that was not taken is never published as a number.');
   return r;
 }
@@ -63,7 +68,7 @@ function readSite() {
 
 const reg = readRegistry();
 console.log(`[RUN-CV] registry: ${reg.pass}/${reg.tests} pass · ${reg.fail} fail · ${reg.skipped} not taken` + (reg.failedToLoad.length ? ` · failed to load: ${reg.failedToLoad.join(', ')}` : ''));
-if (reg.fail !== 0 || reg.failedToLoad.length) {
+if (reg.fail !== 0 || reg.failedToLoad.length || reg.suiteRed) {
   throw new Error(`RUN-CV emit REFUSED: registry has ${reg.fail} failing assertion(s) and ${reg.failedToLoad.length} suite(s) that failed to load. A red build is never published as a green headline.`);
 }
 
