@@ -809,6 +809,134 @@ const TESTS = [
   // the hourly digest puts its red block first; `node scripts/ceo-critical-items.mjs` prints it for any
   // chat). Fixture-only: the suite derives the default path from STATE_DIR and never opens the record root.
   "../../tests/ceo-critical-items-ledger.test.mjs",
+  // RUN-BX (2026-10-09, cc/run-cv-2026-10-09) — the census's 70 `register-pending` suites, each READ and
+  // run standalone from this runner's cwd on a clean extract (all 70 exit 0 here; site `--all` 142/142),
+  // then probed for the one thing a standalone run cannot show: whether `await import()` into THIS
+  // process lets the runner finish. Fourteen reach a `process.exit(…)` on every clean extract (thirteen
+  // close with `process.exit(fail ? 1 : 0)` or its equivalent; axis-windows-traps exits 0 on the
+  // no-launchers branch that `.gitignore:80 *.ps1` makes every checkout take) and kill the importer
+  // with exit 0 and no census — the exact false green this file exists to refuse —
+  // so they stay in tests/suite-census-ledger.json as `exempt`, each with its line number, and three
+  // more are exempt for reasons the ledger states (a Windows-only floor the module's cache cannot meet,
+  // a real-feed freshness assertion that would deadlock the emit script, a vault root bound at module
+  // load with a write path). The 53 below are the ones that could join honestly. Registered BY HAND.
+  //
+  // Desktop Stage-3 brain-audit batteries (same family as the run-113 packets above) and the AXIS
+  // voice-in Phase-1 scaffold: severity-weighted escalation (high→1, medium→2, low→3; content-blind;
+  // the flat-3 default preserved; composes with an unchanged buildEscalationDraft), the durability
+  // ledger (content-blind/R11-safe signatures, a no-op is never a fix, 72 h recurrence climbs ONE rung
+  // and caps at human, 24 h quiet = durable, deflection real-or-empty, real hash-chained journal
+  // ingest), the restore point (earned before step 1 and verified by OUTCOME — the sequence number must
+  // rise; silent no-op and throttle degrade honestly to journal-only, no fabricated id, revert never
+  // automatic, R11 > kill-switch > not-required > dry-run > throttle). The hotkey suite is the Phase-1
+  // CONTRACT (Super+Space default, a fallback, the exports, and `registerHotkey` throwing /stub/); its
+  // own header says it ran standalone until Phase 1 ships — when it does, that throws-/stub/ line is
+  // the one that must become the real test, and this registration is what will say so.
+  "./escalation-severity.test.mjs",
+  "./plan-durability-ledger.test.mjs",
+  "./restore-point.test.mjs",
+  "../axis/voice-in/tests/hotkey.test.mjs",
+  // AXIS console — hearing and speaking (the 2026-08-11/12 transcripts, pinned): the wake word as the
+  // browser actually transcribes it (access/axes/acts/exes), a turn that ends on silence not on a
+  // breath with the whole transcript kept, the persona never bypassed by an empty first getVoices(),
+  // a pinned voice that cannot hide a later persona change, the v2 dock carrying every v1 voice
+  // behaviour, the globe growing while a turn is live and the login screen forgetting the last
+  // session, what AXIS SAYS kept apart from what the dock SHOWS, and "One moment." never marked as a
+  // repeat.
+  "../../tests/axis-voice-hearing.test.mjs",
+  "../../tests/axis-turn-taking.test.mjs",
+  "../../tests/axis-voice-ready.test.mjs",
+  "../../tests/axis-voice-pin.test.mjs",
+  "../../tests/axis-voice-dock.test.mjs",
+  "../../tests/axis-globe-voice.test.mjs",
+  "../../tests/axis-presence-privacy.test.mjs",
+  "../../tests/axis-speech-not-screen.test.mjs",
+  "../../tests/axis-transcript-fixes.test.mjs",
+  // AXIS console — understanding the operator and acting for real: AXIS's own replies reach the
+  // director (not only the user's turns), a correction is never answered by a document matcher, the
+  // 2026-08-12 microphone transcript's four faults each pinned, open/show/pull-up navigates (and meta
+  // turns bypass every local answerer; the worker-prompt evidence-rule reading is NOT TAKEN off the
+  // operator machine, by host-reading.mjs), "remove these items" removes rather than recites (board
+  // declines commands; cancel_followup cancels the row AND its draft), the afternoon transcript
+  // replayed until it executes, Waiting Reply "Delegate" reaching the follow-up engine, the
+  // approve-hop executing only rail-safe items, Cowork/Claude Code reachable from how Ahmad talks,
+  // the fleet reporting to AXIS and managed through a fixed roster, and AXIS speaking up on its own
+  // with the machine-control rails intact. board-remove, intent-apply and remove-scenarios each set
+  // AXIS_DB_PATH=':memory:' BEFORE their first import of scripts/lib/axis-db.mjs, whose DB_PATH binds
+  // at module load — keep them ahead of any suite that imports that module for real, or the three
+  // would open the real sales DB instead of memory.
+  "../../tests/axis-conversation-memory.test.mjs",
+  "../../tests/axis-conversation-tiers.test.mjs",
+  "../../tests/axis-real-conversation.test.mjs",
+  "../../tests/axis-assistant-behaviors.test.mjs",
+  "../../tests/axis-board-remove.test.mjs",
+  "../../tests/axis-remove-scenarios.test.mjs",
+  "../../tests/axis-intent-apply.test.mjs",
+  "../../tests/axis-inbox.test.mjs",
+  "../../tests/axis-cowork-code-routes.test.mjs",
+  "../../tests/axis-fleet-manage.test.mjs",
+  "../../tests/axis-proactive.test.mjs",
+  // AXIS brains, cost and the fleet's honesty: the cost cascade in order (vault/KB → agents →
+  // subscription → the metered API last) with the write-back gate, brain errors that say what they
+  // are ("credit balance too low" is not "busy") plus $0 local answers and hands-free re-arm, the
+  // out-of-credit misdiagnosis when the local worker is simply down (its launcher readings are NOT
+  // TAKEN off the operator machine — `*.ps1` is gitignored — by host-reading.mjs, exactly as
+  // docs/AGENT-BOOTSTRAP.md §5 describes), research that cites or admits (two publishers for a
+  // [FACT], retrieval failure → a stated gap, the vault note never overwriting, secrets refused), last
+  // SUCCESS never last run, the queue duty (a jammed category gets no more of itself), and every due
+  // date real or "no due date". axis-queue-steward is declared in record-dependencies.json (it reads
+  // the record root on purpose and reports absence as a fact).
+  "../../tests/axis-brain-cascade.test.mjs",
+  "../../tests/axis-brain-fallback.test.mjs",
+  "../../tests/axis-worker-offline.test.mjs",
+  "../../tests/axis-researcher.test.mjs",
+  "../../tests/axis-job-watchdog.test.mjs",
+  "../../tests/axis-queue-steward.test.mjs",
+  "../../tests/axis-priorities.test.mjs",
+  // AXIS console — structure and source: every browser module parses the way the RUNTIME loads it
+  // (ESM, after the raw-newline incident), the page order topbar → globe → deck with ONE AXIS
+  // surface, the guards guarded (a source-grep assertion can never be satisfied by the comment that
+  // explains it), and the public axis-state.json counts-only with named detail behind verifyAperture
+  // (declared in record-dependencies.json: it names the record root in a leak pattern).
+  "../../tests/axis-esm-parse.test.mjs",
+  "../../tests/axis-overview-clearance.test.mjs",
+  "../../tests/axis-blind-guards.test.mjs",
+  "../../tests/axis-command-center.test.mjs",
+  // The commercial surface, audited end to end and proven RED FIRST on fixtures: the response-time
+  // promise (BE1), the price a stranger is quoted (BF1), the tier vocabulary (BF2), the amount a buyer
+  // is actually charged (BI2), the document a conversation ends in (BL1), the intake nobody keeps
+  // (BM1), one plan name across the card and both Schedules (BP3), and the Stripe staged-price
+  // contract (env-only price ids, subscriptions for recurring tiers, site prices = pricing-tiers.mjs).
+  // None picks which surface moves and none forecasts anything (Rules 14 and 15).
+  "../../tests/response-time-consistency.test.mjs",
+  "../../tests/price-consistency.test.mjs",
+  "../../tests/tier-registry.test.mjs",
+  "../../tests/chargeable-amounts.test.mjs",
+  "../../tests/quote-inputs.test.mjs",
+  "../../tests/quote-intake.test.mjs",
+  "../../tests/plan-name-consistency.test.mjs",
+  "../../tests/stripe-price-staging.test.mjs",
+  // Repository hygiene gates: every asset parses before any regex suite is believed (BG0), every
+  // scripts/, netlify/ and root-level script passes `node --check` (DEFECT-106), every internal-looking
+  // root file or directory is force-404'd because the publish dir is `.` (run 145), no suite takes a
+  // scratch directory without the probe and the printed fix is one that runs (BH2, BL3), the branch
+  // reference is the one this checkout resolves to and never a cached pointer (BL2), the visit beacon
+  // is incapable of carrying identity (AC2), and the "Hello ," merge bug hard-fails (#27).
+  "../../tests/asset-parse-gate.test.mjs",
+  "../../tests/script-syntax-gate.test.mjs",
+  "../../tests/root-serving-gate.test.mjs",
+  "../../tests/scratch-floor.test.mjs",
+  "../../tests/scratch-substitution.test.mjs",
+  "../../tests/branch-reference-consumers.test.mjs",
+  "../../tests/ac2-visit-beacon.test.mjs",
+  "../../tests/outreach-merge-guard.test.mjs",
+  // ARIA web vision (STAGE 2 acceptance, offline, $0): the real retriever over the real KB diagnoses a
+  // known screenshot, abstains on a low-confidence image, redacts PII/secrets before querying, and
+  // honours the consent gate; the aria-vision-diagnose function end to end with a stubbed KB fetch.
+  // LAST on purpose: the handler suite deletes ANTHROPIC_API_KEY and ARIA_VISION_MODEL from this
+  // process's env and does not put them back, so nothing may run after it.
+  "../../tests/vision-diagnose.test.mjs",
+  "../../tests/vision-diagnose-handler.test.mjs",
 ];
 
 // RUN-BJ / BJ1 (2026-08-12) — THE FLOOR THIS RUNNER NEVER HAD.
