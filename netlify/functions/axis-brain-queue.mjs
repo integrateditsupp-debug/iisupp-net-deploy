@@ -193,6 +193,40 @@ export default async (request) => {
     } catch { return json(200, { ok: true, events: [] }); }
   }
 
+  // Full visibility + control over Claude work (2026-10-10): every queued, running and finished job.
+  if (action === 'jobs') {
+    const read = async (prefix) => {
+      const list = await store.list({ prefix }).catch(() => ({ blobs: [] }));
+      const out = [];
+      for (const b of (list.blobs || []).slice(-40)) {
+        const v = await store.get(b.key, { type: 'json' }).catch(() => null);
+        if (v) out.push({ ...v, id: v.id || b.key.slice(prefix.length) });
+      }
+      return out;
+    };
+    const [queued, done, progress] = await Promise.all([read('task/'), read('done/'), read('progress/')]);
+    let hb = null; try { hb = await store.get(HEARTBEAT_KEY, { type: 'json' }); } catch {}
+    const online = !!(hb && hb.t && Date.now() - hb.t < HEARTBEAT_MAX_MS);
+    const doneIds = new Set(done.map((d) => d.id));
+    const jobs = [
+      ...queued.filter((t) => !doneIds.has(t.id)).map((t) => ({ id: t.id, kind: t.kind, arg: t.arg, t: t.t, state: t.picked ? 'working' : 'queued' })),
+      ...done.map((d) => ({ id: d.id, kind: d.kind || 'task', arg: d.arg || '', t: d.t || 0, state: d.error ? 'failed' : 'done', answer: String(d.answer || '').slice(0, 1500), error: d.error || null })),
+    ].sort((a, b) => (b.t || 0) - (a.t || 0)).slice(0, 40);
+    progress.sort((a, b) => (b.t || 0) - (a.t || 0));
+    return json(200, { ok: true, online, jobs, progress: progress.slice(0, 12) });
+  }
+
+  if (action === 'task.cancel' || action === 'task.amend') {
+    const id = String(body.id || '');
+    const key = `task/${id}`;
+    const t = await store.get(key, { type: 'json' }).catch(() => null);
+    if (!t) return json(200, { ok: false, reason: 'not-queued', detail: 'Already picked up or finished — send a follow-up instead.' });
+    if (action === 'task.cancel') { await store.delete(key); return json(200, { ok: true, cancelled: id }); }
+    t.arg = String(body.arg || t.arg).slice(0, 2000); t.amended = Date.now();
+    await store.setJSON(key, t);
+    return json(200, { ok: true, id });
+  }
+
   if (action === 'poll') {
     const id = String(body.id || '');
     if (!id) return json(400, { error: 'id required' });
