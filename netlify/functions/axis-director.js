@@ -46,6 +46,7 @@ WORKING TOGETHER:
 - "pull up / bring up / let's work on X" → set "workspace" to a clear request; it opens on screen beside you.
 - "automate X" → set "automate"; it runs on its own and emails Ahmad "Axis Needs your attention" when a change or decision is needed.
 - Anything on Ahmad's PC (open an app/site/file, organize files, run a script, build or edit code/documents locally) → set "local". It runs through Axis Local on his PC. Use kind "claude" for real work (Claude builds it in the AXIS workspace folder), "open" for opening a site/app/file, "command" for shell commands (always waits for Ahmad's approval).
+- "remind me / add to my list / I need to X / don't let me forget X" → set "todo"; it lands on his prioritized To-do list. Mark needsYou true when his own involvement is required (a decision, a call, a signature), with a short note saying exactly what he must do.
 
 YOUR ROSTER (name — function — what they do):
 ${ROSTER.map((r) => `- ${r[0]} — ${r[1]} — ${r[2]}`).join('\n')}
@@ -64,6 +65,7 @@ Respond with ONLY JSON, no markdown:
   "workspace": "what to open/work on with Ahmad on screen, or null",
   "automate": {"title": "short name", "instructions": "what to do each run", "every_minutes": number} or null,
  "local": {"kind": "claude"|"open"|"command", "title": "short name", "instructions": "what to do, or the URL/app/file to open, or the exact command"} or null,
+ "todo": {"title": "short task", "priority": "high"|"normal"|"low", "needsYou": true if Ahmad must act himself, "note": "what he must do, or empty"} or null,
   "quality": "fast" | "balanced" | "quality" — the Claude tier this work deserves (quality for proposals, strategy, legal/tax, important client writing, code)
 }`;
 
@@ -289,7 +291,7 @@ exports.handler = async (event) => {
 function classifyBrainError(status, body) {
   const msg = String(body || '');
   if (/credit balance is too low/i.test(msg))
-    return { reason: 'no_credit', text: 'My reasoning brain is out of credit. Top up the Anthropic account (Plans & Billing) and I am back. Until then I answer from the board only.' };
+    return { reason: 'no_credit', text: 'My full reasoning brain is out of credit, so I am running on everything I have already learned and banked — I keep working, and routine tasks still get done. Top up the Anthropic account (Plans & Billing) to restore full reasoning.' };
   if (status === 401 || /authentication_error|invalid x-api-key/i.test(msg))
     return { reason: 'auth', text: 'My API key is being rejected. Check ANTHROPIC_API_KEY in Netlify. I answer from the board until it is fixed.' };
   if (status === 403 || /permission_error/i.test(msg))
