@@ -14,33 +14,36 @@
   const css = document.createElement('style');
   css.textContent = `
   .axx-launch{position:fixed;right:18px;bottom:84px;z-index:60;display:flex;gap:6px}
-  .axx-launch button,.axx button.b{background:var(--surface-2);color:var(--txt);border:1px solid var(--line-2);border-radius:999px;padding:7px 12px;font:600 11px var(--sans);letter-spacing:.06em;cursor:pointer}
-  .axx-launch button:hover,.axx button.b:hover{border-color:var(--gold);color:var(--gold-2)}
-  .axx button.g{background:var(--gold);color:var(--gold-ink);border-color:var(--gold)}
-  .axx{position:fixed;top:0;right:0;height:100dvh;width:min(560px,100vw);z-index:70;background:var(--surface);border-left:1px solid var(--line-2);box-shadow:-20px 0 60px rgba(0,0,0,.35);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s ease}
+  .axx-launch button,.axx button.b{background:rgba(212,175,55,.06);color:var(--txt);border:1px solid rgba(212,175,55,.28);border-radius:999px;padding:7px 12px;font:600 11px var(--sans);letter-spacing:.06em;cursor:pointer;backdrop-filter:blur(8px);transition:border-color .15s,color .15s,box-shadow .15s}
+  .axx-launch button:hover,.axx button.b:hover{border-color:var(--gold);color:var(--gold-2);box-shadow:0 0 14px rgba(212,175,55,.22)}
+  .axx button.g{background:linear-gradient(135deg,var(--gold),var(--gold-2));color:var(--gold-ink);border-color:var(--gold)}
+  .axx{position:fixed;top:0;right:0;height:100dvh;width:min(560px,100vw);z-index:70;background:linear-gradient(160deg,rgba(13,16,24,.92),rgba(9,11,17,.96));border-left:1px solid rgba(212,175,55,.3);box-shadow:-24px 0 80px rgba(0,0,0,.55),inset 1px 0 0 rgba(212,175,55,.12);backdrop-filter:blur(18px);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s ease}
   .axx.open{transform:none}
-  .axx header{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--line)}
-  .axx header .t{flex:1;font:650 14px var(--sans);color:var(--gold-2)}
-  .axx nav{display:flex;gap:4px;padding:8px 12px;border-bottom:1px solid var(--line);overflow-x:auto}
+  .axx header{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid rgba(212,175,55,.18);background:linear-gradient(90deg,rgba(212,175,55,.08),transparent)}
+  .axx header .t{flex:1;font:650 14px var(--sans);letter-spacing:.04em;background:linear-gradient(90deg,var(--gold-2),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .axx nav{display:flex;gap:4px;padding:8px 12px;border-bottom:1px solid rgba(212,175,55,.14);overflow-x:auto}
   .axx nav button{background:none;border:0;color:var(--txt);opacity:.6;padding:6px 10px;font:600 11px var(--sans);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-bottom:1px solid transparent}
-  .axx nav button.on{opacity:1;color:var(--gold-2);border-color:var(--gold)}
+  .axx nav button.on{opacity:1;color:var(--gold-2);border-color:var(--gold);text-shadow:0 0 12px rgba(212,175,55,.4)}
   .axx main{flex:1;overflow:auto;padding:14px 16px}
-  .axx .card{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:var(--surface-2)}
+  .axx .card{border:1px solid rgba(212,175,55,.16);border-radius:12px;padding:12px;margin-bottom:10px;background:rgba(255,255,255,.03);transition:border-color .15s,box-shadow .15s}
+  .axx .card:hover{border-color:rgba(212,175,55,.34);box-shadow:0 0 18px rgba(212,175,55,.08)}
+  .axx .card.done{opacity:.65}
   .axx .k{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
   .axx .doc{line-height:1.6}.axx .doc h3,.axx .doc h4{margin:.6em 0 .2em;color:var(--gold-2)}
-  .axx textarea,.axx input{width:100%;background:var(--surface-3);color:var(--txt);border:1px solid var(--line-2);border-radius:8px;padding:8px;font:13px var(--sans)}
+  .axx textarea,.axx input,.axx select{width:100%;background:rgba(255,255,255,.04);color:var(--txt);border:1px solid rgba(212,175,55,.22);border-radius:8px;padding:8px;font:13px var(--sans)}
+  .axx textarea:focus,.axx input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 2px rgba(212,175,55,.15)}
   .axx .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
   .axx .say{margin:0 0 10px;color:var(--gold-2);font-style:italic}
-  .axx .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;background:var(--line-2)}.axx .dot.on{background:var(--gold)}`;
+  .axx .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;background:var(--line-2)}.axx .dot.on{background:var(--gold);box-shadow:0 0 8px rgba(212,175,55,.7)}`;
   document.head.appendChild(css);
 
   const launch = document.createElement('div');
   launch.className = 'axx-launch'; launch.hidden = true;
-  launch.innerHTML = '<button data-live>Talk to Axis</button><button data-tab="work">Workspace</button><button data-tab="auto">Automations</button><button data-tab="apr">Approvals</button>';
+  launch.innerHTML = '<button data-live>Talk to Axis</button><button data-tab="work">Workspace</button><button data-tab="todo">To-do</button><button data-tab="auto">Automations</button><button data-tab="apr">Approvals</button>';
   const panel = document.createElement('aside');
   panel.className = 'axx'; panel.setAttribute('aria-label', 'AXIS workspace');
   panel.innerHTML = '<header><span class="t">AXIS · Working with you</span><button class="b" data-close>Close</button></header><nav>' +
-    ['work:Workspace', 'auto:Automations', 'apr:Approvals', 'pc:My PC', 'inbox:Inbox', 'brief:Brief', 'setup:Connections'].map((x) => { const [k, l] = x.split(':'); return `<button data-tab="${k}">${l}</button>`; }).join('') +
+    ['work:Workspace', 'todo:To-do', 'auto:Automations', 'apr:Approvals', 'pc:My PC', 'inbox:Inbox', 'brief:Brief', 'setup:Connections'].map((x) => { const [k, l] = x.split(':'); return `<button data-tab="${k}">${l}</button>`; }).join('') +
     '</nav><main></main>';
   document.body.append(launch, panel);
   const main = panel.querySelector('main');
@@ -79,6 +82,9 @@
   }
   window.axisLiveToggle = liveToggle;
   window.axisLiveStop = () => live?.stop();
+  // One Axis: the globe and quick bar (axis-unify.js) drive this panel.
+  window.addEventListener('axis:open', (e) => { if (e.detail?.say) lastSay = e.detail.say; open(e.detail?.tab || 'work'); });
+  window.addEventListener('axis:say', (e) => { if (e.detail?.text) { lastSay = e.detail.text; open('work'); } });
   setInterval(() => { launch.hidden = !localStorage.getItem(TOKEN_KEY) || document.getElementById('login')?.offsetParent != null; }, 1500);
 
   async function render() {
@@ -86,6 +92,7 @@
     main.innerHTML = '<p class="k">Loading…</p>';
     if (tab === 'work') return renderWork();
     if (tab === 'pc') return renderPc();
+    if (tab === 'todo') return renderTodos();
     const s = await api('status');
     if (!s.ok) { main.innerHTML = `<p>${esc(s.error || 'Unavailable')}</p>`; return; }
     if (tab === 'auto') {
@@ -132,6 +139,20 @@
     clearTimeout(renderPc.t); renderPc.t = setTimeout(() => { if (tab === 'pc' && panel.classList.contains('open')) renderPc(); }, 8000);
   }
 
+  // To-do list: prioritized, shows what is done and what still needs Ahmad.
+  async function renderTodos() {
+    const r = await api('todos.list');
+    if (!r.ok) { main.innerHTML = `<p>${esc(r.error || 'Unavailable')}</p>`; return; }
+    const rank = { high: 0, normal: 1, low: 2 };
+    const todos = (r.todos || []).slice().sort((a, b) =>
+      (a.done - b.done) || ((rank[a.priority] ?? 1) - (rank[b.priority] ?? 1)) || (Date.parse(b.created_at) - Date.parse(a.created_at)));
+    main.innerHTML = `<div class="card"><p class="k">Add to the list</p><input id="axtT" placeholder="e.g. Send the Smith Dental proposal"><div class="row"><select id="axtP" class="b" style="width:auto"><option value="high">High</option><option value="normal" selected>Normal</option><option value="low">Low</option></select><label class="b" style="cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" id="axtN" style="width:auto"> Needs me</label><button class="b g" id="axtC">Add</button></div></div>` +
+      (todos.map((t) => `<div class="card ${t.done ? 'done' : ''}"><div class="row" style="align-items:center;margin-top:0"><input type="checkbox" data-done="${t.id}" ${t.done ? 'checked' : ''} style="width:auto"><b style="flex:1;${t.done ? 'text-decoration:line-through;opacity:.55' : ''}">${esc(t.title)}</b><span class="k">${esc(t.priority)}</span></div>${t.note ? `<p>${esc(t.note)}</p>` : ''}${t.needsYou && !t.done ? '<p class="k" style="color:var(--gold-2)">Needs your involvement</p>' : ''}<div class="row"><button class="b" data-tdel="${t.id}">Remove</button></div></div>`).join('') || '<p>Nothing on the list yet. Tell Axis “remind me to …”.</p>');
+    main.querySelector('#axtC').onclick = async () => { const v = main.querySelector('#axtT').value.trim(); if (!v) return; await api('todos.add', { title: v, priority: main.querySelector('#axtP').value, needsYou: main.querySelector('#axtN').checked }); renderTodos(); };
+    main.querySelectorAll('[data-done]').forEach((c) => c.onchange = async () => { await api('todos.update', { id: c.dataset.done, done: c.checked }); renderTodos(); });
+    main.querySelectorAll('[data-tdel]').forEach((b) => b.onclick = async () => { await api('todos.delete', { id: b.dataset.tdel }); renderTodos(); });
+  }
+
   let recentDocs = [], workRevision = 0;
   async function renderWork(refresh = true) {
     const revision = ++workRevision;
@@ -167,6 +188,8 @@
       const url = typeof input === 'string' ? input : input.url;
       if (/axis-director/.test(url) && res.ok) {
         res.clone().json().then(async (j) => {
+          if (j?.text) lastSay = String(j.text);
+          if (j?.todo?.title) { await api('todos.add', j.todo); if (panel.classList.contains('open') && tab === 'todo') renderTodos(); }
           if (j?.automate?.instructions) { await api('tasks.create', j.automate); open('auto'); }
           if (j?.local?.instructions) { await api('local.enqueue', { ...j.local, tier: j.quality || undefined }); open('pc'); }
           if (j?.workspace) {

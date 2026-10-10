@@ -106,6 +106,33 @@ export default async (request) => {
       return json(200, { ok: true, approval: a });
     }
 
+    // ── To-do list (prioritized, "needs you" flags) ─────────────────────
+    if (action === 'todos.list') return json(200, { ok: true, todos: await readJSON('todos', []) });
+    if (action === 'todos.add') {
+      const title = String(body.title || '').slice(0, 200);
+      if (!title) return json(400, { error: 'title required' });
+      const todos = await readJSON('todos', []);
+      const todo = { id: id('todo'), title, priority: ['high', 'normal', 'low'].includes(body.priority) ? body.priority : 'normal',
+        needsYou: !!body.needsYou, note: String(body.note || '').slice(0, 500), done: false, created_at: now(), done_at: null };
+      await writeJSON('todos', [todo, ...todos].slice(0, 300));
+      return json(200, { ok: true, todo });
+    }
+    if (action === 'todos.update') {
+      const todos = await readJSON('todos', []);
+      const t = todos.find((x) => x.id === body.id);
+      if (!t) return json(404, { error: 'not found' });
+      if (typeof body.done === 'boolean') { t.done = body.done; t.done_at = body.done ? now() : null; }
+      if (['high', 'normal', 'low'].includes(body.priority)) t.priority = body.priority;
+      if (typeof body.needsYou === 'boolean') t.needsYou = body.needsYou;
+      if (body.note !== undefined) t.note = String(body.note).slice(0, 500);
+      await writeJSON('todos', todos);
+      return json(200, { ok: true, todo: t });
+    }
+    if (action === 'todos.delete') {
+      await writeJSON('todos', (await readJSON('todos', [])).filter((x) => x.id !== body.id));
+      return json(200, { ok: true });
+    }
+
     // ── Leads (Apollo) ───────────────────────────────────────────────────
     if (action === 'leads.search') return json(200, { ok: true, results: await leadSearch(String(body.query || '')) });
 
