@@ -118,6 +118,12 @@ export function mountGlobe(host, { size = 96 } = {}) {
 
   function frame() {
     if (!running) return;
+    if (!host.isConnected) {
+      running = false;
+      document.removeEventListener('visibilitychange', vis);
+      ro?.disconnect();
+      return;
+    }
     const gold = readVar('--gold', '#d2a94e');
     const gold2 = readVar('--gold-2', '#e8c87a');
     const state = document.documentElement.dataset.axisState || 'idle';
