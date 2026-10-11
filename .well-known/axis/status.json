@@ -5,7 +5,7 @@
  "revenueToDate": "none",
  "headline": "ARIA / AXIS is in active build and is voice-operable. Sent: 0. Meetings 0, revenue none. Checks this cycle: 1284 of 1341 desktop checks pass, none failing. 57 read an operator-only record absent here and are reported as not taken. 147 of 147 site suites pass.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
- "generatedAt": "2026-10-11T00:38:10.188Z",
+ "generatedAt": "2026-10-11T01:38:19.915Z",
  "schema": "axis-status/1",
  "public": true,
  "honest": true
