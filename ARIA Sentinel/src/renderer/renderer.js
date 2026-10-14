@@ -26,6 +26,7 @@ import { createVoiceConversation } from "./voice-conversation.mjs"; // RUN-CU / 
 import { TIERS, CLIENT_PLANS, plansUrl, priceLine, monthlyDisplay, visitsLabel, SEPARATE_HUMAN_SUPPORT_NOTE } from "../shared/pricing-tiers.mjs";
 import { trialDays, trialState, trialFractionLeft, licenseStatusLine, trialBadgeText, accountStatusLine, lockedTabCopy, wizardTrialLine } from "../shared/trial-copy.mjs";
 import { describeSupervisedResult, approveToast, describeDryRun, killSwitchToast } from "../shared/fix-outcome.mjs";
+import { ruleSentence, normalizeAdvisoryPrefs, ADVISORY_INTERVAL_MIN, ADVISORY_INTERVAL_MAX, ADVISORY_SNOOZE_MIN_H, ADVISORY_SNOOZE_MAX_H } from "../shared/advisory-escalation.mjs"; // 2026-10-14 — advise three times, then act
 import { WHAT_CARDS, quickChoiceToPrefs, quickChoiceOf, applySafeDefaults, summaryLines, autonomyForMode, isLicenseKeyShaped, progressLabel } from "../shared/setup-flow.mjs";
 
 let state;
@@ -104,6 +105,7 @@ async function init() {
   // (audit R15) the footer globe shrinks so the whole rail fits a 1366×768 work area (size="120" stays in the markup).
   qs(".rail-footer aria-globe")?.setAttribute("size", "56");
   sentinel.onState((next) => renderState(next));
+  sentinel.onAdvisory?.((view) => advisoryChatLine(view)); // 2026-10-14 — Notice n of 3 → the ARIA chat (Home row comes with the state)
   sentinel.onNavigate((tab) => activateTab(tab));
   // A web deep-link (mode=walkthrough) hands a recipe to the app → open the Walk-through tab in GUIDE mode.
   sentinel.onWalkthrough?.((payload) => { activateTab("walkthrough"); renderWalkthrough(payload); });
@@ -170,6 +172,7 @@ function runTabLoaders(target) {
   if (target === "system") { loadSystemContext(); loadBlueprints(); }
   if (target === "settings") loadUpdatesPanel();
   if (target === "settings") loadAutonomyPrefs(); // RUN-CU / CU4 — Autonomy & contacts form
+  if (target === "settings") loadAdvisoryPrefs(); // 2026-10-14 — "Tell me first": minutes between notices + the rule in plain words
   if (target === "control-center") renderApprovals(state); // RUN-CU / CU4 — Approvals section (pending + last 10 decided)
   if (target === "integrations") { loadIntegrations(); loadIncidents(); } // Integrations tab — status grid + ServiceNow incidents
   if (target === "integrations") loadOfficeSafety(); // JULY PORT 2026-10-14 — Office Safety Net panel (opt-in)
@@ -453,6 +456,7 @@ function wireActions() {
   wireRun23e();
   wireLockedTabOverlay(); // SENTINEL TRIAL GATING 2026-07-02 — locked-tab upsell overlay + buy path
   wireAutonomyPrefs();    // RUN-CU / CU4 — Settings → Autonomy & contacts + keep-dry-run + test notification
+  wireAdvisoryPrefs();    // 2026-10-14 — Settings → Autonomy: advise-first interval / Not-now hours / Never list
   wireCommonCallDemo();   // JULY PORT 2026-10-14 — the scripted demo lab in Control Center (copy only, never an action)
   wireResolutionControls(); // JULY PORT 2026-10-14 — Fix It search/filter + Fix History pagination (Recipes tab)
 
@@ -1030,6 +1034,9 @@ function renderHomeLists(next) {
   const host = qs("#homeLists");
   if (!host || !next) return;
   host.innerHTML = HomeTab.homeListsHtml({ detections: next.detections || [], log: next.transparencyLog || [], approvals: next.approvals || {}, deferred: next.deferredFixes || [], pending: lastPendingCards });
+  // 2026-10-14 — the advise-first notices lead "What I need from you" (each one says when ARIA acts unless you choose).
+  const noticeRows = HomeTab.advisoryRowsHtml(Array.isArray(next.advisories) ? next.advisories : []);
+  if (noticeRows) { const need = qs("#homeNeed"); if (need) { need.querySelector(".home-empty")?.remove(); need.querySelector(".eyebrow")?.insertAdjacentHTML("afterend", noticeRows); } }
   setText("homeCanFix", HomeTab.canFixLine({ recipes: next.recipes || [], platformCapabilities: next.platformCapabilities, liveFixes: next.liveFixes }));
   qsa("#homeLists [data-home-fix]").forEach((b) => b.addEventListener("click", () => runAction(b, async () => {
     const row = b.closest(".home-row");
@@ -1041,6 +1048,14 @@ function renderHomeLists(next) {
   qsa("#homeLists [data-home-dismiss]").forEach((b) => b.addEventListener("click", () => { const row = b.closest(".home-row"); if (row) row.remove(); if (!qs("#homeFound .home-row")) { const f = qs("#homeFound"); if (f) f.insertAdjacentHTML("beforeend", `<p class="home-empty">Nothing else right now.</p>`); } }));
   qsa("#homeLists [data-approve]").forEach((b) => b.addEventListener("click", () => runAction(b, async () => { const r = await sentinel.approveFix?.(b.dataset.approve); showToast(approveToast(r, { liveFixes: next.liveFixes })); return r; })));
   qsa("#homeLists [data-deny]").forEach((b) => b.addEventListener("click", () => runAction(b, async () => { const r = await sentinel.denyFix?.(b.dataset.deny); showToast(r && r.ok ? { title: "Denied", body: "Nothing was changed." } : { title: "Couldn't deny", body: (r && r.reason) || "Already decided or expired.", danger: true }); return r; })));
+  // 2026-10-14 — the advise-first notices: Fix now · Not now · Never for this (any choice ends the escalation).
+  qsa("#homeLists [data-advisory-ack]").forEach((b) => b.addEventListener("click", () => runAction(b, async () => {
+    const row = b.closest(".home-row");
+    if (row) row.querySelectorAll("[data-advisory-ack]").forEach((x) => { x.disabled = true; });
+    const r = await sentinel.advisoryAck?.(b.dataset.advisoryAck, b.dataset.choice);
+    showToast(advisoryAckToast(b.dataset.choice, r));
+    return r;
+  })));
   wireDeepLinks("homeLists");
 }
 
@@ -3618,6 +3633,81 @@ function wireSetupDialogA11y() {
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
+}
+
+// ===== 2026-10-14 — ADVISE THREE TIMES, THEN ACT (Autonomous mode) =====
+// main gives every notice in plain words (advisory-escalation.mjs advisoryCopy); the renderer only shows it and returns
+// the person's choice. The Settings sentence is generated by ruleSentence() from the same constants the code runs.
+function advisoryChatLine(view) {
+  if (!view || !view.copy) return;
+  const c = view.copy;
+  const choices = (Array.isArray(c.choices) ? c.choices : []).map((x) => x && x.label).filter(Boolean).join(" · ");
+  appendChat("aria", `${c.line}: ${c.found} ${c.willDo} ${c.when}${choices ? ` (On Home or the globe card: ${choices}.)` : ""}`);
+}
+/** The toast for a choice — what really happened (Rule 14: "fixed" only when the pipeline says so). */
+function advisoryAckToast(choice, r) {
+  if (!r || r.ok !== true) return { title: "Couldn't record that", body: r && /already|not-found/.test(String(r.error || "")) ? "That notice was already answered or has closed. Nothing else changed." : "Nothing was changed.", danger: true };
+  if (choice === "not-now") {
+    const until = r.advisory && Date.parse(r.advisory.snoozedUntil || "");
+    return { title: "Not now", body: `I'll tell you again ${Number.isFinite(until) ? "after " + new Date(until).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "later"}. Nothing runs before then.` };
+  }
+  if (choice === "never") return { title: "Never for this", body: "I won't fix this on my own on this device again. If it comes back, I'll ask you first. (Settings → Autonomy → Allow again.)" };
+  if (!r.fix) return { title: "IT contact told", body: "Your IT contact has been told. Nothing was changed on this device." };
+  const o = describeSupervisedResult(r.fix);
+  return { title: "Fix now", body: o.text, danger: o.ok === false };
+}
+function advisoryRuleFromForm() {
+  return ruleSentence({ advisoryIntervalMinutes: Number(qs("#advisoryInterval")?.value), advisorySnoozeHours: Number(qs("#advisorySnooze")?.value) });
+}
+function renderAdvisoryNeverList(never) {
+  const host = qs("#advisoryNeverList");
+  if (!host) return;
+  const list = Array.isArray(never) ? never : [];
+  host.hidden = list.length === 0;
+  host.textContent = "";
+  if (!list.length) return;
+  const lead = document.createElement("p"); lead.className = "note"; lead.textContent = "You chose “Never for this” for these — ARIA asks you first instead of fixing them on its own:";
+  host.appendChild(lead);
+  const titles = new Map(((state && state.recipes) || []).map((r) => [r.id, r.title]));
+  for (const id of list) {
+    const row = document.createElement("div"); row.className = "health-row";
+    const name = document.createElement("strong"); name.textContent = titles.get(id) || id;
+    const again = document.createElement("button"); again.className = "ghost"; again.type = "button"; again.textContent = "Allow again"; again.dataset.advisoryAllow = id;
+    again.addEventListener("click", () => runAction(again, async () => { const r = await sentinel.setAdvisoryPrefs?.({ allowAgain: [id] }); renderAdvisoryPrefs(r); return r; }));
+    row.append(name, again);
+    host.appendChild(row);
+  }
+}
+function renderAdvisoryPrefs(r) {
+  if (!r || !r.prefs) return;
+  const p = normalizeAdvisoryPrefs(r.prefs);
+  const iv = qs("#advisoryInterval"), sz = qs("#advisorySnooze");
+  if (iv) iv.value = String(p.intervalMinutes);
+  if (sz) sz.value = String(p.snoozeHours);
+  setText("advisoryRuleSentence", ruleSentence(p));
+  renderAdvisoryNeverList(r.never);
+}
+async function loadAdvisoryPrefs() {
+  try {
+    const r = await sentinel.getAdvisoryPrefs?.();
+    if (r && r.ok && r.prefs) renderAdvisoryPrefs(r);
+    else setText("advisoryRuleSentence", ruleSentence((state && state.advisoryPrefs) || {})); // older main: the defaults, still from the same constants
+  } catch (e) { reportRendererError(e, "advisory-prefs"); }
+}
+function wireAdvisoryPrefs() {
+  const iv = qs("#advisoryInterval"), sz = qs("#advisorySnooze");
+  for (const [el, lo, hi] of [[iv, ADVISORY_INTERVAL_MIN, ADVISORY_INTERVAL_MAX], [sz, ADVISORY_SNOOZE_MIN_H, ADVISORY_SNOOZE_MAX_H]]) {
+    if (!el) continue;
+    el.min = String(lo); el.max = String(hi);
+    el.addEventListener("input", () => setText("advisoryRuleSentence", advisoryRuleFromForm())); // the sentence follows the numbers
+  }
+  bindClick("saveAdvisoryPrefs", (b) => runAction(b, async () => {
+    const r = await sentinel.setAdvisoryPrefs?.({ intervalMinutes: Number(iv?.value), snoozeHours: Number(sz?.value) });
+    const st = qs("#advisoryPrefsStatus");
+    if (st) st.textContent = r && r.ok ? `Saved · a notice every ${r.prefs.intervalMinutes} min · Not now waits ${r.prefs.snoozeHours} h` : "Couldn't save.";
+    renderAdvisoryPrefs(r);
+    return r;
+  }));
 }
 
 // ===== RUN-CU / CU4 — Settings → Autonomy & contacts (edits the SAME prefs the wizard collects; setup:update-prefs) =====

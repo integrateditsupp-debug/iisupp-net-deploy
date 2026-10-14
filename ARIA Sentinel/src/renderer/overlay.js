@@ -29,9 +29,16 @@ const sentinel = window.sentinel || {
   diagnose: async () => ({ ok: false, error: "bridge_unavailable" }),
   isVettedRecipe: async () => ({ vetted: false }),
   voiceApprove: async () => ({ ok: false, error: "bridge_unavailable" }), // RUN-CU / CU4
-  fileAssociationFix: async () => ({ ok: false, error: "bridge_unavailable", message: "Desktop bridge unavailable." }) // JULY PORT 2026-10-14
+  fileAssociationFix: async () => ({ ok: false, error: "bridge_unavailable", message: "Desktop bridge unavailable." }), // JULY PORT 2026-10-14
+  onAdvisory: () => {}, // 2026-10-14 — advise-first notices (Notice n of 3)
+  advisoryAck: async () => ({ ok: false, error: "bridge_unavailable" })
 };
 let currentDetection = null;
+// 2026-10-14 — the advise-first notice on the card (null = none); declared up here because setMode() reads it.
+let currentAdvisory = null;
+let advisoryCloseTimer = null;
+const advisoryActions = document.getElementById("overlayAdvisoryActions");
+const advisoryStatus = document.getElementById("overlayAdvisoryStatus");
 // JULY PORT 2026-10-14 (ddfcac5b) — the read-only .txt association guard's two recipes. Their only action is opening
 // Windows Default Apps for the PERSON to choose Notepad (sentinel.fileAssociationFix → ms-settings:defaultapps):
 // the card's button says exactly that ("Fix in Settings") and ARIA writes nothing.
@@ -220,6 +227,10 @@ sentinel.onCompanionFlow?.((payload) => {
 
 sentinel.onDetection((detection) => {
   currentDetection = detection;
+  // 2026-10-14 — main sends the notice for a detection BEFORE the detection itself: never let the plain detector card
+  // replace "Notice n of 3" (and its three choices) for the same problem. Any other problem replaces it as before.
+  if (currentAdvisory && detection && detection.recipeId === currentAdvisory.recipeId) { setMode("card"); return; }
+  clearAdvisory();
   render(detection);
   setMode("card");
   const target = detection.risk === "red" ? "escalation" : "diagnosing";
@@ -235,6 +246,8 @@ sentinel.onDetection((detection) => {
 
 sentinel.getState().then((state) => {
   if (state && state.mode) { overlayMode = state.mode; chip.textContent = modeChip(); }
+  const notice = Array.isArray(state && state.advisories) ? state.advisories.find((a) => a && Array.isArray(a.choices) && a.choices.length && a.status !== "snoozed") : null;
+  if (notice) { renderAdvisory(notice); setGlobeState(notice.kind === "red" ? "escalation" : "diagnosing"); return; }
   const latest = state.detections && state.detections[0];
   if (latest) {
     currentDetection = latest;
@@ -250,6 +263,7 @@ document.getElementById("overlayGlobe").addEventListener("click", async () => {
   if (voiceConvo.isActive()) { await voiceConvo.globeTap(); return; } // RUN-CU / CU4 — multi-turn loop owns the tap
   if (voiceActive) { await stopVoiceAndAnswer(); return; }
   if (typeof speechSynthesis !== "undefined" && speechSynthesis.speaking) { cancelVoice(); return; }
+  if (currentAdvisory) { setMode("card"); return; } // 2026-10-14 — an open notice comes back on a globe click
   if (currentDetection) {
     setMode("card");
     return;
@@ -264,6 +278,7 @@ let overlayMode = "manual";
 function modeChip() { return `${String(overlayMode || "manual").toUpperCase()} MODE`; }
 document.getElementById("overlayDismiss").addEventListener("click", async () => {
   currentDetection = null;
+  clearAdvisory();
   chip.textContent = modeChip();
   title.textContent = "ARIA is watching";
   copy.textContent = "Local self-diagnosis is active.";
@@ -331,7 +346,9 @@ function setMode(mode) {
   if (cardHead) cardHead.hidden = !companion;
   if (chip) chip.hidden = companion;
   if (title) title.hidden = companion;
-  if (overlayActions) overlayActions.hidden = companion;
+  if (overlayActions) overlayActions.hidden = companion || Boolean(currentAdvisory);
+  if (advisoryActions) advisoryActions.hidden = companion || !currentAdvisory;
+  card.classList.toggle("advisory-active", !companion && Boolean(currentAdvisory));
   // ONE box: whenever the card opens, hide + cancel the confirm bubble AND the greeting (never stack/overlap).
   if (showCard) {
     if (confirmTimer) { clearTimeout(confirmTimer); confirmTimer = null; }
@@ -348,6 +365,95 @@ function render(detection) {
   copy.textContent = detection.summary;
   if (fixButton) fixButton.textContent = ASSOCIATION_RECIPE_IDS.has(detection.recipeId) ? "Fix in Settings" : "Open fix";
 }
+
+// ============================================================================================================
+// ADVISE-FIRST NOTICES (2026-10-14, Autonomous mode) — "advise three times, then act". main sends each notice
+// (sentinel:advisory) already in plain words: what ARIA found · what it will do · WHEN ("in N minutes unless you
+// choose"), with the choices that still apply. This card shows exactly that copy (textContent only — never HTML) and
+// sends the person's choice back (sentinel:advisory-ack). Any choice ends the escalation; Close does not choose.
+// ============================================================================================================
+function setAdvisoryStatus(text) {
+  if (!advisoryStatus) return;
+  advisoryStatus.textContent = text || "";
+  advisoryStatus.hidden = !text;
+}
+function clearAdvisory() {
+  currentAdvisory = null;
+  if (advisoryCloseTimer) { clearTimeout(advisoryCloseTimer); advisoryCloseTimer = null; }
+  setAdvisoryStatus("");
+  card.classList.remove("advisory-active");
+  if (advisoryActions) advisoryActions.hidden = true;
+  if (overlayActions && !card.classList.contains("companion-active")) overlayActions.hidden = false;
+}
+function renderAdvisory(view) {
+  if (!view || !view.id) return;
+  const c = view.copy || {};
+  currentAdvisory = view;
+  if (advisoryCloseTimer) { clearTimeout(advisoryCloseTimer); advisoryCloseTimer = null; }
+  chip.textContent = String(c.line || `Notice ${view.advisory || 1} of ${view.of || 3}`).toUpperCase();
+  title.textContent = c.found || view.title || "ARIA found a problem";
+  copy.textContent = "";
+  copy.appendChild(el("p", "advisory-will", c.willDo || ""));
+  copy.appendChild(el("p", "advisory-when", c.when || ""));
+  const labels = new Map((Array.isArray(c.choices) ? c.choices : []).map((x) => [x && x.id, x && x.label]));
+  for (const b of advisoryActions ? advisoryActions.querySelectorAll("[data-advisory-choice]") : []) {
+    const id = b.dataset.advisoryChoice;
+    b.hidden = !labels.has(id);
+    b.disabled = false;
+    if (labels.has(id)) b.textContent = labels.get(id);
+  }
+  setAdvisoryStatus(view.frozen ? "Paused — nothing advances until ARIA is running normally again." : "");
+  card.classList.add("advisory-active");
+  if (overlayActions) overlayActions.hidden = true;
+  if (advisoryActions) advisoryActions.hidden = false;
+}
+/** What the person's choice really did, in plain words (never "fixed" before the pipeline says so — Rule 14). */
+function advisoryChoiceText(choice, r) {
+  if (!r || r.ok !== true) return r && /already|not-found/.test(String(r.error || "")) ? "That notice was already answered or has closed — nothing else changed." : "I couldn't record that choice. Nothing was changed.";
+  if (choice === "not-now") {
+    const until = r.advisory && Date.parse(r.advisory.snoozedUntil || "");
+    return `OK — not now. I'll tell you again ${Number.isFinite(until) ? "after " + new Date(until).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "later"}; nothing runs before then.`;
+  }
+  if (choice === "never") return "OK — I won't fix this on my own on this device again. If it comes back, I'll ask you first.";
+  if (!r.fix) return "Your IT contact has been told. Nothing was changed on this device.";
+  return describeSupervisedResult(r.fix).text;
+}
+sentinel.onAdvisory?.((view) => {
+  if (!view || !view.id) return;
+  if (comp) return; // never yank the person out of a walk-through; the notice is on Home and the next one re-pops
+  currentDetection = null;
+  renderAdvisory(view);
+  setMode("card");
+  setGlobeState(view.kind === "red" ? "escalation" : "diagnosing");
+});
+for (const b of advisoryActions ? advisoryActions.querySelectorAll("[data-advisory-choice]") : []) {
+  b.addEventListener("click", async () => {
+    const view = currentAdvisory;
+    if (!view) return;
+    const choice = b.dataset.advisoryChoice;
+    for (const x of advisoryActions.querySelectorAll("button")) x.disabled = true;
+    setAdvisoryStatus(choice === "fix-now" ? (view.kind === "red" ? "Telling your IT contact…" : "Starting the fix — a countdown you can cancel runs first…") : "Saving your choice…");
+    let r = null;
+    try { r = await sentinel.advisoryAck(view.id, choice); } catch { r = null; }
+    setAdvisoryStatus(advisoryChoiceText(choice, r));
+    for (const x of advisoryActions.querySelectorAll("[data-advisory-choice]")) x.hidden = true;
+    const closeBtn = document.getElementById("advisoryClose");
+    if (closeBtn) { closeBtn.disabled = false; closeBtn.textContent = "Close"; }
+    const ok = Boolean(r && r.ok);
+    setGlobeState(!ok ? "escalation" : choice === "fix-now" && view.kind !== "red" ? "fixing" : "idle");
+    advisoryCloseTimer = setTimeout(() => { advisoryCloseTimer = null; if (currentAdvisory === view) closeAdvisoryCard(); }, 9000);
+  });
+}
+async function closeAdvisoryCard() {
+  clearAdvisory();
+  chip.textContent = modeChip();
+  title.textContent = "ARIA is watching";
+  copy.textContent = "Local self-diagnosis is active.";
+  setMode("globe");
+  setGlobeState("idle");
+  await sentinel.dismissOverlay?.();
+}
+document.getElementById("advisoryClose")?.addEventListener("click", () => { closeAdvisoryCard(); });
 
 // ============================================================================================================
 // ARIA COMPANION — the interactive assistant on the globe. Renders ONE card at a time and carries the user's

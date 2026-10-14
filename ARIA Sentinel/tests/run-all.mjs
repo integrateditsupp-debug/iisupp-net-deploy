@@ -1009,6 +1009,9 @@ const TESTS = [
   "./fault-lab-autonomous.test.mjs",
   "./fault-lab-modes.test.mjs",
   "./fault-lab-soak.test.mjs",
+  // …and its surfaces, fed main's REAL notices: the globe card (Notice n of 3 + Fix now · Not now · Never for this),
+  // the Home "What I need from you" rows, the ARIA chat line, Settings → Autonomy, the content-blind bridge slice.
+  "./advisory-ui.test.mjs",
   // The commercial surface, audited end to end and proven RED FIRST on fixtures: the response-time
   // promise (BE1), the price a stranger is quoted (BF1), the tier vocabulary (BF2), the amount a buyer
   // is actually charged (BI2), the document a conversation ends in (BL1), the intake nobody keeps

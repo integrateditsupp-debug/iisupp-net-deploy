@@ -72,9 +72,28 @@ export function didRowsHtml(log = [], { limit = 6, now = Date.now() } = {}) {
   return rows || `<p class="home-empty">Nothing applied yet. When ARIA previews or applies a fix, it is listed here with its verified outcome — never before it ran.</p>`;
 }
 
+/**
+ * 2026-10-14 — the advise-first notices (Autonomous mode: "advise three times, then act"), from getState().advisories:
+ * what ARIA found · what it will do · when — with the choices that still apply (Fix now · Not now · Never for this).
+ * The copy is main's plain-words copy (advisory-escalation.mjs), escaped here like every other string.
+ */
+export function advisoryRowsHtml(advisories = []) {
+  return (Array.isArray(advisories) ? advisories : []).filter((a) => a && a.id).map((a) => {
+    const c = a.copy || {};
+    const choices = Array.isArray(c.choices) ? c.choices.filter((x) => x && x.id) : [];
+    const buttons = choices.map((x) => `<button class="${x.id === "fix-now" ? "primary" : "ghost"}" data-advisory-ack="${esc(a.id)}" data-choice="${esc(x.id)}">${esc(x.label || x.id)}</button>`).join("");
+    const sub = [c.line, c.willDo, c.when].filter(Boolean).join(" · ");
+    return `<div class="home-row need-advisory" data-advisory="${esc(a.id)}" data-kind="${esc(a.kind || "")}"><span class="home-time">${esc(`${a.advisory || 1} of ${a.of || 3}`)}</span>` +
+      `<div class="home-text"><strong>${esc(c.found || a.title || "ARIA found a problem")}</strong><small>${esc(sub)}</small></div>` +
+      (buttons ? `<div class="home-actions">${buttons}</div>` : "") + `</div>`;
+  }).join("");
+}
+
 /** "What I need from you" — approvals waiting for a yes, fixes queued to a window, and the pending cards (trial/update). */
-export function needRowsHtml({ approvals = {}, deferred = [], pending = [] } = {}, { now = Date.now() } = {}) {
+export function needRowsHtml({ approvals = {}, deferred = [], pending = [], advisories = [] } = {}, { now = Date.now() } = {}) {
   const out = [];
+  const notices = advisoryRowsHtml(advisories);
+  if (notices) out.push(notices);
   for (const a of (approvals && Array.isArray(approvals.pending)) ? approvals.pending : []) {
     const left = Number.isFinite(Date.parse(a.expiresAt || "")) ? Math.max(0, Math.round((Date.parse(a.expiresAt) - now) / 60000)) : null;
     out.push(`<div class="home-row need-approval" data-approval="${esc(a.id || "")}"><span class="home-time">${esc(when(a.createdAt, now))}</span><div class="home-text"><strong>Say yes to: ${esc(a.title || a.recipeId || "a fix")}</strong><small>${esc(a.color || "yellow")} tier · asked by ${esc(a.requestedBy || "ARIA")}${left == null ? "" : " · waits " + left + " min"}</small></div><div class="home-actions"><button class="primary" data-approve="${esc(a.id || "")}">Approve</button><button class="ghost" data-deny="${esc(a.id || "")}">Deny</button></div></div>`);
@@ -89,10 +108,10 @@ export function needRowsHtml({ approvals = {}, deferred = [], pending = [] } = {
 }
 
 /** The three blocks, as one HTML string for #homeLists. */
-export function homeListsHtml({ detections = [], log = [], approvals = {}, deferred = [], pending = [] } = {}, opts = {}) {
+export function homeListsHtml({ detections = [], log = [], approvals = {}, deferred = [], pending = [], advisories = [] } = {}, opts = {}) {
   return `<section class="home-block" id="homeFound"><p class="eyebrow">What I found</p>${foundRowsHtml(detections, opts)}</section>` +
     `<section class="home-block" id="homeDid"><p class="eyebrow">What I did</p>${didRowsHtml(log, opts)}</section>` +
-    `<section class="home-block" id="homeNeed"><p class="eyebrow">What I need from you</p>${needRowsHtml({ approvals, deferred, pending }, opts)}</section>`;
+    `<section class="home-block" id="homeNeed"><p class="eyebrow">What I need from you</p>${needRowsHtml({ approvals, deferred, pending, advisories }, opts)}</section>`;
 }
 
 // The detectors this version runs on Windows (one word each, the order a person would read them).
