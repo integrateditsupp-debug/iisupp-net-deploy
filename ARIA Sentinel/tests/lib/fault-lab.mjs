@@ -33,7 +33,16 @@ import { mapDiskSignals } from "../../src/sub-agents/detection/disk-watcher.mjs"
 import { mapEventLogSignals } from "../../src/sub-agents/detection/event-log-watcher.mjs";
 import { mapWerSignals } from "../../src/sub-agents/detection/wer-watcher.mjs";
 import { mapCrashControl } from "../../src/sub-agents/detection/crash-control-watcher.mjs";
+import { evaluateClockDrift } from "../../src/sub-agents/detection/perf-watcher.mjs";
+import { VERIFY_COMMANDS } from "../../src/shared/recipe-runner.mjs";
 import { bootMain } from "./main-sandbox.mjs";
+
+// The read-only probes the lab suites never count as a change: status reads + every registry verify probe.
+// FAULT LAB 2026-10-14 (defect 3) — the gating verify probes start with `try {` / `if (` (they exit non-zero when the
+// problem is still there), so "is this a probe?" is answered from VERIFY_COMMANDS itself, not from a command prefix.
+export const PROBE_RE = /^\(Get-|^Get-Service -Name \w+ \| Select-Object|^Get-ComputerRestorePoint|^\[math\]::Round|^Test-NetConnection/;
+const VERIFY_PROBES = new Set(Object.values(VERIFY_COMMANDS));
+export function isReadOnlyProbe(cmd) { return PROBE_RE.test(String(cmd)) || VERIFY_PROBES.has(String(cmd)); }
 
 const MIN = 60 * 1000;
 const GB = 1024 ** 3;
@@ -287,6 +296,25 @@ export function createVirtualWindows({ profile = "standard", strictAdmin = false
       return { out: "\r\nWindows IP Configuration\r\n", err: "", ok: true };
     }
     if (s === "Test-NetConnection -ComputerName 1.1.1.1 -Port 53 -InformationLevel Quiet") return { out: internetUp() ? "True\r\n" : "False\r\n", err: "", ok: true };
+    // — the GATING verify probes (recipe-runner VERIFY_GATES): they EXIT 1 when the problem is still there —
+    // dns-fail-v1: resolve the NCSI name through the configured resolver (DNS only). Reachability comes from the network
+    // state (adapter · Wi-Fi · lease · gateway · Winsock) and a stale cache entry still breaks it.
+    if (s === "try { Resolve-DnsName -Name dns.msftncsi.com -Type A -DnsOnly -QuickTimeout -ErrorAction Stop | Out-Null } catch { exit 1 }") {
+      return dnsResolves() ? { out: "", err: "", ok: true } : { out: "", err: "", ok: false, exit: 1 };
+    }
+    // svc-dhcp-stopped-v1: the service is Running…
+    if ((m = s.match(/^if \(\(Get-Service -Name ([A-Za-z0-9_]+)\)\.Status -ne 'Running'\) \{ exit 1 \}$/))) {
+      const k = svcKey(m[1]);
+      if (!k) return { out: "", err: `Get-Service : Cannot find any service with service name '${m[1]}'.`, ok: false, exit: 1 };
+      return S.services[k].status === "Running" ? { out: "", err: "", ok: true } : { out: "", err: "", ok: false, exit: 1 };
+    }
+    // …and a connected DHCP-enabled interface holds a DHCP lease (an APIPA address is no lease).
+    if (s === "if ((Get-NetIPInterface -AddressFamily IPv4 -Dhcp Enabled -ConnectionState Connected -ErrorAction SilentlyContinue) -and -not (Get-NetIPAddress -AddressFamily IPv4 -PrefixOrigin Dhcp -ErrorAction SilentlyContinue)) { exit 1 }") {
+      const n = S.network;
+      const dhcpInterfaceUp = n.adapterUp && n.wifiConnected;
+      const lease = n.leaseValid && !n.apipa;
+      return dhcpInterfaceUp && !lease ? { out: "", err: "", ok: false, exit: 1 } : { out: "", err: "", ok: true };
+    }
     // — restore points —
     if (s === "Get-ComputerRestorePoint | Select-Object -ExpandProperty SequenceNumber") {
       if (!elevated) return { out: "", err: "Get-ComputerRestorePoint : Access is denied.", ok: false };
@@ -355,6 +383,7 @@ export function createVirtualWindows({ profile = "standard", strictAdmin = false
       const r = statement(s, elevated);
       stdout += r.out || "";
       if (r.err) stderr += (stderr ? "\r\n" : "") + r.err;
+      if (Number.isInteger(r.exit)) return { stdout, stderr, exitCode: r.exit }; // an `exit N` ends the session there
       lastOk = r.ok;
     }
     return { stdout, stderr, exitCode: lastOk ? 0 : 1 };
@@ -423,7 +452,10 @@ export function createVirtualWindows({ profile = "standard", strictAdmin = false
   machine.diff = diff;
 
   // — the detection layer: the REAL watcher evaluators over this machine's state —
-  const scanMemo = { services: null, net: { down: false, dnsFail: false }, conn: { fails: 0, down: false }, eventIdx: 0, werIdx: 0, dumps: -1 };
+  const scanMemo = { services: null, net: { down: false, dnsFail: false }, conn: { fails: 0, down: false }, eventIdx: 0, werIdx: 0, dumps: -1, clock: {} };
+  // FAULT LAB 2026-10-14 (defect 6) — what the perf watcher's clock sub-check reads: the time service's computed offset
+  // (absolute, microseconds) against its NTP source.
+  const clockSample = () => ({ offsetUs: Math.round(Math.abs(Number(st().time.offsetSec) || 0) * 1e6) });
   function serviceRows() {
     return Object.entries(st().services).map(([Name, s]) => ({ Name, Status: s.status, StartType: s.startType, Failing: s.hung === true }));
   }
@@ -439,6 +471,7 @@ export function createVirtualWindows({ profile = "standard", strictAdmin = false
     scanMemo.eventIdx = st().eventLog.length;
     scanMemo.werIdx = st().werReports.length;
     scanMemo.dumps = mapCrashControl({ dumpCount: st().minidumps.count, stopCode: "" }, -1).count;
+    scanMemo.clock = evaluateClockDrift({}, clockSample()).state;
   };
   /** One watcher round (the network probe twice — reachability needs two failures). Returns [{ signal, hint, watcher }]. */
   machine.scan = () => {
@@ -461,6 +494,9 @@ export function createVirtualWindows({ profile = "standard", strictAdmin = false
     const cc = mapCrashControl({ dumpCount: st().minidumps.count, stopCode: st().minidumps.lastStopCode }, scanMemo.dumps);
     scanMemo.dumps = cc.count;
     for (const s of cc.signals) out.push({ ...s, watcher: "crash-control" });
+    const clock = evaluateClockDrift(scanMemo.clock, clockSample());
+    scanMemo.clock = clock.state;
+    for (const s of clock.signals) out.push({ ...s, watcher: "perf" });
     const seen = new Set();
     return out.filter((s) => (seen.has(s.signal) ? false : (seen.add(s.signal), true)));
   };
@@ -472,7 +508,10 @@ export function createVirtualWindows({ profile = "standard", strictAdmin = false
 // recipe     what the REAL detection path picks (detectIssue → matchRecipes) for the fault's signal
 // needsAdmin the recipe has a step that needs administrator rights (no unattended elevated runner exists)
 // path       what the rule must do in Autonomous mode with live fixes on and nobody answering:
-//              auto-fix       3 notices → the countdown → the fix → verify (the recipe must be vetted for unattended runs)
+//              auto-fix       3 notices → the countdown → the fix → verify (the recipe must be vetted for unattended runs —
+//                             locally, or by the vendor floor for a green recipe with a gating verify + inverse: defect 4)
+//              not-resolved   3 notices → the countdown → the fix runs → its GATING verify fails → `not_resolved` (never
+//                             "fixed and verified") → the IT contact is told through the escalation path (defect 3)
 //              escalate       3 notices → the IT contact is told (notify + webhook) → NEVER executed
 //              attempt-fails  3 notices → the fix runs and fails honestly (nothing changed) → fix-failed notify
 //              guide-only     no notices: the recipe is a guide, ARIA cannot apply it (nothing ever runs)
@@ -506,10 +545,12 @@ export const FAULTS = Object.freeze([
     resolved: (m) => m.state.disk.freeBytes / m.state.disk.sizeBytes >= 0.05
   },
   {
-    id: "time-drift", level: "L1", title: "Clock drift (95 s)", recipe: "system-time-drift-v1", color: "green", needsAdmin: false, path: "guide-only",
-    fixKeys: [], report: "person", signal: "SYSTEM.TIME.DRIFT",
-    gap: "No Windows watcher reports clock drift; the person has to say so, and the recipe is a guide (nothing to apply).",
-    inject: (s) => { s.time.offsetSec = 95; },
+    // FAULT LAB 2026-10-14 (defect 6) — the perf watcher's clock sub-check now reports drift beyond 2 minutes itself (it was
+    // "person reports a 95 s drift"). The fault drifts past the watcher's threshold; under it (e.g. 95 s) the watcher stays
+    // quiet by design (tests/fault-lab-defects.test.mjs). The recipe is still a guide: nothing to apply.
+    id: "time-drift", level: "L1", title: "Clock drift (5 min)", recipe: "system-time-drift-v1", color: "green", needsAdmin: false, path: "guide-only",
+    fixKeys: [], report: "watcher",
+    inject: (s) => { s.time.offsetSec = 300; },
     resolved: (m) => m.state.time.offsetSec === 0
   },
   {
@@ -533,9 +574,10 @@ export const FAULTS = Object.freeze([
     resolved: (m) => m.state.services.BITS.status === "Running" && !m.state.bits.transfersStuck
   },
   {
+    // (defect 2 closed the gap noted here: the network watcher's NET.ADAPTER.DOWN / NET.DOWN for the same outage now route
+    // to the net-adapter-down-v1 guide instead of "No local recipe matched".)
     id: "wlan-stopped", level: "L2", title: "Wi-Fi dropped (WLAN AutoConfig stopped)", recipe: "svc-wlansvc-stopped-v1", color: "green", needsAdmin: true, path: "escalate", kind: "needs-admin",
     fixKeys: ["network.adapterUp", "network.wifiConnected", "services.WlanSvc.restarts", "services.WlanSvc.status"], report: "watcher",
-    gap: "The network watcher's NET.ADAPTER.DOWN for the same outage matches no recipe (\"No local recipe matched\").",
     inject: (s) => { s.services.WlanSvc.status = "Stopped"; s.network.wifiConnected = false; s.network.adapterUp = false; },
     resolved: (m) => m.state.services.WlanSvc.status === "Running" && m.internetUp()
   },
@@ -547,16 +589,22 @@ export const FAULTS = Object.freeze([
     resolved: (m) => m.state.services.Dnscache.status === "Running"
   },
   {
-    id: "dhcp-lease-stale", level: "L2", title: "Wi-Fi connected, no internet (DHCP lease stale)", recipe: "dns-fail-v1", color: "green", needsAdmin: false, path: "auto-fix",
+    // FAULT LAB 2026-10-14 (defects 2 + 3) — was path "auto-fix" with "ARIA reports it fixed and verified, but the root cause is
+    // still there". dns-fail-v1's verify is now a GATING probe (the NCSI name must resolve), so the refresh ends `not_resolved`
+    // and the IT contact is told; NET.DOWN now also reaches the person as the net-adapter-down-v1 guide.
+    id: "dhcp-lease-stale", level: "L2", title: "Wi-Fi connected, no internet (DHCP lease stale)", recipe: "dns-fail-v1", color: "green", needsAdmin: false, path: "not-resolved",
     fixKeys: ["dns.cacheEntries", "dns.registrations", "dns.staleEntries"], report: "watcher", fixesSymptomOnly: true,
-    gap: "The watcher reports the DNS symptom (NET.DNS.FAIL → dns-fail-v1, a user-space refresh whose exit-code-only verify passes) while NET.DOWN matches no recipe — so the lease is never renewed and the internet stays down after a 'verified' fix.",
+    gap: "The DNS refresh (dns-fail-v1) cannot renew a stale lease — renewing it needs `ipconfig /renew`, which needs administrator rights — so the item ends `not resolved` and goes to the IT contact; NET.DOWN gives the person the network guide meanwhile.",
     inject: (s) => { s.network.leaseValid = false; s.network.apipa = true; s.network.gatewayReachable = false; s.dns.staleEntries = 3; },
     resolved: (m) => m.internetUp()
   },
   {
-    id: "spooler-disabled", level: "L3", title: "Print spooler disabled (start type Disabled)", recipe: "printer-spooler-v1", color: "green", needsAdmin: true, path: "escalate", kind: "needs-admin",
-    fixKeys: [], report: "person", signal: "PRINT.OFFLINE",
-    gap: "The service watcher (correctly) stays quiet for a Disabled service; only the person's report surfaces it, and no recipe may change a start type (re-enabling needs an administrator).",
+    // FAULT LAB 2026-10-14 (defect 5) — was report "person" via PRINT.OFFLINE → printer-spooler-v1 because the service watcher
+    // ignored a Disabled service. The watcher now reports a watched service stopped with start type Disabled as the
+    // stopped-service signal with startType "disabled" → svc-spooler-stopped-v1, needs an administrator, never automatic.
+    id: "spooler-disabled", level: "L3", title: "Print spooler disabled (start type Disabled)", recipe: "svc-spooler-stopped-v1", color: "green", needsAdmin: true, path: "escalate", kind: "needs-admin",
+    fixKeys: [], report: "watcher",
+    gap: "No recipe may change a start type: the restart that Fix now or an approval runs fails honestly until an administrator re-enables the Print Spooler (the card says so).",
     inject: (s) => { s.services.Spooler.startType = "Disabled"; s.services.Spooler.status = "Stopped"; s.printQueue = { jobs: 2, frozen: true }; },
     resolved: (m) => m.state.services.Spooler.status === "Running"
   },
@@ -573,9 +621,11 @@ export const FAULTS = Object.freeze([
     resolved: (m) => !m.state.bitlocker.recoveryPrompt
   },
   {
-    id: "winsock-corrupt", level: "L3", title: "Winsock catalog corrupt (needs netsh winsock reset + reboot)", recipe: "dns-fail-v1", color: "green", needsAdmin: false, path: "auto-fix",
+    // FAULT LAB 2026-10-14 (defect 3) — was path "auto-fix" ("fixed and verified" while the internet stayed down): the gating
+    // verify now fails, so the DNS refresh ends `not_resolved` and the IT contact is told. The L3 fix itself still never runs.
+    id: "winsock-corrupt", level: "L3", title: "Winsock catalog corrupt (needs netsh winsock reset + reboot)", recipe: "dns-fail-v1", color: "green", needsAdmin: false, path: "not-resolved",
     fixKeys: ["dns.cacheEntries", "dns.registrations", "dns.staleEntries"], report: "watcher", fixesSymptomOnly: true, l3FixNeverRuns: /netsh\s+winsock\s+reset/i, rootKeys: ["network.winsockOk"],
-    gap: "The real fix (netsh winsock reset + reboot) exists only as an unbound Tier-0 catalog entry, so it can never run — correct for an L3 change — but the DNS symptom is 'fixed and verified' while the internet stays down.",
+    gap: "The real fix (netsh winsock reset + reboot) exists only as an unbound Tier-0 catalog entry, so it can never run — correct for an L3 change; the DNS refresh now ends `not resolved` and the IT contact is told.",
     inject: (s) => { s.network.winsockOk = false; s.dns.staleEntries = 2; },
     resolved: (m) => m.state.network.winsockOk === true
   },
@@ -584,6 +634,16 @@ export const FAULTS = Object.freeze([
     fixKeys: [], report: "person", signal: "PRINT.DRIVER.STUCK",
     inject: (s) => { s.printQueue = { jobs: 1, frozen: true }; s.services.Spooler.hung = true; },
     resolved: (m) => !m.state.printQueue.frozen
+  },
+  {
+    // FAULT LAB 2026-10-14 (defect 1) — SYSTEM.SERVICE.STOPPED.DHCP used to route to system-time-drift-v1 (a clock guide).
+    // It now has svc-dhcp-stopped-v1: a Restart-Service that needs administrator rights (never unattended) and a gating
+    // verify (service Running + lease present). Vendor-vetted (defect 4), so a fresh install asks for approval in
+    // Confirmed instead of holding it — and in Autonomous it still goes to the IT contact (needs administrator rights).
+    id: "dhcp-stopped", level: "L2", title: "DHCP Client service stopped", recipe: "svc-dhcp-stopped-v1", color: "green", needsAdmin: true, path: "escalate", kind: "needs-admin",
+    fixKeys: ["services.Dhcp.restarts", "services.Dhcp.status"], report: "watcher",
+    inject: (s) => { s.services.Dhcp.status = "Stopped"; },
+    resolved: (m) => m.state.services.Dhcp.status === "Running"
   }
 ]);
 
@@ -594,8 +654,12 @@ export function faultById(id) { return FAULTS.find((f) => f.id === id) || null; 
 // A fault may sit in several groups (the DHCP lease is on both the resolver path and the Wi-Fi path).
 export const CONFLICT_GROUPS = Object.freeze([
   ["spooler-stuck", "spooler-disabled", "print-driver-crash"],
-  ["stale-dns", "dnscache-stopped", "dhcp-lease-stale", "winsock-corrupt"],
-  ["dhcp-lease-stale", "winsock-corrupt", "wlan-stopped"],
+  // (2026-10-14, defect 3) wlan-stopped joins the resolver path: dns-fail-v1's verify now really resolves a name, which needs
+  // the network up — with WLAN stopped the DNS refresh is (correctly) NOT RESOLVED, so the two outcomes are no longer
+  // independent. (The soak caught it: the old exit-code-only verify called that combination "fixed (verified)".)
+  ["stale-dns", "dnscache-stopped", "dhcp-lease-stale", "winsock-corrupt", "wlan-stopped"],
+  // (2026-10-14) dhcp-stopped joins the network path: a DHCP restart's lease check reads the same lease state.
+  ["dhcp-lease-stale", "winsock-corrupt", "wlan-stopped", "dhcp-stopped"],
   ["wu-stuck", "bits-stopped"]
 ]);
 
@@ -692,7 +756,9 @@ export async function bootLab(options = {}) {
       const results = [];
       for (const s of signals) {
         const issue = poison ? `${s.hint} at ${poison}` : s.hint;
-        results.push({ ...s, result: await main.detectIssue({ source: s.watcher === "person" ? "chat" : "detection-watcher", signal: s.signal, issue }) });
+        // (defect 5) exactly what the detection orchestrator forwards: the fixed enum startType "disabled", nothing else.
+        const startType = s.watcher !== "person" && s.startType === "disabled" ? { startType: "disabled" } : {};
+        results.push({ ...s, result: await main.detectIssue({ source: s.watcher === "person" ? "chat" : "detection-watcher", signal: s.signal, issue, ...startType }) });
       }
       await clock.settle();
       return results;

@@ -1016,6 +1016,12 @@ const TESTS = [
   // docs/FAULT-LAB.md): what can be proven without Windows — one catalogue, a script that cannot touch the network /
   // DNS / registry / clock / default apps / startup types, the guard read at run time, and the verdict logic.
   "./fault-lab-run.test.mjs",
+  // 2026-10-14 — the defects the fault lab found, each proven closed through the REAL detectIssue path on the simulated
+  // machine: the DHCP stop's own recipe, the network-down guide, the DNS gating verify (not_resolved → the IT contact),
+  // the Disabled start type, the read-only clock-drift check — and the vendor floor that lets "advise three times, then
+  // act" complete on a fresh install (green only; every other gate unchanged).
+  "./fault-lab-defects.test.mjs",
+  "./vendor-vetted-green.test.mjs",
   // The commercial surface, audited end to end and proven RED FIRST on fixtures: the response-time
   // promise (BE1), the price a stranger is quoted (BF1), the tier vocabulary (BF2), the amount a buyer
   // is actually charged (BI2), the document a conversation ends in (BL1), the intake nobody keeps

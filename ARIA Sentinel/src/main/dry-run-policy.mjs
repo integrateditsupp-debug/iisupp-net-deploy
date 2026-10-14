@@ -17,17 +17,37 @@
 //   · a completed dry-run is recorded as "preview" — it neither raises nor lowers the vetted count;
 //   · every refusal carries a plain `copy` string the UI can show instead of "Couldn't start this fix."
 //
+// FAULT LAB 2026-10-14 (defect 4) — THE VENDOR FLOOR (green only). The owner's Autonomous rule — "advise three times,
+// then act" — could never complete on a fresh install: every recipe starts at 0 local vetted runs (Tier 2), and Tier 2
+// is never allowed unattended, so the third unanswered notice always ended with "tell the IT contact". The exact rule now:
+//   · A GREEN recipe that SHIPS in the registry with a GATING verify probe and a declared rollback / inverse
+//     (recipe-runner.mjs isVendorVetted) is VENDOR-VETTED: vettedTier() treats the shipped catalogue as its floor,
+//     Tier 1 — the minimum this policy needs before anything runs unattended. The caller must say so explicitly
+//     (`vendorVetted: true` AND `color: "green"`); without both the answer is exactly the old one.
+//   · YELLOW never takes the floor: it still needs 10 locally vetted runs (and recipe-runner still never lets a yellow
+//     fix fire on its own). RED never runs on its own at all (approval-policy red-never-automated).
+//   · The local counters are kept: they still raise trust (≥100 → Tier 0 = auto-fire eligible), still gate yellow, and
+//     still move ±1 per live success / veto / abort — the floor only stops a fresh install from reading as "unproven".
+//   · No other gate moves: the supervisor, the countdown, Ctrl+Alt+K, the restore point for yellow, needsAdmin (an
+//     admin-needing fix is still never run unattended) and red-never-automated are all enforced downstream, unchanged.
+//
 // 🔒 R11 — outcomes for an off-limits recipe id are never recorded.
 import { isBlockedPath } from "../shared/path-guard.mjs";
 
 const MODE_RANK = { manual: 0, confirmed: 1, autonomous: 2 };
 
-/** Vetted tier from a success count. */
-export function vettedTier(count) {
+/** The tier the shipped catalogue guarantees a vendor-vetted GREEN recipe (Tier 1: Confirmed minimum, may run unattended). */
+export const VENDOR_VETTED_TIER = 1;
+
+/**
+ * Vetted tier from a success count. With `{ color: "green", vendorVetted: true }` the shipped catalogue is the floor
+ * (never worse than VENDOR_VETTED_TIER); any other colour, or no flag, is the local count alone (unchanged).
+ */
+export function vettedTier(count, { color, vendorVetted = false } = {}) {
   const n = Number(count) || 0;
-  if (n >= 100) return 0;
-  if (n >= 10) return 1;
-  return 2;
+  const local = n >= 100 ? 0 : n >= 10 ? 1 : 2;
+  if (vendorVetted === true && color === "green") return Math.min(local, VENDOR_VETTED_TIER);
+  return local;
 }
 
 /**
@@ -56,8 +76,10 @@ export function policyCopy({ allowed, dryRun, reason, humanInitiated } = {}) {
  * checkbox, the supervisor verdict and WHO asked (a person, an approval, or an unattended source).
  * Pure — returns the full gate, never executes.
  */
-export function executionPolicy({ vettedCount = 0, mode = "manual", dryRunCheckbox, supervisorVerdict, humanInitiated = false, approved = false } = {}) {
-  const tier = vettedTier(vettedCount);
+export function executionPolicy({ vettedCount = 0, mode = "manual", dryRunCheckbox, supervisorVerdict, humanInitiated = false, approved = false, color, vendorVetted = false } = {}) {
+  const tier = vettedTier(vettedCount, { color, vendorVetted });
+  // Where the tier came from (informational, for the audit + tests): the local ledger, or the vendor floor (defect 4).
+  const trust = tier < vettedTier(vettedCount) ? "vendor-vetted" : (Number(vettedCount) || 0) >= 10 ? "locally-vetted" : "not-yet-vetted";
   const m = MODE_RANK[mode] ?? 0;
   const dryRun = resolveDryRun({ mode, dryRunCheckbox });
   const supervisorApproved = supervisorVerdict === "approve" || supervisorVerdict === "approve-fast";
@@ -84,6 +106,7 @@ export function executionPolicy({ vettedCount = 0, mode = "manual", dryRunCheckb
   const execute = allowed && supervisorApproved && !dryRun;
   const policy = {
     tier,
+    trust,
     dryRun,
     allowed,
     execute,

@@ -5,6 +5,8 @@
 // For EVERY fault in the catalogue (tests/lib/fault-lab.mjs FAULTS), Autonomous mode, live fixes ON, nobody answering:
 //   auto-fix       exactly 3 notices at the configured cadence → the visible 10-s countdown → the fix → verify → the
 //                  machine diff equals EXACTLY the keys the fix may change → audit rows → notify-after
+//   not-resolved   (2026-10-14, defect 3) 3 notices → the countdown → the fix runs → its GATING verify fails → NOT RESOLVED
+//                  (never "fixed and verified") → the IT contact is told through the escalation path; root cause untouched
 //   escalate       exactly 3 notices → the IT contact is told (fix-failed notify + approval for a fixable one) → the
 //                  machine is identical; never executed
 //   attempt-fails  3 notices → the fix runs and fails honestly → identical machine → fix-failed notify
@@ -16,10 +18,13 @@
 // (frozen from the start). For EVERY L3 fault: never executed without an explicit approval; the fault's own state is
 // untouched. Plus: no unknown command was ever issued, no excluded-folder path was ever referenced or echoed.
 import assert from "node:assert/strict";
-import { bootLab, FAULTS, faultById, diff, healthyState } from "./lib/fault-lab.mjs";
+import fs from "node:fs";
+import path from "node:path";
+import { bootLab, FAULTS, faultById, diff, healthyState, isReadOnlyProbe } from "./lib/fault-lab.mjs";
 import { RECIPES } from "../src/shared/recipes.mjs";
 import { PRIVATE_FOLDER_NAME, PRIVATE_FOLDER_RE } from "../src/shared/path-guard.mjs";
 import { ADVISORY_COUNT } from "../src/shared/advisory-escalation.mjs";
+import { isVendorVetted, NOT_RESOLVED } from "../src/shared/recipe-runner.mjs";
 
 const MIN = 60 * 1000;
 const TICK = 15 * 1000;
@@ -29,8 +34,9 @@ let groups = 0; const g = () => { groups++; };
 let scenarios = 0;
 const findings = [];
 
-const PROBE_RE = /^\(Get-|^Get-Service -Name \w+ \| Select-Object|^Get-ComputerRestorePoint|^\[math\]::Round|^Test-NetConnection/;
-const mutating = (lab) => lab.machine.commands.filter((c) => !PROBE_RE.test(c.cmd) && !/^Checkpoint-Computer/.test(c.cmd));
+// 2026-10-14 (defect 3) — the gating verify probes (`try { Resolve-DnsName … }`, `if ((Get-Service …` ) are read-only too;
+// the lab answers "is this a probe?" from VERIFY_COMMANDS (isReadOnlyProbe) instead of the old prefix-only regex.
+const mutating = (lab) => lab.machine.commands.filter((c) => !isReadOnlyProbe(c.cmd) && !/^Checkpoint-Computer/.test(c.cmd));
 const rows = (lab, tag, re) => lab.audit().filter((r) => r.tag === tag && (!re || re.test(r.text)));
 function numbered(lab, recipeId) {
   return lab.audit().filter((r) => r.tag === "ADVISORY" && /^ADVISORY \d\/3: /.test(r.text) && r.recipeId === recipeId);
@@ -92,7 +98,7 @@ for (const f of FAULTS) {
     assert.ok(shown.length >= 3 && shown.every((c) => c.choices.join() === "fix-now,not-now,never"), `${label}: each notice pushed a globe card with the three choices`);
     assert.equal(lab.notifications.filter((nn) => /^Notice [123] of 3: /.test(nn.title)).length, 3, `${label}: one desktop notification per notice`);
     const last = ms(notices[2]);
-    if (f.path === "auto-fix" || f.path === "attempt-fails") {
+    if (f.path === "auto-fix" || f.path === "attempt-fails" || f.path === "not-resolved") {
       assert.equal(autoFix.length, 1, `${label}: one AUTO-FIX after 3 advisories`);
       assert.match(autoFix[0].text, /^AUTO-FIX after 3 advisories: /);
       const wait = ms(autoFix[0]) - last;
@@ -113,6 +119,34 @@ for (const f of FAULTS) {
           findings.push({ fault: f.id, gap: f.gap });
         } else assert.equal(f.resolved(lab.machine), true, `${label}: the fault is really gone`);
         if (f.l3FixNeverRuns) assert.ok(!lab.machine.commands.some((c) => f.l3FixNeverRuns.test(c.cmd)), `${label}: the L3 fix itself never ran`);
+      } else if (f.path === "not-resolved") {
+        // 2026-10-14 (defect 3) — these faults (dhcp-lease-stale, winsock-corrupt) used to end "fixed and verified" with the
+        // root cause still there. The DNS refresh still runs (exactly its keys) but its GATING verify fails, so the outcome
+        // is NOT RESOLVED — never "done", never "verified" — and the IT contact is told through the escalation path.
+        keysOk(changed, f, label);
+        assert.equal(f.resolved(lab.machine), false, `${label}: the root cause is still there (and ARIA says so)`);
+        assert.equal(rows(lab, "REVIEW", /^Verification for .*: failed — not resolved/).length, 1, `${label}: the verify row says not resolved`);
+        assert.equal(rows(lab, "DONE", /^Verification for .*: passed\.$/).length, 0, `${label}: never "verification passed"`);
+        const fixRows = rows(lab, "FIX").filter((r) => r.recipeId === f.recipe);
+        assert.equal(fixRows.length, 1, `${label}: one FIX row`);
+        assert.equal(fixRows[0].resolution, NOT_RESOLVED, `${label}: the FIX row carries not_resolved`);
+        assert.notEqual(fixRows[0].outcome, "done", `${label}: never counted as a done fix`);
+        assert.match(fixRows[0].text, /NOT RESOLVED/, `${label}: the FIX row says so in words`);
+        assert.equal(rows(lab, "ADVISORY", /fixed on its own/).length, 0, `${label}: the escalation never closed as fixed`);
+        assert.equal(rows(lab, "ADVISORY", /NOT RESOLVED/).length, 1, `${label}: the advisory row says not resolved`);
+        assert.equal(escalated.length, 1, `${label}: escalated once`);
+        assert.match(escalated[0].text, /^ESCALATED to your IT contact — the fix ran but the problem is still there \(not resolved\): .*Nothing further was changed\.$/);
+        const told = lab.outbound.filter((o) => /aria-sentinel-notify/.test(o.url) && /"event":"fix-failed"/.test(o.body));
+        assert.equal(told.length, 1, `${label}: the existing notify path told people once`);
+        assert.match(told[0].body, /jordan@example\.com/, `${label}: …including the configured IT contact`);
+        assert.match(told[0].body, /"outcome":"needs a person - not resolved"/);
+        assert.ok(!lab.notifications.some((nn) => /^Done: /.test(nn.title)), `${label}: never a "Done" notification`);
+        assert.equal(lab.state().approvals.pending.filter((a) => a.recipeId === f.recipe).length, 0, `${label}: no approval to re-run a fix that already ran`);
+        const outcome = lab.state().advisoryOutcomes.find((o) => o.recipeId === f.recipe);
+        assert.equal(outcome && outcome.status, "escalated", `${label}: recorded as escalated`);
+        assert.equal(outcome && outcome.outcome, NOT_RESOLVED);
+        if (f.l3FixNeverRuns) assert.ok(!lab.machine.commands.some((c) => f.l3FixNeverRuns.test(c.cmd)), `${label}: the L3 fix itself never ran`);
+        findings.push({ fault: f.id, gap: f.gap });
       } else {
         assert.deepEqual(changed, [], `${label}: a failed attempt changed nothing`);
         assert.ok(rows(lab, "FIX").some((r) => r.recipeId === f.recipe && r.outcome === "failed"), `${label}: reported as failed, never as fixed`);
@@ -218,6 +252,12 @@ for (const f of TAKEN) {
   await s.lab.minutes(40);
   if (f.path === "auto-fix") keysOk(s.changed(), f, `not-now ${f.id} (after the new round)`);
   else if (f.path === "escalate") { assert.equal(rows(s.lab, "ESCALATE").length, 1, `not-now ${f.id}: escalated after the new round`); assert.deepEqual(s.changed(), []); }
+  // 2026-10-14 (defect 3) — after the new round the fix runs, its gating verify fails → not resolved → the IT contact.
+  else if (f.path === "not-resolved") {
+    keysOk(s.changed(), f, `not-now ${f.id} (after the new round)`);
+    assert.equal(rows(s.lab, "ESCALATE", /not resolved/).length, 1, `not-now ${f.id}: not resolved → escalated after the new round`);
+    assert.ok(rows(s.lab, "FIX").some((r) => r.recipeId === f.recipe && r.resolution === NOT_RESOLVED), `not-now ${f.id}: the FIX row says not resolved`);
+  }
   clean(s.lab, `not-now ${f.id}`);
 }
 g();
@@ -248,7 +288,8 @@ g();
 
 // ── 6 — Ctrl+Alt+K at every stage: blocked, audited, nothing changed, never resumed silently ─────────────────────────
 for (const f of TAKEN) {
-  const stages = f.path === "auto-fix" || f.path === "attempt-fails" ? ["after-notice-1", "after-notice-3", "during-countdown"] : ["after-notice-1", "after-notice-3"];
+  // (2026-10-14) a not-resolved fault also reaches the countdown, so it is killed during it too.
+  const stages = f.path === "auto-fix" || f.path === "attempt-fails" || f.path === "not-resolved" ? ["after-notice-1", "after-notice-3", "during-countdown"] : ["after-notice-1", "after-notice-3"];
   for (const stage of stages) {
     const s = await start(f.id);
     if (stage === "after-notice-3") await runUntilNotice(s, 3);
@@ -297,7 +338,9 @@ for (const f of TAKEN) {
   await s.lab.minutes(60);
   assert.equal(numbered(s.lab, f.recipe).length, 0, `license ${f.id}: no notices while the license is expired`);
   assert.equal(mutating(s.lab).length, 0, `license ${f.id}: and nothing runs on its own`);
-  assert.ok(rows(s.lab, "ADVISORY", /not advising or fixing on its own while license/).length === 1, `license ${f.id}: says why`);
+  // (2026-10-14, defect 2) scoped to the fault's own recipe: a network outage now also detects the net-adapter-down-v1
+  // guide, which gets its own "noted" row while the license is expired — one row per recipe, still never a notice.
+  assert.ok(rows(s.lab, "ADVISORY", /not advising or fixing on its own while license/).filter((r) => r.recipeId === f.recipe).length === 1, `license ${f.id}: says why`);
   assert.deepEqual(s.changed(), []);
   clean(s.lab, `license ${f.id}`);
 }
@@ -320,6 +363,13 @@ for (const f of FAULTS.filter((x) => x.level === "L3")) {
     assert.deepEqual(s.changed(), [], `${label}: machine identical`);
     assert.equal(mutating(s.lab).length, 0, `${label}: nothing ran`);
   }
+  // 2026-10-14 (defect 3) — an L3 fault whose DNS symptom gets the user-space refresh: 3 notices, the refresh, NOT RESOLVED,
+  // then the IT contact — its own root-cause key is untouched (checked above for every L3 fault).
+  if (f.path === "not-resolved") {
+    assert.equal(numbered(s.lab, f.recipe).length, 3, `${label}: 3 notices`);
+    assert.equal(rows(s.lab, "ESCALATE", /not resolved/).length, 1, `${label}: not resolved → the IT contact`);
+    keysOk(s.changed(), f, label);
+  }
   if (f.l3FixNeverRuns) assert.ok(!s.lab.machine.commands.some((c) => f.l3FixNeverRuns.test(c.cmd)), `${label}: the L3 fix never ran`);
   if (f.color === "red") {
     for (const r of RECIPES.filter((x) => x.id === f.recipe)) for (const a of r.actions || []) assert.ok(!s.lab.machine.commands.some((c) => c.cmd.includes(a.command)), `${label}: red step "${a.id}" never ran`);
@@ -338,36 +388,73 @@ for (const f of FAULTS.filter((x) => x.level === "L3")) {
   clean(s.lab, label);
 }
 // spooler-disabled: an EXPLICIT approval runs it through the same gates — and it fails honestly (needs an administrator to re-enable it).
+// 2026-10-14 (defect 5) — the WATCHER now reports it (start type Disabled → svc-spooler-stopped-v1, needs an administrator);
+// before, only a person's PRINT.OFFLINE report surfaced it (printer-spooler-v1). The recipe id follows the catalogue.
 {
   const s = await start("spooler-disabled");
+  const det = s.lab.state().detections.find((d) => d.recipeId === s.f.recipe);
+  assert.ok(det && det.startType === "disabled" && /is disabled \(start type\), not just stopped — needs an administrator/.test(det.summary), "the card says disabled, not just stopped — needs an administrator");
   await s.lab.minutes(15);
-  const apr = s.lab.state().approvals.pending.find((a) => a.recipeId === "printer-spooler-v1");
+  const apr = s.lab.state().approvals.pending.find((a) => a.recipeId === s.f.recipe);
   assert.ok(apr, "the escalation left an approval request");
   const r = await s.lab.approve(apr.id);
   assert.equal(r.ok, true);
   await s.lab.minutes(2);
   assert.ok(s.lab.machine.uacPrompts.length >= 1, "approved → the UAC prompt the person answers");
   assert.deepEqual(s.changed(), [], "a disabled service cannot be started: nothing changed");
-  assert.ok(rows(s.lab, "FIX").some((x) => x.recipeId === "printer-spooler-v1" && x.outcome === "failed"), "reported as failed, never as fixed");
+  assert.ok(rows(s.lab, "FIX").some((x) => x.recipeId === s.f.recipe && x.outcome === "failed"), "reported as failed, never as fixed");
   clean(s.lab, "L3 spooler-disabled approved");
 }
 g();
 
-// ── 9 — fresh install (nothing vetted yet): the rule never promises an unattended fix it cannot make ───────────────────
+// ── 9 — fresh install (nothing vetted locally yet) ─────────────────────────────────────────────────────────────────────
+// 2026-10-14 (defect 4) — EXPECTATION CHANGED ON PURPOSE. This group used to pin the gap: on a fresh install stale-dns was
+// "not-yet-vetted" → 3 notices → the IT contact, so "advise three times, then act" could never complete for a new customer.
+// dns-fail-v1 is GREEN, ships a GATING verify probe and a declared inverse → vendor-vetted (the Tier-1 floor), so the rule
+// completes: 3 notices → the countdown → the fix → verified. What must NOT change is pinned alongside: a fresh install still
+// never runs an admin-needing fix on its own (→ the IT contact), and a green user-space recipe WITHOUT a gating verify
+// (svc-dnscache-stopped-v1) is still "not yet vetted" (→ the IT contact) — the floor is earned per recipe, never assumed.
 {
   const s = await start("stale-dns", { vetted: {} });
+  assert.equal(isVendorVetted("dns-fail-v1"), true, "dns-fail-v1 is vendor-vetted");
   const rec = activeFor(s.lab, "dns-fail-v1");
-  assert.equal(rec.track, "tech-contact"); assert.equal(rec.kind, "not-yet-vetted");
-  assert.match(rec.copy.willDo, /hasn't been proven on this device yet/);
+  assert.equal(rec.track, "auto-fix"); assert.equal(rec.kind, "green");
+  assert.match(rec.copy.willDo, /^I can fix this myself/);
   await s.lab.minutes(15);
-  assert.equal(rows(s.lab, "AUTO-FIX").length, 0); assert.equal(rows(s.lab, "ESCALATE").length, 1);
-  assert.deepEqual(s.changed(), []);
+  assert.equal(numbered(s.lab, "dns-fail-v1").length, 3, "fresh: exactly 3 notices");
+  assert.equal(rows(s.lab, "AUTO-FIX").length, 1, "fresh: then ARIA acts on its own");
+  assert.equal(rows(s.lab, "ESCALATE").length, 0, "fresh: no IT contact needed");
+  assert.deepEqual(ticksSeen(s.lab).slice(0, 10), [10, 9, 8, 7, 6, 5, 4, 3, 2, 1], "fresh: the visible 10-second countdown ran first");
+  assert.equal(rows(s.lab, "DONE", /^Verification for .*: passed\.$/).length, 1, "fresh: the gating verify passed");
+  assert.equal(rows(s.lab, "ADVISORY", /fixed on its own after 3 notices \(verified\)/).length, 1, "fresh: closed as fixed (verified)");
+  keysOk(s.changed(), s.f, "fresh-install auto-fix");
+  assert.equal(s.f.resolved(s.lab.machine), true, "fresh: the fault is really gone");
+  assert.equal(s.lab.machine.uacPrompts.length, 0, "fresh: never an elevation");
+  const hist = JSON.parse(fs.readFileSync(path.join(s.lab.root, "userData", "recipe-history.json"), "utf8"));
+  assert.equal(hist.recipes["dns-fail-v1"].vetted, 1, "fresh: the local counter is kept — the verified live run counts +1");
+  // An admin-needing fix on a fresh install: still never run on its own → the IT contact.
+  const a = await start("spooler-stuck", { vetted: {} });
+  const arec = activeFor(a.lab, "svc-spooler-stopped-v1");
+  assert.equal(arec.track, "tech-contact"); assert.equal(arec.kind, "needs-admin");
+  await a.lab.minutes(15);
+  assert.equal(rows(a.lab, "AUTO-FIX").length, 0); assert.equal(rows(a.lab, "ESCALATE").length, 1);
+  assert.deepEqual(a.changed(), []); assert.equal(mutating(a.lab).length, 0);
+  // A green user-space recipe WITHOUT a gating verify probe: not vendor-vetted → still "not yet vetted" → the IT contact.
+  const d = await start("dnscache-stopped", { vetted: {} });
+  assert.equal(isVendorVetted("svc-dnscache-stopped-v1"), false, "no gating verify → no vendor floor");
+  const drec = activeFor(d.lab, "svc-dnscache-stopped-v1");
+  assert.equal(drec.track, "tech-contact"); assert.equal(drec.kind, "not-yet-vetted");
+  assert.match(drec.copy.willDo, /hasn't been proven on this device yet/);
+  await d.lab.minutes(15);
+  assert.equal(rows(d.lab, "AUTO-FIX").length, 0); assert.equal(rows(d.lab, "ESCALATE").length, 1);
+  assert.deepEqual(d.changed(), []);
+  // Fix now on a fresh install runs at once (a person is present), exactly as before.
   const t = await start("stale-dns", { vetted: {} });
   const r = await t.lab.ack(activeFor(t.lab, "dns-fail-v1").id, "fix-now");
   assert.equal(r.ok, true);
   await t.lab.minutes(2);
   keysOk(t.changed(), t.f, "fresh-install fix-now");
-  clean(s.lab, "fresh"); clean(t.lab, "fresh fix-now");
+  clean(s.lab, "fresh"); clean(a.lab, "fresh admin"); clean(d.lab, "fresh not-vetted"); clean(t.lab, "fresh fix-now");
 }
 g();
 
@@ -432,18 +519,23 @@ g();
 }
 g();
 
-// ── 13 — the strict-Windows belief: if `ipconfig /registerdns` needs elevation (the registry says it does not), the DNS
-//         auto-fix fails at step 2 and is reported failed — never fixed — and only the flush it really made is changed.
+// ── 13 — the strict-Windows belief: `ipconfig /registerdns` AND `Clear-DnsClientCache` need elevation (the registry says
+//         neither does). 2026-10-14 (defect 3) — EXPECTATION REFINED ON PURPOSE: `ipconfig /registerdns` is a NON-FATAL step
+//         now, so its refusal is a WARN row and the fix goes on; under the strict model the NEXT step (Clear-DnsClientCache,
+//         "Access is denied") is what fails the fix. The end state is the same honest one: reported failed — never fixed —
+//         and only the flush it really made is changed.
 {
   const s = await start("stale-dns", { strictAdmin: true });
   await s.lab.minutes(15);
+  assert.equal(rows(s.lab, "WARN", /^Re-register DNS: did not complete .*non-fatal step/).length, 1, "strict: the refused re-registration is a warning, not the failure");
+  assert.equal(rows(s.lab, "ERROR", /^Clear DNS client cache: /).length, 1, "strict: the refused cache clear is what fails the fix");
   assert.ok(rows(s.lab, "FIX").some((r) => r.recipeId === "dns-fail-v1" && r.outcome === "failed"), "strict: reported failed");
   assert.deepEqual(s.changed(), ["dns.cacheEntries", "dns.staleEntries"], "strict: the flush happened, the re-registration did not");
-  findings.push({ fault: "stale-dns (strict admin model)", gap: "If Windows refuses `ipconfig /registerdns` for a standard user (as it is believed to), dns-fail-v1 fails at its second step on every unattended run; the registry declares the step user-space." });
+  findings.push({ fault: "stale-dns (strict admin model)", gap: "A refused `ipconfig /registerdns` is now a non-fatal warning; if Windows ALSO refuses `Clear-DnsClientCache` to a standard user (the strict model), dns-fail-v1 fails at that step on every unattended run — only its flush changes anything. To confirm on a real machine." });
   clean(s.lab, "strict");
 }
 g();
 
 assert.equal(groups, 13);
-console.log(`fault-lab-autonomous test passed (${groups} groups · ${scenarios} scenarios on the simulated Windows machine against the real main.mjs · ${FAULTS.length} faults · paths auto-fix/escalate/attempt-fails/guide-only · Fix now ×3 · Not now · Never · Ctrl+Alt+K ×${2}-3 stages · pause · expired license · L3 never executed · fresh install · yellow restore point first · restart resume · poisoned input · strict admin model).`);
+console.log(`fault-lab-autonomous test passed (${groups} groups · ${scenarios} scenarios on the simulated Windows machine against the real main.mjs · ${FAULTS.length} faults · paths auto-fix/not-resolved/escalate/attempt-fails/guide-only · Fix now ×3 · Not now · Never · Ctrl+Alt+K ×${2}-3 stages · pause · expired license · L3 never executed · fresh install acts after 3 notices (vendor-vetted green) · yellow restore point first · restart resume · poisoned input · strict admin model).`);
 for (const fnd of findings) console.log(`  finding — ${fnd.fault}: ${fnd.gap}`);

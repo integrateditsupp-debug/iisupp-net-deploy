@@ -139,9 +139,10 @@ import { sealAudit, verifyAudit } from "../shared/audit-integrity.mjs";
 import { createProcessDetector, IPC as PROC_HEALTH_IPC } from "./process-detectors.mjs";
 import { recommendAction } from "../shared/recommend-action.mjs";
 import { superviseProposal, supervisorAuditEntry, recipeSideEffects } from "./supervisor-agent.mjs";
-import { executionPolicy, recordOutcome, vettedCountOf, emptyHistory } from "./dry-run-policy.mjs";
+import { executionPolicy, recordOutcome, vettedCountOf, emptyHistory, vettedTier } from "./dry-run-policy.mjs";
 import { createCountdown, createCountdownManager, shouldCountdown, countdownChatLine, countdownBannerText, COUNTDOWN_SECONDS } from "./action-countdown.mjs";
-import { EXECUTABLE_RECIPES, YELLOW_RECIPES } from "../shared/recipe-runner.mjs";
+// FAULT LAB 2026-10-14 — the vendor floor (defect 4) and the not_resolved outcome of a failed gating verify (defect 3).
+import { EXECUTABLE_RECIPES, YELLOW_RECIPES, isVendorVetted, NOT_RESOLVED } from "../shared/recipe-runner.mjs";
 // RUN 23b — Tier-0 executor: maps Tier-0 recipe ids to real, reversible PowerShell with pre/post/rollback.
 import { executeTier0, resolveExecutorId, TIER0_EXECUTOR_IDS, TIER0_COMMANDS, validateTier0Command } from "./tier-0-executor.mjs";
 import { actionNeedsAdmin, buildElevatedExecution, UAC_CANCELLED_EXIT } from "../shared/recipe-runner.mjs"; // PROD 2026-10-14 (audit M3) — admin-aware steps
@@ -2657,9 +2658,13 @@ async function autoFireIfEligible(recipe, context = {}) {
   void endpoint;
 }
 
-/** Vetted tier (0/1/2) of a recipe from the recipe-history ledger. */
+/** Vetted tier (0/1/2) of a recipe from the recipe-history ledger — with the vendor floor for a vendor-vetted GREEN fix. */
 function vettedTierOf(recipeId) {
-  try { const n = vettedCountOf(readRecipeHistory(), String(recipeId || "")); return n >= 100 ? 0 : n >= 10 ? 1 : 2; } catch { return 2; }
+  try {
+    const id = String(recipeId || "");
+    // FAULT LAB 2026-10-14 (defect 4) — the same rule executionPolicy() applies (dry-run-policy.mjs vettedTier).
+    return vettedTier(vettedCountOf(readRecipeHistory(), id), { color: recipeColor(id), vendorVetted: isVendorVetted(id) });
+  } catch { return 2; }
 }
 
 // RUN-CU / CU4 — after every execution outcome: failures notify immediately (always); successes notify per
@@ -2671,15 +2676,18 @@ function afterFixOutcome(recipeId, result, meta = {}) {
     const failed = !result || result.ok === false;
     const rp = result && result.restorePoint;
     // ADVISORY ESCALATION — an auto-fix made after three unanswered notices reports its real outcome to its escalation.
-    advisoryFixOutcome(recipeId, result, meta);
+    // FAULT LAB 2026-10-14 (defect 3) — a `not_resolved` auto-fix is ESCALATED there (the IT contact is told through the
+    // existing advisoryEscalate path); that path then owns the notifications, so they are not sent twice from here.
+    const escalated = advisoryFixOutcome(recipeId, result, meta) === "escalated";
+    const notResolved = Boolean(result && result.outcome === NOT_RESOLVED);
     // (audit M18) a watcher-sourced auto-fix reports its REAL outcome to the Slack/Teams webhook from here (the
     // advisory auto-fix is watcher-sourced too: source "detection:advisory").
-    if (/^detection(?::|$)/.test(String(meta.source || "")) && !dryRun) {
+    if (/^detection(?::|$)/.test(String(meta.source || "")) && !dryRun && !escalated) {
       const recipe = recipeById(recipeId);
       sendAutoFixNotify({ recipeId, signal: (recipe && recipe.signal) || recipeId, outcome: failed ? "failed" : "applied", endpoint: os.hostname(), durationMs: Math.max(0, Date.now() - (Number(meta.startedAt) || Date.now())), tier: recipeColor(recipeId) === "green" ? "green" : "yellow" }).catch(() => undefined);
     }
     if (failed && !dryRun) {
-      notifyEvent("fix-failed", { title, recipeId, severity: recipeColor(recipeId), outcome: "failed", rolledBack: Boolean(result && result.rolledBack) });
+      if (!escalated) notifyEvent("fix-failed", { title, recipeId, severity: recipeColor(recipeId), outcome: notResolved ? "not resolved" : "failed", rolledBack: Boolean(result && result.rolledBack) });
       return;
     }
     if (setupPrefsNow().reportCadence === "per-fix") {
@@ -2752,7 +2760,9 @@ function advisoryTrackFor(recipe) {
   if (recipeNeedsAdmin(id)) return { track: "tech-contact", kind: "needs-admin", color };
   // recipe-runner + autonomous.mjs: a yellow fix NEVER fires on its own — it always waits for a person's yes.
   if (color === "yellow" || !isGreenRecipe(id)) return { track: "tech-contact", kind: "needs-confirm", color };
-  const policy = executionPolicy({ vettedCount: vettedCountOf(readRecipeHistory(), id), mode: "confirmed", dryRunCheckbox: store.get("keepSystemFixesDryRun"), supervisorVerdict: "approve", humanInitiated: false });
+  // FAULT LAB 2026-10-14 (defect 4) — a vendor-vetted green fix starts at the vendor floor (Tier 1), so on a fresh install
+  // the third unanswered notice can end in the fix itself — still through every gate in runSupervisedFix.
+  const policy = executionPolicy({ vettedCount: vettedCountOf(readRecipeHistory(), id), vendorVetted: isVendorVetted(id), color, mode: "confirmed", dryRunCheckbox: store.get("keepSystemFixesDryRun"), supervisorVerdict: "approve", humanInitiated: false });
   if (policy.dryRun) return null; // "keep every fix in preview" → the preview path, unchanged
   if (!policy.allowed) return { track: "tech-contact", kind: "not-yet-vetted", color };
   if (!isRecipeAllowedByPolicy(store.get("policyOverlay") || null, id)) return null;
@@ -2774,7 +2784,7 @@ function considerAdvisory(recipe, context = {}) {
   const r = advisoryMachine.open({
     detectionId: String(context.detectionId || ""),
     recipeId: recipe.id,
-    title: advisoryRedact(recipeTitle(recipe.id)),
+    title: advisoryRedact(String(context.advisoryTitle || recipeTitle(recipe.id))),
     summary: advisoryRedact(String(recipe.summary || "")),
     color: t.color,
     track: t.track,
@@ -2868,12 +2878,25 @@ function advisoryFollowPipeline(rec, result) {
   advisoryMachine.settle(rec.id, status, verdict === "approval-requested" ? "approval-requested" : verdict);
   logEvent("ADVISORY", `${rec.title}: not fixed on its own — ${advisoryRedact(String(r.copy || r.reason || verdict)).slice(0, 160)}`, { recipeId: rec.recipeId, advisoryId: rec.id, verdict });
 }
-/** afterFixOutcome → the auto-fix's real outcome closes its escalation (fixed / fix-failed / preview-only). */
+/**
+ * afterFixOutcome → the auto-fix's real outcome closes its escalation (fixed / fix-failed / preview-only), or — when the
+ * fix ran but its gating verify says the problem is still there (`not_resolved`) — ESCALATES it to the IT contact.
+ * Returns the status it settled ("escalated" means the escalation path owns the notifications), or undefined.
+ */
 function advisoryFixOutcome(recipeId, result, meta = {}) {
   try {
-    if (!/^detection:advisory/.test(String(meta.source || ""))) return;
+    if (!/^detection:advisory/.test(String(meta.source || ""))) return undefined;
     const rec = advisoryMachine.state.records.find((r) => r.recipeId === recipeId && r.status === "fixing");
-    if (!rec) return;
+    if (!rec) return undefined;
+    // FAULT LAB 2026-10-14 (defect 3) — not resolved is never "fixed": the item goes to the IT contact (the EXISTING
+    // escalation path: fix-failed notify incl. the IT contact + the webhook + an ESCALATE audit row). Nothing further runs.
+    if (result && result.dryRun !== true && result.outcome === NOT_RESOLVED) {
+      advisoryMachine.settle(rec.id, "escalated", NOT_RESOLVED);
+      logEvent("ADVISORY", `${rec.title}: the fix ran after ${rec.of} notices, but the check afterwards says the problem is still there — NOT RESOLVED. Telling your IT contact; nothing further is changed.`, { recipeId, advisoryId: rec.id, status: "escalated", outcome: NOT_RESOLVED });
+      advisoryEscalate(rec, "not-resolved");
+      broadcastState();
+      return "escalated";
+    }
     const dryRun = Boolean(result && result.dryRun);
     const failed = !result || result.ok === false;
     const status = dryRun ? "held" : failed ? "fix-failed" : "fixed";
@@ -2881,21 +2904,27 @@ function advisoryFixOutcome(recipeId, result, meta = {}) {
     advisoryMachine.settle(rec.id, status, outcome);
     logEvent("ADVISORY", `${rec.title}: ${status === "fixed" ? `fixed on its own after ${rec.of} notices (${outcome})` : status === "held" ? "previewed only — nothing was changed" : `the fix did not complete (${outcome}) — nothing further was changed`}.`, { recipeId, advisoryId: rec.id, status, outcome });
     broadcastState();
-  } catch { /* reporting never affects the fix */ }
+    return status;
+  } catch { return undefined; /* reporting never affects the fix */ }
 }
-/** The IT-contact track's last step (or "Get help now" on a red notice): the EXISTING notify paths, never an execution. */
+/**
+ * The IT-contact track's last step (or "Get help now" on a red notice, or a `not_resolved` auto-fix): the EXISTING notify
+ * paths, never an execution. why ∈ unanswered · fix-now · gates-changed · not-resolved.
+ */
 function advisoryEscalate(rec, why = "unanswered") {
   const prefs = setupPrefsNow();
   const contacts = Array.isArray(prefs.techContacts) ? prefs.techContacts.length : 0;
-  const reason = why === "fix-now" ? "you asked for help" : why === "gates-changed" ? "it can no longer be fixed on its own" : `no answer after ${rec.of} notices`;
-  notifyEvent("fix-failed", { title: rec.title, recipeId: rec.recipeId, severity: rec.color, outcome: why === "fix-now" ? "needs a person - help requested" : "needs a person - no answer" });
+  const notResolved = why === "not-resolved"; // FAULT LAB 2026-10-14 (defect 3) — the fix ran; its check says the problem is still there
+  const reason = why === "fix-now" ? "you asked for help" : why === "gates-changed" ? "it can no longer be fixed on its own" : notResolved ? "the fix ran but the problem is still there (not resolved)" : `no answer after ${rec.of} notices`;
+  notifyEvent("fix-failed", { title: rec.title, recipeId: rec.recipeId, severity: rec.color, outcome: why === "fix-now" ? "needs a person - help requested" : notResolved ? "needs a person - not resolved" : "needs a person - no answer" });
   sendAutoFixNotify({ recipeId: rec.recipeId, signal: (recipeById(rec.recipeId) || {}).signal || rec.recipeId, outcome: "escalated", endpoint: os.hostname(), durationMs: 0, tier: rec.color === "green" ? "green" : rec.color === "red" ? "red" : "yellow" }).catch(() => undefined);
   // A fix a person CAN approve (needs admin · not yet vetted · needs a yes) also waits as an approval; red never runs.
-  if (rec.kind !== "red" && rec.color !== "red") {
+  // A not-resolved fix already ran: asking to run the same fix again would only repeat it, so no approval is raised.
+  if (rec.kind !== "red" && rec.color !== "red" && !notResolved) {
     approvals.request({ recipeId: rec.recipeId, title: rec.title, color: rec.color, tier: vettedTierOf(rec.recipeId), requestedBy: "advisory", reason: `advisory-${rec.kind}`, source: "advisory" });
     ensureApprovalPolling();
   }
-  logEvent("ESCALATE", `ESCALATED to ${contacts ? "your IT contact" : "the device user (no IT contact configured)"} — ${reason}: ${rec.title}. Nothing was changed.`, { recipeId: rec.recipeId, advisoryId: rec.id, kind: rec.kind, why });
+  logEvent("ESCALATE", `ESCALATED to ${contacts ? "your IT contact" : "the device user (no IT contact configured)"} — ${reason}: ${rec.title}. ${notResolved ? "Nothing further was changed." : "Nothing was changed."}`, { recipeId: rec.recipeId, advisoryId: rec.id, kind: rec.kind, why });
 }
 /** "Fix now": the person chose — the SAME supervised pipeline, human-initiated (UAC when needed, countdown first). */
 async function advisoryFixNow(rec) {
@@ -3494,7 +3523,10 @@ async function runSupervisedFix(payload = {}) {
   const humanInitiated = !/^(detection|deep-link|bridge)/.test(source) && payload.approved !== true;
   const approvedRecord = payload.approved === true && payload.approvalId ? approvals.byId(String(payload.approvalId)) : null;
   const approved = Boolean(approvedRecord && approvedRecord.status === "approved" && approvedRecord.recipeId === recipeId);
-  const policy = executionPolicy({ vettedCount: vettedCountOf(history, recipeId), mode, dryRunCheckbox: store.get("keepSystemFixesDryRun"), supervisorVerdict: verdict.verdict, humanInitiated, approved });
+  // FAULT LAB 2026-10-14 (defect 4) — the vendor floor applies to a GREEN fix only; a fix the supervisor flagged high-risk
+  // (needsConfirm → treated as yellow below) never takes it.
+  const policyColor = verdict.supervisorEvidence && verdict.supervisorEvidence.needsConfirm ? "yellow" : recipeColor(recipeId);
+  const policy = executionPolicy({ vettedCount: vettedCountOf(history, recipeId), vendorVetted: isVendorVetted(recipeId), color: policyColor, mode, dryRunCheckbox: store.get("keepSystemFixesDryRun"), supervisorVerdict: verdict.verdict, humanInitiated, approved });
   // The consent gate folds into the policy's dry-run so the renderer sees ONE truth: policy.dryRun === false
   // means "this will change the device". Without live fixes on, a human run is an honest preview.
   if (!policy.dryRun && globalDryRun()) { policy.dryRun = true; policy.execute = false; policy.heldBy = "live-fixes-off"; policy.copy = liveFixesStatus().enabled ? "Preview only — the global dry-run safety is on for this device." : "Preview only — live fixes are off. Turn them on in Settings → Fixes to apply this for real."; }
@@ -4048,6 +4080,8 @@ function scrubDetection(detection = {}) {
     risk: detection.risk || "yellow",
     mode: detection.mode || "manual",
     confidence: detection.confidence || signature.confidence,
+    // FAULT LAB 2026-10-14 (defect 5) — the fixed enum only: a watched service disabled at its start type needs an admin.
+    ...(detection.startType === "disabled" ? { startType: "disabled", needsAdmin: true } : {}),
     context: contentSafeContext({ signal: signature.code, source: detection.source || signature.source })
   };
 }
@@ -4093,6 +4127,13 @@ function addDetection(recipe, context = {}) {
     signal: signature.code,
     source: context.source || signature.source
   });
+  // FAULT LAB 2026-10-14 (defect 5) — a watched service whose START TYPE is Disabled (the service watcher's
+  // `startType: "disabled"`, accepted only from the watcher and only for a service recipe): the card says what is really
+  // wrong — disabled, not just stopped — and that an administrator is needed. It routes to the same service recipe, whose
+  // restart needs administrator rights (needsAdmin → never unattended); no recipe ever changes a start type.
+  const disabled = context.startType === "disabled" && String(context.source || "") === "detection-watcher" && Boolean(recipe.service && recipe.service.display);
+  const disabledLine = disabled ? `${recipe.service.display} is disabled (start type), not just stopped — needs an administrator` : "";
+  if (disabled) safeContext.startType = "disabled";
   const detection = {
     id: randomUUID(),
     ts: new Date().toISOString(),
@@ -4102,16 +4143,17 @@ function addDetection(recipe, context = {}) {
     signal: recipe.signal,
     title: recipe.title,
     chip: recipe.chip,
-    summary: recipe.summary,
+    summary: disabled ? `${disabledLine}.` : recipe.summary,
     risk: recipe.risk,
     mode: recipe.mode,
     confidence: signature.confidence,
+    ...(disabled ? { startType: "disabled", needsAdmin: true } : {}),
     context: safeContext
   };
   const detections = store.get("detections") || [];
   detections.unshift(detection);
   store.set("detections", detections.slice(0, 100));
-  logEvent("DETECT", `${recipe.signal}: ${recipe.title}`, { recipeId: recipe.id });
+  logEvent("DETECT", `${recipe.signal}: ${recipe.title}${disabled ? " — start type Disabled, needs an administrator" : ""}`, disabled ? { recipeId: recipe.id, startType: "disabled" } : { recipeId: recipe.id });
   recordSlaDetectionRow(detection, recipe); // (audit M12) the SLA tab measures real detections, never zero data as 100%
   // Tray reflects the new situation at a glance: a red recipe escalates, everything else is a detection.
   setAgentState(recipe.risk === "red" ? "escalation" : "detection");
@@ -4119,8 +4161,10 @@ function addDetection(recipe, context = {}) {
   // deduped per issue for 6h, content-blind (catalog title + id + severity + platform only).
   notifyEvent("issue-detected", { title: recipe.title, recipeId: recipe.id, severity: recipeColor(recipe.id), detectionId: detection.id });
   // Autonomous mode may auto-apply a green recipe — gated by the opt-in + cap/cooldown/fleet guards. (ADVISORY ESCALATION:
-  // the detection id travels along so its escalation is idempotent per detection.)
-  autoFireIfEligible(recipe, { ...context, detectionId: detection.id }).catch(() => undefined);
+  // the detection id travels along so its escalation is idempotent per detection; a disabled service's notices carry the
+  // same plain sentence as its card.)
+  // (advisoryTitle is always set HERE — never taken from the caller's input — so no free text can reach a notice.)
+  autoFireIfEligible(recipe, { ...context, detectionId: detection.id, advisoryTitle: disabled ? disabledLine : undefined }).catch(() => undefined);
   overlayActiveUntil = Date.now() + 8000; // run the globe at 60fps through the fix animation
   if (overlayWindow) {
     showOverlay({ expanded: true });
@@ -4283,17 +4327,28 @@ async function runRecipe(recipeId, options = {}) {
   const elevation = options.elevation === "uac" && process.platform === "win32" && recipeColor(recipe.id) !== "red" ? "uac" : "none";
   for (const action of recipe.actions || []) {
     const result = await runAction(action, actualDryRun, recipe.id, { confirmed, restorePointTaken, elevation });
+    // FAULT LAB 2026-10-14 (defect 3) — a NON-FATAL step (action.nonFatal, e.g. `ipconfig /registerdns`, which Windows may
+    // refuse a standard user) that fails LIVE is a WARNING, not a failed fix: it is recorded, said in the audit, and the
+    // remaining steps run. It never counts as a live change and never makes the fix "done" — the verify probe decides.
+    if (!result.ok && action.nonFatal === true && result.dryRun === false) {
+      steps.push({ actionId: action.id, label: action.label, ...result, nonFatal: true });
+      logEvent("WARN", `${action.label}: did not complete (Windows may require administrator rights for this step) — a non-fatal step, so the fix continues without it. Nothing else was skipped.`, { recipeId, actionId: action.id, nonFatal: true });
+      continue;
+    }
     steps.push({ actionId: action.id, label: action.label, ...result });
     logEvent(result.ok ? "DONE" : "ERROR", `${action.label}: ${result.message}`, { recipeId, actionId: action.id });
     if (!result.ok) break;
   }
   // After a real (non-dry-run) execution of a cleared recipe, run a read-only verification probe.
   let verifiedFlag = null;
-  const liveSteps = steps.filter((s) => s.dryRun === false).length;
-  if (!actualDryRun && isExecutableRecipe(recipe.id) && steps.every((s) => s.ok) && liveSteps > 0) {
+  const requiredSteps = steps.filter((s) => !s.nonFatal); // a failed non-fatal step never fails (or passes) the fix
+  const liveSteps = steps.filter((s) => s.dryRun === false && !(s.nonFatal && !s.ok)).length;
+  if (!actualDryRun && isExecutableRecipe(recipe.id) && requiredSteps.every((s) => s.ok) && liveSteps > 0) {
     const verified = await verifyRecipe(recipe.id);
     verifiedFlag = Boolean(verified.ok);
-    logEvent(verified.ok ? "DONE" : "REVIEW", `Verification for ${recipe.signal}: ${verified.ok ? "passed" : "inconclusive"}.`, { recipeId });
+    // FAULT LAB 2026-10-14 (defect 3) — the verify probe's verdict IS the outcome: the steps ran but the check after them
+    // failed = NOT RESOLVED (never "success", never "fixed and verified"), and the audit row says so in those words.
+    logEvent(verified.ok ? "DONE" : "REVIEW", `Verification for ${recipe.signal}: ${verified.ok ? "passed" : "failed — not resolved (the steps ran, but the check after them says the problem is still there)"}.`, verified.ok ? { recipeId } : { recipeId, outcome: NOT_RESOLVED });
     // RUN-B B5 - a REAL applied+verified fix: show the under-globe "resolved | email sent | ticket ref"
     // confirmation (real email + real recorded ticket ref). Non-blocking; never fires on an unverified fix.
     if (verified.ok) {
@@ -4301,25 +4356,34 @@ async function runRecipe(recipeId, options = {}) {
     }
   }
   refreshHealthScore();
-  const ok = steps.every((step) => step.ok);
+  // FAULT LAB 2026-10-14 (defect 3) — every required step ran, the gate's verify failed → `not_resolved`: ok:false (so the
+  // vetted ledger never counts it as a success and every surface treats it as "needs a person"), outcome + reason say it.
+  const stepsOk = requiredSteps.every((step) => step.ok);
+  const notResolved = stepsOk && verifiedFlag === false;
+  const ok = stepsOk && !notResolved;
   setAgentState(ok ? "idle" : "escalation");
   // Rule 14 — "live" only when at least one action really executed; a yellow fix held in preview for want of a
   // restore point reports dryRun:true + says why, never "Fix applied".
   const effectiveDryRun = actualDryRun || liveSteps === 0;
   const heldForRestorePoint = !actualDryRun && liveSteps === 0 && isYellowRecipe(recipe.id) && !restorePointTaken;
+  const warnings = steps.filter((s) => s.nonFatal && !s.ok).map((s) => s.actionId);
   // (R6a) one FIX row per completed LIVE execution: "done" only when every step ran and verification did not fail.
-  if (!effectiveDryRun) logEvent("FIX", `${recipe.title}: ${ok ? (verifiedFlag === false ? "applied, verification inconclusive" : "applied") : "failed"}`, { recipeId, outcome: ok && verifiedFlag !== false ? "done" : "failed", liveSteps });
+  if (!effectiveDryRun) logEvent("FIX", `${recipe.title}: ${ok ? (warnings.length ? "applied (a non-fatal step did not complete)" : "applied") : notResolved ? "applied, NOT RESOLVED — the check after the fix says the problem is still there" : "failed"}`, { recipeId, outcome: ok && verifiedFlag !== false ? "done" : "failed", liveSteps, ...(notResolved ? { resolution: NOT_RESOLVED } : {}), ...(warnings.length ? { warnings } : {}) });
   return {
     ok,
     dryRun: effectiveDryRun,
+    ...(notResolved ? { outcome: NOT_RESOLVED, reason: NOT_RESOLVED } : {}),
     recipe: publicRecipe(recipe),
     steps,
     restorePoint,
     restorePointTaken,
     verified: verifiedFlag,
+    warnings,
     message: heldForRestorePoint
       ? "Held in preview: a restore point is unavailable on this platform/account, so this yellow-tier fix was not applied."
-      : effectiveDryRun ? "Dry-run complete. No system changes were made." : recipe.success
+      : effectiveDryRun ? "Dry-run complete. No system changes were made."
+        : notResolved ? "Not resolved: the fix ran, but the check afterwards says the problem is still there. Nothing further was changed — a person should take a look."
+          : recipe.success
   };
   };
   // Idempotency: a repeated execution_id returns the cached outcome instead of re-applying.
@@ -4851,6 +4915,9 @@ function legacySignalFor(code) {
     "BROWSER.ZOOM.WRONG": "ZOOM.WEIRD",
     "NET.DNS.FAIL": "DNS.FAIL",
     "NET.ADAPTER.APIPA": "NET.NO_GATEWAY",
+    // FAULT LAB 2026-10-14 (defect 2) — "the internet is unreachable" gets the same guide as "no adapter is up"
+    // (net-adapter-down-v1); before this NET.DOWN matched no recipe at all and the person heard nothing.
+    "NET.DOWN": "NET.ADAPTER.DOWN",
     "APP.TEAMS.SIGNIN_LOOP": "TEAMS.SIGNIN_LOOP",
     "BSOD.CRITICAL_PROCESS_DIED": "BLUE.SCREEN",
     "BSOD.SYSTEM_SERVICE_EXCEPTION": "BLUE.SCREEN",

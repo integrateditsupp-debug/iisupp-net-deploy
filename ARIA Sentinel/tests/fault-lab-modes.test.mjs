@@ -7,22 +7,25 @@
 //                 (safe-auto: a vetted, user-space green fix runs on its own after the 10-s countdown — as before; a
 //                 not-yet-vetted one is held by the execution policy.)
 //   autonomous  — the advise-three-times rule (proven in depth by tests/fault-lab-autonomous.test.mjs).
-// Trust is a dimension of its own: every fault runs on a FRESH install (nothing vetted) and on a TRUSTED one (its recipe
-// has earned 12 vetted runs — Tier 1, the minimum the execution policy needs before anything runs unattended).
+// Trust is a dimension of its own: every fault runs on a FRESH install (nothing vetted locally) and on a TRUSTED one (its
+// recipe has earned 12 vetted runs — Tier 1, the minimum the execution policy needs before anything runs unattended).
+// 2026-10-14 (defect 4) — on a fresh install a VENDOR-VETTED green recipe (gating verify probe + declared inverse:
+// recipe-runner isVendorVetted) starts at that same Tier-1 floor; every other recipe still starts unvetted.
 // It prints the matrix and writes docs/MODE-BEHAVIOUR-MATRIX.md (dated, naming this test).
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { bootLab, FAULTS, faultById, diff } from "./lib/fault-lab.mjs";
+import { bootLab, FAULTS, faultById, diff, isReadOnlyProbe } from "./lib/fault-lab.mjs";
 import { PRIVATE_FOLDER_NAME } from "../src/shared/path-guard.mjs";
+import { isVendorVetted, NOT_RESOLVED } from "../src/shared/recipe-runner.mjs";
 
 const MIN = 60 * 1000;
 const TRUSTED = Object.fromEntries([...new Set(FAULTS.map((f) => f.recipe))].map((id) => [id, 12]));
 const TRUST = { fresh: {}, trusted: TRUSTED };
 const MODES = ["manual", "confirmed", "autonomous"];
 const LEVELS = ["L1", "L2", "L3"];
-const PROBE_RE = /^\(Get-|^Get-Service -Name \w+ \| Select-Object|^Get-ComputerRestorePoint|^\[math\]::Round|^Test-NetConnection/;
-const mutating = (lab) => lab.machine.commands.filter((c) => !PROBE_RE.test(c.cmd) && !/^Checkpoint-Computer/.test(c.cmd));
+// 2026-10-14 (defect 3) — the gating verify probes are read-only too (isReadOnlyProbe reads VERIFY_COMMANDS).
+const mutating = (lab) => lab.machine.commands.filter((c) => !isReadOnlyProbe(c.cmd) && !/^Checkpoint-Computer/.test(c.cmd));
 const rows = (lab, tag, re) => lab.audit().filter((r) => r.tag === tag && (!re || re.test(r.text)));
 let groups = 0; const g = () => { groups++; };
 let scenarios = 0;
@@ -60,6 +63,10 @@ function describe(lab, f, changed) {
   if (!detected) return "not detected — nothing happens";
   // Ground truth beats the claim: the lab knows whether the fault is really gone.
   const truly = f.resolved(lab.machine);
+  // 2026-10-14 (defect 3) — a fix whose GATING verify failed is NOT RESOLVED: say exactly that (it ran; it is not fixed).
+  const notResolved = fixRows.some((r) => r.resolution === NOT_RESOLVED);
+  if (notices && autoFix && notResolved) return `${notices} notices → fix ran; its check says the problem is still there → not resolved → IT contact told (${ch})`;
+  if (notResolved && !notices) return `ran on its own after the 10-s countdown; its check says the problem is still there → not resolved, a person is told (${ch})`;
   if (notices && autoFix && done && !truly) return `${notices} notices → ARIA reports it fixed and verified, but the root cause is still there (${ch})`;
   if (done && !notices && !truly) return `ran on its own; ARIA reports it fixed and verified, but the root cause is still there (${ch})`;
   if (notices && autoFix && done) return `${notices} notices → fixed on its own after the 10-s countdown (${ch})`;
@@ -92,22 +99,27 @@ for (const f of FAULTS) {
         assert.equal(mutating(s.lab).length, 0, `${label}: nothing ran`);
         assert.equal(notices, 0, `${label}: manual never escalates`);
       }
+      // 2026-10-14 (defect 4) — EXPECTATIONS CHANGED ON PURPOSE for vendor-vetted recipes (dns-fail-v1, svc-dhcp-stopped-v1):
+      // a fresh install starts them at the Tier-1 floor, so they behave like the trusted column. Everything else is unchanged.
+      const vendor = isVendorVetted(f.recipe);
       if (mode === "confirmed") {
         assert.equal(notices, 0, `${label}: the rule is Autonomous-only — Confirmed is unchanged`);
         assert.equal(rows(s.lab, "AUTO-FIX").length, 0, `${label}: no advisory auto-fix in Confirmed`);
         if (f.needsAdmin) {
           const asks = s.lab.state().approvals.pending.filter((a) => a.recipeId === f.recipe).length;
-          if (trust === "trusted") assert.equal(asks, 1, `${label}: a vetted fix that needs admin asks ONCE`);
+          if (trust === "trusted" || vendor) assert.equal(asks, 1, `${label}: a vetted fix that needs admin asks ONCE${vendor && trust === "fresh" ? " (vendor-vetted: the shipped catalogue is its floor)" : ""}`);
           else assert.equal(asks, 0, `${label}: a not-yet-vetted one is held by the execution policy (no unattended path at all)`);
           assert.deepEqual(changed, [], `${label}: and waits — nothing changed`);
         }
-        if (f.level === "L3" && f.path !== "auto-fix") assert.deepEqual(changed, [], `${label}: L3 never changes anything on its own`);
-        if (trust === "fresh") assert.deepEqual(changed, [], `${label}: nothing unvetted ever runs unattended`);
+        // (defect 3) a not-resolved fault's DNS-symptom refresh is the only change an L3 fault may see — its root key never.
+        if (f.level === "L3" && f.path !== "auto-fix" && f.path !== "not-resolved") assert.deepEqual(changed, [], `${label}: L3 never changes anything on its own`);
+        if (trust === "fresh" && !vendor) assert.deepEqual(changed, [], `${label}: nothing unvetted ever runs unattended`);
       }
       if (mode === "autonomous") {
         if (f.path === "escalate" || f.path === "guide-only") assert.deepEqual(changed, [], `${label}: identical`);
-        if (f.path === "auto-fix" && trust === "trusted") assert.ok(changed.length > 0, `${label}: fixed after 3 notices`);
-        if (trust === "fresh") assert.deepEqual(changed, [], `${label}: a fresh install never fixes on its own — it escalates`);
+        if ((f.path === "auto-fix" || f.path === "not-resolved") && (trust === "trusted" || vendor)) assert.ok(changed.length > 0, `${label}: the fix ran after 3 notices`);
+        if (trust === "fresh" && !vendor) assert.deepEqual(changed, [], `${label}: a fresh install never runs an unvetted fix on its own — it escalates`);
+        if (f.path === "not-resolved") assert.ok(rows(s.lab, "ESCALATE", /not resolved/).some((r) => r.recipeId === f.recipe), `${label}: not resolved → the IT contact`);
         if (f.path !== "guide-only") assert.equal(notices, 3, `${label}: exactly 3 notices`);
       }
       assert.equal(s.lab.machine.uacPrompts.length, 0, `${label}: nobody answered, so nothing ever asked for elevation`);
@@ -173,7 +185,8 @@ for (const f of FAULTS.filter((x) => x.level === "L3")) {
     const label = `L3 ${mode} ${f.id}`;
     if (f.l3FixNeverRuns) assert.ok(!s.lab.machine.commands.some((c) => f.l3FixNeverRuns.test(c.cmd)), `${label}: the L3 fix never ran`);
     if (f.rootKeys) for (const k of f.rootKeys) assert.ok(!s.changed().includes(k), `${label}: root cause ${k} untouched`);
-    if (f.path !== "auto-fix") { assert.deepEqual(s.changed(), [], `${label}: identical`); assert.equal(mutating(s.lab).length, 0, `${label}: nothing ran`); }
+    // (2026-10-14, defect 3) a not-resolved fault gets the user-space DNS refresh (its symptom); its root key is checked above.
+    if (f.path !== "auto-fix" && f.path !== "not-resolved") { assert.deepEqual(s.changed(), [], `${label}: identical`); assert.equal(mutating(s.lab).length, 0, `${label}: nothing ran`); }
     clean(s.lab, label);
   }
 }
@@ -197,7 +210,7 @@ lines.push("# Mode × level behaviour matrix — ARIA Sentinel fault lab");
 lines.push("");
 lines.push(`Generated ${today} by \`tests/fault-lab-modes.test.mjs\` from ${scenarios} scenarios run on the simulated Windows machine (\`tests/lib/fault-lab.mjs\`) against the real \`src/main/main.mjs\` (booted by \`tests/lib/main-sandbox.mjs\`). Every cell is what the lab OBSERVED; the test run rewrites this file — it is never edited by hand.`);
 lines.push("");
-lines.push("Setup: live fixes ON · a business device with one IT contact · the advise-first interval at 3 minutes · nobody answering anything · 40 minutes of (virtual) time · Sentinel on the standard user token (administrator rights only through a UAC prompt a person answers). **fresh** = nothing vetted yet (a new install); **trusted** = the fault's recipe has earned 12 vetted runs (Tier 1, the minimum the execution policy requires before anything runs unattended).");
+lines.push("Setup: live fixes ON · a business device with one IT contact · the advise-first interval at 3 minutes · nobody answering anything · 40 minutes of (virtual) time · Sentinel on the standard user token (administrator rights only through a UAC prompt a person answers). **fresh** = nothing vetted locally yet (a new install) — except that a **vendor-vetted** green recipe (it ships a gating verify probe and a declared inverse) starts at the Tier-1 floor; **trusted** = the fault's recipe has earned 12 vetted runs (Tier 1, the minimum the execution policy requires before anything runs unattended).");
 lines.push("");
 lines.push("## Mode × level");
 lines.push("");
@@ -209,10 +222,10 @@ lines.push("Levels: **L1** reversible user-level · **L2** service / network · 
 lines.push("");
 lines.push("## Every fault, every mode (nobody answering)");
 lines.push("");
-lines.push("| Fault | Level | Recipe (real detection path) | Colour | Needs admin | manual | confirmed | autonomous |");
-lines.push("|---|---|---|---|---|---|---|---|");
+lines.push("| Fault | Level | Recipe (real detection path) | Colour | Needs admin | Vendor-vetted | manual | confirmed | autonomous |");
+lines.push("|---|---|---|---|---|---|---|---|---|");
 const cell = (f, mode) => `fresh: ${esc(matrix[f.id][mode].fresh)}<br>trusted: ${esc(matrix[f.id][mode].trusted)}`;
-for (const f of FAULTS) lines.push(`| ${esc(f.title)} (\`${f.id}\`) | ${f.level} | \`${f.recipe}\` | ${f.color} | ${f.needsAdmin ? "yes" : "no"} | ${cell(f, "manual")} | ${cell(f, "confirmed")} | ${cell(f, "autonomous")} |`);
+for (const f of FAULTS) lines.push(`| ${esc(f.title)} (\`${f.id}\`) | ${f.level} | \`${f.recipe}\` | ${f.color} | ${f.needsAdmin ? "yes" : "no"} | ${isVendorVetted(f.recipe) ? "yes" : "no"} | ${cell(f, "manual")} | ${cell(f, "confirmed")} | ${cell(f, "autonomous")} |`);
 lines.push("");
 lines.push("## When a person acts (trusted device)");
 lines.push("");

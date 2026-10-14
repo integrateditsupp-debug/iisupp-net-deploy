@@ -36,7 +36,8 @@ export const REAL_FAULTS = Object.freeze({
 });
 // Refused here (the ps1 refuses them too): they would change the network, DNS, the clock, an app, a startup type — or
 // they are L3. tests/lib/fault-lab.mjs covers every one of them on a simulated machine.
-export const SIMULATED_ONLY = Object.freeze(["stale-dns", "time-drift", "teams-stuck", "wu-stuck", "wlan-stopped", "dnscache-stopped", "dhcp-lease-stale", "spooler-disabled", "system-files-corrupt", "bitlocker-recovery", "winsock-corrupt", "print-driver-crash"]);
+// (2026-10-14) dhcp-stopped (defect 1's catalogue fault) is simulated only too: stopping the DHCP Client would change the network.
+export const SIMULATED_ONLY = Object.freeze(["stale-dns", "time-drift", "teams-stuck", "wu-stuck", "wlan-stopped", "dnscache-stopped", "dhcp-lease-stale", "spooler-disabled", "system-files-corrupt", "bitlocker-recovery", "winsock-corrupt", "print-driver-crash", "dhcp-stopped"]);
 const TERMINAL = new Set(["fixed", "fix-failed", "held", "escalated", "acknowledged", "never", "blocked", "cancelled", "closed"]);
 
 export function parseArgs(argv = []) {

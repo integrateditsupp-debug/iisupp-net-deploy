@@ -12,9 +12,9 @@
 //   + every no-answer round showed exactly 3 notices · nothing unknown was ever run · every escalation ended
 // A failure names its seed (re-run one: SOAK_SEED=<seed> node tests/fault-lab-soak.test.mjs).
 import assert from "node:assert/strict";
-import { bootLab, faultById, pickRandomFaults, mulberry32, diff, healthyState } from "./lib/fault-lab.mjs";
+import { bootLab, faultById, pickRandomFaults, mulberry32, diff, healthyState, isReadOnlyProbe } from "./lib/fault-lab.mjs";
 import { RECIPES } from "../src/shared/recipes.mjs";
-import { YELLOW_RECIPES } from "../src/shared/recipe-runner.mjs";
+import { YELLOW_RECIPES, NOT_RESOLVED } from "../src/shared/recipe-runner.mjs";
 import { TIER0_COMMANDS } from "../src/main/tier-0-executor.mjs";
 import { PRIVATE_FOLDER_NAME, PRIVATE_FOLDER_RE } from "../src/shared/path-guard.mjs";
 
@@ -23,7 +23,8 @@ const TICK = 15 * 1000;
 const SEED0 = 20261014;
 const RUNS = process.env.SOAK_SEED ? 1 : 200;
 const VETTED = { "dns-fail-v1": 12, "svc-dnscache-stopped-v1": 12 };
-const PROBE_RE = /^\(Get-|^Get-Service -Name \w+ \| Select-Object|^Get-ComputerRestorePoint|^\[math\]::Round|^Test-NetConnection/;
+// 2026-10-14 (defect 3) — the gating verify probes are read-only too: "is this a probe?" comes from VERIFY_COMMANDS
+// (tests/lib/fault-lab.mjs isReadOnlyProbe), so invariant 5 never mistakes a verify for an unowned change.
 const GUARD = /;\s*if\(-not \$\?\)\{exit 1\}/g;
 
 // Which recipe(s) own a command — read from the registry + the executor bindings (the commands actually issued).
@@ -33,7 +34,7 @@ for (const r of RECIPES) for (const a of r.actions || []) if (a.shell === "power
 for (const [id, spec] of Object.entries(TIER0_COMMANDS)) own(spec.command, id);
 const ownersOf = (cmd) => OWNERS.get(String(cmd).replace(GUARD, "").trim()) || [];
 
-const stats = { runs: 0, faults: 0, fixed: 0, escalated: 0, failedHonestly: 0, untouched: 0, personFixNow: 0, personNotNow: 0, personNever: 0, poisoned: 0, elevatedProfile: 0, notices: 0, commands: 0, byLevel: { L1: 0, L2: 0, L3: 0 } };
+const stats = { runs: 0, faults: 0, fixed: 0, escalated: 0, failedHonestly: 0, notResolved: 0, untouched: 0, personFixNow: 0, personNotNow: 0, personNever: 0, poisoned: 0, elevatedProfile: 0, notices: 0, commands: 0, byLevel: { L1: 0, L2: 0, L3: 0 } };
 const failures = [];
 
 async function sequence(seed) {
@@ -101,6 +102,12 @@ async function sequence(seed) {
     } else if (f.path === "attempt-fails" && !personFixed && !neverOrSnooze) {
       assert.ok(audit.some((r) => r.tag === "FIX" && r.recipeId === f.recipe && r.outcome === "failed"), `${label}: ${id} — reported failed, never fixed`);
       stats.failedHonestly++;
+    } else if (f.path === "not-resolved" && !personFixed && !neverOrSnooze) {
+      // 2026-10-14 (defect 3) — the fix ran, its gating verify failed: NOT RESOLVED (never "fixed (verified)"), then the IT contact.
+      assert.ok(audit.some((r) => r.tag === "FIX" && r.recipeId === f.recipe && r.resolution === NOT_RESOLVED), `${label}: ${id} — reported not resolved`);
+      assert.ok(!audit.some((r) => r.tag === "ADVISORY" && r.recipeId === f.recipe && /fixed on its own/.test(r.text)), `${label}: ${id} — never closed as fixed`);
+      assert.ok(audit.some((r) => r.tag === "ESCALATE" && r.recipeId === f.recipe && /not resolved/.test(r.text)), `${label}: ${id} — the IT contact was told`);
+      stats.notResolved++;
     } else if (f.path === "escalate" && !personFixed && !neverOrSnooze) {
       assert.ok(audit.some((r) => r.tag === "ESCALATE" && r.recipeId === f.recipe), `${label}: ${id} — the IT contact was told`);
       stats.escalated++;
@@ -128,7 +135,7 @@ async function sequence(seed) {
   // 5 — no change without a prior AUTO-FIX for that recipe or a person's action on it.
   const autoFixAt = audit.filter((r) => r.tag === "AUTO-FIX").map((r) => ({ at: Date.parse(r.ts), recipeId: r.recipeId }));
   const personAt = lab.humanActions.filter((h) => h.kind === "ack" && h.choice === "fix-now").map((h) => ({ at: h.at, recipeId: h.recipeId }));
-  for (const c of lab.machine.commands.filter((x) => !PROBE_RE.test(x.cmd) && !/^Checkpoint-Computer/.test(x.cmd))) {
+  for (const c of lab.machine.commands.filter((x) => !isReadOnlyProbe(x.cmd) && !/^Checkpoint-Computer/.test(x.cmd))) {
     const owners = ownersOf(c.cmd);
     assert.ok(owners.length > 0, `${label}: a changing command with no registry owner ran: ${c.cmd}`);
     const ok = [...autoFixAt, ...personAt].some((e) => e.at <= c.at && owners.includes(e.recipeId));
@@ -165,7 +172,8 @@ function FAULT_KEYS(f) {
     "bits-stopped": ["services.BITS.status", "bits.transfersStuck"], "wlan-stopped": ["services.WlanSvc.status", "network.wifiConnected"],
     "dnscache-stopped": ["services.Dnscache.status"], "dhcp-lease-stale": ["network.leaseValid", "network.apipa", "network.gatewayReachable"],
     "spooler-disabled": ["services.Spooler.startType", "services.Spooler.status", "printQueue"], "system-files-corrupt": ["systemFiles.corrupt"],
-    "bitlocker-recovery": ["bitlocker.recoveryPrompt"], "winsock-corrupt": ["network.winsockOk"], "print-driver-crash": ["printQueue", "services.Spooler.hung"]
+    "bitlocker-recovery": ["bitlocker.recoveryPrompt"], "winsock-corrupt": ["network.winsockOk"], "print-driver-crash": ["printQueue", "services.Spooler.hung"],
+    "dhcp-stopped": ["services.Dhcp.status"] // 2026-10-14 (defect 1) — the new catalogue fault
   })[f.id] || [];
 }
 
@@ -178,4 +186,4 @@ if (failures.length) {
   assert.fail(`fault-lab-soak: ${failures.length} of ${seeds.length} sequences broke an invariant (first seed ${failures[0].seed})`);
 }
 assert.equal(stats.runs, seeds.length);
-console.log(`fault-lab-soak test passed (${stats.runs} seeded sequences, seeds ${seeds[0]}–${seeds.at(-1)} · ${stats.faults} faults injected (L1 ${stats.byLevel.L1} · L2 ${stats.byLevel.L2} · L3 ${stats.byLevel.L3}) · ${stats.fixed} fixed on their own after 3 notices · ${stats.escalated} escalated to the IT contact · ${stats.failedHonestly} failed honestly · ${stats.untouched} left untouched at the root · ${stats.notices} notices · ${stats.commands} commands interpreted · person: ${stats.personFixNow} Fix now · ${stats.personNotNow} Not now · ${stats.personNever} Never · ${stats.poisoned} poisoned inputs · ${stats.elevatedProfile} elevated-agent runs · 0 invariant failures).`);
+console.log(`fault-lab-soak test passed (${stats.runs} seeded sequences, seeds ${seeds[0]}–${seeds.at(-1)} · ${stats.faults} faults injected (L1 ${stats.byLevel.L1} · L2 ${stats.byLevel.L2} · L3 ${stats.byLevel.L3}) · ${stats.fixed} fixed on their own after 3 notices · ${stats.escalated} escalated to the IT contact · ${stats.failedHonestly} failed honestly · ${stats.notResolved} not resolved → IT contact · ${stats.untouched} left untouched at the root · ${stats.notices} notices · ${stats.commands} commands interpreted · person: ${stats.personFixNow} Fix now · ${stats.personNotNow} Not now · ${stats.personNever} Never · ${stats.poisoned} poisoned inputs · ${stats.elevatedProfile} elevated-agent runs · 0 invariant failures).`);

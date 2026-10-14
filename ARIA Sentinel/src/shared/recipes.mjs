@@ -382,6 +382,11 @@ export const RECIPES = [
         shell: "powershell",
         risk: "green",
         requiresConfirm: false,
+        // FAULT LAB 2026-10-14 (defect 3) — NON-FATAL: Windows may refuse `ipconfig /registerdns` to a standard user
+        // (the strict-administrator lab model). Re-registration only re-sends this device's own records; the flush and
+        // the cache clear are what fix a lookup, so a refused re-registration is logged as a warning and the fix goes on
+        // (main.mjs runRecipe). The verify probe still decides whether the problem is really gone.
+        nonFatal: true,
         command: "ipconfig /registerdns",
         dryRunResult: "Would re-register the client's DNS records."
       },
@@ -1174,6 +1179,11 @@ export const RECIPES = [
   svcRecipe("svc-wlansvc-stopped-v1", "WLANSVC", "WlanSvc", "WLAN AutoConfig", ["wlan autoconfig service stopped", "wlansvc not running", "wlan service is stopped"]),
   svcRecipe("svc-workstation-stopped-v1", "WORKSTATION", "LanmanWorkstation", "Workstation", ["workstation service stopped", "lanmanworkstation not running", "workstation service is stopped"]),
   svcRecipe("svc-rasman-stopped-v1", "RASMAN", "RasMan", "Remote Access Connection Manager", ["remote access service stopped", "rasman not running", "ras service is stopped"]),
+  // FAULT LAB 2026-10-14 (defect 1) — the DHCP Client (one of the service watcher's CRITICAL_SERVICES) had no recipe, so
+  // SYSTEM.SERVICE.STOPPED.DHCP fell through the matcher to system-time-drift-v1. Same shape as svc-wlansvc-stopped-v1:
+  // one green `Restart-Service Dhcp -Force` step (needsAdmin → a UAC prompt a person answers, never unattended), and a
+  // GATING verify probe in recipe-runner.mjs (the service is Running AND a DHCP lease is present).
+  svcRecipe("svc-dhcp-stopped-v1", "DHCP", "Dhcp", "DHCP Client", ["dhcp client service stopped", "dhcp not running", "dhcp service is stopped"]),
   {
     id: "system-high-cpu-v1", family: "SYSTEM", signal: "SYSTEM.SLOW.HIGH_CPU", title: "Sustained high CPU", chip: "SYSTEM - HIGH CPU",
     risk: "green", mode: "manual", confidenceKeywords: ["cpu sustained high", "high cpu usage stuck", "cpu pegged at 100"],
@@ -1339,6 +1349,25 @@ export const RECIPES = [
     ],
     success: "Update review opened. A restore point is taken before any install.",
     escalation: "Desktop Support for fleet-wide patch rollout or a failed update."
+  },
+  // FAULT LAB 2026-10-14 (defect 2) — NET.ADAPTER.DOWN (no network adapter is up) and NET.DOWN (two failed reachability
+  // probes in a row) matched NO recipe ("No local recipe matched"), so the most visible outage there is produced silence.
+  // A GUIDE ONLY: every step is the person's own (Settings, the cable) — none is a command, nothing here can ever run
+  // (shell "manual" never passes recipe-runner's gate). main.mjs legacySignalFor() routes NET.DOWN here too.
+  {
+    id: "net-adapter-down-v1", family: "NETWORK", signal: "NET.ADAPTER.DOWN", title: "Network connection down", chip: "NETWORK - ADAPTER",
+    risk: "green", mode: "manual",
+    confidenceKeywords: ["network adapter down", "network adapter disabled", "airplane mode is on", "no network adapter connected"],
+    summary: "This device has no working network connection. Four quick checks usually bring it back — ARIA changes nothing for you.",
+    detector: "Network watcher: no adapter up (NET.ADAPTER.DOWN) or two failed reachability probes in a row (NET.DOWN).",
+    actions: [
+      { id: "airplane-mode-off", label: "Turn Airplane mode off", shell: "manual", risk: "green", requiresConfirm: false, command: "Manual: open Settings > Network & internet and make sure Airplane mode is Off.", dryRunResult: "Shows the Airplane mode check. Nothing is changed." },
+      { id: "reenable-wifi-ethernet", label: "Turn Wi-Fi or Ethernet back on", shell: "manual", risk: "green", requiresConfirm: false, command: "Manual: in Settings > Network & internet, turn Wi-Fi On and reconnect to your usual network, or check that Ethernet shows Connected.", dryRunResult: "Shows the Wi-Fi / Ethernet check. Nothing is changed." },
+      { id: "check-cable-adapter", label: "Check the cable and the adapter", shell: "manual", risk: "green", requiresConfirm: false, command: "Manual: re-seat the network cable or the USB / dock adapter, check its lights, then try another port or cable.", dryRunResult: "Shows the cable and adapter check. Nothing is changed." },
+      { id: "restart-adapter", label: "Restart the adapter in Settings", shell: "manual", risk: "green", requiresConfirm: false, command: "Manual: Settings > Network & internet > Advanced network settings: choose the adapter, Disable it, wait 10 seconds, then Enable it again.", dryRunResult: "Shows how to restart the adapter in Settings. Nothing is changed." }
+    ],
+    success: "Network checks opened. ARIA keeps checking the connection on its own.",
+    escalation: "Network Team if the adapter is missing, or the connection stays down after these checks."
   }
 ];
 
@@ -1374,7 +1403,8 @@ function svcRecipe(id, codeSuffix, serviceName, displayName, keywords) {
   const actions = unstoppable
     ? [
       { id: "flush-dns", label: "Flush DNS resolver cache", shell: "powershell", risk: "green", requiresConfirm: false, command: "ipconfig /flushdns", dryRunResult: "Would flush the DNS resolver cache." },
-      { id: "register-dns", label: "Re-register DNS", shell: "powershell", risk: "green", requiresConfirm: false, command: "ipconfig /registerdns", dryRunResult: "Would re-register the client's DNS records." },
+      // FAULT LAB 2026-10-14 (defect 3) — the same non-fatal re-registration as dns-fail-v1 (same command, same rights question).
+      { id: "register-dns", label: "Re-register DNS", shell: "powershell", risk: "green", requiresConfirm: false, nonFatal: true, command: "ipconfig /registerdns", dryRunResult: "Would re-register the client's DNS records." },
       { id: "clear-dns-client-cache", label: "Clear DNS client cache", shell: "powershell", risk: "green", requiresConfirm: false, command: "Clear-DnsClientCache", dryRunResult: "Would clear the DNS Client resolver cache (the service itself is protected by Windows and cannot be restarted)." }
     ]
     : [
@@ -1393,6 +1423,9 @@ function svcRecipe(id, codeSuffix, serviceName, displayName, keywords) {
     id,
     family: "SYSTEM",
     signal: `SYSTEM.SERVICE.STOPPED.${codeSuffix}`,
+    // FAULT LAB 2026-10-14 (defect 5) — the Windows service this recipe is about (a fixed short name + its display name,
+    // never user data), so a detection can say "Print Spooler is disabled (start type)…" in plain words.
+    service: Object.freeze({ name: serviceName, display: displayName }),
     title: `${displayName} service stopped`,
     chip: "SYSTEM - SERVICE",
     risk: "green",

@@ -82,6 +82,7 @@ $SimulatedOnly = [ordered]@{
   'bitlocker-recovery'   = 'L3 - simulated only'
   'winsock-corrupt'      = 'L3 - would change the network stack'
   'print-driver-crash'   = 'L3 - simulated only'
+  'dhcp-stopped'         = 'L2 - would change the network'
 }
 $LabServices = @('Spooler', 'Audiosrv', 'AudioEndpointBuilder', 'wuauserv', 'BITS', 'cryptsvc', 'Dnscache', 'Dhcp', 'WlanSvc', 'LanmanWorkstation', 'EventLog', 'Winmgmt', 'W32Time')
 $LabPrinter = 'Microsoft Print to PDF'

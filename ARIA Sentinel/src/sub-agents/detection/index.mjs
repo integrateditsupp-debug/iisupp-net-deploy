@@ -56,6 +56,16 @@ export function spawnBudgetPerMinute(watchers = []) {
     const perMin = (60_000 / cadence) * per;
     rows.push({ name: w && w.name, cadenceMs: cadence, spawnsPerTick: per, perMinute: perMin });
     total += perMin;
+    // FAULT LAB 2026-10-14 (defect 6) — a watcher may run a slower SUB-CHECK inside its tick (the perf watcher's clock
+    // check: one read-only spawn every 15 min). It declares it in `subChecks`, and it is counted here as its own row, so
+    // the budget stays the whole truth and the watcher's own per-tick number (perf: 0, native) stays exact.
+    for (const sc of Array.isArray(w && w.subChecks) ? w.subChecks : []) {
+      const scCadence = Number(sc && sc.cadenceMs) || 60_000;
+      const scPer = Number.isFinite(Number(sc && sc.spawnsPerTick)) ? Number(sc.spawnsPerTick) : 1;
+      const scPerMin = (60_000 / scCadence) * scPer;
+      rows.push({ name: `${w && w.name}.${sc && sc.name}`, cadenceMs: scCadence, spawnsPerTick: scPer, perMinute: scPerMin });
+      total += scPerMin;
+    }
   }
   return { total: Math.round(total * 1000) / 1000, rows };
 }
@@ -88,7 +98,7 @@ export function createDetectionOrchestrator(deps = {}) {
 
   const isBlocked = () => externalBlocked() || pausedUntil > Date.now();
 
-  const emit = (signal, hint) => {
+  const emit = (signal, hint, extra) => {
     if (isBlocked()) return;
     if (typeof signal !== "string" || !signal) return;
     const now = Date.now();
@@ -96,8 +106,10 @@ export function createDetectionOrchestrator(deps = {}) {
     if (now - prev < DEBOUNCE_MS) return; // per-signal debounce
     lastEmit.set(signal, now);
     try {
-      // Contract: signal is a symbolic enum, hint is an enum string. No raw content.
-      detectIssue({ source: "detection-watcher", signal, issue: String(hint || signal) });
+      // Contract: signal is a symbolic enum, hint is an enum string. No raw content. FAULT LAB 2026-10-14 (defect 5): the
+      // only extra a watcher may attach is the fixed enum startType "disabled" — anything else is dropped here.
+      const startType = extra && extra.startType === "disabled" ? { startType: "disabled" } : {};
+      detectIssue({ source: "detection-watcher", signal, issue: String(hint || signal), ...startType });
     } catch (err) {
       onError("emit", err instanceof Error ? err : new Error(String(err)));
     }

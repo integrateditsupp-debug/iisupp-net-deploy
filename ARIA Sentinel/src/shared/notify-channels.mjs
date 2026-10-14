@@ -182,10 +182,15 @@ export function buildNotification(event, ctx = {}, prefs = {}) {
     sms = `ARIA: ${title} ${outcomeWord(ctx)} on ${device}.`;
     desktop = { title: `${ctx.dryRun ? "Previewed" : "Done"}: ${title}`, body: outcomeWord(ctx) };
   } else if (ev === "fix-failed") {
+    // FAULT LAB 2026-10-14 (defect 3) — a fix whose steps ran but whose check afterwards failed is "not resolved", not
+    // "did not complete": say what actually happened (Rule 14).
+    const notResolved = /\bnot resolved\b/i.test(String(ctx.outcome || ""));
     subject = `ARIA Sentinel could not fix: ${title} on ${device}`;
-    text = `"${title}" did not complete on ${device}. ${ctx.rolledBack ? "The change was rolled back." : "Nothing further was changed."} A person should take a look.`;
-    sms = `ARIA: ${title} did not complete on ${device}. A person should look.`;
-    desktop = { title: `Needs a person: ${title}`, body: "The fix did not complete. Open ARIA Sentinel for details." };
+    text = notResolved
+      ? `"${title}" ran on ${device}, but the check afterwards says the problem is still there (not resolved). Nothing further was changed. A person should take a look.`
+      : `"${title}" did not complete on ${device}. ${ctx.rolledBack ? "The change was rolled back." : "Nothing further was changed."} A person should take a look.`;
+    sms = notResolved ? `ARIA: ${title} on ${device} is not resolved after the fix. A person should look.` : `ARIA: ${title} did not complete on ${device}. A person should look.`;
+    desktop = { title: `Needs a person: ${title}`, body: notResolved ? "The fix ran, but the problem is still there. Open ARIA Sentinel for details." : "The fix did not complete. Open ARIA Sentinel for details." };
   } else if (ev === "report") {
     const s = ctx.summary || {};
     const fixes = Number(s.fixes) || 0, det = Number(s.detections) || 0, fails = Number(s.failures) || 0;
