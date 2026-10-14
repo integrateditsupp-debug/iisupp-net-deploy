@@ -29,6 +29,7 @@ export function createDiskWatcher({ emit, isBlocked }) {
   return {
     name: "disk",
     cadenceMs: 5 * 60 * 1000,
+    spawnsPerTick: 1,
     async tick() {
       if (isBlocked()) return;
       const raw = await runPowerShellJson(QUERY);

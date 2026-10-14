@@ -12,6 +12,18 @@ import { spawn } from "node:child_process";
 const PS_FLAGS = ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Restricted", "-Command"];
 const DEFAULT_TIMEOUT_MS = 15000;
 
+// PROD 2026-10-14 (audit M27) — ONE tracked runner. main.mjs registers its childProcesses set here once, so every
+// watcher / process-scan child it spawns is terminated by Ctrl+Alt+K like the recipe children already were.
+// `track(child)` returns the untrack function; a missing or throwing tracker never affects a tick.
+let tracker = null;
+export function configurePowerShellRunner({ track } = {}) {
+  tracker = typeof track === "function" ? track : null;
+}
+function trackChild(child) {
+  if (!tracker) return () => {};
+  try { const untrack = tracker(child); return typeof untrack === "function" ? untrack : () => {}; } catch { return () => {}; }
+}
+
 /**
  * Run a read-only PowerShell command and resolve its parsed JSON.
  * Never rejects — on any failure it resolves `null` so a watcher tick is a safe no-op.
@@ -35,6 +47,7 @@ export function runPowerShellJson(command, options = {}) {
     } catch {
       return done(null);
     }
+    const untrack = trackChild(child);
     const timer = setTimeout(() => {
       try {
         child.kill();
@@ -62,10 +75,12 @@ export function runPowerShellJson(command, options = {}) {
     });
     child.on("error", () => {
       clearTimeout(timer);
+      untrack();
       done(null);
     });
     child.on("close", () => {
       clearTimeout(timer);
+      untrack();
       done(parseJsonSafe(out));
     });
   });

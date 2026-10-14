@@ -83,11 +83,22 @@ export function decideExecution(input = {}) {
   return result("execute", "full-auto-yellow-in-window", { ...meta, requiresRestorePoint: true, notifyAfter: true });
 }
 
-/** Human copy for an action (Rule 17 — plain, benefit first). Used by chat/voice + the approvals list. */
+/**
+ * Human copy for an action (Rule 17 — plain, benefit first). Used by chat/voice + the approvals list.
+ * PROD 2026-10-14 (audit M3) — a decision that carries `needsAdmin:true` says so: an attended execute names the
+ * UAC prompt the person will see; an unattended one explains why it became an approval request instead of
+ * pretending the step could run silently. (Rule 14: nothing here claims a change that cannot happen.)
+ */
 export function describeDecision(decision = {}) {
+  const needsAdmin = decision.needsAdmin === true;
   switch (decision.action) {
-    case "execute": return decision.requiresRestorePoint ? "Fixing it now — a restore point is in place so it can be undone." : "Fixing it now — I'll tell you when it's done.";
-    case "request-approval": return decision.reason === "restore-point-unavailable" ? "I need a yes before this one — I couldn't make a restore point first." : "I've asked for approval before touching anything.";
+    case "execute":
+      if (needsAdmin) return decision.requiresRestorePoint ? "Fixing it now — this step needs administrator approval (UAC), so Windows will ask you first; a restore point is in place so it can be undone." : "Fixing it now — this step needs administrator approval (UAC), so Windows will ask you first.";
+      return decision.requiresRestorePoint ? "Fixing it now — a restore point is in place so it can be undone." : "Fixing it now — I'll tell you when it's done.";
+    case "request-approval":
+      if (decision.reason === "needs-admin-unattended") return "This fix needs administrator approval (UAC), and unattended fixes need the admin runner (not registered) — so I've asked for your approval instead of running it on my own.";
+      if (decision.reason === "needs-admin-unavailable") return "This fix needs administrator rights, which ARIA cannot request on this platform — I've asked for your approval so a person can run it.";
+      return decision.reason === "restore-point-unavailable" ? "I need a yes before this one — I couldn't make a restore point first." : "I've asked for approval before touching anything.";
     case "notify-only": return decision.reason === "red-never-automated" ? "This one needs a person — I've flagged it, nothing was changed." : "Found it and flagged it — I'm in observe mode, so nothing was changed.";
     case "defer-window": return "Queued for your next maintenance window — nothing changes until then.";
     case "blocked": return "Fixes are paused on this device right now, so nothing was changed.";

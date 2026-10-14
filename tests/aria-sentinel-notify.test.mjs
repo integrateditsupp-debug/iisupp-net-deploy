@@ -83,13 +83,25 @@ console.log('[notify-fn] auth');
   const good = await post(basePayload(), { 'x-sentinel-key': deviceKey });
   ok('sha256(plan key) → 200 via plan-key derivation', good.status === 200 && good.json.ok === true && good.json.auth === 'device');
   ok('no raw key ever reaches the server: the header is a hash and nothing hashed it back', !calls.some((c) => String(c.body || '').includes(planKey('pro'))));
-  // revoked: a sentinel-licenses record with this key and status revoked (and no active sibling) denies
+  // revoked: SENTINEL-BACKEND 2026-10-14 (audit B4/B14) — the ONE revocation store ('sentinel-licenses-revocations',
+  // keyed by sha256(key)) that sentinel-licenses?action=revoke and the Stripe subscription.deleted path write.
+  // No more 2,000-blob scan of sentinel-licenses on every notify; a record there with status revoked no longer
+  // denies by itself — the revoke action decides (shared v1 plan keys are cut off only when no active sibling
+  // record still holds the same key; see tests/sentinel-licenses-api.test.mjs).
   memStore('sentinel-licenses')._m.set('sub_1', JSON.stringify({ key: planKey('pro'), status: 'revoked', email: 'x@example.com' }));
+  const scanFree = await post(basePayload(), { 'x-sentinel-key': deviceKey });
+  ok('a revoked record alone (no revocation entry) does not deny — nothing scans the registry any more', scanFree.status === 200);
+  await memStore('sentinel-licenses-revocations').setJSON(deviceKey, { revoked: true, at: '2026-10-14T00:00:00.000Z', reason: 'admin-revoke' });
   const rev = await post(basePayload(), { 'x-sentinel-key': deviceKey });
   ok('revoked license → 401 license-revoked', rev.status === 401 && rev.json.error === 'license-revoked');
-  memStore('sentinel-licenses')._m.set('sub_2', JSON.stringify({ key: planKey('pro'), status: 'active', email: 'y@example.com' }));
+  memStore('sentinel-licenses-revocations')._m.clear();
   const again = await post(basePayload(), { 'x-sentinel-key': deviceKey });
-  ok('an active sibling record on the same plan key keeps it valid', again.status === 200);
+  ok('clearing the revocation entry (admin unrevoke) restores access', again.status === 200);
+  // a per-customer key-index record with status revoked denies too (written by revoke / cancellation)
+  await memStore('sentinel-license-keys').setJSON(deviceKey, { v: 'sentinel-license-key-v1', status: 'revoked', tier: 'pro', email: 'x@example.com' });
+  const idxRev = await post(basePayload(), { 'x-sentinel-key': deviceKey });
+  ok('key-index record status:revoked → 401 license-revoked', idxRev.status === 401 && idxRev.json.error === 'license-revoked');
+  memStore('sentinel-license-keys')._m.clear();
   memStore('sentinel-licenses')._m.clear();
   // internal token path (fail-closed gate)
   const noTok = await post(basePayload(), { 'x-internal-token': 'whatever-long-token' });

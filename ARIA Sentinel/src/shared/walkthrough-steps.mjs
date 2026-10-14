@@ -162,7 +162,7 @@ export function composeLearnPrompt(goal) {
   ].join("\n");
 }
 
-// The shared interview (input-collection Ahmad asked for). Reused by every AI-setup flow.
+// The shared interview (input collection). Reused by every AI-setup flow.
 function interviewSteps() {
   return [
     { type: "input-text", key: "name", label: "YOUR FIRST NAME", title: "What's your first name?", placeholder: "e.g. Alex", body: "So I can talk to you like a person. This stays on your device." },
@@ -207,7 +207,7 @@ export const FLOWS = Object.freeze({
     id: "claude-setup", group: "setup", title: "Set up Claude", tool: "Claude",
     blurb: "Best all-round assistant — and with Claude Code it can build software and automate files on your PC.",
     steps: [
-      { type: "display", title: "Let's set up Claude", body: "Claude is a great all-round assistant. As Cowork + Claude Code it can also build software and automate files on your computer — the same way this app was built. First a few quick questions so I can tailor it to you." },
+      { type: "display", title: "Let's set up Claude", body: "Claude is a great all-round assistant. With Claude Code it can also build software and automate files on your computer. First a few quick questions so I can tailor it to you." },
       ...interviewSteps(),
       { type: "display", title: "Why Claude fits you", body: "Great at: writing, thinking through problems, and — with Claude Code — building and automating on your machine. Honest limits: it can be over-careful, and it isn't a search engine (bring your own sources). Cost: Claude has a free tier and paid plans — I never guess a number. The next step opens Anthropic's official pricing so you see today's real prices. IIS setup fee: we'll quote you — nothing is charged here." },
       { type: "open", title: "See Claude's real pricing", body: "Opens Anthropic's official pricing page so you see current, accurate numbers — not a guess.", url: "https://www.anthropic.com/pricing", note: "Opens your browser. You decide if and what to pay — ARIA never pays for you." },
@@ -243,7 +243,7 @@ export const FLOWS = Object.freeze({
     id: "codex-setup", group: "setup", title: "Set up Claude Code / Codex CLI", tool: "Claude Code",
     blurb: "The command-line coding agents — build software and automate files right on your PC.",
     steps: [
-      { type: "display", title: "Let's set up a coding agent", body: "Claude Code (Anthropic) and Codex (OpenAI) run in your terminal and can build and automate on your machine — this very app was built that way. A few quick questions first so I can tailor it to you." },
+      { type: "display", title: "Let's set up a coding agent", body: "Claude Code (Anthropic) and Codex (OpenAI) run in your terminal and can build and automate on your machine. A few quick questions first so I can tailor it to you." },
       ...interviewSteps(),
       { type: "display", title: "Which one fits you", body: "Claude Code pairs with a Claude account; Codex pairs with a ChatGPT account. Both need a paid plan for real work — I never guess a number. The next steps open the official pages so you see today's real prices. IIS setup fee: we'll quote you — nothing is charged here." },
       { type: "open", title: "See Claude Code's real pricing", body: "Opens Anthropic's official pricing page so you see current, accurate numbers — not a guess.", url: "https://www.anthropic.com/pricing", note: "Opens your browser. You decide if and what to pay — ARIA never pays for you." },
@@ -444,7 +444,7 @@ export function allFlowOpenUrls() {
 }
 
 // ============================================================================================================
-// AUTO-RUN THE MAJORITY (2026-07-16) — Ahmad: "automate the majority unless user input is needed." The under-globe
+// AUTO-RUN THE MAJORITY (2026-07-16) — "automate the majority unless user input is needed." The under-globe
 // runner does the mechanical steps itself (auto-opens allowlisted pages, auto-advances read-only cards) and PAUSES
 // only for genuine user input. This classifier is the single source of truth for what auto-runs vs what halts, so
 // the UI and the tests agree. Rule 14 boundary is baked IN: a hard-stop `open` (sign in / create account / pick a

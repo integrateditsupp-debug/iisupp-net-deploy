@@ -314,8 +314,15 @@ exports.handler = async (event) => {
       planName: body.planName || tier,
       kind: SUBSCRIPTION_TIERS.has(tier) ? 'aria-plan' : 'iis-catalog'
     };
-    // Catalog items return to homepage success path; subscription tiers return to /aria.
-    if (mode === 'subscription') {
+    // SENTINEL-BACKEND 2026-10-14 (audit B11): an ARIA Sentinel desktop tier returns to /downloads/ — the page
+    // that renders the "your key is on its way to <email>; download below" success state — not to /aria, where
+    // nothing happened and nothing explained where the key was. The Sentinel webhook (sentinel-stripe-webhook)
+    // mints + emails the key on checkout.session.completed; metadata.tier is what it reads (sentinel_* only).
+    if (mode === 'subscription' && tier.startsWith('sentinel_')) {
+      successUrl = origin + '/downloads/?checkout=success&session_id={CHECKOUT_SESSION_ID}';
+      cancelUrl  = origin + '/plans/?checkout=canceled';
+    } else if (mode === 'subscription') {
+      // Catalog items return to homepage success path; ARIA-web subscription tiers return to /aria.
       successUrl = origin + '/aria?checkout=success&session_id={CHECKOUT_SESSION_ID}';
       cancelUrl  = origin + '/aria?checkout=canceled';
     } else {
@@ -342,6 +349,12 @@ exports.handler = async (event) => {
     if (body.collectShipping) {
       sessionParams.shipping_address_collection = { allowed_countries: ['US', 'CA'] };
       sessionParams.phone_number_collection = { enabled: true };
+    }
+    // SENTINEL-BACKEND 2026-10-14: a Sentinel subscription carries its tier on the SUBSCRIPTION too, so the
+    // customer.subscription.* webhook events (which do not see the Checkout Session's metadata) can tell a
+    // Sentinel plan from an ARIA-web plan without a price lookup.
+    if (mode === 'subscription' && metadata && typeof metadata.tier === 'string' && metadata.tier.startsWith('sentinel_')) {
+      sessionParams.subscription_data = { metadata: { tier: metadata.tier, kind: 'aria-plan', product: 'aria-sentinel' } };
     }
     const session = await stripe.checkout.sessions.create(sessionParams);
     return j(200, { url: session.url, id: session.id });

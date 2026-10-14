@@ -105,7 +105,8 @@ const runAll = fs.readFileSync(path.join(root, "tests", "run-all.mjs"), "utf8");
 
 assert.match(main, /from "\.\.\/shared\/value-proof\.mjs"/, "main imports the value-proof module");
 assert.match(main, /function valueProofNow\(/, "main defines valueProofNow");
-assert.match(main, /const fixes = log\.filter\(\(e\) => e\.tag === "RUN"\)\.length;\n  return valueProof\(/, "valueProofNow uses the SAME real audit-log RUN fix count");
+// PROD 2026-10-14 (R6a): the fix count is LIVE fixes only — countLiveFixes() never counts a "Dry-run …" preview row.
+assert.match(main, /const fixes = countLiveFixes\(log\); \/\/ R6a[^\n]*\n  return valueProof\(/, "valueProofNow uses the SAME real audit-log LIVE fix count (never previews)");
 assert.match(main, /hoursSaved: vp\.hoursSaved, dollarsSaved: vp\.dollarsSaved/, "dashboard metrics fed real-or-empty ROI");
 assert.match(main, /hoursSaved: vp\.hoursSaved, dollarsSaved: vp\.dollarsSaved, deflectionPct: vp\.deflectionPct/, "report/email kpis fed real ROI + deflection");
 assert.match(main, /deflection: resolutionStatsNow\(\)\.deflectionPct/, "B1 dashboard deflection wiring preserved (not regressed)");

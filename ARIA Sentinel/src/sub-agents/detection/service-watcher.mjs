@@ -105,6 +105,7 @@ export function createServiceWatcher({ emit, isBlocked }) {
   return {
     name: "service",
     cadenceMs: 60 * 1000,
+    spawnsPerTick: 1,
     async tick() {
       if (isBlocked()) return;
       const raw = await runPowerShellJson(QUERY);

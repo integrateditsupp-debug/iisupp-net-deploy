@@ -44,17 +44,41 @@ const WATCHER_FACTORIES = process.platform === "darwin" ? MACOS_WATCHER_FACTORIE
 const DEBOUNCE_MS = 5 * 60 * 1000; // never emit the same signal more than once / 5 min
 
 /**
+ * PROD 2026-10-14 (audit M8) — the PowerShell spawn budget of a watcher set: Σ (60000 / cadenceMs) × spawnsPerTick.
+ * Pure; tests/spawn-budget.test.mjs asserts the Windows set stays ≤ 6 spawns/min (it used to be ≈21).
+ */
+export function spawnBudgetPerMinute(watchers = []) {
+  let total = 0;
+  const rows = [];
+  for (const w of watchers) {
+    const cadence = Number(w && w.cadenceMs) || 60_000;
+    const per = Number.isFinite(Number(w && w.spawnsPerTick)) ? Number(w.spawnsPerTick) : 1;
+    const perMin = (60_000 / cadence) * per;
+    rows.push({ name: w && w.name, cadenceMs: cadence, spawnsPerTick: per, perMinute: perMin });
+    total += perMin;
+  }
+  return { total: Math.round(total * 1000) / 1000, rows };
+}
+
+/**
  * @param {object} deps
  * @param {(input:{source:string,signal:string,issue:string})=>any} deps.detectIssue
  * @param {()=>boolean} deps.isBlocked   - true when paused OR globally killed
  * @param {(tag:string,text:string)=>void} [deps.logger]
  * @param {(name:string,err:Error)=>void} [deps.onError]
+ * @param {{get:(key:string)=>any,set:(key:string,value:any)=>void}} [deps.cursors] - PROD 2026-10-14 (audit M6):
+ *        persisted watcher cursors (main: electron-store "watcherCursors") so a relaunch never re-emits old events.
+ * @param {object} [deps.watcherOptions] - per-watcher option overrides keyed by watcher name (e.g. network probe target).
+ * @param {Array<Function>} [deps.factories] - test seam: an explicit factory list instead of the platform default.
  */
 export function createDetectionOrchestrator(deps = {}) {
   const detectIssue = deps.detectIssue || (() => {});
   const externalBlocked = deps.isBlocked || (() => false);
   const logger = deps.logger || (() => {});
   const onError = deps.onError || (() => {});
+  const cursors = deps.cursors && typeof deps.cursors.get === "function" && typeof deps.cursors.set === "function" ? deps.cursors : null;
+  const watcherOptions = deps.watcherOptions && typeof deps.watcherOptions === "object" ? deps.watcherOptions : {};
+  const factories = Array.isArray(deps.factories) ? deps.factories : WATCHER_FACTORIES;
 
   let pausedUntil = 0;
   let lastTick = 0;
@@ -79,7 +103,7 @@ export function createDetectionOrchestrator(deps = {}) {
     }
   };
 
-  const watchers = WATCHER_FACTORIES.map((factory) => factory({ emit, isBlocked }));
+  const watchers = factories.map((factory) => factory({ emit, isBlocked, cursors, options: watcherOptions[factory.name] || watcherOptions[String(factory.name || "").replace(/^create/, "").replace(/Watcher$/, "").toLowerCase()] || {} }));
 
   const safeTick = async (watcher) => {
     lastTick = Date.now();
@@ -93,7 +117,10 @@ export function createDetectionOrchestrator(deps = {}) {
 
   return {
     watchers,
+    // PROD 2026-10-14 (audit M11) — idempotent: a second startAll() while timers run is a no-op, and startAll()
+    // after stopAll() really restarts the timers (Stop ARIA → Start ARIA used to leave every watcher dead).
     startAll() {
+      if (timers.length) return this;
       logger("DETECT", `Detection orchestrator starting ${watchers.length} watchers.`);
       started = true;
       for (const watcher of watchers) {
@@ -108,11 +135,14 @@ export function createDetectionOrchestrator(deps = {}) {
       return {
         running: started && timers.length > 0,
         count: watchers.length,
-        lastTickAgeMs: lastTick ? Date.now() - lastTick : null
+        lastTickAgeMs: lastTick ? Date.now() - lastTick : null,
+        names: watchers.map((w) => String(w.name || "")), // (F3 round 2) for the Home "Watching: …" line
+        spawnsPerMinute: spawnBudgetPerMinute(watchers).total // (audit M8) the PowerShell budget this set costs
       };
     },
     stopAll() {
       while (timers.length) clearInterval(timers.pop());
+      started = false;
       logger("DETECT", "Detection orchestrator stopped all watchers.");
     },
     pauseAll(ms = 24 * 60 * 60 * 1000) {

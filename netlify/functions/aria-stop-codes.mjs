@@ -6,8 +6,14 @@
 // lets clients detect tampering of the index in transit. Source of truth: aria-stop-codes-data.mjs.
 //
 // Optional ?q= filters by stop-code or hex (case-insensitive substring). Omitted → the full index returns.
+//
+// SENTINEL-BACKEND 2026-10-14 (audit B8): served at BOTH /aria-stop-codes and the /.netlify/functions path the
+// desktop declares (ARIA Sentinel/src/shared/recipes.mjs STOP_CODES_ENDPOINT) — the latter answered 404 live.
+// (audit B18) x-aria-stop-codes-sha256 is an integrity checksum of the body, not a signature.
 import crypto from "node:crypto";
 import { STOP_CODES } from "./aria-stop-codes-data.mjs";
+
+export const STOP_CODES_PATHS = Object.freeze(["/aria-stop-codes", "/.netlify/functions/aria-stop-codes"]);
 
 function matchesQuery(entry, needle) {
   return String(entry.code || "").toLowerCase().includes(needle) ||
@@ -43,4 +49,4 @@ export default async function handler(request) {
   });
 }
 
-export const config = { path: "/aria-stop-codes" };
+export const config = { path: [...STOP_CODES_PATHS] };

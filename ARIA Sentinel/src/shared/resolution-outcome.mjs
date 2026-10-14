@@ -9,6 +9,27 @@
 // 🔒 R11: any free-text (session id) is path-scrubbed before it can be persisted.
 
 export const RESOLUTION_SCHEMA = "resolution-outcome.v1";
+
+// PROD 2026-10-14 (F4 round 2 / R6a) — WHAT COUNTS AS A FIX for hours-saved / $-saved / pilot proof / trust posture.
+// The audit log carries a RUN row per execution — "Executing recipe X" (live) AND "Dry-run recipe X" (preview) —
+// and every surface used to count both as fixes, so a device that only ever previewed showed hours "saved".
+// A fix counts ONLY when it ran LIVE and finished: main writes one "FIX" row per completed live execution with
+// outcome "done" (verified / succeeded) or "failed"; only "done" counts. Logs written before the FIX row existed
+// (dev machines) fall back to the RUN "Executing …" rows (live attempts), never to "Dry-run …" previews. Pure.
+const LIVE_RUN_RE = /^Executing\b/;
+export function isLiveFixRow(entry) {
+  if (!entry || typeof entry !== "object" || entry.dryRun === true) return false;
+  return entry.tag === "FIX" && String(entry.outcome || "").toLowerCase() === "done";
+}
+export function isLegacyLiveRunRow(entry) {
+  return Boolean(entry && typeof entry === "object" && entry.tag === "RUN" && entry.dryRun !== true && LIVE_RUN_RE.test(String(entry.text || "")));
+}
+/** Count the live, completed fixes in an audit log (any order). Never counts a preview. */
+export function countLiveFixes(log = []) {
+  const rows = Array.isArray(log) ? log : [];
+  if (rows.some((e) => e && e.tag === "FIX")) return rows.filter(isLiveFixRow).length;
+  return rows.filter(isLegacyLiveRunRow).length; // pre-FIX-row logs: live attempts, still never previews
+}
 export const OUTCOME_KINDS = ["resolved", "not-yet"];
 
 // Confidence thresholds on a 0..1 match score. Chosen conservatively — "high" only when the match is strong.

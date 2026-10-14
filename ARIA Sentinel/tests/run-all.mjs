@@ -914,6 +914,63 @@ const TESTS = [
   "../../tests/axis-overview-clearance.test.mjs",
   "../../tests/axis-blind-guards.test.mjs",
   "../../tests/axis-command-center.test.mjs",
+  // RUN-AX2 / RUN-SN1 (2026-10-14): the situation model every AXIS brain reads (Toronto clock, honest
+  // sources, CEO-ledger ranking) and the Netlify bundling guard (heavy external modules scoped per
+  // function — the 3.2 GB-of-zips ENOSPC of 2026-10-13). Both are node:assert suites with no
+  // process.exit, read on this extract: exit 0 standalone and clean under the one-process import.
+  "../../tests/axis-situation.test.mjs",
+  "../../tests/netlify-function-externals.test.mjs",
+  // RUN-SN1 / F1 (2026-10-14): the DEPLOYED Sentinel handlers under in-memory Blobs + stubbed fetch —
+  // store connection (connectLambda before getStore), v2 per-customer keys + v1 still resolving,
+  // revocation unified, session-report gated, Stripe webhook scoped to sentinel_* tiers, fleet
+  // endpoints (heartbeat/recipes/stop-codes/manifest), notify bound to the license record.
+  "../../tests/sentinel-store-and-keys.test.mjs",
+  "../../tests/sentinel-resolve-and-licenses.test.mjs",
+  "../../tests/sentinel-session-report.test.mjs",
+  "../../tests/sentinel-stripe-webhook.test.mjs",
+  "../../tests/sentinel-fleet-endpoints.test.mjs",
+  "../../tests/sentinel-notify-binding-and-contracts.test.mjs",
+  // RUN-SN1 / F2 (2026-10-14): the main process made true on a real machine — consent-gated live
+  // fixes (Tier-2 runs when a human initiated), honest elevation (UAC, needs-admin never "healthy"),
+  // PNG tray art, version from package.json, first-tick watcher baselines, startup tamper grace,
+  // the spawn budget, first-launch silence, policy.json loader, self-error quiet.
+  "./fresh-install-resolve.test.mjs",
+  "./needs-admin-matrix.test.mjs",
+  "./tray-art.test.mjs",
+  "./version-sync.test.mjs",
+  "./watcher-baselines.test.mjs",
+  "./startup-first-run.test.mjs",
+  "./spawn-budget.test.mjs",
+  "./first-launch-silence.test.mjs",
+  "./policy-overlay-loader.test.mjs",
+  "./self-error-quiet.test.mjs",
+  // RUN-SN1 / F3 (2026-10-14): the renderer made honest and finishable — buy path + prices from one
+  // source, 30-day trial copy that matches the code, fix outcomes described truthfully, real-or-empty
+  // KPIs, customer surfaces clean of internal wording, the 4-screen quick setup, the Home lists; the
+  // Playwright first-run harness skips with a clear line where Chromium is absent.
+  "./renderer-first-run.test.mjs",
+  "./pricing-surface-sync.test.mjs",
+  "./trial-copy-matches-code.test.mjs",
+  "./fix-outcome-copy.test.mjs",
+  "./customer-content-clean.test.mjs",
+  "./real-or-empty-ui.test.mjs",
+  "./home-lists.test.mjs",
+  "./setup-flow.test.mjs",
+  "./copy-claims.test.mjs",
+  // RUN-SN1 / F4 (2026-10-14): the customer build is an explicit allow-list derived from the import
+  // graph (business-ops modules stay in the repo, not in the asar), the Windows packager wrapper,
+  // version lockstep, sales copy == pricing-tiers, the binary host declared.
+  "./customer-build-allowlist.test.mjs",
+  "./package-win.test.mjs",
+  "./version-lockstep.test.mjs",
+  "./sales-copy-prices.test.mjs",
+  "./publish-binary-host.test.mjs",
+  // RUN-SN1 / F4 (repo root): /downloads + /plans Sentinel copy == pricing-tiers, the checkout states.
+  "../../tests/sentinel-sell-pages.test.mjs",
+  // RUN-SN1 / F2 round 2: the renderer/build requests wired in main — billing-aware checkout, watcher
+  // status in state, kill switch stops, manual-mode globe clickable, window fits 1366×768, reports
+  // folder IPC, signed-artifact names, live-fix counting only, device/key headers.
+  "./round2-main-wiring.test.mjs",
   // The commercial surface, audited end to end and proven RED FIRST on fixtures: the response-time
   // promise (BE1), the price a stranger is quoted (BF1), the tier vocabulary (BF2), the amount a buyer
   // is actually charged (BI2), the document a conversation ends in (BL1), the intake nobody keeps

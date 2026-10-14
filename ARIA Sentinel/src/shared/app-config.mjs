@@ -221,6 +221,19 @@ export function sanitizePrefs(p) {
   if ("maintenanceWindow" in p) out.maintenanceWindow = sanitizeMaintenanceWindow(p.maintenanceWindow);
   if ("notifyChannels" in p) out.notifyChannels = sanitizeNotifyChannels(p.notifyChannels);
   if (typeof p.fullAutoUnderstood === "boolean") out.fullAutoUnderstood = p.fullAutoUnderstood;
+  // PROD 2026-10-14 (audit M8) — optional network-watcher probe targets (host/IP shapes only; blank = the device's own
+  // gateway / DNS server + the NCSI name Windows already resolves). Never user content, never a URL.
+  if ("networkProbe" in p) out.networkProbe = sanitizeNetworkProbe(p.networkProbe);
+  return out;
+}
+const PROBE_HOST_RE = /^[A-Za-z0-9.:-]{1,253}$/;
+function sanitizeNetworkProbe(v) {
+  const o = v && typeof v === "object" ? v : {};
+  const out = {};
+  const host = String(o.probeHost == null ? "" : o.probeHost).trim();
+  const name = String(o.dnsProbeName == null ? "" : o.dnsProbeName).trim();
+  if (host && PROBE_HOST_RE.test(host)) out.probeHost = host;
+  if (name && PROBE_HOST_RE.test(name)) out.dnsProbeName = name;
   return out;
 }
 

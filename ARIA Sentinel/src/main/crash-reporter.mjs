@@ -9,6 +9,9 @@
 import { redactPrivate } from "../shared/path-guard.mjs";
 
 export const CRASH_QUEUE_MAX = 50;
+// PROD 2026-10-14 (audit M17) — a record that failed to send this many times is dropped (logged locally), so a
+// dead endpoint or a malformed record cannot be retried on every launch for ever.
+export const CRASH_SEND_MAX_ATTEMPTS = 5;
 
 /** Scrub a message/stack: R11 folder first, then strip every absolute path + file:// URL to a placeholder. */
 export function scrubCrashText(text) {
@@ -47,14 +50,18 @@ export function enqueueCrash(queue, record, max = CRASH_QUEUE_MAX) {
 /**
  * Forward the queue via an injected async sendFn(record) => boolean. Returns the records that did NOT send
  * (kept for the next launch — retry-on-failure). A throwing/false sendFn never throws out of here, so a dead
- * endpoint can never block startup. Pure except for the injected sender.
+ * endpoint can never block startup. Each failure counts an attempt; past `maxAttempts` the record is dropped
+ * (the retry ceiling — audit M17). Pure except for the injected sender.
  */
-export async function flushCrashQueue(queue, sendFn) {
+export async function flushCrashQueue(queue, sendFn, { maxAttempts = CRASH_SEND_MAX_ATTEMPTS, onDrop } = {}) {
   const remaining = [];
   for (const rec of Array.isArray(queue) ? queue : []) {
     let ok = false;
     try { ok = (await sendFn(rec)) === true; } catch { ok = false; }
-    if (!ok) remaining.push(rec);
+    if (ok) continue;
+    const attempts = (Number(rec && rec.attempts) || 0) + 1;
+    if (attempts >= maxAttempts) { if (typeof onDrop === "function") { try { onDrop(rec, attempts); } catch { /* never throw */ } } continue; }
+    remaining.push({ ...rec, attempts });
   }
   return remaining;
 }
@@ -64,9 +71,14 @@ export async function flushCrashQueue(queue, sendFn) {
 //   import { installCrashReporter } from "./crash-reporter.mjs";
 //   installCrashReporter({ version: SENTINEL_VERSION, crashFile: path.join(os.homedir(), ".aria-sentinel", "crash.log"),
 //                          endpoint: "https://iisupp.net/.netlify/functions/sentinel-crash", fs, log: logEvent });
-export function installCrashReporter({ version, crashFile, endpoint, fs, process: proc = process, log = () => {} } = {}) {
+// PROD 2026-10-14 (audit M17): `fetchImpl` is main's outbound wrapper (so the privacy verifier sees the send and the
+// allowlist is enforced), `canSend()` is the consent gate (setup completed) — before consent the queue only grows
+// locally — and `flush()` lets main send the queue once consent arrives. `headers()` supplies the device credential.
+export function installCrashReporter({ version, crashFile, endpoint, fs, process: proc = process, log = () => {}, fetchImpl, canSend, headers, maxAttempts = CRASH_SEND_MAX_ATTEMPTS } = {}) {
   const read = () => { try { return JSON.parse(fs.readFileSync(crashFile, "utf8")); } catch { return []; } };
   const write = (q) => { try { fs.mkdirSync(crashFile.replace(/[\\/][^\\/]+$/, ""), { recursive: true }); fs.writeFileSync(crashFile, JSON.stringify(q, null, 2)); } catch { /* best-effort */ } };
+  const doFetch = typeof fetchImpl === "function" ? fetchImpl : (typeof fetch === "function" ? fetch : null);
+  const allowed = () => { try { return typeof canSend === "function" ? canSend() === true : true; } catch { return false; } };
 
   const capture = (error) => {
     try {
@@ -78,18 +90,29 @@ export function installCrashReporter({ version, crashFile, endpoint, fs, process
   proc.on("uncaughtException", capture);
   proc.on("unhandledRejection", (r) => capture(r instanceof Error ? r : new Error(String(r))));
 
-  // On launch, flush whatever queued — best-effort, off the UI path, never blocks.
   const send = async (rec) => {
+    if (!doFetch) return false;
     try {
-      const res = await fetch(endpoint, { method: "POST", headers: { "content-type": "application/json", "user-agent": "aria-sentinel" }, body: JSON.stringify(rec) });
-      return res.ok;
+      const extra = typeof headers === "function" ? (headers() || {}) : {};
+      const { attempts, ...body } = rec || {}; // the local attempt counter never leaves the device
+      const res = await doFetch(endpoint, { method: "POST", headers: { "content-type": "application/json", "user-agent": "aria-sentinel", ...extra }, body: JSON.stringify(body) });
+      return Boolean(res && res.ok);
     } catch { return false; }
   };
-  Promise.resolve().then(async () => {
-    const queue = read();
-    if (!queue.length) return;
-    write(await flushCrashQueue(queue, send));
-  }).catch(() => {});
+  let flushing = false;
+  const flush = async () => {
+    if (flushing || !allowed()) return { sent: 0, remaining: read().length, skipped: !allowed() };
+    flushing = true;
+    try {
+      const queue = read();
+      if (!queue.length) return { sent: 0, remaining: 0 };
+      const remaining = await flushCrashQueue(queue, send, { maxAttempts, onDrop: () => log("CRASH", `Crash record dropped after ${maxAttempts} failed send attempts (kept nowhere else).`) });
+      write(remaining);
+      return { sent: queue.length - remaining.length, remaining: remaining.length };
+    } finally { flushing = false; }
+  };
+  // On launch, flush whatever queued — best-effort, off the UI path, never blocks — ONLY once the person consented.
+  Promise.resolve().then(flush).catch(() => {});
 
-  return { capture };
+  return { capture, flush };
 }

@@ -31,7 +31,7 @@ exports.handler = async (event) => {
   if (!/^cs_(test|live)_[A-Za-z0-9]{10,}$/.test(sessionId)) return j(400, { error: 'session_id malformed' });
 
   const stripe = Stripe(stripeKey);
-  const store = await openStore();
+  const store = await openStore(event);
   const confirmKey = 'confirmed-' + sessionId;
 
   // Idempotency: a replayed session_id returns the stored outcome — no second license, no second email.
@@ -122,10 +122,15 @@ exports.handler = async (event) => {
   }
 };
 
-async function openStore() {
+// SENTINEL-BACKEND 2026-10-14 (audit B1): Lambda-compat functions must hand the event's Blobs credentials to
+// @netlify/blobs (connectLambda) before getStore, and strong consistency is unavailable in that mode (every
+// read threw). lib/sentinel-store.cjs does both; null still means "idempotency disabled for this invocation".
+async function openStore(event) {
   try {
-    const { getStore } = require('@netlify/blobs');
-    return getStore({ name: STORE_NAME, consistency: 'strong' });
+    const { openStore: open } = require('./lib/sentinel-store.cjs');
+    const store = await open(STORE_NAME, event);
+    if (!store) console.warn('[stripe-confirm] Blobs unavailable — idempotency disabled for this invocation');
+    return store;
   } catch (e) {
     console.warn('[stripe-confirm] Blobs unavailable — idempotency disabled for this invocation:', e.message);
     return null;

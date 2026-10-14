@@ -53,7 +53,7 @@ const preload = fs.readFileSync(path.join(root, "src", "main", "preload.cjs"), "
 const runAll = fs.readFileSync(path.join(root, "tests", "run-all.mjs"), "utf8");
 assert.match(main, /from "\.\.\/shared\/case-study\.mjs"/, "main imports case-study");
 assert.match(main, /function conversionMomentNow\(/, "main defines conversionMomentNow");
-assert.match(main, /transparencyLog[\s\S]{0,80}tag === "RUN"/, "conversion is fed by REAL audit-log RUN fixes (not a fabricated number)");
+assert.match(main, /transparencyLog[\s\S]{0,80}countLiveFixes\(log\)/, "conversion is fed by REAL audit-log LIVE fixes (PROD 2026-10-14 R6a: never a preview, not a fabricated number)");
 assert.match(main, /sentinel:conversion-moment/, "main exposes the conversion-moment IPC");
 assert.match(main, /sentinel:case-study-draft/, "main exposes the case-study-draft IPC");
 assert.match(main, /conversion:\s*conversionMomentNow\(\)/, "gateStatus surfaces the conversion block");

@@ -103,7 +103,7 @@ t();
     const src = fs.readFileSync(path.join(root, f), "utf8");
     for (const m of src.matchAll(/https:\/\/iisupp\.net(\/[^\s"'`)?]*)/g)) {
       const p = m[1];
-      if (p === "/" || p === "" || p === "/aria-sentinel" || p.startsWith("/aria-sentinel/") || p === "/account" || p === "/contact" || p === "/aria" || p === "/downloads" || p === "/sentinel-status") continue; // user-facing pages opened in the browser, not fetched
+      if (p === "/" || p === "" || p === "/aria-sentinel" || p.startsWith("/aria-sentinel/") || p === "/account" || p === "/contact" || p === "/aria" || p === "/downloads" || p === "/sentinel-status" || p === "/plans" || p.startsWith("/plans/")) continue; // user-facing pages opened in the browser, not fetched (PROD 2026-10-14: /plans is the live plan page)
       if (!isDeclaredPath(p) && !ALLOWED_OUTBOUND_PATHS.some((a) => a.path === p)) undeclared.push(`${f}: ${p}`);
     }
   }

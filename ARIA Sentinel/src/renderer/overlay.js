@@ -1,5 +1,6 @@
 import { COMPANION_MENU, getFlow, flowStep, resolveStep, stepKey, isStepAnswered, listFlows, autoRunAction, flowStepTag } from "../shared/walkthrough-steps.mjs";
-import { createLocalStt } from "./local-stt.mjs"; // TRUE on-device offline STT (Vosk) — no cloud, no audio egress
+import { createLocalStt, sttUnavailableReason } from "./local-stt.mjs"; // TRUE on-device offline STT (Vosk) — no cloud, no audio egress
+import { describeSupervisedResult } from "../shared/fix-outcome.mjs"; // PROD 2026-10-14 (audit R11) — the real result of a gated fix, in plain words
 import { createVoiceConversation } from "./voice-conversation.mjs"; // RUN-CU / CU4 — multi-turn voice loop (shared with the ARIA tab)
 
 // Keep the overlay renderable long enough to surface bridge failure, but never pretend fixes ran.
@@ -134,17 +135,19 @@ function addTapToSpeak(input, container) {
   const hide = () => { try { btn.remove(); cap.remove(); } catch { /* already gone */ } };
   let stt = null, listening = false;
   const stop = () => { listening = false; btn.classList.remove("listening"); btn.textContent = "🎤 Tap to speak"; if (stt) { try { stt.stop(); } catch { /* ignore */ } stt = null; } };
+  // PROD 2026-10-14 (audit R12) — a failed start never makes the mic vanish: the caption says WHY voice is unavailable.
+  const unavailable = (err) => { stop(); btn.disabled = true; btn.textContent = "🎤 Voice unavailable"; cap.textContent = sttUnavailableReason(err); };
   btn.addEventListener("click", async () => {
     if (listening) { stop(); return; }
     try {
       const modelUrl = await window.sentinel.voskModelUrl();
-      if (!modelUrl) return hide(); // no bundled model → hide the mic; NEVER fall back to a cloud recognizer
+      if (!modelUrl) return unavailable(new Error("stt-no-model")); // no bundled model → say so; NEVER fall back to a cloud recognizer
       listening = true; btn.classList.add("listening"); btn.textContent = "● Listening… tap to stop";
       stt = await createLocalStt({
         modelUrl,
         onText: (said) => { if (said) { input.value = (input.value ? input.value + " " : "") + said; input.dispatchEvent(new Event("input")); } }
       });
-    } catch { stop(); hide(); } // local engine unavailable → hide the mic (typing still works)
+    } catch (err) { unavailable(err); } // local engine / mic unavailable → honest caption (typing still works)
   });
   host.appendChild(btn); host.appendChild(cap);
   // Probe up front: if there's no bundled model on this install, don't show a dead mic button.
@@ -186,6 +189,7 @@ sentinel.onGlobeConfirmation?.((c) => {
   confirmEl.onclick = () => { if (confirmTimer) clearTimeout(confirmTimer); hide(); };
 });
 
+sentinel.onState?.((st) => { if (st && st.mode) { overlayMode = st.mode; if (!currentDetection && chip && !chip.hidden) chip.textContent = modeChip(); } });
 sentinel.onOverlayMode?.((mode) => {
   setMode(mode);
   // If main put us into companion mode (globe click / proactive / launcher Start), render the right surface.
@@ -224,6 +228,7 @@ sentinel.onDetection((detection) => {
 });
 
 sentinel.getState().then((state) => {
+  if (state && state.mode) { overlayMode = state.mode; chip.textContent = modeChip(); }
   const latest = state.detections && state.detections[0];
   if (latest) {
     currentDetection = latest;
@@ -248,9 +253,12 @@ document.getElementById("overlayGlobe").addEventListener("click", async () => {
   await sentinel.openCompanion();
 });
 
+// (audit R11) the chip names the REAL mode (state.mode), never a hard-coded "MANUAL MODE".
+let overlayMode = "manual";
+function modeChip() { return `${String(overlayMode || "manual").toUpperCase()} MODE`; }
 document.getElementById("overlayDismiss").addEventListener("click", async () => {
   currentDetection = null;
-  chip.textContent = "MANUAL MODE";
+  chip.textContent = modeChip();
   title.textContent = "ARIA is watching";
   copy.textContent = "Local self-diagnosis is active.";
   setMode("globe");
@@ -269,20 +277,31 @@ document.getElementById("overlayFix").addEventListener("click", async () => {
     setTimeout(() => setGlobeState("idle"), 2000);
     return;
   }
-  const result = currentDetection.recipeId === "sentinel-self-repair-v1"
-    ? await sentinel.selfRepair("overlay")
-    : await sentinel.runRecipe(currentDetection.recipeId, { dryRun: true });
-  chip.textContent = result.dryRun ? "DRY-RUN COMPLETE" : result.ok ? "DONE" : "REVIEW";
-  title.textContent = result.recipe?.title || "ARIA self-repair";
-  copy.textContent = result.message || "Self-repair completed.";
-  setGlobeState(result.ok ? "done" : "escalation");
+  if (currentDetection.recipeId === "sentinel-self-repair-v1") {
+    const result = await sentinel.selfRepair("overlay");
+    chip.textContent = result && result.ok ? "DONE" : "REVIEW";
+    title.textContent = (result && result.recipe && result.recipe.title) || "ARIA self-repair";
+    copy.textContent = (result && result.message) || "Self-repair completed.";
+    setGlobeState(result && result.ok ? "done" : "escalation");
+    setTimeout(() => setGlobeState("idle"), 2400);
+    return;
+  }
+  // PROD 2026-10-14 (audit R11) — "Open fix" goes through the SAME gated pipeline as every other resolve
+  // (R11 → supervisor → policy → countdown → kill-switch) and the card says what REALLY happened: policy copy,
+  // needs-admin, countdown, preview, running — never "DRY-RUN COMPLETE" regardless of mode.
+  const r = await (sentinel.supervisedFix ? sentinel.supervisedFix({ recipeId: currentDetection.recipeId, mode: "confirmed", source: "overlay", risk: currentDetection.risk || "medium" }) : Promise.resolve(null));
+  const o = describeSupervisedResult(r);
+  chip.textContent = ({ countdown: "APPLYING SOON", running: "APPLYING", "needs-admin": "NEEDS ADMIN", preview: "PREVIEWED", approval: "WAITING FOR YES", deferred: "QUEUED", policy: "HELD", veto: "HELD", blocked: "BLOCKED", declined: "NOT RUN", failed: "FAILED", unavailable: "UNAVAILABLE", acknowledged: "NOTED" })[o.kind] || "REVIEW";
+  title.textContent = currentDetection.title || "ARIA fix";
+  copy.textContent = o.text;
+  setGlobeState(o.ok === false ? "escalation" : o.kind === "preview" ? "idle" : "fixing");
   setTimeout(() => setGlobeState("idle"), 2400);
 });
 
 // The single overlay box. Modes: "globe" (nothing but the globe) · "card" (detector Fix/Dismiss) · "companion"
 // (interactive assistant). BOTH card + companion use the ONE #overlayCard. Guarantees at most ONE of
 // {#overlayCard, #overlayConfirm, greeting} is ever visible — opening the card cancels the confirm + greeting
-// timers so they can't stack/clip on top of it (Ahmad's overlap bug). The globe is never covered.
+// timers so they can't stack/clip on top of it (the overlap bug). The globe is never covered.
 function setMode(mode) {
   const companion = mode === "companion";
   const showCard = mode === "card" || companion;
@@ -485,7 +504,7 @@ function renderFlowStep(view) {
 
   // ── ONBOARDING FIX-CARD HEAD (2026-07-16) — every step renders in the SAME structure as the under-globe
   // detector fix-card: a small-caps TAG CHIP, a bold TITLE, then a one-line SUBTITLE. Reuses the card family so
-  // the walk-through and the fix-cards are visually identical siblings (Ahmad's screenshot reference). ─────────
+  // the walk-through and the fix-cards are visually identical siblings (the design reference). ─────────
   companionBody.appendChild(el("div", "companion-tag", flowStepTag(flow, view.index)));
   companionBody.appendChild(el("div", "companion-lead", step.title));
 
@@ -499,7 +518,7 @@ function renderFlowStep(view) {
     companionBody.appendChild(el("div", "companion-sub", r.text != null ? r.text : (step.body || "")));
   } else if (step.type === "input-text") {
     if (step.body) companionBody.appendChild(el("div", "companion-sub", step.body));
-    // Labeled field (small-caps label above the input) — the onboarding-card data-entry shape Ahmad asked for.
+    // Labeled field (small-caps label above the input) — the onboarding-card data-entry shape.
     if (step.label) companionBody.appendChild(el("div", "companion-field-label", step.label));
     const input = el("input", "companion-input"); input.type = "text"; input.placeholder = step.placeholder || "";
     input.value = comp.answers[step.key] || "";
@@ -644,9 +663,7 @@ async function renderFixResult(view) {
     resolve.addEventListener("click", async () => {
       status.textContent = "Starting the gated fix…";
       const r = await sentinel.supervisedFix({ recipeId: view.recipeId, mode: "confirmed" });
-      if (!r || r.ok === false) status.textContent = r?.error === "r11_blocked" ? "1 personal folder excluded." : r?.verdict === "veto" ? "Held by the safety supervisor." : "Couldn't start the fix.";
-      else if (r.countdown) status.textContent = `Applying in ${r.seconds || 10}s — cancel from the countdown, or Ctrl+Alt+K to abort.`;
-      else status.textContent = r.policy && r.policy.dryRun === false ? "Fix applied (reversible)." : "Previewed safely (dry-run).";
+      status.textContent = describeSupervisedResult(r).text; // (audit R1) the real outcome — never "Fix applied" before it ran
     });
     row.appendChild(resolve);
   } else if (view.recipeId) {

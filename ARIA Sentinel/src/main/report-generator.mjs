@@ -27,7 +27,9 @@ export function trustLines(data = {}) {
   const ev = data.evidence;
   const pv = data.privacy;
   if (!ev || typeof ev !== "object") {
-    return ["Audit integrity verified · privacy verifier active · 100% sanitization · R11 private folder never touched."];
+    // Legacy callers only (main always supplies evidence now): the RUN 22 line minus its fabricated "100% sanitization"
+    // (audit M29) — a figure nobody measured is not printed; the excluded-folder guard is named by role, not folder.
+    return ["Audit integrity verified · privacy verifier active · sanitization not measured in this report · excluded-folder guard (R11) enforced."];
   }
   const audit = ev["CC4.1"];
   const auditLine = audit ? (audit.met ? "Audit integrity: verified" : `Audit integrity: NOT evidenced (${audit.detail || "check failed"})`) : "Audit integrity: not measured";
@@ -41,7 +43,7 @@ export function trustLines(data = {}) {
     auditLine,
     privacyLine,
     signedLine,
-    `Controls: ${counts.measured || 0} measured on this device · ${counts["not-evidenced"] || 0} not evidenced · ${counts.capability || 0} shipped capabilities (not measured here) · R11 private folder never touched.`
+    `Controls: ${counts.measured || 0} measured on this device · ${counts["not-evidenced"] || 0} not evidenced · ${counts.capability || 0} shipped capabilities (not measured here) · excluded-folder guard (R11) enforced.`
   ];
 }
 
@@ -51,10 +53,14 @@ export function executiveSummary(data = {}) {
   const ev = data.evidence && typeof data.evidence === "object" ? data.evidence : null;
   const pv = data.privacy || null;
   const third = ev
-    ? `${ev["CC4.1"] && ev["CC4.1"].met ? "Audit integrity verified" : "Audit integrity not evidenced"}, privacy verifier ${pv && pv.pass === true && pv.evidenced ? "passing (measured)" : pv && pv.pass === false ? "needs review (measured)" : "not measured yet"}, and the protected private folder was never accessed (R11 enforced).`
-    : `Audit integrity verified, privacy verifier passing, and the protected private folder was never accessed (R11 enforced).`;
+    ? `${ev["CC4.1"] && ev["CC4.1"].met ? "Audit integrity verified" : "Audit integrity not evidenced"}, privacy verifier ${pv && pv.pass === true && pv.evidenced ? "passing (measured)" : pv && pv.pass === false ? "needs review (measured)" : "not measured yet"}, and the excluded folders were never accessed (R11 guard enforced).`
+    : `Audit integrity not evidenced in this report, privacy verifier not measured here, and the excluded folders were never accessed (R11 guard enforced).`;
+  // PROD 2026-10-14 (audit M13) — "resolved N incidents" was the number of chat diagnoses. The sentence now says what
+  // was counted: incidents LOGGED, diagnoses RUN and fixes VERIFIED (each real-or-empty; a missing figure prints "--").
+  const n = (v) => (v == null ? "--" : v);
+  const work = (k.diagnoses != null || k.verifiedFixes != null) ? `, ran ${n(k.diagnoses)} diagnoses and verified ${n(k.verifiedFixes)} fixes` : "";
   return [
-    `ARIA Sentinel resolved ${k.incidents ?? 0} incidents this quarter, ${k.autoPct == null ? "--" : k.autoPct + "%"} automatically, saving ~${k.hoursSaved == null ? "--" : k.hoursSaved} hours of L1 effort.${k.deflectionPct == null ? "" : ` ${k.deflectionPct}% of issues were resolved first-touch${k.dollarsSaved == null ? "" : ` (~$${Number(k.dollarsSaved).toLocaleString("en-US")} of L1 effort avoided)`}.`}`,
+    `ARIA Sentinel logged ${k.incidents ?? 0} incidents this quarter${work}, ${k.autoPct == null ? "--" : k.autoPct + "%"} automatically, saving ~${k.hoursSaved == null ? "--" : k.hoursSaved} hours of L1 effort.${k.deflectionPct == null ? "" : ` ${k.deflectionPct}% of issues were resolved first-touch${k.dollarsSaved == null ? "" : ` (~$${Number(k.dollarsSaved).toLocaleString("en-US")} of L1 effort avoided)`}.`}`,
     `SLA compliance held at ${data.sla?.composite == null ? "--" : data.sla.composite + "%"} against a ${data.sla?.floor == null ? "--" : data.sla.floor + "%"} contractual floor, with ${data.sla?.breaches ?? 0} breach(es).`,
     third
   ];
@@ -68,7 +74,7 @@ export function buildSections(data = {}) {
     { id: "kpis", title: "Quarter-over-quarter KPIs", rows: (data.kpiTable || []).map((r) => ({ label: esc(r.label), value: esc(r.value), delta: esc(r.delta || "") })) },
     { id: "sla", title: "SLA achievement", rows: Object.entries(data.sla?.categories || {}).map(([k2, v]) => ({ label: esc(k2), value: esc(v) })) },
     { id: "incidents", title: "Top incidents resolved", rows: (data.topIncidents || []).map((i) => ({ label: esc(i.title), value: esc(i.outcome) })) },
-    { id: "roi", title: "Hours of human work avoided", value: esc(`${k.hoursSaved == null ? "--" : k.hoursSaved} hours${k.dollarsSaved == null ? "" : ` = $${Number(k.dollarsSaved).toLocaleString("en-US")}`} (${k.incidents ?? 0} incidents${k.deflectionPct == null ? "" : `, ${k.deflectionPct}% resolved first-touch`})`) },
+    { id: "roi", title: "Hours of human work avoided", value: esc(`${k.hoursSaved == null ? "--" : k.hoursSaved} hours${k.dollarsSaved == null ? "" : ` = $${Number(k.dollarsSaved).toLocaleString("en-US")}`} (${k.incidents ?? 0} incidents logged${k.verifiedFixes == null ? "" : `, ${k.verifiedFixes} fixes verified`}${k.deflectionPct == null ? "" : `, ${k.deflectionPct}% resolved first-touch`})`) },
     { id: "compliance", title: "Compliance posture", rows: Object.entries(data.compliance || {}).map(([fw, s]) => ({ label: esc(fw.toUpperCase()), value: esc(`${s.score}/100 (${s.badge})`) })) },
     { id: "recurring", title: "Recurring issues + recommended fixes", rows: (data.recurring || []).map((r) => ({ label: esc(r.issue), value: esc(r.fix) })) },
     { id: "upcoming", title: "Next-quarter upcoming work", lines: (data.upcoming || []).map(esc) },

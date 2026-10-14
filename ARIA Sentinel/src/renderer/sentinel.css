@@ -11,7 +11,7 @@
   --aria-gold-tint-bd: #38301d;
   --aria-text: #ffffff;
   --aria-text-2: #aaaaaa;
-  --aria-text-muted: #666666;
+  --aria-text-muted: #8f8f8f; /* PROD 2026-10-14 (audit R16) — 5.3:1 on #0a0a0a; #666 was 3.45:1, below AA */
   --aria-success: #7afbff;
   --aria-warning: #ffcb6b;
   --aria-error: #ff7e7e;
@@ -445,7 +445,7 @@ input {
 input[type="checkbox"] { width: 18px; height: 18px; min-height: 0; flex: 0 0 18px; padding: 0; accent-color: var(--aria-gold); }
 input:focus { border-color: rgba(197,160,89,.75); }
 
-.note { color: var(--aria-text-muted); font-size: 12px; margin: 10px 0 14px; }
+.note { color: var(--aria-text-muted); font-size: 12.5px; line-height: 1.5; margin: 10px 0 14px; }
 
 .mapping {
   display: grid;
@@ -1158,3 +1158,124 @@ body.low-power .trial-end-card .plan-card::before { display: none; }
 .companion-transcript .t-aria { background:#0f0f12; color:#d6d1c4; align-self:flex-start; border:1px solid rgba(255,255,255,.07); }
 .companion-transcript .t-status { font-size:11px; color:#7a7a7a; text-align:center; }
 .platform-note { font-size:11.5px; color:#ffcb6b; margin-top:6px; }
+
+
+/* ═══════════════════════ PROD 2026-10-14 — honesty / first-run / home additions (audit R6 · R8 · R10 · R15 · R16) ═══════════════════════ */
+/* The [hidden] attribute always wins over a class display rule (a hidden "I understand" row stayed visible under .setup-check{display:flex}). */
+[hidden] { display: none !important; }
+/* (R16) a visible focus ring everywhere — inputs lost theirs with outline:none; buttons never had one. */
+:focus-visible { outline: 2px solid var(--aria-gold); outline-offset: 2px; }
+input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--aria-gold); outline-offset: 1px; }
+.nav-sub a:focus-visible, .mode-row:focus-visible, .autonomy-card:focus-visible { outline: 2px solid var(--aria-gold-light); }
+
+/* (R15) the rail scrolls; sub-anchors stay compact so Integrations + Settings sit above the fold at 768 px. */
+.settings-nav { gap: 4px; margin-top: 14px; }
+.nav-item { min-height: 31px; }
+.nav-sub a { padding: 3px 8px; font-size: 10.5px; }
+.rail-footer { padding-top: 10px; font-size: 11px; }
+.rail-footer .aria-living-globe { width: 56px; height: 56px; margin: 0 auto 4px; }
+
+/* (R10) the in-app countdown card — fixed bottom-right, above everything but toasts. */
+.countdown-card {
+  position: fixed; right: 18px; bottom: 18px; z-index: 1350;
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px;
+  width: min(420px, calc(100vw - 36px)); padding: 12px 14px;
+  background: linear-gradient(180deg, #17140f, #0b0b0d); border: 1px solid var(--aria-gold); border-radius: 14px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.65), 0 0 26px rgba(197,160,89,.22); color: var(--aria-text);
+  animation: toast-in .25s ease;
+}
+.countdown-card[hidden] { display: none; }
+.countdown-ring { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--aria-gold); display: grid; place-items: center; font-family: var(--aria-font-display); font-size: 18px; color: var(--aria-gold-light); }
+.countdown-text { display: grid; gap: 2px; min-width: 0; }
+.countdown-text strong { font-size: 13px; }
+.countdown-text small { color: var(--aria-text-2); font-size: 12px; }
+.countdown-card .ghost { min-height: 34px; padding: 0 14px; white-space: nowrap; border: 1px solid #ff6b6b; color: #ffb3b3; }
+.countdown-card.done .countdown-ring { border-color: var(--aria-success); color: var(--aria-success); }
+body.low-power .countdown-card { animation: none; }
+
+/* (§4) HOME — three plain lists + the watcher line + the can-fix line. */
+.home-watch { color: var(--aria-text-2); font-size: 12.5px; margin: 6px 0 0; }
+.home-lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin: 12px 0; }
+.home-block { background: var(--aria-grad-card); border: 1px solid var(--aria-border); border-radius: 12px; padding: 12px 14px; min-width: 0; }
+.home-block .eyebrow { margin: 0 0 8px; }
+.home-row { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 6px 8px; align-items: start; padding: 8px 0; border-top: 1px solid var(--aria-border-soft); font-size: 12.5px; }
+.home-row:first-of-type { border-top: 0; }
+.home-row .home-time { color: var(--aria-text-muted); font-family: var(--aria-font-mono); font-size: 11px; padding-top: 2px; }
+.home-row .home-icon { font-size: 14px; }
+.home-row.did-applied, .home-row.did-verified, .home-row.did-previewed, .home-row.did-unverified, .home-row.did-failed, .home-row.did-stopped, .home-row.did-cancelled, .home-row.did-ticket { grid-template-columns: 52px 18px minmax(0, 1fr) auto; align-items: center; }
+.home-text { min-width: 0; display: grid; gap: 2px; }
+.home-text strong { font-weight: 600; overflow-wrap: anywhere; }
+.home-text small { color: var(--aria-text-muted); font-size: 11.5px; }
+.home-status { color: var(--aria-text-muted); font-style: normal; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; }
+.did-verified .home-status { color: var(--aria-status-green); }
+.did-failed .home-status, .did-stopped .home-status { color: var(--aria-error); }
+.did-previewed .home-status { color: var(--aria-text-2); }
+/* actions sit on their own line under the sentence, so the sentence never squashes into a single-word column */
+.home-actions { grid-column: 2; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-start; }
+.home-actions button { min-height: 30px; padding: 0 11px; font-size: 11.5px; }
+.home-row .resolve-status { grid-column: 2; margin: 2px 0 0; }
+/* the wizard footer: the Skip label never wraps into three lines; links read gold, not browser blue */
+.setup-card .onboarding-foot { flex-direction: column; align-items: stretch; gap: 8px; }
+.setup-card .onboarding-foot .onboard-dots { justify-content: center; }
+.setup-card .onboarding-foot .button-row { width: 100%; }
+.setup-card .onboarding-foot .button-row > .setup-skip { flex: 0 0 auto; white-space: nowrap; font-size: 11px; padding: 0 12px; min-height: 36px; }
+.setup-card a { color: var(--aria-gold-light); }
+.home-empty { color: var(--aria-text-muted); font-size: 12.5px; margin: 4px 0 0; line-height: 1.5; }
+.home-canfix { margin: 0 0 12px; }
+
+/* (R8) the quick-track wizard: three large choice cards, a visible skip, step progress. */
+.setup-card { width: min(520px, 94vw); text-align: left; }
+.setup-card .coach-globe { margin-left: auto; margin-right: auto; }
+.setup-card h2 { text-align: center; }
+.setup-progress { text-align: center; margin: 8px 0 0; }
+.setup-skip { font-size: 11.5px; padding: 0 10px; }
+.setup-hello { text-align: center; }
+.setup-hello .setup-lead { font-size: 14px; line-height: 1.55; color: var(--aria-text); }
+.setup-hello-actions { display: flex; flex-direction: column; gap: 8px; margin: 14px 0 6px; }
+.setup-hello-actions .primary { min-height: 44px; font-size: 14px; }
+.setup-defaults-line { color: var(--aria-text-muted); font-size: 11.5px; margin: 6px 0 0; }
+.what-cards { display: grid; gap: 8px; margin: 10px 0; }
+.what-card { text-align: left; cursor: pointer; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--aria-border); background: var(--aria-grad-card); color: var(--aria-text); display: grid; gap: 4px; font: inherit; }
+.what-card b { font-size: 14px; color: var(--aria-gold-light); }
+.what-card span { font-size: 12.5px; color: var(--aria-text-2); line-height: 1.45; }
+.what-card em { font-size: 10.5px; color: var(--aria-gold); font-style: normal; letter-spacing: .08em; text-transform: uppercase; }
+.what-card.selected { border-color: var(--aria-gold); background: var(--aria-gold-tint-bg); box-shadow: inset 0 0 0 1px rgba(241,220,167,.45); }
+.what-card:hover { border-color: var(--aria-gold); }
+.setup-summary { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.setup-summary li { font-size: 12.5px; color: var(--aria-text-2); padding-left: 18px; position: relative; line-height: 1.45; }
+.setup-summary li::before { content: "✓"; position: absolute; left: 0; color: var(--aria-status-green); }
+.setup-live-row { display: flex; gap: 10px; align-items: flex-start; margin-top: 10px; font-size: 12.5px; color: var(--aria-text-2); }
+.setup-live-row input { margin-top: 2px; }
+.setup-inline-status { color: var(--aria-success); font-size: 12px; min-height: 16px; margin: 4px 0 0; }
+
+/* (R2) live-fixes rows + the top-bar fix chip. */
+.live-fixes-row small { color: var(--aria-text-muted); }
+.chip.fix-live { border-color: rgba(70,215,138,.5); color: var(--aria-status-green); }
+.chip.fix-preview { border-color: rgba(143,143,143,.5); color: var(--aria-text-2); }
+#liveFixesNote.on { color: var(--aria-status-green); }
+
+/* (R24) the on-screen kill switch + (R9) run-state note. */
+.danger-btn { border: 1px solid #ff6b6b !important; color: #ffb3b3 !important; }
+.danger-btn:hover { box-shadow: 0 0 14px rgba(255, 90, 90, .35); }
+.hero-status[data-level="stopped"] .hero-label { color: var(--aria-text-2); text-shadow: none; }
+.hero-status[data-level="paused"] .hero-label { color: var(--aria-warning); text-shadow: 0 0 22px rgba(255, 203, 107, .30); }
+.chip.mode-pill.stopped { border-color: rgba(255,126,126,.5); color: var(--aria-error); }
+.chip.mode-pill.paused { border-color: rgba(255,203,107,.5); color: var(--aria-warning); }
+
+/* (R6) endpoint rows: null = not available (grey), never red. */
+.health-row.endpoint-na strong { color: var(--aria-text-muted); }
+.health-row.endpoint-fail strong { color: var(--aria-error); }
+.health-row.endpoint-ok strong { color: var(--aria-status-green); }
+.fail-badge { color: var(--aria-error); font-style: normal; font-size: 10px; letter-spacing: .12em; }
+.off-badge { color: var(--aria-text-muted); font-style: normal; font-size: 10px; letter-spacing: .12em; }
+
+/* (R5) plan modal: billing toggle + price notes. */
+.plan-billing { display: inline-flex; gap: 4px; margin: 0 auto 12px; border: 1px solid var(--aria-border); border-radius: 999px; padding: 3px; }
+.plan-billing .bt-opt { background: transparent; color: var(--aria-text-2); border-radius: 999px; padding: 6px 14px; cursor: pointer; font-size: 12px; }
+.plan-billing .bt-opt.active { background: var(--aria-grad-gold); color: #15110a; font-weight: 600; }
+.plan-card .plan-note { display: block; color: var(--aria-text-muted); font-size: 10.5px; margin: 2px 0 6px; min-height: 14px; }
+#planSupportNote { margin: 0 0 6px; }
+
+/* (R18) the knowledge dropzone is a real control. */
+.dropzone u { color: var(--aria-gold-light); cursor: pointer; }
+.dropzone:focus-visible { outline: 2px solid var(--aria-gold); }

@@ -1,6 +1,7 @@
-// RUN 23 §1 — live process-health polling. Every 30s a single content-blind `Get-Process` snapshot is taken
-// (PowerShell via the existing ps.mjs spawn helper — NO new deps) and reduced to a small, sanitized health
-// report. Detects: frozen (Responding=false), cpu-hog (>40% sustained across 2 samples = ~60s), ram-hog
+// RUN 23 §1 — live process-health polling. Every 120s (PROD 2026-10-14, audit M8: was 30s — 2 of the ≈21
+// PowerShell spawns/min) a single content-blind `Get-Process` snapshot is taken (PowerShell via the existing
+// ps.mjs spawn helper — NO new deps) and reduced to a small, sanitized health report. Detects: frozen
+// (Responding=false), cpu-hog (>40% sustained across 2 samples = ~4 min at the 120s cadence), ram-hog
 // (WorkingSet >1GB), and odd (runs from a temp/download location). 🔒 R11 — the enumerator drops ANY process
 // whose image path matches the off-limits "Private pics and Vids" glob, so it is never read, listed, or
 // surfaced. Pure evaluate core (`evaluateProcessHealth`) is unit-tested; the poller is win32-only.
@@ -8,9 +9,9 @@ import os from "node:os";
 import { isBlockedPath, redactPrivate } from "../shared/path-guard.mjs";
 import { runPowerShellJson } from "../sub-agents/detection/ps.mjs";
 
-export const POLL_MS = 30 * 1000;
+export const POLL_MS = 120 * 1000; // (audit M8) 0.5 spawns/min
 export const CPU_HOG_PCT = 40;
-export const CPU_SUSTAIN_SAMPLES = 2; // two consecutive >40% samples (~60s) before flagging
+export const CPU_SUSTAIN_SAMPLES = 2; // two consecutive >40% samples (~4 min) before flagging
 export const RAM_HOG_MB = 1024;       // WorkingSet > 1 GB
 export const IPC = Object.freeze({
   get: "sentinel:processHealth:get",
@@ -106,6 +107,7 @@ export function createProcessDetector({ runJson = runPowerShellJson, now = () =>
   return {
     name: "process-health",
     cadenceMs: POLL_MS,
+    spawnsPerTick: 1,
     latest: () => latest,
     async tick() {
       if (process.platform !== "win32") return latest;

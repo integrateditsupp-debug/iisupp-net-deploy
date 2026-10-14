@@ -75,6 +75,8 @@ export function createCountdownManager() {
   return {
     register(c) { if (c) pending.add(c); return c; },
     remove(c) { pending.delete(c); },
+    /** PROD 2026-10-14 — the pending countdowns (so one can be cancelled by id from the renderer). */
+    list() { return [...pending]; },
     abortAll() {
       let n = 0;
       for (const c of [...pending]) {

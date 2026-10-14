@@ -146,11 +146,12 @@ You're in. Here's your license key for ARIA ${label}:
 
     ${record.key}
 
-Two steps:
-1. Download ARIA Sentinel from ${DOWNLOADS_URL}
-2. Open it, paste the key when prompted
+Three steps:
+1. Install ARIA Sentinel for Windows — the installer link is on ${DOWNLOADS_URL} (pilot builds are emailed with this key while the signed installer is being set up; Windows SmartScreen will warn on an unsigned build — "More info → Run anyway").
+2. Open it, choose "Start with safe defaults", and paste the key when prompted.
+3. Turn on "Live fixes" in Settings → Autonomy when you want ARIA to apply fixes (Windows may ask for admin permission).
 
-Your tier unlocks ARIA web today. ARIA Sentinel desktop ships on Windows within a month — we'll email when the .exe is live.
+Your tier also unlocks ARIA web today.
 
 Questions: ${ADMIN_EMAIL} or (647) 581-3182.
 

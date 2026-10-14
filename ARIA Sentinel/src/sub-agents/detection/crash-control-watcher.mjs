@@ -40,6 +40,7 @@ export function createCrashControlWatcher({ emit, isBlocked }) {
   return {
     name: "crash-control",
     cadenceMs: 5 * 60 * 1000,
+    spawnsPerTick: 1,
     runAtStartup: true,
     async tick() {
       if (isBlocked()) return;

@@ -1,16 +1,41 @@
-// network-watcher — fires NET.ADAPTER.DOWN / NET.DNS.FAIL.
-// Sources: Get-NetAdapter (operational status) + Resolve-DnsName probe · cadence 30s.
-// Content-blind: adapter names, MACs and IPs are read locally and DROPPED. Only the
-// boolean "any adapter up" and "dns resolves" are evaluated.
+// network-watcher — fires NET.ADAPTER.DOWN / NET.DNS.FAIL / NET.DOWN.
+// Sources: Get-NetAdapter (operational status) + a DNS probe + a reachability probe · cadence 120s.
+// Content-blind: adapter names, MACs, IPs, the gateway and the DNS server address are read locally and DROPPED.
+// Only the booleans "any adapter up", "dns resolves" and "gateway reachable" are evaluated.
+//
+// PROD 2026-10-14 (audit M8) — QUIET AND LOCAL. This watcher used to spawn PowerShell TWICE every 30 s (4/min)
+// and probe third-party hosts (Resolve-DnsName microsoft.com + Test-NetConnection 1.1.1.1:53) — outbound traffic
+// no verifier saw and corporate firewalls flag. Now ONE spawn every 120 s probes the machine's OWN network edge:
+//   · reachability = ICMP to the default gateway (or TCP/53 to the configured DNS server when there is no route);
+//   · DNS = resolve the name Windows' own connectivity sensor (NCSI) already resolves, through the configured
+//     resolver — no new traffic signature;
+// Both targets are configurable (watcherOptions.network.{probeHost,dnsProbeName}) for sites that prefer a
+// public anchor; the values are validated to a host/IP shape before they are ever placed in the command.
 import { runPowerShellJson, toArray } from "./ps.mjs";
 
-// One probe: are any adapters Up, and does a known-good public name resolve?
-// Resolve-DnsName against a stable anchor is a connectivity probe, not navigation —
-// no URL is constructed and no page is fetched.
-const QUERY =
-  "$a=Get-NetAdapter -ErrorAction SilentlyContinue | Select-Object Status; " +
-  "$dns=$null; try { $dns=Resolve-DnsName -Name 'microsoft.com' -Type A -QuickTimeout -ErrorAction Stop } catch {}; " +
-  "[pscustomobject]@{adapters=@($a|ForEach-Object{$_.Status});dnsOk=[bool]$dns} | ConvertTo-Json -Compress";
+export const NETWORK_CADENCE_MS = 120 * 1000;
+export const DEFAULT_DNS_PROBE_NAME = "dns.msftncsi.com"; // the NCSI name Windows itself resolves
+
+const HOST_RE = /^[A-Za-z0-9.-]{1,253}$/;
+const IP_RE = /^[0-9A-Fa-f.:]{3,45}$/;
+
+/** Build the single content-blind PowerShell probe. Pure; options are validated, never interpolated raw. */
+export function buildNetworkQuery(options = {}) {
+  const dnsName = HOST_RE.test(String(options.dnsProbeName || "")) ? String(options.dnsProbeName) : DEFAULT_DNS_PROBE_NAME;
+  const probeHost = IP_RE.test(String(options.probeHost || "")) || HOST_RE.test(String(options.probeHost || "")) ? String(options.probeHost) : "";
+  const reach = probeHost
+    ? `$reach=[bool](Test-NetConnection -ComputerName '${probeHost}' -Port 53 -InformationLevel Quiet -WarningAction SilentlyContinue -ErrorAction SilentlyContinue); `
+    : "$reach=$false; if($gw){ $reach=[bool](Test-Connection -ComputerName $gw -Count 1 -Quiet -ErrorAction SilentlyContinue) } "
+      + "elseif($dnsSrv){ $reach=[bool](Test-NetConnection -ComputerName $dnsSrv -Port 53 -InformationLevel Quiet -WarningAction SilentlyContinue -ErrorAction SilentlyContinue) }; ";
+  return (
+    "$a=Get-NetAdapter -ErrorAction SilentlyContinue | Select-Object Status; " +
+    "$gw=(Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction SilentlyContinue | Sort-Object RouteMetric | Select-Object -First 1).NextHop; " +
+    "$dnsSrv=$null; try { $dnsSrv=(Get-DnsClientServerAddress -AddressFamily IPv4 -ErrorAction Stop | Where-Object {$_.ServerAddresses} | Select-Object -First 1).ServerAddresses[0] } catch {}; " +
+    `$dns=$null; try { $dns=Resolve-DnsName -Name '${dnsName}' -Type A -QuickTimeout -ErrorAction Stop } catch {}; ` +
+    reach +
+    "[pscustomobject]@{adapters=@($a|ForEach-Object{$_.Status});dnsOk=[bool]$dns;ok=[bool]$reach;hasGateway=[bool]$gw} | ConvertTo-Json -Compress"
+  );
+}
 
 let lastDown = false; // edge-trigger: only emit on transition into a failed state
 let lastDnsFail = false;
@@ -44,21 +69,23 @@ export function evaluateConnectivity(state, reachable) {
   return { signals, state: { fails, down } };
 }
 
-export function createNetworkWatcher({ emit, isBlocked }) {
+export function createNetworkWatcher({ emit, isBlocked, options = {} }) {
+  const query = buildNetworkQuery(options);
   return {
     name: "network",
-    cadenceMs: 30 * 1000,
+    cadenceMs: NETWORK_CADENCE_MS,
+    spawnsPerTick: 1, // adapter state + DNS + reachability in ONE probe
     async tick() {
       if (isBlocked()) return;
-      const raw = await runPowerShellJson(QUERY);
+      const raw = await runPowerShellJson(query);
       if (raw == null) return;
       const { signals, state } = evaluateNetwork(raw, { down: lastDown, dnsFail: lastDnsFail });
       lastDown = state.down;
       lastDnsFail = state.dnsFail;
       for (const s of signals) emit(s.signal, s.hint);
-      // Reachability probe (RUN 13): 2 consecutive failures → NET.DOWN (globe troubleshoot bubble).
-      const probe = await runPowerShellJson("[pscustomobject]@{ok=(Test-NetConnection -ComputerName 1.1.1.1 -Port 53 -InformationLevel Quiet)} | ConvertTo-Json -Compress");
-      const reachable = probe == null ? true : Boolean(toArray(probe)[0]?.ok ?? probe?.ok);
+      // Reachability (RUN 13): 2 consecutive failures → NET.DOWN (globe troubleshoot bubble).
+      const row = toArray(raw)[0] || raw || {};
+      const reachable = Boolean(row?.ok);
       const conn = evaluateConnectivity(lastConn, reachable);
       lastConn = conn.state;
       for (const s of conn.signals) emit(s.signal, s.hint);

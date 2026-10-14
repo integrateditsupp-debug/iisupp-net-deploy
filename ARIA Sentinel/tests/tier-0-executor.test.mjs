@@ -77,4 +77,17 @@ for (const id of TIER0_EXECUTOR_IDS) {
 assert.equal(validateTier0Command("bcdedit /set x"), false);
 assert.equal(validateTier0Command("Restart-Service Spooler; diskpart"), false);
 
-console.log("Tier-0-executor test passed (5 bindings · success/neutral/fail · dry-run no-spawn · alias · unbound · logger · allowlist).");
+// 10 — PROD 2026-10-14 (audit M5): a DENIED restart (exit 0 because the trailing Get-Service statement succeeded,
+// "Cannot open Spooler service" on stderr, state still Running) is a FAIL that names administrator rights — it
+// used to be reported as "No change needed (already healthy)".
+r = await executeTier0("restart-print-spooler", { run: async () => ({ exitCode: 0, stderr: "Restart-Service : Cannot open Spooler service on computer '.'.", stdout: "Running" }) });
+assert.equal(r.outcome, "fail");
+assert.equal(r.reason, "needs-admin");
+assert.match(r.message, /administrator/i, "the message mentions administrator");
+assert.doesNotMatch(r.message, /already healthy/i);
+// The exec'd command carries the exit guard right after the remediation statement.
+const guardedCalls = [];
+await executeTier0("restart-print-spooler", { run: svcRun({ start: "Stopped", calls: guardedCalls }) });
+assert.ok(guardedCalls.some((c) => /^Restart-Service Spooler -Force; if\(-not \$\?\)\{exit 1\}; \(Get-Service Spooler\)\.Status$/.test(c)), "remediation is exit-guarded");
+
+console.log("Tier-0-executor test passed (5 bindings · success/neutral/fail · dry-run no-spawn · alias · unbound · logger · allowlist · denied-restart = needs-admin · exit guard).");

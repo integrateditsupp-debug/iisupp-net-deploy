@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280">
 <title>Downloads · ARIA Sentinel — Integrated IT Support</title>
-<meta name="description" content="ARIA Sentinel — autonomous desktop IT support agent. Windows release within a month, then all platforms. Content-blind by design.">
+<meta name="description" content="ARIA Sentinel — resident desktop IT support agent for Windows. Subscribe, get your license key and the installer by email, install, paste the key. Content-blind by design.">
 <link rel="icon" type="image/png" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,6 +66,17 @@
   .platform b{display:block;color:#fff;font-size:14px;margin-bottom:4px;font-weight:600}
   .platform .when{color:rgba(255,255,255,.55);font-size:11px;letter-spacing:.05em}
   .platform.live .when{color:#f1dca7}
+  .checkout-state{display:none;max-width:860px;margin:0 auto 10px;padding:22px 26px;border-radius:14px;border:1px solid rgba(197,160,89,.45);background:rgba(197,160,89,.07);text-align:left}
+  .checkout-state.show{display:block}
+  .checkout-state h2{font-family:Cinzel,serif;font-size:22px;color:#f1dca7;margin:0 0 8px}
+  .checkout-state p{color:rgba(255,255,255,.78);font-size:14px;line-height:1.6;margin:0 0 6px}
+  .checkout-state ol{margin:12px 0 4px 20px;color:rgba(255,255,255,.85);font-size:14px;line-height:1.7}
+  .checkout-state li b{color:#f1dca7}
+  .checkout-state .ref{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:rgba(255,255,255,.45);margin-top:10px}
+  .checkout-state.neutral{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.03)}
+  .checkout-state.neutral h2{color:#fff}
+  .honest{max-width:860px;margin:18px auto 0;padding:14px 18px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.02);font-size:12.5px;color:rgba(255,255,255,.65);line-height:1.6;text-align:left}
+  .honest b{color:#f1dca7;font-weight:600}
   footer{padding:56px 28px 36px;text-align:center;color:rgba(255,255,255,.4);font-size:11.5px;border-top:1px solid rgba(255,255,255,.05);margin-top:64px}
   footer a{color:#c5a059;text-decoration:underline;text-underline-offset:3px}
 </style>
@@ -91,8 +102,27 @@
 <main>
 <section class="hero">
   <p class="hero-tag">DOWNLOADS</p>
-  <h1>ARIA Sentinel &mdash; <span class="gold">coming soon</span></h1>
-  <p>The desktop companion to ARIA. Keeps your machine running smoothly so you stop losing hours to IT. <strong style="color:#f1dca7">Available on all platforms beginning with Windows within a month.</strong> Talk to our team for a tailored walkthrough.</p>
+  <h1>ARIA Sentinel &mdash; <span class="gold">Windows pilot build</span></h1>
+  <p>The desktop companion to ARIA. Keeps your machine running smoothly so you stop losing hours to IT. <strong style="color:#f1dca7">Subscribe below, and your license key and the Windows installer arrive by email.</strong> Install, paste the key, done. macOS follows Windows.</p>
+
+  <!-- Post-checkout states. stripe-checkout returns Sentinel tiers to /downloads/?checkout=success&session_id=…
+       (sentinel-stripe-webhook mints + emails the key) and sends a cancelled checkout to /plans/?checkout=canceled.
+       Both are handled here too; nothing below calls a function that could create a token or send mail. -->
+  <div class="checkout-state" id="checkout-success" role="status" aria-live="polite">
+    <h2>Thank you &mdash; your license key is on its way</h2>
+    <p id="checkout-success-lead">We are emailing your ARIA Sentinel license key to the address you entered at checkout. It usually lands within a few minutes; check your spam folder if it does not.</p>
+    <ol>
+      <li><b>Check your email</b> for the message from Integrated IT Support with your license key and the Windows installer link.</li>
+      <li><b>Download and run the installer</b> on the Windows PC you want protected (per-user install, no admin rights needed). This pilot build is unsigned, so Windows SmartScreen will show &ldquo;Windows protected your PC&rdquo; &mdash; choose <em>More info &rarr; Run anyway</em>.</li>
+      <li><b>Open ARIA Sentinel and paste the key</b> in Settings &rarr; License. Your tier unlocks immediately; no reinstall.</li>
+    </ol>
+    <p>No email after 15 minutes? Reply to your Stripe receipt or write to <a href="mailto:ahmad.wasee@iisupp.net?subject=ARIA%20Sentinel%20license%20key" style="color:#c5a059">ahmad.wasee@iisupp.net</a> with the reference below and we will resend it.</p>
+    <div class="ref" id="checkout-ref"></div>
+  </div>
+  <div class="checkout-state neutral" id="checkout-cancel" role="status" aria-live="polite">
+    <h2>Checkout cancelled &mdash; nothing was charged</h2>
+    <p>No subscription was created. Pick a tier below whenever you are ready, or <a href="/plans/" style="color:#c5a059">compare every tier on the plans page</a>.</p>
+  </div>
 </section>
 
 <section class="cards">
@@ -102,7 +132,7 @@
     <div class="seats">1 user &middot; 1 device</div>
     <p class="blurb">Hands-on IT support for one machine. Fewer interruptions, faster recovery.</p>
     <button class="pf-cta" data-tier="sentinel_personal_m" data-name="Personal">SUBSCRIBE</button>
-    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Desktop unlocks at launch</div>
+    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Key + installer emailed after checkout</div>
   </article>
   <article class="card">
     <h3>Pro</h3>
@@ -110,53 +140,55 @@
     <div class="seats">Small team</div>
     <p class="blurb">For small teams that want their IT to mostly run itself.</p>
     <button class="pf-cta" data-tier="sentinel_pro_m" data-name="Pro">SUBSCRIBE</button>
-    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Desktop unlocks at launch</div>
+    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Key + installer emailed after checkout</div>
   </article>
   <article class="card">
     <h3>Small Business</h3>
     <div class="price">$19,500<small>/mo</small></div>
-    <div class="seats">SMB fleet</div>
+    <div class="seats">SMB fleet &middot; $234,000/yr billed annually</div>
     <p class="blurb">Replaces a Tier-1 helpdesk. Includes compliance reporting.</p>
     <button class="pf-cta" data-tier="sentinel_business_y" data-name="Small Business">SUBSCRIBE</button>
-    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Desktop unlocks at launch</div>
+    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Key + installer emailed after checkout</div>
   </article>
   <article class="card">
     <h3>Mid Size</h3>
     <div class="price">$39,000<small>/mo</small></div>
-    <div class="seats">Mid-size org</div>
+    <div class="seats">Mid-size org &middot; $468,000/yr billed annually</div>
     <p class="blurb">Built for organizations growing past their first IT hire.</p>
     <button class="pf-cta" data-tier="sentinel_midsize_y" data-name="Mid Size">SUBSCRIBE</button>
-    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Desktop unlocks at launch</div>
+    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Key + installer emailed after checkout</div>
   </article>
   <article class="card">
     <h3>Enterprise</h3>
     <div class="price">$78,125<small>/mo</small></div>
-    <div class="seats">Enterprise fleet</div>
+    <div class="seats">Enterprise fleet &middot; $937,500/yr billed annually</div>
     <p class="blurb">For organizations that need IT to be invisible at scale.</p>
     <button class="pf-cta" data-tier="sentinel_enterprise_y" data-name="Enterprise">SUBSCRIBE</button>
-    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Desktop unlocks at launch</div>
+    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Key + installer emailed after checkout</div>
   </article>
 </section>
+
+<p class="honest"><b>How delivery works right now.</b> The Windows installer is a <b>pilot build</b>: it is sent by email with your license key after purchase rather than downloaded from this page, and it is <b>not yet code-signed</b>, so Windows SmartScreen warns on first run. A signed public download replaces this the moment signing is complete &mdash; leave your email below to hear when. Business tiers bundle a minimal number of on-site visits per year; any further human support is a separate, quote-based contract. No tier includes 24/7 human support or SMS alerts in this version.</p>
 
 <section class="features">
   <p class="features-tag">WHAT THIS UNLOCKS FOR YOU</p>
   <div class="features-grid">
-    <div><b>Less downtime</b>Issues resolved before they slow you down.</div>
+    <div><b>Less downtime</b>Issues found the moment they happen and explained in plain words; vetted fixes applied with your consent.</div>
     <div><b>Quiet by design</b>Stays out of your way. Works while you work.</div>
     <div><b>Privacy first</b>Never reads your documents, screen, or files.</div>
     <div><b>Compliance ready</b>Reports your auditors can use (higher tiers).</div>
     <div><b>Scales with you</b>From one machine to a global team.</div>
-    <div><b>White-glove on call</b>Founder-level support when you need it.</div>
+    <div><b>White-glove, within reach</b>Founder-level support by email and phone during business hours; bundled on-site visits on business tiers.</div>
   </div>
 </section>
 
 <section class="platforms">
   <p class="platforms-tag">PLATFORM ROADMAP</p>
   <div class="platforms-grid">
-    <div class="platform live"><b>Windows</b><span class="when">Within a month</span></div>
+    <div class="platform live"><b>Windows</b><span class="when">Pilot build now &middot; emailed after purchase</span></div>
     <div class="platform"><b>macOS</b><span class="when">Following Windows</span></div>
-    <div class="platform"><b>Linux</b><span class="when">Following macOS</span></div>
-    <div class="platform"><b>Mobile</b><span class="when">Companion app</span></div>
+    <div class="platform"><b>Linux</b><span class="when">Roadmap &middot; not scheduled</span></div>
+    <div class="platform"><b>Mobile</b><span class="when">Roadmap &middot; not scheduled</span></div>
   </div>
 </section>
 
@@ -168,7 +200,7 @@
     <input type="hidden" name="source" value="/downloads">
     <button type="submit" id="notify-btn">NOTIFY ME</button>
   </form>
-  <p class="notify-note">We'll only email you when the Windows release goes live. No spam, ever.</p>
+  <p class="notify-note">We'll email you once when the signed public Windows download goes live. No spam, ever.</p>
   <div class="status-msg" id="notify-status"></div>
 </section>
 
@@ -179,6 +211,36 @@
 
 <script>
 (function(){
+  // ---- post-checkout state (?checkout=success&session_id=… | ?checkout=cancel|canceled) ----
+  try {
+    var q = new URLSearchParams(window.location.search);
+    var state = (q.get('checkout') || '').toLowerCase();
+    var sid = q.get('session_id') || '';
+    if (state === 'success') {
+      var box = document.getElementById('checkout-success');
+      box.classList.add('show');
+      var ref = document.getElementById('checkout-ref');
+      // Only a short, non-secret suffix is shown — enough for support to find the session, never the whole id.
+      if (sid && ref) ref.textContent = 'Reference: checkout session \u2026' + sid.slice(-8);
+      box.scrollIntoView({ block: 'start' });
+      // Optional: a read-only status endpoint may tell us the (masked) email the key went to. It does not exist yet
+      // (requested from the server lane); a 404 simply leaves the generic copy in place.
+      if (sid) {
+        fetch('/.netlify/functions/sentinel-checkout-status?session_id=' + encodeURIComponent(sid), { credentials: 'omit' })
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(d){
+            if (d && d.email_masked) {
+              document.getElementById('checkout-success-lead').textContent =
+                'We are emailing your ARIA Sentinel license key to ' + d.email_masked + '. It usually lands within a few minutes; check your spam folder if it does not.';
+            }
+          })
+          .catch(function(){ /* generic copy stays */ });
+      }
+    } else if (state === 'cancel' || state === 'canceled' || state === 'cancelled') {
+      document.getElementById('checkout-cancel').classList.add('show');
+    }
+  } catch (e) { /* the page works without the state banner */ }
+
   var form = document.getElementById('notify-form');
   var status = document.getElementById('notify-status');
   var btn = document.getElementById('notify-btn');
@@ -192,7 +254,7 @@
     fd.forEach(function(v,k){ body.append(k, String(v)); });
     fetch('/', { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: body.toString() })
       .then(function(r){
-        if(r.ok){ showStatus("You're on the list. We'll email when Sentinel goes live on Windows.", 'ok'); form.reset(); }
+        if(r.ok){ showStatus("You're on the list. We'll email you when the signed public Windows download is live.", 'ok'); form.reset(); }
         else{ showStatus('Submission failed — please email ahmad.wasee@iisupp.net directly.', 'err'); }
       })
       .catch(function(){ showStatus('Network error — please email ahmad.wasee@iisupp.net directly.', 'err'); })

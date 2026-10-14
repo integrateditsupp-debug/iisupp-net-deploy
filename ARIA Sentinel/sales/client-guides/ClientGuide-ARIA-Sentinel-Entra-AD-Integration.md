@@ -9,7 +9,7 @@
 
 ## Who needs this
 - A Microsoft 365 / Entra ID **tenant administrator** (or Global Admin) to register the app and grant consent.
-- ARIA Sentinel **Integrated edition** installed.
+- ARIA Sentinel installed on a **business tier** (Small Business, Mid Size or Enterprise) with a directory-integration engagement scoped. Read-only lookups ship in the product today; write actions are delivered per engagement.
 
 ## What you'll end up with
 - An **app registration** named *ARIA Sentinel* with least-privilege **read-only** Graph permissions.

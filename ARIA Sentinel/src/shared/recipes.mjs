@@ -1,6 +1,17 @@
-// Keep in sync with package.json "version" (the version-bump process bumps both). 2026-07-02: was stale at
-// "0.1.0" while package.json shipped 0.1.16 — the UI showed the wrong version and OTA compared the wrong current.
-export const SENTINEL_VERSION = "0.1.16";
+// PROD 2026-10-14 (audit M4) — the version is DERIVED from package.json (the one place the bump process edits), with
+// the literal below only as a fallback when the manifest cannot be read. 2026-07-02 this constant went stale at
+// "0.1.0" while package.json shipped 0.1.16, and again at "0.1.16" while 0.2.0 shipped — the About tab, /health,
+// the heartbeat, the user-agent, the update check and the evidence pack all reported the wrong build.
+// tests/version-sync.test.mjs asserts the export equals package.json.version.
+import { createRequire } from "node:module";
+const SENTINEL_VERSION_FALLBACK = "0.2.1";
+function readPackageVersion() {
+  try {
+    const v = createRequire(import.meta.url)("../../package.json").version;
+    return typeof v === "string" && /^\d+\.\d+/.test(v) ? v : SENTINEL_VERSION_FALLBACK;
+  } catch { return SENTINEL_VERSION_FALLBACK; }
+}
+export const SENTINEL_VERSION = readPackageVersion();
 export const BRIDGE_PORT = 37841;
 export const CONTROL_PLANE_MVP_RECIPE_COUNT = 25;
 export const CONTROL_PLANE_MVP_STOP_CODE_COUNT = 25;
@@ -8,6 +19,13 @@ export const RECIPE_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-recip
 export const STOP_CODES_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-stop-codes";
 export const KB_BUNDLE_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-kb-bundle";
 export const RECIPE_FEEDBACK_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-recipe-feedback";
+
+/** PROD 2026-10-14 (audit M9) — is a declared outbound path actually served today? (Unknown ids → false.) */
+export function isEndpointDeployed(id) {
+  const p = ALLOWED_OUTBOUND_PATHS.find((x) => x.id === String(id || ""));
+  return Boolean(p) && p.deployed !== false;
+}
+export const ENDPOINT_NOT_AVAILABLE_NOTE = "not available in this version";
 
 export const ALLOWED_OUTBOUND_PATHS = [
   {
@@ -32,7 +50,11 @@ export const ALLOWED_OUTBOUND_PATHS = [
     host: "iisupp.net",
     path: "/.netlify/functions/aria-kb-bundle",
     direction: "inbound-data",
-    purpose: "Pull content-blind KB metadata bundle."
+    purpose: "Pull content-blind KB metadata bundle.",
+    // PROD 2026-10-14 (audit M9) — declared, allow-listed, NOT deployed server-side. The desktop skips it honestly
+    // ("not available in this version") instead of logging a failed knowledge check at every launch.
+    deployed: false,
+    status: "not-deployed"
   },
   {
     id: "recipe-feedback",
@@ -40,7 +62,9 @@ export const ALLOWED_OUTBOUND_PATHS = [
     host: "iisupp.net",
     path: "/.netlify/functions/aria-recipe-feedback",
     direction: "opt-in-outcome-only",
-    purpose: "Send { recipe_id, outcome, ts } only after opt-in. ts MUST be an ISO-8601 string, not epoch-ms — a 13-digit epoch number trips the content-blind payment-card-length check in assertContentSafePayload."
+    purpose: "Send { recipe_id, outcome, ts } only after opt-in. ts MUST be an ISO-8601 string, not epoch-ms — a 13-digit epoch number trips the content-blind payment-card-length check in assertContentSafePayload.",
+    deployed: false,
+    status: "not-deployed"
   },
   {
     id: "servicenow",
@@ -310,6 +334,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "yellow",
         requiresConfirm: true,
+        needsAdmin: true,
         command: "Checkpoint-Computer -Description 'ARIA pre-fix' -RestorePointType 'MODIFY_SETTINGS'",
         dryRunResult: "Restore point request queued. Dry-run did not modify the machine."
       },
@@ -361,13 +386,16 @@ export const RECIPES = [
         dryRunResult: "Would re-register the client's DNS records."
       },
       {
-        id: "restart-dnscache",
-        label: "Restart DNS Client service",
+        // PROD 2026-10-14 (audit M3) — `Restart-Service Dnscache` is gone: the DNS Client service cannot be stopped or
+        // restarted by anyone on Windows 10 1809+ (it always failed, so the recipe always ended in ERROR). The
+        // user-space cache clear does the same job without administrator rights.
+        id: "clear-dns-client-cache",
+        label: "Clear DNS client cache",
         shell: "powershell",
         risk: "green",
         requiresConfirm: false,
-        command: "Restart-Service Dnscache -Force",
-        dryRunResult: "Would restart the DNS Client (Dnscache) service; it rebuilds on next lookup."
+        command: "Clear-DnsClientCache",
+        dryRunResult: "Would clear the DNS Client resolver cache (user-space, no service restart needed)."
       }
     ],
     success: "DNS cache cleared. Reload the page.",
@@ -404,6 +432,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "orange",
         requiresConfirm: true,
+        needsAdmin: true,
         command: "ipconfig /release; ipconfig /renew",
         dryRunResult: "Would briefly disconnect and renew the network address."
       },
@@ -413,6 +442,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "green",
         requiresConfirm: false,
+        needsAdmin: true,
         command: "Restart-Service WlanSvc -Force",
         dryRunResult: "Would restart the WLAN AutoConfig service so Windows reconnects to saved networks."
       }
@@ -442,6 +472,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "green",
         requiresConfirm: false,
+        needsAdmin: true,
         command: "Restart-Service Spooler -Force",
         dryRunResult: "Would restart the Print Spooler service so the stuck queue is re-read."
       }
@@ -729,6 +760,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "orange",
         requiresConfirm: true,
+        needsAdmin: true,
         command: "Restart-Service wuauserv,bits,cryptsvc -Force",
         dryRunResult: "Would restart Windows Update, BITS and Cryptographic Services."
       }
@@ -804,13 +836,14 @@ export const RECIPES = [
     risk: "yellow",
     mode: "confirmed",
     confidenceKeywords: ["internet seems down", "no internet connection", "network down troubleshoot", "cannot reach the internet"],
-    summary: "Renew the network address, flush DNS and restart the DNS/DHCP client services, then re-test connectivity.",
+    summary: "Renew the network address, flush DNS and restart the DHCP client service, then re-test connectivity.",
     detector: "Two consecutive reachability probes to a public resolver failed.",
     diagnostic: { shell: "powershell", command: "Test-NetConnection -ComputerName 1.1.1.1 -Port 53 -InformationLevel Quiet" },
     actions: [
-      { id: "renew-ip", label: "Renew network address", shell: "powershell", risk: "yellow", requiresConfirm: true, command: "ipconfig /release; ipconfig /renew", dryRunResult: "Would release and renew the network address." },
+      { id: "renew-ip", label: "Renew network address", shell: "powershell", risk: "yellow", requiresConfirm: true, needsAdmin: true, command: "ipconfig /release; ipconfig /renew", dryRunResult: "Would release and renew the network address (asks for administrator approval)." },
       { id: "flush-dns", label: "Flush DNS", shell: "powershell", risk: "green", requiresConfirm: true, command: "ipconfig /flushdns", dryRunResult: "Would flush the DNS resolver cache." },
-      { id: "restart-net-services", label: "Restart DNS + DHCP clients", shell: "powershell", risk: "yellow", requiresConfirm: true, command: "Restart-Service Dnscache,Dhcp -Force", dryRunResult: "Would restart the DNS Client and DHCP Client services." }
+      // PROD 2026-10-14 (audit M3) — DNS Client (Dnscache) cannot be restarted on Windows 10/11; only the DHCP client is.
+      { id: "restart-net-services", label: "Restart DHCP client", shell: "powershell", risk: "yellow", requiresConfirm: true, needsAdmin: true, command: "Restart-Service Dhcp -Force", dryRunResult: "Would restart the DHCP Client service (asks for administrator approval)." }
     ],
     success: "Network stack refreshed. Re-testing connectivity.",
     escalation: "Network Team if the internet stays down after the refresh."
@@ -837,6 +870,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "yellow",
         requiresConfirm: true,
+        needsAdmin: true,
         command: "Restart-Service bthserv -Force",
         dryRunResult: "Would restart the Bluetooth Support Service so adapters re-initialise."
       }
@@ -871,6 +905,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "green",
         requiresConfirm: false,
+        needsAdmin: true,
         command: "Restart-Service RasMan -Force",
         dryRunResult: "Would restart Remote Access Connection Manager so the VPN tunnel can re-establish."
       }
@@ -921,6 +956,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "green",
         requiresConfirm: false,
+        needsAdmin: true,
         command: "Restart-Service Audiosrv,AudioEndpointBuilder -Force",
         dryRunResult: "Would restart Windows Audio and Audio Endpoint Builder."
       }
@@ -971,6 +1007,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "yellow",
         requiresConfirm: true,
+        needsAdmin: true,
         command: "Update-MpSignature",
         dryRunResult: "Would trigger Microsoft Defender signature update."
       }
@@ -1313,6 +1350,28 @@ function guideRecipe(id, family, signal, title, chip, risk, keywords) {
 
 // Helper for the 8 RUN 7 service-restart recipes — identical reversible shape, one per service.
 function svcRecipe(id, codeSuffix, serviceName, displayName, keywords) {
+  // PROD 2026-10-14 (audit M3) — DNS Client (Dnscache) cannot be stopped/restarted by anyone on Windows 10 1809+, so
+  // its recipe refreshes the resolver in user space instead (same id, same signal, honest actions). Every other
+  // service restart needs administrator rights and says so (needsAdmin → a UAC prompt the person answers).
+  const unstoppable = /^dnscache$/i.test(serviceName);
+  const actions = unstoppable
+    ? [
+      { id: "flush-dns", label: "Flush DNS resolver cache", shell: "powershell", risk: "green", requiresConfirm: false, command: "ipconfig /flushdns", dryRunResult: "Would flush the DNS resolver cache." },
+      { id: "register-dns", label: "Re-register DNS", shell: "powershell", risk: "green", requiresConfirm: false, command: "ipconfig /registerdns", dryRunResult: "Would re-register the client's DNS records." },
+      { id: "clear-dns-client-cache", label: "Clear DNS client cache", shell: "powershell", risk: "green", requiresConfirm: false, command: "Clear-DnsClientCache", dryRunResult: "Would clear the DNS Client resolver cache (the service itself is protected by Windows and cannot be restarted)." }
+    ]
+    : [
+      {
+        id: "restart-service",
+        label: `Restart ${displayName} service`,
+        shell: "powershell",
+        risk: "green",
+        requiresConfirm: false,
+        needsAdmin: true,
+        command: `Restart-Service ${serviceName} -Force`,
+        dryRunResult: `Would restart the ${displayName} service (asks for administrator approval).`
+      }
+    ];
   return {
     id,
     family: "SYSTEM",
@@ -1322,21 +1381,13 @@ function svcRecipe(id, codeSuffix, serviceName, displayName, keywords) {
     risk: "green",
     mode: "confirmed",
     confidenceKeywords: keywords,
-    summary: `Restart the stopped ${displayName} service.`,
+    summary: unstoppable
+      ? `Refresh the DNS resolver (the ${displayName} service is protected by Windows and cannot be restarted from a session; a reboot restarts it).`
+      : `Restart the stopped ${displayName} service.`,
     detector: `${serviceName} service in a Stopped state.`,
     diagnostic: { shell: "powershell", command: `Get-Service -Name ${serviceName} | Select-Object Name,Status` },
-    actions: [
-      {
-        id: "restart-service",
-        label: `Restart ${displayName} service`,
-        shell: "powershell",
-        risk: "green",
-        requiresConfirm: false,
-        command: `Restart-Service ${serviceName} -Force`,
-        dryRunResult: `Would restart the ${displayName} service.`
-      }
-    ],
-    success: `${displayName} service restarted.`,
+    actions,
+    success: unstoppable ? "DNS resolver refreshed. If names still fail, restart the computer." : `${displayName} service restarted.`,
     escalation: "Desktop Support if the service will not stay running."
   };
 }

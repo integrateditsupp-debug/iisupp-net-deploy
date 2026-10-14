@@ -14,6 +14,14 @@
  * The guard is the desktop's mustBeTelemetrySafe, imported from the Sentinel tree so both ends share one
  * definition; if it cannot load the endpoint fails CLOSED (503), it never falls back to "probably fine".
  *
+ * SENTINEL-BACKEND 2026-10-14 (audit B5): when the device credential maps to a per-customer license record
+ * (lib/sentinel-license-records.cjs key index), every email recipient must be one the RECORD vouches for —
+ * the Stripe customer email, an admin-set contact, the email the device registered at check-in, or a
+ * colleague on the same private company domain. Anything else → 403 recipients-not-registered and nothing
+ * is sent. A v1 shared plan key with no customer record keeps the previous caller-named behaviour (Rule 15),
+ * still behind the content guard. The rate bucket is per tenant AND per device (`device` field), so one
+ * device cannot exhaust a whole plan's quota.
+ *
  * Rule 14: email/SMS counts come from lib/notify.mjs, which reports ok only on a provider-confirmed id.
  * Twilio unset → sms.dormant:true and sent:0 — the desktop shows "not sent", never "sent".
  * For approval-requested the ask is stored in the 'sentinel-approvals' Blobs store and the email carries
@@ -24,6 +32,7 @@
 
 const { checkRateLimit, rateLimitResponse, hashKey } = require('./_rate-limit.js');
 const A = require('./lib/sentinel-approvals.cjs');
+const R = require('./lib/sentinel-license-records.cjs');
 
 const MAX_BODY = 24 * 1024;
 const MAX_RECIPIENTS = 8;
@@ -86,14 +95,16 @@ exports.handler = async (event) => {
   const auth = await A.authenticate(event);
   if (!auth.ok) return A.json(auth.status || 401, { ok: false, error: auth.error });
 
-  // Rate limit per device (tenant + device hash) — per IP for internal callers.
-  const rlKey = hashKey(`sentinel-notify:${auth.kind === 'device' ? auth.tenant : A.clientIp(event)}`);
-  const rl = checkRateLimit(event, { scope: 'sentinel-notify', key: rlKey, limit: 30, windowMs: 10 * 60 * 1000 });
-  if (!rl.ok) return rateLimitResponse(rl, { 'cache-control': 'no-store' });
-
   let body = {};
   try { body = JSON.parse(event.body || '{}'); } catch { return A.json(400, { ok: false, error: 'bad-json' }); }
   if (!body || typeof body !== 'object' || Array.isArray(body)) return A.json(400, { ok: false, error: 'bad-json' });
+
+  // Rate limit per tenant AND per device (the body's `device` hash / x-sentinel-device) — per IP for internal callers.
+  const deviceForRate = A.TOKEN_RE.test(String(body.device || '')) ? String(body.device) : (A.headerOf(event, 'x-sentinel-device') || 'no-device');
+  const rlKey = hashKey(`sentinel-notify:${auth.kind === 'device' ? `${auth.tenant}:${deviceForRate}` : A.clientIp(event)}`);
+  const rl = checkRateLimit(event, { scope: 'sentinel-notify', key: rlKey, limit: 30, windowMs: 10 * 60 * 1000 });
+  if (!rl.ok) return rateLimitResponse(rl, { 'cache-control': 'no-store' });
+
   if (body.v !== 'sentinel-notify-v1') return A.json(400, { ok: false, error: 'unsupported-version' });
   const ev = String(body.event || '');
   if (!A.NOTIFY_EVENTS.includes(ev)) return A.json(400, { ok: false, error: 'unknown-event' });
@@ -110,6 +121,22 @@ exports.handler = async (event) => {
   const rcp = normalizeRecipients(body.recipients || []);
   if (!rcp.ok) return A.json(400, { ok: false, error: rcp.reason });
 
+  // Recipient binding (B5): a per-customer license record decides who may be emailed. Only recipients whose
+  // email would actually be used (channels.email) are checked; the SMS channel is dormant (no Twilio) and
+  // phones stay as the device named them. No record (legacy shared plan key) → previous behaviour.
+  let recipientBinding = 'none';
+  if (auth.kind === 'device' && auth.record) {
+    recipientBinding = 'license-record';
+    const rejected = [];
+    rcp.recipients.forEach((r, i) => {
+      if (!channels.email || !r.email) return;
+      if (!R.isAllowedRecipient(r.email, { keyRecord: auth.record, deviceRecord: auth.device }).ok) rejected.push(i);
+    });
+    if (rejected.length) {
+      return A.json(403, { ok: false, error: 'recipients-not-registered', rejected, hint: 'Email recipients must be the licensed customer email, an admin-registered contact, or a colleague on the same company domain. Ask Integrated IT Support to add the contact to the license.' });
+    }
+  }
+
   // Content-blind guard — the Sentinel's own definition, fail-closed.
   const guard = await A.contentGuard();
   if (!guard || typeof guard.mustBeTelemetrySafe !== 'function') return A.json(503, { ok: false, error: 'content-guard-unavailable' });
@@ -120,7 +147,7 @@ exports.handler = async (event) => {
   let approval = null;
   let approvalError = null;
   if (ev === 'approval-requested') {
-    const store = await A.openStore(A.APPROVALS_STORE);
+    const store = await A.openStore(A.APPROVALS_STORE, event);
     if (!store) {
       approvalError = 'approval-store-unavailable';
     } else {
@@ -164,6 +191,7 @@ exports.handler = async (event) => {
     ok: true,
     event: ev,
     auth: auth.kind,
+    recipientBinding,
     email: emailOut,
     sms: smsOut,
     approval,

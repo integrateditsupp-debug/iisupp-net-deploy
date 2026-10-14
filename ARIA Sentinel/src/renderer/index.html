@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1280">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'" />
+    <!-- PROD 2026-10-14 (audit R12) — worker-src blob: lets the bundled on-device Vosk engine spawn its WASM worker; nothing else widens. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self' blob:" />
     <title>ARIA Sentinel</title>
     <link rel="stylesheet" href="./sentinel.css" />
   </head>
@@ -71,9 +72,10 @@
           </div>
         </nav>
         <div class="rail-footer">
+          <!-- PROD 2026-10-14 (audit R15) — the renderer shrinks this to 56 px at boot so the whole rail fits a 1366×768 work area. -->
           <aria-globe class="aria-living-globe" size="120"></aria-globe>
           <strong>Resident agent</strong>
-          <small id="railVersion">v0.1.0</small>
+          <small id="railVersion">v—</small>
         </div>
       </aside>
 
@@ -86,12 +88,24 @@
           <div class="status-stack">
             <span id="railStatus" class="chip mode-pill">Manual mode - watching</span>
             <span id="trialBadge" class="chip amber" hidden>Trial</span>
+            <!-- PROD 2026-10-14 (audit R2) — the live-fix truth in the top bar: "Fixes: preview" until the person turns live fixes on. -->
+            <span id="fixStatusChip" class="chip" title="Whether ARIA may apply vetted fixes for real on this device, or only preview them">Fixes: checking…</span>
             <span id="bridgeStatus" class="chip cyan">Bridge checking</span>
             <!-- RUN 33 PIVOT — "Dry-run safe" pill removed; execution safety is governed by the chosen Mode. -->
             <!-- RUN 33-A — live KB freshness (version + last-synced), filled from state.kbMeta after a KB answer -->
             <span id="kbFreshness" class="chip" title="ARIA's knowledge base version and when it last synced from iisupp.net/aria" hidden></span>
           </div>
         </header>
+        <!-- PROD 2026-10-14 (audit R10) — the in-app countdown card: visible wherever you are in the app, with a real Cancel
+             that aborts THIS countdown (cancelCountdown(id)). Fed by onCountdownTick; hidden when nothing is pending. -->
+        <aside id="countdownCard" class="countdown-card" role="status" aria-live="polite" hidden>
+          <div class="countdown-ring" aria-hidden="true"><span id="countdownSeconds">10</span></div>
+          <div class="countdown-text">
+            <strong id="countdownTitle">Applying a fix</strong>
+            <small id="countdownSub">Applying in 10 s — cancel if you're not sure.</small>
+          </div>
+          <button id="countdownCancel" class="ghost" type="button">Cancel</button>
+        </aside>
 
         <!-- ============ ARIA (RUN 33 PIVOT: Chat + Learning + Health + Memory + Agents) ============ -->
         <section id="aria" class="tab-panel aria-tab">
@@ -108,7 +122,7 @@
               <div class="aria-chat-welcome" id="ariaChatWelcome"><strong>Ask ARIA anything.</strong><br/>Windows, Mac, iPhone, iPad, Android, ChromeOS or Linux — answered from the knowledge base first, instantly.</div>
             </div>
             <form class="aria-chat-composer" id="ariaChatForm">
-              <textarea id="ariaChatInput" placeholder="Ask ARIA anything…" rows="1"></textarea>
+              <textarea id="ariaChatInput" placeholder="Ask ARIA anything…" aria-label="Ask ARIA anything" rows="1"></textarea>
               <!-- RUN-CU / CU4 — on-device voice: the mic shows ONLY when the bundled local model exists (never a cloud recognizer). -->
               <button class="aria-chat-mic" id="ariaChatMic" type="button" title="Talk to ARIA (voice stays on your device)" hidden>🎤</button>
               <button class="aria-chat-send" id="ariaChatSend" type="submit">Send →</button>
@@ -117,9 +131,15 @@
               <label class="aria-chat-voicetoggle"><input type="checkbox" id="ariaVoiceConversation" /> <span>Voice conversation — keep listening after each answer (say "that's all" to stop)</span></label>
               <span class="aria-chat-voicestatus" id="ariaVoiceStatus"></span>
             </div>
-            <div class="aria-chat-statusline">Answer chain: <b>KB-first</b> ($0) · <b>Anthropic</b> fallback · <b>local KB</b> offline · <span id="ariaChatChunks">203 chunks</span></div>
+            <!-- PROD 2026-10-14 (audit R6 / R23) — plain words for the customer; the chunk count fills in only after a real KB answer. -->
+            <div class="aria-chat-statusline">Answers come from ARIA's knowledge base first; your conversations stay on this device. <span id="ariaChatChunks" title="How many knowledge-base passages ARIA can draw on">KB size: —</span></div>
           </section>
 
+          <!-- PROD 2026-10-14 (audit R23) — the answer-chain / learning / memory / agents dashboards stay (Rule 15) but sit
+               under one collapsed "Advanced" group; the plain one-line summary above is what a customer reads first. -->
+          <details class="accordion" id="aria-advanced">
+            <summary class="accordion-summary"><span class="accordion-title">Advanced — how ARIA answers</span><span class="accordion-sub">Learning · answer-chain health · local memory · background agents</span><span class="accordion-caret" aria-hidden="true">▸</span></summary>
+            <div class="accordion-body">
           <!-- ── Learning ── -->
           <div class="merge-head" id="aria-learning"><div class="merge-bar" aria-hidden="true"></div><div><p class="eyebrow">ARIA</p><h2>Learning</h2><p class="merge-sub">What ARIA is learning from the web /aria knowledge base</p></div></div>
           <section class="panel">
@@ -141,7 +161,7 @@
             <div class="fallthrough" id="fallthroughChain"></div>
           </section>
 
-          <!-- ── Memory (local sessions, R11-guarded) ── -->
+          <!-- ── Memory (local sessions, excluded-folder-guarded) ── -->
           <div class="merge-head" id="aria-memory"><div class="merge-bar" aria-hidden="true"></div><div><p class="eyebrow">ARIA</p><h2>Memory</h2><p class="merge-sub">Local conversation sessions — never leaves this device</p></div></div>
           <section class="panel">
             <div id="memoryStats" class="memory-stats"><p class="merge-sub">Reading local sessions…</p></div>
@@ -149,11 +169,13 @@
             <!-- Export / Clear actions ship with the Memory live-data wiring (next build slice). -->
           </section>
 
-          <!-- ── Agents (fleet heartbeats, read-only) ── -->
-          <div class="merge-head" id="aria-agents"><div class="merge-bar" aria-hidden="true"></div><div><p class="eyebrow">ARIA</p><h2>Agents</h2><p class="merge-sub">Background agent fleet — read-only heartbeats</p></div></div>
+          <!-- ── Agents (background heartbeats, read-only) ── -->
+          <div class="merge-head" id="aria-agents"><div class="merge-bar" aria-hidden="true"></div><div><p class="eyebrow">ARIA</p><h2>Agents</h2><p class="merge-sub">Background helpers — read-only heartbeats</p></div></div>
           <section class="panel">
-            <div id="agentFleet" class="agent-fleet"><p class="merge-sub">Reading agent heartbeats…</p></div>
+            <div id="agentFleet" class="agent-fleet"><p class="merge-sub">Reading heartbeats…</p></div>
           </section>
+            </div>
+          </details>
         </section>
 
         <!-- ============ DASHBOARD (RUN 23d: Overview + Performance + SLA + Activity) ============ -->
@@ -162,7 +184,13 @@
           <section class="panel hero-panel">
             <div id="heroStatus" class="hero-status" data-level="protected"><strong class="hero-label">PROTECTED</strong></div>
             <p id="heroSubline" class="hero-subline">ARIA is watching.</p>
+            <!-- PROD 2026-10-14 (audit §4.2) — proof it is watching: the detectors this version runs + the real last-check age. -->
+            <p id="homeWatch" class="home-watch">Watching: checking…</p>
           </section>
+          <!-- PROD 2026-10-14 (audit §4.1) — the plain-language home: three honest lists from real state (tabs/home.mjs). -->
+          <div id="homeLists" class="home-lists"></div>
+          <!-- (audit §4.6) one honest limits line from the recipe registry: what this version can really apply. -->
+          <p id="homeCanFix" class="note home-canfix">Checking what this version can fix…</p>
           <div id="kpiTiles" class="kpi-grid"></div>
           <section class="panel" id="pendingActionsPanel" hidden>
             <p class="eyebrow">Needs attention</p><h2>Pending actions</h2>
@@ -175,7 +203,10 @@
               <button id="dashHealthCheck" class="ghost">Run health check</button>
               <button id="dashCheckUpdates" class="ghost">Check for updates</button>
               <button id="dashExportEvidence" class="ghost">Export evidence pack</button>
+              <!-- (audit R8) the coachmark tour is never auto-stacked on the wizard; it lives here on demand (Rule 15). -->
+              <button id="dashTakeTour" class="ghost">Take the 30-second tour</button>
             </div>
+            <p id="dashQuickStatus" class="note" hidden></p>
           </section>
 
           <!-- ## Performance (merged from the Performance tab) -->
@@ -197,18 +228,19 @@
             </div>
           </details>
 
-          <!-- ## SLA (merged from the SLA tab) -->
-          <div class="merge-head" id="sla">
+          <!-- ## SLA (merged from the SLA tab). PROD 2026-10-14 (audit R25): shown only when the plan tracks an SLA — a
+               single-PC Personal install never sees breach/credit language. -->
+          <div class="merge-head" id="sla" data-feature="slaTracking">
             <div class="merge-bar" aria-hidden="true"></div>
             <div><p class="eyebrow">SLA</p><h2>SLA</h2><p class="merge-sub">Compliance window · uptime · response &amp; resolution by severity · breaches</p></div>
           </div>
-          <section class="panel"><p class="eyebrow">Compliance window</p><h2 id="slaComposite">SLA-met this month</h2><p class="note" id="slaComplianceNote"></p></section>
+          <section class="panel" data-feature="slaTracking"><p class="eyebrow">Compliance window</p><h2 id="slaComposite">SLA not measured yet</h2><p class="note" id="slaComplianceNote"></p></section>
           <!-- Density 2026-07-02 — uptime renders as a LIVE chart by default (real-or-empty); numbers + severity rows collapse below. -->
-          <div class="kpi-chart-panel">
+          <div class="kpi-chart-panel" data-feature="slaTracking">
             <div class="chart-head"><h3>Availability</h3><span class="chart-sub">Uptime · live · real-or-empty</span></div>
             <div id="slaChart" class="kpi-chart"></div>
           </div>
-          <details class="accordion" id="sla-numbers">
+          <details class="accordion" id="sla-numbers" data-feature="slaTracking">
             <summary class="accordion-summary"><span class="accordion-title">See the numbers</span><span class="accordion-sub">Uptime windows · response &amp; resolution by severity · breaches</span><span class="accordion-caret" aria-hidden="true">▸</span></summary>
             <div class="accordion-body">
               <section class="panel"><p class="eyebrow">Uptime</p><h2>Availability</h2><div id="slaUptime" class="kpi-grid"></div></section>
@@ -226,7 +258,8 @@
           <section class="panel">
             <div id="recentActivity" class="activity-timeline"></div>
           </section>
-          <footer id="trustStrip" class="trust-strip">🔒 Local processing · audit integrity verified · 0 outbound to non-allowlisted hosts last 24h · privacy verifier active · 100% sanitization</footer>
+          <!-- PROD 2026-10-14 (audit R6) — no claim before it is measured: main fills this with what the verifiers really found. -->
+          <footer id="trustStrip" class="trust-strip">🔒 Local processing · checking the audit chain and privacy verifier…</footer>
         </section>
 
         <!-- ============ CONTROL CENTER (unchanged) ============ -->
@@ -244,7 +277,10 @@
               <button id="diagnoseIssue" class="primary">Diagnose issue</button>
               <button id="pauseUpdates" class="ghost">Pause updates 7 days</button>
               <button id="openAdminConsole" class="ghost">Open admin console</button>
+              <!-- PROD 2026-10-14 (audit R24) — the on-screen kill switch for people who do not know Ctrl+Alt+K. -->
+              <button id="killSwitchBtn" class="ghost danger-btn" title="Stop every running fix and child process right now (same as Ctrl+Alt+K)">Stop everything now</button>
             </div>
+            <p id="runStateNote" class="note" hidden></p>
             <p id="selfHealHeadline" class="note"></p>
             <div id="systemChecks" class="health-list"></div>
           </section>
@@ -302,16 +338,17 @@
           <!-- ## Compliance (merged from the Compliance tab) -->
           <div class="merge-head" id="compliance">
             <div class="merge-bar" aria-hidden="true"></div>
-            <div><p class="eyebrow">Compliance</p><h2>Compliance</h2><p class="merge-sub">Audit integrity · safety gate · R11 · framework scores · evidence export</p></div>
+            <div><p class="eyebrow">Compliance</p><h2>Compliance</h2><p class="merge-sub">Audit integrity · safety gate · excluded folders · framework scores · evidence export</p></div>
           </div>
           <!-- Density 2026-07-02 — the compliance metric rows collapse behind a one-line summary; expand for detail. -->
           <details class="accordion" id="compliance-detail">
-            <summary class="accordion-summary"><span class="accordion-title">Compliance detail</span><span class="accordion-sub">Audit hash chain · privacy verifier · Tier-0 safety gate · R11 · framework scores</span><span class="accordion-caret" aria-hidden="true">▸</span></summary>
+            <summary class="accordion-summary"><span class="accordion-title">Compliance detail</span><span class="accordion-sub">Audit hash chain · privacy verifier · Tier-0 safety gate · excluded folders · framework scores</span><span class="accordion-caret" aria-hidden="true">▸</span></summary>
             <div class="accordion-body">
               <section class="panel"><p class="eyebrow">Audit integrity</p><h2>Hash chain</h2><div id="compAudit" class="health-list"></div></section>
               <section class="panel"><p class="eyebrow">Privacy verifier</p><h2>Outbound + sanitization</h2><div id="compPrivacy" class="health-list"></div></section>
               <section class="panel"><p class="eyebrow">Safety gate</p><h2>Tier-0 blocks</h2><div id="compTier0" class="health-list"></div></section>
-              <section class="panel"><p class="eyebrow">R11 privacy rule</p><h2>Private folder enforcement</h2><div id="compR11" class="health-list"></div></section>
+              <section class="panel"><p class="eyebrow">Excluded folders</p><h2>Folders ARIA never touches</h2><p class="note">Folders you exclude are never read, listed or fixed. Manage them in Settings → Autonomy; the list stays on this device.</p><div id="compR11" class="health-list"></div></section>
+              <section class="panel"><p class="eyebrow">Outbound endpoints</p><h2>What this version talks to</h2><div id="compEndpoints" class="health-list"></div></section>
               <section class="panel"><p class="eyebrow">Frameworks</p><h2>Composite scores</h2><div id="compFrameworks" class="kpi-grid"></div></section>
             </div>
           </details>
@@ -330,8 +367,9 @@
               <div id="outboundList" class="outbound-list"></div>
             </section>
             <section class="panel stat-panel">
-              <span>0</span>
-              <strong>data-upload paths to iisupp.net</strong>
+              <!-- PROD 2026-10-14 (audit R6) — computed from the declared outbound list at runtime, never a literal. -->
+              <span id="dataUploadCount">—</span>
+              <strong id="dataUploadLabel">paths that upload your content to iisupp.net</strong>
               <p>Telemetry is content-blind. Raw pages, document text, URLs, screenshots, credentials and command output are not sent.</p>
               <button id="exportAudit" class="ghost wide">Export audit JSON</button>
             </section>
@@ -349,7 +387,7 @@
           <section class="panel">
             <p class="eyebrow">RFP evidence pack</p>
             <h2>Export an audit bundle</h2>
-            <p class="muted">One ZIP with the last 30 days of audit log, the privacy snapshot, the latest network capture, the recipe registry version, the SBOM and the signed-bundle hash — saved to your Documents folder.</p>
+            <p class="muted">One ZIP with the last 30 days of audit log, the privacy snapshot, the latest network capture and the recipe registry version — plus the SBOM and signed-bundle hash when this build ships them — saved to your Documents folder. The result line below says exactly what was written.</p>
             <div class="button-row">
               <button id="exportEvidence" class="ghost wide">Export evidence pack</button>
               <span id="evidenceResult" class="capture-verdict"></span>
@@ -398,7 +436,10 @@
             <section class="panel">
               <p class="eyebrow">Company knowledge</p>
               <h2>Knowledge sources</h2>
-              <div class="dropzone">Drop documents or browse<br><small>PDF - DOCX - MD - TXT - indexed locally into the KB</small></div>
+              <!-- PROD 2026-10-14 (audit R18) — "browse" is a real file picker (ingestKb), not a dead word. -->
+              <div class="dropzone" id="kbDropzone" role="button" tabindex="0" aria-label="Drop documents here or press Enter to browse">Drop documents here, or <u>browse</u><br><small>PDF - DOCX - MD - TXT - indexed locally into the KB</small></div>
+              <input id="kbFileInput" type="file" multiple accept=".pdf,.docx,.md,.txt" hidden aria-label="Choose documents to index" />
+              <p id="kbIngestStatus" class="note" hidden></p>
               <button id="updateKnowledge" class="ghost wide">Update knowledge</button>
               <div id="knowledgeRows" class="source-list"></div>
             </section>
@@ -408,7 +449,8 @@
               <p class="note">The gold A appears in your browser toolbar and fixes browser issues on-device.</p>
               <div class="button-row">
                 <button id="extInstructions" class="ghost">Install instructions</button>
-                <button id="openChromeExt" class="ghost" data-support="https://iisupp.net/aria">Open chrome://extensions</button>
+                <!-- (audit R18) honest label: the app cannot open chrome:// pages; it copies the install path for you. -->
+                <button id="openChromeExt" class="ghost" title="Copies the extension folder path so you can paste it into Load unpacked">How to install (copy path)</button>
               </div>
               <ol id="extSteps" class="ext-steps" hidden>
                 <li>Open your browser's extensions page (chrome://extensions or edge://extensions).</li>
@@ -440,7 +482,7 @@
               <button id="refreshSystemContext" class="ghost">Refresh</button>
             </div>
             <p id="systemContextMeta" class="note">All inventory stays on this device. Nothing is sent off-device unless you click "Share with ARIA for diagnosis".</p>
-            <input id="systemContextSearch" type="text" placeholder="Search apps, services, drivers…" />
+            <input id="systemContextSearch" type="text" placeholder="Search apps, services, drivers…" aria-label="Search apps, services and drivers" />
             <div id="systemContextSummary" class="health-list"></div>
             <!-- Density 2026-07-02 — the full app inventory is collapsed by default (one-line summary); expand or search to browse. -->
             <details class="accordion" id="system-apps">
@@ -491,6 +533,7 @@
                 <section class="panel">
                   <p class="eyebrow">Assignment group mapping</p>
                   <h2>Automatic routing</h2>
+                  <p class="note" id="routingNote">Example mapping — it becomes active only after ServiceNow is connected and the groups are confirmed.</p>
                   <div id="routingRows" class="mapping"></div>
                 </section>
               </div>
@@ -585,7 +628,7 @@
             <p class="eyebrow">Choose how ARIA helps</p>
             <h2>Mode</h2>
             <div class="mode-list">
-              <button class="mode-row selected" data-mode="manual"><span class="radio"></span><span><strong>Manual</strong><em>DEFAULT</em><small>ARIA detects issues and walks you through fixes in chat. Fixes stay in guided preview unless you explicitly step up to a live approval mode.</small></span></button>
+              <button class="mode-row selected" data-mode="manual"><span class="radio"></span><span><strong>Manual</strong><em>DEFAULT · FREE</em><small>ARIA detects issues and walks you through fixes in chat. Fixes stay in guided preview unless you explicitly step up to a live approval mode. Always available — the free floor.</small></span></button>
               <button class="mode-row" data-mode="confirmed"><span class="radio"></span><span><strong>Confirmed</strong><em>LIVE WITH APPROVAL</em><small>ARIA surfaces the fix card, runs the safety gate, and applies the fix only after you approve.</small></span></button>
               <button class="mode-row" data-mode="autonomous"><span class="radio"></span><span><strong>Autonomous</strong><em>LIVE - OPT-IN</em><small>ARIA may fast-path proven low-risk fixes after the supervisor clears them; higher-risk fixes still stop for approval.</small></span></button>
             </div>
@@ -596,6 +639,8 @@
               <span>Keep every system fix in preview (dry-run) — show me what would change, change nothing</span>
             </label>
             <p class="note" id="platformModeNote" hidden></p>
+            <!-- PROD 2026-10-14 (audit R2) — the live-fix truth, read-only here; the switch lives in Autonomy below. -->
+            <p class="note" id="modeLiveFixesLine">Live fixes: checking…</p>
           </section>
           <!-- RUN 34-2 — the redundant Settings "Ask ARIA" box was removed; ARIA Chat lives only in the ARIA tab. -->
 
@@ -604,6 +649,18 @@
             <div class="merge-bar" aria-hidden="true"></div>
             <div><p class="eyebrow">Autonomy &amp; contacts</p><h2>Autonomy &amp; contacts</h2><p class="merge-sub">Who uses this device · who hears when something breaks · how much Sentinel fixes on its own · who approves · who gets the report · when maintenance can run</p></div>
           </div>
+          <!-- PROD 2026-10-14 (audit R1 / R2) — the consent gate everything else depends on: Live fixes OFF = every fix previews
+               and changes nothing; ON = ARIA applies vetted fixes you confirm (Windows may ask for administrator permission). -->
+          <section class="panel" id="liveFixesPanel">
+            <p class="eyebrow">Can ARIA change this computer?</p>
+            <h2>Live fixes</h2>
+            <label class="toggle-row live-fixes-row" style="display:flex;align-items:center;gap:10px">
+              <input id="liveFixesToggle" type="checkbox" />
+              <span><strong>Let ARIA apply vetted fixes for real</strong><br /><small>Off = ARIA shows what it would do and changes nothing. On = ARIA applies vetted fixes you confirm; Windows may ask for admin permission (UAC) first.</small></span>
+            </label>
+            <p class="note" id="liveFixesNote">Checking…</p>
+            <p class="note" id="excludedFoldersLine">Excluded folders: checking…</p>
+          </section>
           <section class="panel" id="autonomyPanel">
             <p class="eyebrow">How much should Sentinel fix on its own</p>
             <h2>Autonomy level</h2>
@@ -627,7 +684,7 @@
             <p class="eyebrow">Who should know when something breaks</p>
             <h2>Tech contacts</h2>
             <p class="note">One per line: <code>name, email, phone, role</code> — role is <b>admin</b>, <b>it-lead</b> or <b>approver</b>. A business device needs at least one before Sentinel will fix anything on its own.</p>
-            <textarea id="techContacts" rows="3" placeholder="Jordan Lee, jordan@company.com, +1 416 555 0101, admin"></textarea>
+            <textarea id="techContacts" rows="3" aria-label="Tech contacts, one per line" placeholder="Jordan Lee, jordan@company.com, +1 416 555 0101, admin"></textarea>
           </section>
           <section class="panel">
             <p class="eyebrow">Who approves a fix before it runs</p>
@@ -682,14 +739,16 @@
           <section class="panel">
             <p class="eyebrow">Hotkeys</p>
             <h2>Local shortcuts</h2>
-            <div class="table-list">
-              <div class="table-row"><span>Ctrl + Alt + A</span><strong>Open ARIA chat (globe bubble)</strong><em class="active-badge">Active</em></div>
-              <div class="table-row"><span>Ctrl + Alt + G</span><strong>Show or hide the globe</strong><em class="active-badge">Active</em></div>
-              <div class="table-row"><span>Ctrl + Alt + P</span><strong>Pause watching for 24 hours</strong><em class="active-badge">Active</em></div>
-              <div class="table-row kill-row"><span>Ctrl + Alt + K</span><strong>Kill ARIA + undo last action</strong><em class="kill-badge">Panic</em></div>
+            <!-- PROD 2026-10-14 (audit R6) — no static rows: every shortcut below is read from state.hotkeys (combo + live status).
+                 <em class="active-badge">Active</em> means the shortcut is registered right now; "Failed" means another app holds it. -->
+            <p class="note">Each row shows the real combo and its live status. <em class="active-badge">Active</em> = registered on this computer right now · <em class="fail-badge">Failed</em> = another app holds that combo (rebind it) · Disabled = turned off below.</p>
+            <div id="hotkeyStatus" class="table-list"><div class="table-row"><span>—</span><strong>Reading shortcuts…</strong><em></em></div></div>
+            <div class="button-row" style="margin-top:12px">
+              <label class="toggle-row" style="display:flex;align-items:center;gap:8px"><input id="hotkeysEnabled" type="checkbox" checked /> <span>Keyboard shortcuts on</span></label>
+              <label class="toggle-row" style="display:flex;align-items:center;gap:8px"><input id="hotkeysAltGrSafe" type="checkbox" /> <span>AltGr-safe combos (Ctrl+Shift+Alt)</span></label>
+              <label class="toggle-row" style="display:flex;align-items:center;gap:8px"><input id="hotkeysKillSwitch" type="checkbox" checked /> <span>Kill-switch shortcut on</span></label>
+              <span id="hotkeyPrefsStatus" class="note"></span>
             </div>
-            <h3 style="margin-top:14px">Live status</h3>
-            <div id="hotkeyStatus" class="table-list"></div>
           </section>
 
           <!-- ## Troubleshoot (merged from the Troubleshoot tab) -->
@@ -717,7 +776,7 @@
             <button id="openAdminConsole2" class="ghost">Open admin console</button>
           </section>
 
-          <!-- ## Support (merged from the Support tab — RUN 23d: Ahmad folds Support into Settings) -->
+          <!-- ## Support (merged from the Support tab — RUN 23d: Support folds into Settings) -->
           <div class="merge-head" id="support">
             <div class="merge-bar" aria-hidden="true"></div>
             <div><p class="eyebrow">Support</p><h2>Support</h2><p class="merge-sub">Talk to Integrated IT Support · company details</p></div>
@@ -727,18 +786,21 @@
             <h2>Talk to Integrated IT Support</h2>
             <div class="support-grid">
               <div class="support-row"><span>Phone</span><strong>+1-647-581-3182</strong><button class="ghost" data-support="tel:+16475813182">Call now</button></div>
-              <div class="support-row"><span>Email</span><strong>ahmad.wasee@iisupp.net</strong><button class="ghost" data-support="mailto:ahmad.wasee@iisupp.net">Email us</button></div>
+              <div class="support-row"><span>Email</span><strong>support@iisupp.net</strong><button class="ghost" data-support="mailto:support@iisupp.net">Email us</button></div>
               <div class="support-row"><span>WhatsApp</span><strong>wa.me/16475813182</strong><button class="ghost" data-support="https://wa.me/16475813182">Open WhatsApp</button></div>
               <div class="support-row"><span>Web chat</span><strong>iisupp.net/aria</strong><button class="ghost" data-support="https://iisupp.net/aria">Open chat</button></div>
-              <div class="support-row"><span>Status</span><strong>iisupp.net/sentinel-status</strong><button class="ghost" data-support="https://iisupp.net/sentinel-status">Check status</button></div>
+              <!-- PROD 2026-10-14 (audit R4) — only live pages: /account (your plan + downloads) and /plans (buy). -->
+              <div class="support-row"><span>Account</span><strong>iisupp.net/account</strong><button class="ghost" data-support="https://iisupp.net/account">Open my account</button></div>
+              <div class="support-row"><span>Plans</span><strong>iisupp.net/plans</strong><button class="ghost" data-support="https://iisupp.net/plans/?from=app">See plans</button></div>
               <!-- RUN 33-E — re-run the first-launch Setup wizard -->
               <div class="support-row"><span>Setup</span><strong>First-launch wizard</strong><button id="reRunSetup" class="ghost" type="button">Re-run Setup</button></div>
             </div>
-            <p class="note">Business hours: Mon–Fri 9am–6pm ET · Emergency support (Pro+ plans): 24/7</p>
+            <!-- (audit R19) only what is staffed: business hours; after-hours coverage is defined per plan, not promised here. -->
+            <p class="note">Business hours: Mon–Fri 9am–6pm ET. After-hours coverage depends on your plan's support terms.</p>
           </section>
           <section class="panel company-footer">
             <strong>Integrated IT Support Inc.</strong>
-            <p>30 Fothergill Crt, Whitby ON L1P 1L4 · Canada<br />+1-647-581-3182 · ahmad.wasee@iisupp.net<br />D-U-N-S 241726397 · iisupp.net</p>
+            <p>30 Fothergill Crt, Whitby ON L1P 1L4 · Canada<br />+1-647-581-3182 · support@iisupp.net<br />D-U-N-S 241726397 · iisupp.net</p>
           </section>
 
           <!-- ## About (merged from the About tab) -->
@@ -753,14 +815,15 @@
               <input id="showFloatingGlobe" type="checkbox" checked />
               <span>Show the floating globe on my desktop</span>
             </label>
-            <small class="note">Hide it if you don't want a visible icon — the tray menu still works either way. The globe is click-through (it never blocks clicks); press Ctrl+Alt+G to click it.</small>
+            <small class="note" id="globeHint">Hide it if you don't want a visible icon — the tray menu still works either way. In Manual mode the globe stays out of your way (clicks pass through it); press Ctrl+Alt+G to bring it forward and click it.</small>
           </section>
           <section class="panel">
             <p class="eyebrow">About</p>
-            <h2>Resident IT support that never sleeps</h2>
-            <p>ARIA Sentinel lives on your PC, watches for tech problems, and fixes them before they slow you down without sending your data anywhere.</p>
+            <h2>Resident IT support that keeps watching</h2>
+            <!-- (audit R2 / R19) says what the code does: watches, explains, applies the vetted fixes you allow. -->
+            <p>ARIA Sentinel lives on your PC, watches for tech problems, explains them in plain words, and applies the vetted fixes you allow — without sending your data anywhere.</p>
             <div class="table-list">
-              <div class="table-row"><span>Version</span><strong id="aboutVersion">0.1.0</strong><em>Internal MVP</em></div>
+              <div class="table-row"><span>Version</span><strong id="aboutVersion">—</strong><em id="aboutBuildKind">Desktop build</em></div>
               <div class="table-row"><span>Bridge</span><strong>127.0.0.1:37841</strong><em>Local only</em></div>
               <div class="table-row"><span>Admin</span><strong>Separate local web console</strong><em>Owner-only</em></div>
             </div>
@@ -768,11 +831,11 @@
           <section class="panel">
             <p class="eyebrow">License</p>
             <h2>Trial &amp; subscription</h2>
-            <p id="licenseStatus" class="note">Manual mode (free). Start a 30-day trial of Confirmed + Autonomous.</p>
-            <label class="field">Email for trial <input id="trialEmail" type="email" placeholder="you@company.com" /></label>
+            <p id="licenseStatus" class="note">Checking your trial…</p>
+            <label class="field" id="trialEmailField">Email for trial <input id="trialEmail" type="email" placeholder="you@company.com" /></label>
             <div class="button-row">
               <button id="upgradePlanBtn" class="primary">Upgrade plan</button>
-              <button id="startTrial" class="ghost">Start 30-day trial</button>
+              <button id="startTrial" class="ghost">Start trial</button>
               <button id="checkUpdates" class="ghost">Check for updates</button>
               <button id="manageSubscription" class="ghost">Manage subscription</button>
               <span id="updateStatus" class="note"></span>
@@ -789,7 +852,7 @@
               <div><p class="eyebrow">Battery</p><h2>Low-power mode</h2></div>
               <label class="switch"><input type="checkbox" id="lowPowerToggle" /> <span>Enable</span></label>
             </div>
-            <p class="note">Drops watcher polling to 60s, the globe to 15fps, and disables animation. Tip: ARIA runs at &lt;1% idle CPU.</p>
+            <p class="note">Drops watcher polling to 60s, the globe to 15fps, and disables animation.</p>
           </section>
           <section class="panel">
             <div class="panel-actions">
@@ -798,7 +861,7 @@
             </div>
             <p id="accountStatus" class="note">Trial active.</p>
             <div class="button-row">
-              <input id="licenseKeyInput" type="text" placeholder="Enter license" style="flex:1;min-width:200px" />
+              <input id="licenseKeyInput" type="text" placeholder="Enter license" aria-label="License key" style="flex:1;min-width:200px" />
               <button id="enterLicenseBtn" class="ghost">Activate</button>
               <button id="managePlanBtn" class="ghost">Manage subscription</button>
             </div>
@@ -808,7 +871,7 @@
               <div><p class="eyebrow">Updates</p><h2>Auto-update</h2></div>
               <label class="switch"><input type="checkbox" id="autoUpdateToggle" checked /> <span>Auto-update</span></label>
             </div>
-            <p id="updateStatusLine" class="note">You're on the latest version.</p>
+            <p id="updateStatusLine" class="note">Checking…</p>
             <div class="button-row">
               <button id="installUpdateBtn" class="primary" hidden>Install update</button>
               <button id="getLatestBtn" class="ghost" data-support="https://iisupp.net/downloads">Get latest from website</button>
@@ -835,19 +898,19 @@
           </section>
           <section class="panel company-footer">
             <strong>Integrated IT Support Inc.</strong>
-            <p>30 Fothergill Crt, Whitby ON L1P 1L4<br />+1-647-581-3182 · ahmad.wasee@iisupp.net<br />D-U-N-S 241726397 · iisupp.net</p>
+            <p>30 Fothergill Crt, Whitby ON L1P 1L4<br />+1-647-581-3182 · support@iisupp.net<br />D-U-N-S 241726397 · iisupp.net</p>
           </section>
         </section>
       </section>
     </main>
 
     <!-- First-run onboarding tour (4 coachmarks) + UAC/SmartScreen explainers. Hidden until shown by renderer. -->
-    <div id="onboarding" class="onboarding" hidden>
+    <div id="onboarding" class="onboarding" role="dialog" aria-modal="true" aria-labelledby="onboardTitle" hidden>
       <div class="onboarding-card">
         <div class="coach-globe" data-state="idle" aria-hidden="true"></div>
         <p class="eyebrow" id="onboardKicker">Welcome</p>
         <h2 id="onboardTitle">Meet the globe</h2>
-        <p id="onboardBody">A calm gold globe lives in the corner of your screen. It is ARIA Sentinel — resident IT support that never sleeps.</p>
+        <p id="onboardBody">A calm gold globe sits on your desktop. It is ARIA Sentinel — resident IT support that keeps watching while you work.</p>
         <div id="onboardDialog" class="onboard-dialog" hidden></div>
         <div class="onboarding-foot">
           <div class="onboard-dots" id="onboardDots"></div>
@@ -859,13 +922,20 @@
       </div>
     </div>
 
-    <!-- Trial-end modal — full-screen luxury purchase prompt, shown after the trial expires. -->
-    <div id="planModal" class="onboarding trial-end" hidden>
+    <!-- Trial-end modal — full-screen luxury purchase prompt, shown after the trial expires.
+         PROD 2026-10-14 (audit R5 / R19): the updates badge reads state.updates (manual / OTA) and the prices are re-rendered at
+         runtime from pricing-tiers.mjs (monthly + billed-annually notes); the static values below must equal that module
+         (tests/pricing-surface-sync.test.mjs). No comments may sit inside the modal block (tests/trial-end-modal.test.mjs). -->
+    <div id="planModal" class="onboarding trial-end" role="dialog" aria-modal="true" aria-labelledby="planModalTitle" hidden>
       <div class="trial-end-card">
-        <p class="eyebrow">Trial ended</p>
-        <h2 class="trial-end-title">Your ARIA trial has ended</h2>
-        <p class="trial-end-sub">Choose your tier to keep ARIA running on this machine.</p>
-        <p class="trial-end-version">ARIA Sentinel <span id="trialEndVersion">v0.1.0</span> · <span class="auto-update-badge">Auto-updates included</span></p>
+        <p class="eyebrow" id="planModalKicker">Plans</p>
+        <h2 class="trial-end-title" id="planModalTitle">Your ARIA trial has ended</h2>
+        <p class="trial-end-sub" id="planModalSub">Choose your tier to keep ARIA running on this machine.</p>
+        <p class="trial-end-version">ARIA Sentinel <span id="trialEndVersion">v—</span> · <span class="auto-update-badge" id="planModalUpdates">Updates: manual in this version</span></p>
+        <div class="billing-toggle plan-billing" role="tablist" aria-label="Billing period">
+          <button class="bt-opt active" data-plan-billing="monthly" role="tab" type="button">Monthly</button>
+          <button class="bt-opt" data-plan-billing="yearly" role="tab" type="button">Yearly</button>
+        </div>
         <div class="plan-grid plan-grid-5">
           <div class="plan-card" data-tier="personal">
             <strong>Personal</strong><span class="plan-price">$899<em>/mo</em></span>
@@ -891,12 +961,13 @@
         <div class="trial-end-license">
           <a href="#" id="planEnterLicenseLink" class="enter-license-link">Enter license</a>
           <div class="trial-end-license-row" id="planLicenseRow" hidden>
-            <input id="planLicenseInput" type="text" placeholder="Enter license" />
+            <input id="planLicenseInput" type="text" placeholder="Enter license" aria-label="License key" />
             <button id="planActivateBtn" class="ghost">Activate</button>
           </div>
         </div>
+        <p class="note" id="planSupportNote"></p>
         <div class="onboarding-foot">
-          <a href="#" id="planDetails" data-support="https://iisupp.net/aria-sentinel/">Visit iisupp.net for full details</a>
+          <a href="#" id="planDetails" data-support="https://iisupp.net/plans/?from=app">Visit iisupp.net/plans for full details</a>
           <div class="button-row">
             <button id="planEnterLicense" class="ghost">Enter license</button>
             <!-- DEAD-SHELL FIX 2026-07-02 — dismiss the upsell; never trap the user (baseline stays navigable). -->
@@ -908,22 +979,22 @@
 
     <!-- SENTINEL TRIAL GATING 2026-07-02 — honest locked-tab upsell for Walk-Through-entitled (Concierge) buyers
          after their 30-day Sentinel trial. Walk-Through + the buy path stay open; the other tabs show this card. -->
-    <div id="lockedTabOverlay" class="onboarding trial-end" hidden>
+    <div id="lockedTabOverlay" class="onboarding trial-end" role="dialog" aria-modal="true" aria-labelledby="lockedTabTitle" hidden>
       <div class="trial-end-card">
-        <p class="eyebrow">Sentinel trial ended</p>
-        <h2 class="trial-end-title">Subscribe to unlock the rest of ARIA Sentinel</h2>
+        <p class="eyebrow" id="lockedTabKicker">Paid feature</p>
+        <h2 class="trial-end-title" id="lockedTabTitle">Subscribe to unlock the rest of ARIA Sentinel</h2>
         <p class="trial-end-sub" id="lockedTabMessage"></p>
         <p class="trial-end-version" id="lockedTabTrialInfo" hidden></p>
         <div class="button-row">
           <button id="lockedTabChoosePlan" class="primary">Choose a Sentinel plan</button>
-          <button id="lockedTabKeepWalkthrough" class="ghost">Keep using your Walk-Through</button>
-          <button id="lockedTabClose" class="ghost">Close</button>
+          <button id="lockedTabKeepWalkthrough" class="ghost" hidden>Keep using your Walk-Through</button>
+          <button id="lockedTabClose" class="ghost">Close — keep using what's free</button>
         </div>
       </div>
     </div>
 
     <!-- Triple-confirm delete modal (RUN 19 §4) — driven by the renderer's delete-confirm flow. -->
-    <div id="deleteModal" class="onboarding" hidden>
+    <div id="deleteModal" class="onboarding" role="dialog" aria-modal="true" aria-labelledby="deleteStepTitle" hidden>
       <div class="onboarding-card delete-modal-card">
         <p class="eyebrow" id="deleteStepKicker">Delete</p>
         <h2 id="deleteStepTitle">Delete this?</h2>
@@ -945,22 +1016,23 @@
     <!-- Command palette (Cmd/Ctrl+K) -->
     <div id="commandPalette" class="cmdk" hidden>
       <div class="cmdk-box">
-        <input id="cmdkInput" type="text" placeholder="Search recipes and actions… (Esc to close)" autocomplete="off" />
+        <input id="cmdkInput" type="text" placeholder="Search recipes and actions… (Esc to close)" aria-label="Search recipes and actions" autocomplete="off" />
         <div id="cmdkResults" class="cmdk-results"></div>
       </div>
     </div>
 
     <!-- Autonomous opt-in modal — Enable stays disabled until "I understand" is checked. -->
-    <div id="autonomousModal" class="onboarding" hidden>
+    <div id="autonomousModal" class="onboarding" role="dialog" aria-modal="true" aria-labelledby="autonomousModalTitle" hidden>
       <div class="onboarding-card">
         <p class="eyebrow">Mode change</p>
-        <h2>Switch to Autonomous?</h2>
+        <h2 id="autonomousModalTitle">Switch to Autonomous?</h2>
         <p>Autonomous means ARIA fixes <strong>low-risk (green) issues without asking</strong> and tells you after. Higher-risk fixes still confirm with you every time, even in Autonomous.</p>
         <ul style="font-size:13px;color:rgba(255,255,255,.75);margin:0 0 12px;padding-left:18px">
           <li>Only green recipes auto-apply (DNS flush, service restarts, cache flush).</li>
           <li>Same recipe runs at most 3× per 24h, with a 30-min cooldown.</li>
           <li>A restore point is taken before any change.</li>
-          <li>Pause anytime from Settings → Mode.</li>
+          <li>Pause anytime from Control Center → Pause 1 hour, or Stop ARIA.</li>
+          <li>Nothing is applied for real while Live fixes are off (Settings → Autonomy).</li>
         </ul>
         <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-bottom:12px">
           <input type="checkbox" id="autoUnderstand" /> I understand ARIA will apply green fixes automatically.
@@ -976,7 +1048,7 @@
     </div>
 
     <!-- "What's new" modal — shown once after an update (skipped on first install). -->
-    <div id="whatsNew" class="onboarding" hidden>
+    <div id="whatsNew" class="onboarding" role="dialog" aria-modal="true" aria-labelledby="whatsNewTitle" hidden>
       <div class="onboarding-card">
         <p class="eyebrow">What's new</p>
         <h2 id="whatsNewTitle">ARIA Sentinel updated</h2>
@@ -990,16 +1062,21 @@
       </div>
     </div>
 
-    <!-- RUN 33-E — first-launch Setup wizard (6 steps; re-runnable from Settings). Renderer drives the steps. -->
-    <div id="setupWizard" class="onboarding" hidden>
-      <div class="onboarding-card">
+    <!-- RUN 33-E — first-launch Setup wizard (re-runnable from Settings). Renderer drives the steps.
+         PROD 2026-10-14 (audit R8 / §3): a 3-screen quick track (Hello · Who are you · What I'll do → summary) with
+         "Start with safe defaults", "Customize" (the full 12-step track, nothing removed) and a "Skip for now — use safe
+         defaults" on every step. A real dialog: role + aria-modal + focus trap + Escape (→ the summary, never silent). -->
+    <div id="setupWizard" class="onboarding" role="dialog" aria-modal="true" aria-labelledby="setupTitle" hidden>
+      <div class="onboarding-card setup-card">
         <div class="coach-globe" data-state="idle" aria-hidden="true"></div>
         <p class="eyebrow" id="setupKicker">Setup</p>
         <h2 id="setupTitle">Welcome to ARIA Sentinel</h2>
         <div id="setupBody" class="setup-body"></div>
+        <p class="note setup-progress" id="setupProgress"></p>
         <div class="onboarding-foot">
           <div class="onboard-dots" id="setupDots"></div>
           <div class="button-row">
+            <button id="setupSkip" class="ghost setup-skip" type="button">Skip for now — use safe defaults</button>
             <button id="setupBack" class="ghost" type="button">Back</button>
             <button id="setupNext" class="primary" type="button">Next</button>
           </div>

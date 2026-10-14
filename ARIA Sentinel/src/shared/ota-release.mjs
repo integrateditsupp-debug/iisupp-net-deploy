@@ -31,12 +31,30 @@ export function shouldBump(commitMessage) {
 /** Sentinel-only release tag so we never collide with other iisupp releases. */
 export function releaseTag(version) { return `sentinel-v${version}`; }
 
-/** The unsigned customer artifact name electron-builder produces. */
+/** The unsigned customer artifact name electron-builder produces. (Historical name, kept — Rule 15.) */
 export function assetName(version) { return `ARIA-Sentinel-${version}-unsigned.exe`; }
+/** PROD 2026-10-14 (F4 round 2) — the SIGNED installer name (produced only when a signing identity was present). */
+export function signedAssetName(version) { return `ARIA-Sentinel-${version}-setup.exe`; }
+/** The artifact names a client / publisher may meet for a version, preferred first: signed, then unsigned. */
+export function assetCandidates(version) { return [signedAssetName(version), assetName(version)]; }
+/** Is `name` one of OUR installer names (either signing state)? With `version`, it must also be that version's. */
+export function isSentinelArtifactName(name, version) {
+  const n = String(name || "").split(/[\\/]/).pop();
+  const m = /^ARIA-Sentinel-(\d+\.\d+\.\d+)-(setup|unsigned)\.exe$/.exec(n);
+  if (!m) return false;
+  return version ? m[1] === String(version) : true;
+}
+/** Does this artifact name say the build is signed? (the name is the truth — see scripts/release-artifacts.mjs) */
+export function isSignedArtifactName(name) { return /-setup\.exe$/.test(String(name || "").split(/[\\/]/).pop()); }
 
 /** The GitHub Releases download URL clients pull the .exe from (replaces the broken Netlify static path). */
 export function githubAssetUrl(version, owner = GITHUB_OWNER, repo = GITHUB_REPO) {
   return `https://github.com/${owner}/${repo}/releases/download/${releaseTag(version)}/${assetName(version)}`;
+}
+/** The download URL for a SPECIFIC artifact name (signed or unsigned) of a version. */
+export function githubAssetUrlFor(version, name, owner = GITHUB_OWNER, repo = GITHUB_REPO) {
+  const safe = isSentinelArtifactName(name, version) ? String(name) : assetName(version);
+  return `https://github.com/${owner}/${repo}/releases/download/${releaseTag(version)}/${safe}`;
 }
 
 /**

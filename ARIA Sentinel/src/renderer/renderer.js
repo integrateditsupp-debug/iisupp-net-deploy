@@ -9,13 +9,20 @@ import { confidenceBadge } from "../shared/resolution-outcome.mjs"; // RUN-B B1 
 // SENTINEL TRIAL GATING 2026-07-02 — per-tab enable/lock map (Walk-Through survives trial expiry; the buy path never locks).
 import { tabGateMap, LOCKED_TAB_MESSAGE, WALKTHROUGH_TAB } from "../shared/tab-gating.mjs";
 // RUN 22 — dashboard / performance / SLA / compliance / reports tab builders + status.
-import { computeHeroStatus, heroSubline, heroTiles } from "../shared/dashboard-status.mjs";
+import { computeHeroStatus, heroSubline, heroTiles, computeRunState, railStatusLabel } from "../shared/dashboard-status.mjs";
 import * as DashboardTab from "./tabs/dashboard.mjs";
 import * as PerformanceTab from "./tabs/performance.mjs";
 import * as SlaTab from "./tabs/sla.mjs";
 import * as ComplianceTab from "./tabs/compliance.mjs";
 import * as ReportsTab from "./tabs/reports.mjs";
+import * as HomeTab from "./tabs/home.mjs"; // PROD 2026-10-14 (audit §4) — the plain-language home lists + watcher line
 import { createVoiceConversation } from "./voice-conversation.mjs"; // RUN-CU / CU4 — on-device multi-turn voice (ARIA tab 🎤)
+// PROD 2026-10-14 — ONE source each for: prices + the buy URL (R4/R5), trial sentences (R3/R13/R20), what a fix really
+// did (R1/R2/R14/R10) and the first-run wizard model (R8). All pure + browser-safe.
+import { TIERS, CLIENT_PLANS, plansUrl, priceLine, monthlyDisplay, visitsLabel, SEPARATE_HUMAN_SUPPORT_NOTE } from "../shared/pricing-tiers.mjs";
+import { trialDays, trialState, trialFractionLeft, licenseStatusLine, trialBadgeText, accountStatusLine, lockedTabCopy, wizardTrialLine } from "../shared/trial-copy.mjs";
+import { describeSupervisedResult, approveToast, describeDryRun, killSwitchToast } from "../shared/fix-outcome.mjs";
+import { WHAT_CARDS, quickChoiceToPrefs, quickChoiceOf, applySafeDefaults, summaryLines, autonomyForMode, isLicenseKeyShaped, progressLabel } from "../shared/setup-flow.mjs";
 
 let state;
 let sentinel;
@@ -72,6 +79,12 @@ async function init() {
   installErrorReporting();
   wireNavigation();
   wireActions();
+  wireCountdownCard();   // PROD 2026-10-14 (audit R10) — the in-app countdown + Cancel
+  wireLiveFixes();       // PROD 2026-10-14 (audit R1/R2) — the consent switch everything depends on
+  wireHotkeyPrefs();     // PROD 2026-10-14 (audit M20) — shortcuts on/off · AltGr-safe · kill-switch
+  wireSetupDialogA11y(); // PROD 2026-10-14 (audit R8/R16) — focus trap + Escape on the wizard
+  // (audit R15) the footer globe shrinks so the whole rail fits a 1366×768 work area (size="120" stays in the markup).
+  qs(".rail-footer aria-globe")?.setAttribute("size", "56");
   sentinel.onState((next) => renderState(next));
   sentinel.onNavigate((tab) => activateTab(tab));
   // A web deep-link (mode=walkthrough) hands a recipe to the app → open the Walk-through tab in GUIDE mode.
@@ -189,7 +202,7 @@ async function renderWalkthrough(target) {
     // BIG START (2026-07-16) — pick a system (its card highlights), then the big primary START launches that flow
     // under the globe, which auto-runs the majority for you. The per-card Start (click a card) stays too (Rule 15).
     body.innerHTML = `
-      <p class="note">Pick a system to set up, then press <b>Start setup</b> — the guided walk-through opens right under the floating globe and <b>runs itself</b>: ARIA opens each page or app for you and only pauses when it needs you to type something, choose, or sign in. Guide and setup change nothing on your PC; you sign in and pay yourself.</p>
+      <p class="note">Pick a system to set up, then press <b>Start setup</b> — the guided walk-through opens right under the floating globe and moves itself along: ARIA opens the right web page for you in your browser and pauses whenever you need to type, choose, sign in or pay. Guide and setup change nothing on your PC; you sign in and pay yourself.</p>
       <div class="button-row walkthrough-start-row">
         <button class="primary walkthrough-big-start" id="walkthroughBigStart" disabled>▶ Start setup</button>
         <button class="ghost" id="walkthroughDescribe">Fix a problem</button>
@@ -271,30 +284,26 @@ async function renderWalkthrough(target) {
 }
 
 // Shared gated-apply helper used by the Walk-through fallback + the P1 chat/recipe routing. Confirmed-grade,
-// never autonomous; surfaces the gate's verdict. Nothing runs live by default (dry-run policy holds).
+// never autonomous; surfaces the gate's verdict. PROD 2026-10-14 (audit R1/R2/R14): the status line is the REAL
+// result (fix-outcome.mjs) — policy copy from main, needs-admin, declined, failed, countdown, preview — and only
+// a result whose policy says dryRun:false may read as "fixing it now". Never "Running" when nothing ran.
 async function resolveViaSupervisor(recipeId, risk, statusEl) {
-  const r = await sentinel.supervisedFix?.({ recipeId, risk: risk || "medium", mode: "confirmed" });
+  let r = null;
+  try { r = await sentinel.supervisedFix?.({ recipeId, risk: risk || "medium", mode: "confirmed" }); } catch { r = null; }
+  const outcome = describeSupervisedResult(r, { liveFixes: state && state.liveFixes });
   if (statusEl) {
     statusEl.hidden = false;
-    if (!r || r.ok === false) {
-      if (r?.error === "r11_blocked") statusEl.textContent = "1 personal folder excluded — fix blocked by privacy rule.";
-      else if (r?.verdict === "veto") statusEl.textContent = `Held by the safety supervisor: ${r.reason || "vetoed"}.`;
-      else if (r?.copy) statusEl.textContent = r.copy; // RUN-CU / CU4 — notify-only / blocked / policy verdicts, in plain words
-      else statusEl.textContent = "Couldn't start this fix.";
-    } else if (r.countdown) {
-      statusEl.textContent = `Applying in ${r.seconds || 10}s — cancel from the countdown, or press Ctrl+Alt+K to abort.`;
-    } else if (r.bypass) {
-      statusEl.textContent = "Low-risk action acknowledged.";
-    } else if (r.verdict === "approval-requested") {
-      statusEl.textContent = "Waiting for approval — see Control Center → Approvals (and your email).";
-    } else if (r.verdict === "deferred") {
-      statusEl.textContent = r.copy || "Queued for your next maintenance window.";
-    } else {
-      // RUN-CU / CU4 (Rule 14) — never "applied" before it ran: the audit log + restore-point record carry the truth.
-      statusEl.textContent = r.policy && r.policy.dryRun === false ? (r.copy || "Running now — the verified outcome lands in Dashboard → Activity.") : "Previewed safely (dry-run). Enable live fixes to apply.";
-    }
+    statusEl.textContent = outcome.text;
+    statusEl.dataset.outcome = outcome.kind;
+    statusEl.classList.toggle("resolve-fail", outcome.ok === false);
   }
+  if (outcome.kind === "countdown") showCountdownCard({ id: outcome.countdownId, secondsLeft: outcome.seconds, recipeId, title: recipeTitleOf(recipeId), canCancel: true });
   return r;
+}
+
+function recipeTitleOf(recipeId) {
+  const r = (state && Array.isArray(state.recipes) ? state.recipes : []).find((x) => x && x.id === recipeId);
+  return (r && r.title) || String(recipeId || "a fix");
 }
 
 // Walk-through LAUNCHER — Start opens the guided flow UNDER the floating globe (its own overlay window, which
@@ -473,7 +482,172 @@ function wireActions() {
     source: "operator-sim",
     issue: "ARIA Sentinel javascript error main process EADDRINUSE port 37841"
   })));
+  // PROD 2026-10-14 (audit R24) — the on-screen kill switch: same path as Ctrl+Alt+K; the toast is main's own sentence.
+  bindClick("killSwitchBtn", (button) => runAction(button, async () => {
+    const r = await sentinel.killSwitch?.();
+    if (r) { markKilledLocally(); showToast(killSwitchToast(r)); }
+    else showToast({ title: "Kill switch unavailable", body: "The desktop bridge did not answer. Press Ctrl+Alt+K instead.", danger: true });
+    return r;
+  }));
+  // (audit R8) the coachmark tour on demand — never auto-stacked on the wizard.
+  bindClick("dashTakeTour", () => startTour());
+  // (audit R18) "browse" is a real picker; the chrome:// button copies the install path instead of pretending to open it.
+  const kbInput = qs("#kbFileInput");
+  const openPicker = () => kbInput?.click();
+  qs("#kbDropzone")?.addEventListener("click", openPicker);
+  qs("#kbDropzone")?.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openPicker(); } });
+  kbInput?.addEventListener("change", async () => {
+    const files = Array.from(kbInput.files || []);
+    const st = qs("#kbIngestStatus");
+    if (st) { st.hidden = false; st.textContent = files.length ? `Indexing ${files.length} file(s)…` : ""; }
+    let ok = 0;
+    for (const file of files) {
+      try { const base64 = await fileToBase64(file); const r = await sentinel.ingestKb?.({ name: file.name, base64 }); if (r && r.ok !== false) ok += 1; }
+      catch (err) { reportRendererError(err, "kb-browse"); }
+    }
+    if (st && files.length) st.textContent = `${ok} of ${files.length} file(s) indexed locally.`;
+    kbInput.value = "";
+  });
+  bindClick("openChromeExt", async (button) => {
+    const p = "<Sentinel install path>\\resources\\chrome-extension";
+    const r = await sentinel.copyText?.(p);
+    const steps = qs("#extSteps"); if (steps) steps.hidden = false;
+    showToast(r && r.ok ? { title: "Path copied", body: "Open chrome://extensions in your browser, turn on Developer mode, click Load unpacked and paste the path." } : { title: "Couldn't copy", body: "Follow the steps shown under the button.", danger: true });
+    return r;
+  });
 }
+
+// ===== PROD 2026-10-14 (audit R10) — the in-app countdown card =====
+let countdownCurrent = null;
+function showCountdownCard(info) {
+  const card = qs("#countdownCard");
+  if (!card || !info) return;
+  countdownCurrent = { id: info.id || null, recipeId: info.recipeId || null };
+  const secs = Math.max(0, Number(info.secondsLeft ?? info.remaining) || 0);
+  setText("countdownSeconds", String(secs));
+  setText("countdownTitle", `Applying: ${info.title || recipeTitleOf(info.recipeId)}`);
+  setText("countdownSub", secs > 0 ? `Applying in ${secs} s — press Cancel if you're not sure. Nothing has changed yet.` : "Starting now…");
+  const cancel = qs("#countdownCancel");
+  if (cancel) { cancel.disabled = info.canCancel === false || secs <= 0; cancel.textContent = "Cancel"; }
+  card.classList.toggle("done", secs <= 0);
+  card.hidden = false;
+  if (secs <= 0) setTimeout(() => { if (countdownCurrent && countdownCurrent.id === (info.id || null)) hideCountdownCard(); }, 2500);
+}
+function hideCountdownCard() { const card = qs("#countdownCard"); if (card) card.hidden = true; countdownCurrent = null; }
+function wireCountdownCard() {
+  sentinel.onCountdownTick?.((info) => { if (info) showCountdownCard(info); });
+  bindClick("countdownCancel", async (button) => {
+    const cur = countdownCurrent || {};
+    button.disabled = true; button.textContent = "Cancelling…";
+    let r = null;
+    try { r = cur.id && sentinel.cancelCountdown ? await sentinel.cancelCountdown(cur.id) : await sentinel.abortCountdown?.(); } catch { r = null; }
+    const aborted = r && (r.aborted > 0 || r.ok === true);
+    hideCountdownCard();
+    showToast(aborted ? { title: "Cancelled", body: `${cur.recipeId ? recipeTitleOf(cur.recipeId) : "The fix"} was cancelled before it ran. Nothing was changed.` } : { title: "Couldn't cancel", body: "The countdown had already finished or could not be reached. Check Dashboard → What I did.", danger: true });
+    qsa(`[data-resolve-status]`).forEach((el) => { if (el.dataset.outcome === "countdown" && (!cur.recipeId || el.dataset.resolveStatus === cur.recipeId)) { el.textContent = aborted ? "Cancelled — nothing was changed." : el.textContent; el.dataset.outcome = aborted ? "cancelled" : el.dataset.outcome; } });
+    return r;
+  });
+}
+
+// ===== PROD 2026-10-14 (audit R1/R2) — Live fixes: the consent switch, in Settings → Autonomy + the wizard =====
+let liveFixesCache = null;
+function liveFixesConsequence(status) {
+  if (!status) return "Checking whether ARIA may change this computer…";
+  if (status.note) return status.note;
+  return status.enabled ? "Live fixes are on. Fixes that need administrator rights ask for your approval (UAC) each time." : "Live fixes are off — every fix previews only. Turn them on to let ARIA apply vetted fixes you confirm.";
+}
+function renderLiveFixes(status) {
+  if (status && typeof status === "object") liveFixesCache = status;
+  const s = liveFixesCache;
+  const on = Boolean(s && s.enabled);
+  const toggle = qs("#liveFixesToggle");
+  if (toggle) { toggle.checked = on; toggle.disabled = Boolean(s && s.source === "env"); }
+  const note = qs("#liveFixesNote");
+  if (note) { note.textContent = liveFixesConsequence(s) + (s && s.source === "env" ? " (set by an environment variable on this device — the switch is read-only)" : ""); note.classList.toggle("on", on); }
+  setText("modeLiveFixesLine", on ? "Live fixes: ON — vetted fixes you confirm are applied for real (Windows may ask for admin permission). Switch: Settings → Autonomy." : "Live fixes: OFF — every fix previews only. Turn them on in Settings → Autonomy when you're ready.");
+  const chip = qs("#fixStatusChip");
+  if (chip) { chip.textContent = s ? (on ? "Fixes: live" : "Fixes: preview") : "Fixes: checking…"; chip.classList.toggle("fix-live", on); chip.classList.toggle("fix-preview", Boolean(s) && !on); chip.title = liveFixesConsequence(s); }
+  const sl = qs("#setupLiveFixes"); if (sl && !sl.dataset.touched) sl.checked = on;
+}
+async function loadLiveFixes() {
+  try { const r = await sentinel.getLiveFixes?.(); if (r && typeof r.enabled === "boolean") renderLiveFixes(r); } catch { /* the state push carries the same block */ }
+}
+function wireLiveFixes() {
+  bindChange("liveFixesToggle", async (input) => {
+    const want = input.checked;
+    let r = null;
+    try { r = await sentinel.setLiveFixes?.({ enabled: want }); } catch { r = null; }
+    if (r && typeof r.enabled === "boolean") {
+      renderLiveFixes(r);
+      showToast(r.enabled ? { title: "Live fixes on", body: "ARIA may now apply vetted fixes you confirm. Windows may ask for administrator permission (UAC) for some of them." } : { title: "Live fixes off", body: "Every fix previews only — nothing changes on this computer." });
+    } else {
+      input.checked = !want;
+      showToast({ title: "Couldn't change live fixes", body: "The desktop bridge did not answer. Nothing changed.", danger: true });
+    }
+    return r;
+  });
+  loadLiveFixes();
+}
+
+// ===== PROD 2026-10-14 (audit M20) — hotkey prefs (on/off · AltGr-safe · kill-switch) =====
+function wireHotkeyPrefs() {
+  const apply = async () => {
+    const prefs = { enabled: Boolean(qs("#hotkeysEnabled")?.checked), altGrSafe: Boolean(qs("#hotkeysAltGrSafe")?.checked), killSwitch: Boolean(qs("#hotkeysKillSwitch")?.checked) };
+    let r = null;
+    try { r = await sentinel.setHotkeyPrefs?.(prefs); } catch { r = null; }
+    setText("hotkeyPrefsStatus", r && r.ok !== false ? "Saved — shortcuts re-registered." : "Couldn't save shortcut settings.");
+    return r;
+  };
+  for (const id of ["hotkeysEnabled", "hotkeysAltGrSafe", "hotkeysKillSwitch"]) bindChange(id, apply);
+  (async () => {
+    try {
+      const r = await sentinel.getHotkeyPrefs?.();
+      const p = (r && r.prefs) || {};
+      const en = qs("#hotkeysEnabled"); if (en) en.checked = p.enabled !== false;
+      const ag = qs("#hotkeysAltGrSafe"); if (ag) ag.checked = p.altGrSafe === true;
+      const ks = qs("#hotkeysKillSwitch"); if (ks) ks.checked = p.killSwitch !== false;
+    } catch { /* prefs stay at their defaults */ }
+  })();
+}
+
+// ===== PROD 2026-10-14 (audit R9) — run state: Stop / Pause / kill switch reflected honestly =====
+let killedLocally = false;
+function markKilledLocally() { killedLocally = true; killDimmed = true; setGlobeState("dim"); renderRunState(state || {}); }
+function currentRunState(next) {
+  const s = next || state || {};
+  const bridge = s.bridgeStatus || {};
+  return computeRunState({ ariaStopped: Boolean(s.ariaStopped), killed: Boolean(s.killed), killedLocal: killedLocally && !s.ariaStopped, paused: Boolean(s.paused), bridgeConflict: Boolean(bridge.conflict) });
+}
+function renderRunState(next) {
+  const rs = currentRunState(next);
+  setText("railStatus", railStatusLabel((next && next.mode) || "manual", rs));
+  const chip = qs("#railStatus");
+  if (chip) {
+    chip.classList.toggle("stopped", rs.running === false);
+    chip.classList.toggle("paused", rs.id === "paused");
+    chip.title = rs.hint || "";
+  }
+  const note = qs("#runStateNote");
+  if (note) { note.hidden = rs.id === "watching" || rs.id === "self-repair"; note.textContent = rs.hint ? `ARIA is ${rs.label}. ${rs.hint}` : ""; }
+  const start = qs("#startAria"), stop = qs("#stopAria");
+  if (start) start.disabled = !(rs.running === false || rs.id === "paused");
+  if (stop) stop.disabled = rs.running === false;
+  setText("homeWatch", HomeTab.watcherLine({ runState: rs, watchers: next && next.watchers, platformCapabilities: next && next.platformCapabilities, processHealthAgeMs: processHealthAgeMs() }));
+  renderHero(rs);
+  return rs;
+}
+// The hero word = trust sources (from the last dashboard call) + the run state; STOPPED / PAUSED never read "PROTECTED".
+let lastDashboardSources = {};
+let lastSubline = {};
+function renderHero(rs) {
+  const status = computeHeroStatus({ ...(lastDashboardSources || {}), running: rs.running !== false, paused: rs.id === "paused" });
+  const hero = qs("#heroStatus");
+  // UX 2026-07-03: no separate dot/globe — the WORD itself carries the status color (see .hero-label CSS).
+  if (hero) { hero.dataset.level = status.level; hero.innerHTML = `<strong class="hero-label">${status.label}</strong>`; }
+  setText("heroSubline", heroSubline({ ...(lastSubline || {}), runState: rs }));
+}
+let lastProcessHealthAt = 0;
+function processHealthAgeMs() { return lastProcessHealthAt ? Math.max(0, Date.now() - lastProcessHealthAt) : null; }
 
 function bindClick(id, handler) {
   const element = qs(`#${id}`);
@@ -509,12 +683,17 @@ function renderState(next) {
   const catalog = state.recipeCatalog || {};
   const recipes = state.recipes || [];
 
-  setText("railVersion", `v${state.version || "0.1.0"}`);
-  setText("aboutVersion", state.version || "0.1.0");
-  setText("railStatus", `${titleCase(state.mode || "manual")} mode - ${state.paused ? "paused" : bridge.conflict ? "self repair" : "watching"}`);
+  // (audit M4) the version is the real one from main; an unknown version shows "—", never a stale literal.
+  setText("railVersion", state.version ? `v${state.version}` : "v—");
+  setText("aboutVersion", state.version || "—");
+  setText("aboutBuildKind", state.devMode ? "Development run" : "Desktop build");
+  if (state.ariaStopped === false && !state.killed) killedLocally = false; // a Start from main re-arms the run state
+  renderRunState(state); // (audit R9) rail chip + Start/Stop + watcher line reflect stopped / paused / killed
 
   setChip("bridgeStatus", bridge.conflict ? `Bridge conflict :${bridge.port}` : bridge.listening ? `Bridge :${bridge.port}` : `Bridge standby :${bridge.port || state.bridgePort}`, bridge.conflict ? "red" : bridge.listening ? "cyan" : "amber");
   renderKbFreshness(state.kbMeta); // RUN 33-A — live KB version + last-synced in the top bar
+  if (state.liveFixes && typeof state.liveFixes === "object") renderLiveFixes(state.liveFixes); // (audit R2) the live-fix truth
+  renderExcludedFolders(state.excludedFolders); // (audit R7) a count from the person's own settings, never a name
 
   qsa(".mode-row").forEach((button) => button.classList.toggle("selected", button.dataset.mode === state.mode));
   if (qs("#dryRunToggle")) qs("#dryRunToggle").checked = Boolean(state.dryRun);
@@ -552,9 +731,51 @@ function renderState(next) {
   renderApprovals(state);        // RUN-CU / CU4 — approvals (Control Center) refresh on every state push
   renderAutonomyBadge(state);    // RUN-CU / CU4 — current level + keep-dry-run checkbox
   renderPlatformHonesty(state);  // RUN-CU / CU4 (fix k) — detect-only / guided relabels where no fix engine exists
-  maybeShowOnboarding(state);
+  renderHomeLists(state);        // PROD 2026-10-14 (audit §4) — What I found / did / need from you + what this version can fix
+  renderDataUploadStat(state.allowedOutboundPaths || []); // (audit R6) computed, never a literal
+  // (audit R8) ONE overlay at a time: the wizard first; the coachmark tour only after it, once.
   maybeShowSetupWizard(state); // RUN 33-E
+  maybeShowOnboarding(state);
   maybeShowWhatsNew(state);
+}
+
+// PROD 2026-10-14 (audit R7) — excluded folders are shown as a COUNT from the person's own settings.
+function renderExcludedFolders(ex) {
+  const line = qs("#excludedFoldersLine");
+  if (!line) return;
+  if (!ex || !Number.isFinite(Number(ex.count))) { line.textContent = "Excluded folders: —"; return; }
+  const n = Number(ex.count);
+  const extra = Array.isArray(ex.configured) ? ex.configured.length : 0;
+  line.textContent = `Excluded folders: ${n} — never read, listed or fixed${extra ? ` (${extra} added by you)` : ""}. The names stay on this device.`;
+}
+
+// PROD 2026-10-14 (audit R6) — "paths that upload your content": counted from the declared outbound list.
+function renderDataUploadStat(paths) {
+  const list = Array.isArray(paths) ? paths : [];
+  // A path "uploads your content" only when its declared direction says so and is not content-blind by design.
+  const uploads = list.filter((p) => p && /upload|raw|content/i.test(String(p.direction || "")) && !/content-blind/i.test(String(p.direction || ""))).length;
+  setText("dataUploadCount", String(uploads));
+  setText("dataUploadLabel", `of ${list.length} declared outbound paths upload your content to iisupp.net`);
+}
+
+// PROD 2026-10-14 (audit §4) — the plain-language home, fed only from real state.
+let lastPendingCards = [];
+function renderHomeLists(next) {
+  const host = qs("#homeLists");
+  if (!host || !next) return;
+  host.innerHTML = HomeTab.homeListsHtml({ detections: next.detections || [], log: next.transparencyLog || [], approvals: next.approvals || {}, deferred: next.deferredFixes || [], pending: lastPendingCards });
+  setText("homeCanFix", HomeTab.canFixLine({ recipes: next.recipes || [], platformCapabilities: next.platformCapabilities, liveFixes: next.liveFixes }));
+  qsa("#homeLists [data-home-fix]").forEach((b) => b.addEventListener("click", () => runAction(b, async () => {
+    const row = b.closest(".home-row");
+    let st = row && row.querySelector(".resolve-status");
+    if (!st && row) { st = document.createElement("p"); st.className = "note resolve-status"; st.style.gridColumn = "1 / -1"; st.style.margin = "0"; row.appendChild(st); }
+    return resolveViaSupervisor(b.dataset.homeFix, b.dataset.risk || "medium", st);
+  })));
+  qsa("#homeLists [data-home-walk]").forEach((b) => b.addEventListener("click", () => { activateTab("walkthrough"); renderWalkthrough({ recipeId: b.dataset.homeWalk, mode: "guide" }); }));
+  qsa("#homeLists [data-home-dismiss]").forEach((b) => b.addEventListener("click", () => { const row = b.closest(".home-row"); if (row) row.remove(); if (!qs("#homeFound .home-row")) { const f = qs("#homeFound"); if (f) f.insertAdjacentHTML("beforeend", `<p class="home-empty">Nothing else right now.</p>`); } }));
+  qsa("#homeLists [data-approve]").forEach((b) => b.addEventListener("click", () => runAction(b, async () => { const r = await sentinel.approveFix?.(b.dataset.approve); showToast(approveToast(r, { liveFixes: next.liveFixes })); return r; })));
+  qsa("#homeLists [data-deny]").forEach((b) => b.addEventListener("click", () => runAction(b, async () => { const r = await sentinel.denyFix?.(b.dataset.deny); showToast(r && r.ok ? { title: "Denied", body: "Nothing was changed." } : { title: "Couldn't deny", body: (r && r.reason) || "Already decided or expired.", danger: true }); return r; })));
+  wireDeepLinks("homeLists");
 }
 
 // ===== RUN-CU / CU4 — approvals · autonomy level · platform honesty =====
@@ -575,12 +796,13 @@ function renderApprovals(next) {
         <button class="ghost" data-deny="${escapeHtml(p.id)}">Deny</button>
       </div>
     </div>`).join("");
-  qsa("[data-approve]").forEach((b) => b.addEventListener("click", () => runAction(b, async () => {
+  qsa("#approvalsList [data-approve]").forEach((b) => b.addEventListener("click", () => runAction(b, async () => {
     const r = await sentinel.approveFix?.(b.dataset.approve);
-    showToast(r && r.ok ? { title: "Approved", body: r.result && r.result.copy ? r.result.copy : "Running through the gated pipeline now." } : { title: "Couldn't approve", body: (r && r.reason) || "Already decided or expired.", danger: true });
+    // (audit R14) the toast branches on the EXECUTION result (r.result.ok), never on the ledger write alone.
+    showToast(approveToast(r, { liveFixes: next && next.liveFixes }));
     return r;
   })));
-  qsa("[data-deny]").forEach((b) => b.addEventListener("click", () => runAction(b, async () => {
+  qsa("#approvalsList [data-deny]").forEach((b) => b.addEventListener("click", () => runAction(b, async () => {
     const r = await sentinel.denyFix?.(b.dataset.deny);
     showToast(r && r.ok ? { title: "Denied", body: "Nothing was changed." } : { title: "Couldn't deny", body: (r && r.reason) || "Already decided or expired.", danger: true });
     return r;
@@ -596,8 +818,11 @@ const AUTONOMY_CARDS = [
   { id: "approve-first", label: "Approve-first", consequence: "I ask before every fix." },
   { id: "full-auto", label: "Full-auto", consequence: "I fix green and yellow inside your maintenance window and report." }
 ];
+// (audit R2) every "I fix" card carries the live-fix truth: with live fixes OFF the same card previews only.
 function autonomyCardsHtml(selected, idPrefix = "autonomy") {
-  return AUTONOMY_CARDS.map((c) => `<button type="button" class="autonomy-card${c.id === selected ? " selected" : ""}" data-${idPrefix}-level="${c.id}"><b>${escapeHtml(c.label)}</b><span>${escapeHtml(c.consequence)}</span><em>${c.id === "full-auto" ? "needs opt-in + restore point" : c.id === "observe" ? "nothing ever changes" : c.id === "safe-auto" ? "green only · tells you after" : "every fix waits for a yes"}</em></button>`).join("");
+  const live = Boolean(liveFixesCache && liveFixesCache.enabled);
+  const fixNote = live ? "" : " (previews only until Live fixes are on)";
+  return AUTONOMY_CARDS.map((c) => `<button type="button" class="autonomy-card${c.id === selected ? " selected" : ""}" data-${idPrefix}-level="${c.id}"><b>${escapeHtml(c.label)}</b><span>${escapeHtml(c.consequence)}${c.id === "safe-auto" || c.id === "full-auto" ? escapeHtml(fixNote) : ""}</span><em>${c.id === "full-auto" ? "needs opt-in + restore point" : c.id === "observe" ? "nothing ever changes" : c.id === "safe-auto" ? "green only · tells you after" : "every fix waits for a yes"}</em></button>`).join("");
 }
 function renderAutonomyBadge(next) {
   const cur = qs("#autonomyCurrent");
@@ -627,12 +852,12 @@ function renderPlatformHonesty(next) {
   }
 }
 
+// (audit R9) a control-plane / customer-policy kill shows on the real fix chip (the old #dryRunStatus never existed).
 function renderKillBanner(next) {
-  const note = qs("#snStatusNote");
-  if (!note) return;
-  if (next.killed) {
-    setChip("dryRunStatus", "Remediation paused", "red");
-  }
+  const chip = qs("#fixStatusChip");
+  if (!chip) return;
+  if (next.killed) { chip.textContent = "Fixes: halted"; chip.classList.remove("fix-live", "fix-preview"); chip.classList.add("red"); chip.title = next.killReason || "Fixes are halted on this device."; }
+  else chip.classList.remove("red");
 }
 
 // RUN 17 — audit-tamper banner. Driven by state.auditIntegrity (set at session start). The Dismiss
@@ -910,9 +1135,10 @@ function fileToBase64(file) {
 }
 
 const ONBOARD_STEPS = [
-  { kicker: "Welcome", title: "Meet the globe", body: "A calm gold globe lives in the corner of your screen. It is ARIA Sentinel — resident IT support that never sleeps.", state: "idle" },
-  { kicker: "Always on", title: "It watches quietly", body: "ARIA watches for disk, network, app and blue-screen problems on-device. It stays calm until something needs attention.", state: "diagnosing" },
-  { kicker: "Your call", title: "You're in control", body: "Manual mode walks you through fixes in chat. Nothing is applied automatically unless you choose Confirmed or Autonomous.", state: "fixing" },
+  // (audit R11) honest about the globe: it moves to the top of your screen when it needs you; Manual mode keeps it click-through.
+  { kicker: "Welcome", title: "Meet the globe", body: "A calm gold globe sits on your desktop. It is ARIA Sentinel — resident IT support that keeps watching while you work. When it needs you it moves to the top of your screen; click it, or press Ctrl+Alt+G to bring it forward.", state: "idle" },
+  { kicker: "Always on", title: "It watches quietly", body: "ARIA watches for disk, service, network, crash, performance and event-log problems on this device. It stays calm until something needs attention.", state: "diagnosing" },
+  { kicker: "Your call", title: "You're in control", body: "Manual mode walks you through fixes in chat. Nothing is applied automatically unless you choose Confirmed or Autonomous — and nothing changes at all until Live fixes are on (Settings → Autonomy).", state: "fixing" },
   { kicker: "Even on a blue screen", title: "Even on a blue screen", body: "BSOD recovery stays live even when ARIA is paused. Press F8 → Recovery menu → ARIA.", state: "escalation" },
   {
     kicker: "First run", title: "Windows protected your PC", body: "Windows may show 'Windows protected your PC' because ARIA is newly published. Click More info → Run anyway. This is expected until code signing reputation builds — it's not a problem with the app.", state: "idle",
@@ -926,20 +1152,27 @@ const ONBOARD_STEPS = [
 let onboardIndex = 0;
 let onboardingShown = false;
 
+// (audit R8) the coachmark tour never stacks on the wizard: it auto-shows once, only when no wizard is needed or
+// open; after the wizard finishes it runs then (once). "Take the 30-second tour" on the Dashboard re-opens it.
 function maybeShowOnboarding(next) {
   if (onboardingShown) return;
-  if (next && next.firstRunComplete === false) {
-    onboardingShown = true;
-    onboardIndex = 0;
-    renderOnboardStep();
-    const modal = qs("#onboarding");
-    if (modal) modal.hidden = false;
-  }
+  if (!next || next.firstRunComplete !== false) return;
+  if (next.setupNeeded || setupVisible()) return; // the wizard is the only overlay on screen right now
+  startTour({ auto: true });
+}
+function setupVisible() { const w = qs("#setupWizard"); return Boolean(w && !w.hidden); }
+function startTour({ auto = false } = {}) {
+  if (auto) onboardingShown = true;
+  onboardIndex = 0;
+  renderOnboardStep();
+  const modal = qs("#onboarding");
+  if (modal) { modal.hidden = false; setTimeout(() => qs("#onboardNext")?.focus(), 30); }
 }
 
 function wireOnboarding() {
   bindClick("onboardNext", () => advanceOnboarding());
   bindClick("onboardSkip", () => finishOnboarding());
+  qs("#onboarding")?.addEventListener("keydown", (e) => { if (e.key === "Escape") finishOnboarding(); });
 }
 
 function renderOnboardStep() {
@@ -970,6 +1203,7 @@ function advanceOnboarding() {
 async function finishOnboarding() {
   const modal = qs("#onboarding");
   if (modal) modal.hidden = true;
+  onboardingShown = true;
   try {
     await sentinel.completeOnboarding?.();
   } catch {
@@ -997,10 +1231,16 @@ function renderRecipes(recipes) {
     activateTab("walkthrough"); renderWalkthrough({ recipeId: button.dataset.walkRecipe, mode: "guide" });
   }));
 
+  // (audit R17) Dry-run gives visible feedback in the card's status line — never a silent click.
   qsa("[data-recipe-run]").forEach((button) => {
-    button.addEventListener("click", () => runAction(button, () => {
-      if (button.dataset.recipeRun === "sentinel-self-repair-v1") return sentinel.selfRepair("recipe-list");
-      return sentinel.runRecipe(button.dataset.recipeRun, { dryRun: true });
+    button.addEventListener("click", () => runAction(button, async () => {
+      const id = button.dataset.recipeRun;
+      const statusEl = qs(`[data-resolve-status="${cssEscape(id)}"]`) || button.closest(".recipe-card")?.querySelector(".resolve-status");
+      if (statusEl) { statusEl.hidden = false; statusEl.textContent = "Previewing…"; }
+      let r = null;
+      try { r = id === "sentinel-self-repair-v1" ? await sentinel.selfRepair("recipe-list") : await sentinel.runRecipe(id, { dryRun: true }); } catch { r = null; }
+      if (statusEl) { statusEl.textContent = describeDryRun(r); statusEl.dataset.outcome = r && r.ok !== false ? "preview" : "failed"; }
+      return r;
     }));
   });
   // RUN 36 / TASK 3 — "Resolve it for me": run the matched fix LOCALLY through the gated control plane
@@ -1174,7 +1414,8 @@ function runCmdk(id, results) {
   closeCmdk();
   if (!cmd) return;
   if (cmd.type === "nav") activateTab(cmd.tab);
-  else if (cmd.type === "recipe") sentinel.runRecipe?.(cmd.recipeId, { dryRun: true });
+  // (audit R17) a palette dry-run reports what it previewed — never a silent action.
+  else if (cmd.type === "recipe") Promise.resolve(sentinel.runRecipe?.(cmd.recipeId, { dryRun: true })).then((r) => showToast({ title: `Preview: ${recipeTitleOf(cmd.recipeId)}`, body: describeDryRun(r) })).catch(() => showToast({ title: "Preview failed", body: "Couldn't run the preview just now. Nothing was changed.", danger: true }));
   else if (cmd.id === "act:admin") sentinel.openAdminConsole?.();
   else if (cmd.id === "act:globe") sentinel.showGlobe?.();
 }
@@ -1202,17 +1443,16 @@ function renderRun15(state) {
   if (adminBtn) adminBtn.style.display = adminAllowed ? "" : "none";
   const adminBtn2 = qs("#openAdminConsole2");
   if (adminBtn2) adminBtn2.style.display = adminAllowed ? "" : "none";
-  // Start/Stop reflect run state.
-  const start = qs("#startAria");
-  const stop = qs("#stopAria");
-  if (start) start.disabled = !state.ariaStopped && !state.paused;
-  if (stop) stop.disabled = Boolean(state.ariaStopped);
-  // Hotkey live status in the Hotkeys tab.
+  // Start/Stop reflect run state — (audit R9) one source: renderRunState() (stopped / paused / killed re-arm Start).
+  renderRunState(state);
+  // Hotkey rows — (audit R6) every row comes from state.hotkeys (real combo + live status); nothing is static.
   const hk = qs("#hotkeyStatus");
   if (hk && Array.isArray(state.hotkeys)) {
-    setHtml("hotkeyStatus", state.hotkeys.map((h) =>
-      `<div class="table-row"><span>${escapeHtml(h.combo)}</span><strong>${escapeHtml(h.label || h.id)}</strong><em class="${h.status === "active" ? "active-badge" : "fail-badge"}">${h.status === "active" ? (h.usedFallback ? "Active (rebound)" : "Active") : "Failed"}</em><button class="ghost" data-rebind="${escapeHtml(h.id)}">Rebind</button></div>`
-    ).join(""));
+    const combo = (c) => String(c || "").replace(/CommandOrControl/g, "Ctrl").replace(/\+/g, " + ");
+    const badge = (h) => h.status === "active" ? `<em class="active-badge">${h.usedFallback ? "Active (fallback combo)" : "Active"}</em>` : h.status === "disabled" ? `<em class="off-badge">Off</em>` : `<em class="fail-badge">Failed — another app holds it</em>`;
+    setHtml("hotkeyStatus", state.hotkeys.length ? state.hotkeys.map((h) =>
+      `<div class="table-row${h.action === "kill-aria" || h.id === "kill" ? " kill-row" : ""}"><span>${escapeHtml(combo(h.combo))}</span><strong>${escapeHtml(h.label || h.id)}</strong>${badge(h)}<button class="ghost" data-rebind="${escapeHtml(h.id)}">Rebind</button></div>`
+    ).join("") : `<div class="table-row"><span>—</span><strong>No shortcuts are registered on this device.</strong><em class="off-badge">Off</em></div>`);
     qsa("[data-rebind]").forEach((btn) => btn.addEventListener("click", () => {
       const combo = prompt("New combo (e.g. CommandOrControl+Shift+J):");
       if (combo) sentinel.rebindHotkey?.(btn.dataset.rebind, combo);
@@ -1242,7 +1482,10 @@ function renderUpdates(state) {
   if (!u) return;
   const tog = qs("#autoUpdateToggle");
   if (tog) tog.checked = u.autoUpdate !== false;
-  setText("updateStatusLine", `Current version ${u.current}.${u.autoUpdate === false ? " Auto-update is off." : ""}`);
+  // (audit R19) honest update mode: "manual in this version" unless main reports a live OTA channel.
+  const ota = u.mode === "ota" || u.channel === "ota";
+  setText("updateStatusLine", `Current version ${u.current || state.version || "—"}. ${ota ? (u.autoUpdate === false ? "Auto-update is off." : "Updates install automatically.") : "Updates are manual in this version — use \"Get latest from website\"."}`);
+  setText("planModalUpdates", ota ? "Updates: automatic (OTA channel live)" : "Updates: manual in this version");
   const installed = new Set((u.history || []).map((h) => h.version));
   const rows = (u.history && u.history.length ? u.history : [{ version: u.current, installed: "this build" }]).map((h) => {
     const isCurrent = h.version === u.current;
@@ -1277,8 +1520,12 @@ function wireRun13() {
   qs("#planModal")?.addEventListener("keydown", (e) => { if (e.key === "Escape") closePlanModal(); });
   bindClick("logoutBtn", (b) => runAction(b, async () => { const r = await sentinel.logout?.(); return r; }));
   bindClick("managePlanBtn", (b) => runAction(b, () => sentinel.manageSubscription?.()));
-  // Trial-end plan picker — each "Subscribe" CTA opens the tier's Stripe Checkout URL.
-  qsa(".plan-subscribe").forEach((btn) => btn.addEventListener("click", () => sentinel.choosePlan?.(btn.getAttribute("data-plan"))));
+  // Trial-end plan picker — each "Subscribe" CTA opens the tier's checkout. PROD 2026-10-14 (audit R4/R5): main resolves
+  // the URL (a customer machine has no Stripe env, so it lands on the live /plans/?from=app&tier=… page) and the
+  // billing period chosen in the modal travels with the request; the prices on the cards come from pricing-tiers.mjs.
+  qsa(".plan-subscribe").forEach((btn) => btn.addEventListener("click", () => sentinel.choosePlan?.(btn.getAttribute("data-plan"), { billing: planModalBilling })));
+  qsa("[data-plan-billing]").forEach((btn) => btn.addEventListener("click", () => { planModalBilling = btn.dataset.planBilling === "yearly" ? "yearly" : "monthly"; qsa("[data-plan-billing]").forEach((b) => b.classList.toggle("active", b === btn)); renderPlanModalPrices(); }));
+  renderPlanModalPrices();
   // "Enter license" inline reveal inside the trial-end modal.
   bindClick("planEnterLicenseLink", () => { const row = qs("#planLicenseRow"); if (row) row.hidden = !row.hidden; qs("#planLicenseInput")?.focus(); });
   bindClick("planActivateBtn", (b) => runAction(b, async () => {
@@ -1315,17 +1562,44 @@ async function activateLicense() {
 }
 function closePlanModal() { const m = qs("#planModal"); if (m) m.hidden = true; planModalShown = false; }
 
+// PROD 2026-10-14 (audit R5) — the plan modal's prices are rendered from pricing-tiers.mjs: monthly tiers "/mo",
+// annual tiers "/mo · billed annually ($X/yr)", and the Yearly tab shows real yearly totals. One source, no literal.
+let planModalBilling = "monthly";
+function renderPlanModalPrices() {
+  qsa("#planModal .plan-card").forEach((card) => {
+    const plan = card.dataset.tier;
+    if (!TIERS[plan]) return;
+    const pl = priceLine(plan, planModalBilling);
+    const priceEl = card.querySelector(".plan-price");
+    if (priceEl) priceEl.innerHTML = `${escapeHtml(pl.amount)}<em>${escapeHtml(pl.unit)}</em>`;
+    let note = card.querySelector(".plan-note");
+    if (!note) { note = document.createElement("small"); note.className = "plan-note"; priceEl?.insertAdjacentElement("afterend", note); }
+    const visits = visitsLabel(plan);
+    note.textContent = [pl.note, visits].filter(Boolean).join(" · ");
+  });
+  setText("planSupportNote", SEPARATE_HUMAN_SUPPORT_NOTE);
+}
+
+// Open the plan modal with honest framing: "Trial ended" only when it really ended; otherwise "Plans".
+function openPlanModal() {
+  const gate = (state && state.gate) || {};
+  const st = trialState(gate);
+  setText("planModalKicker", st === "expired" ? "Trial ended" : "Plans");
+  setText("planModalTitle", st === "expired" ? "Your ARIA trial has ended" : "Choose an ARIA Sentinel plan");
+  setText("planModalSub", st === "expired" ? "Choose your tier to keep every feature running on this machine. Manual mode and ARIA chat keep working either way." : st === "active" ? `Every feature is unlocked during your ${trialDays(gate)}-day trial. Subscribe now to keep it that way.` : "Choose the tier that fits — your key unlocks the matching features on this machine.");
+  renderPlanModalPrices();
+  const pm = qs("#planModal");
+  if (pm) { pm.hidden = false; planModalShown = true; setTimeout(() => qs("#planModal .plan-subscribe")?.focus(), 30); }
+  else sentinel.openPlanPicker?.();
+}
+
 function renderGate(state) {
   const gate = state && state.gate;
   if (!gate) return;
+  // (audit R3/R13/R20) every trial sentence comes from trial-copy.mjs, fed by main's real end date — never "undefined".
   const badge = qs("#trialBadge");
-  if (badge) {
-    if (gate.licensed) { badge.hidden = false; badge.textContent = "Licensed"; }
-    else if (gate.trial?.state === "active") { badge.hidden = false; badge.textContent = gate.trial.badge; }
-    else { badge.hidden = false; badge.textContent = "Trial ended"; }
-  }
-  const acct = qs("#accountStatus");
-  if (acct) acct.textContent = gate.licensed ? `Licensed${gate.plan ? " · " + gate.plan : ""}` : (gate.trial?.state === "active" ? gate.trial.badge : "Trial ended — choose a plan.");
+  if (badge) { badge.hidden = false; badge.textContent = trialBadgeText(gate); }
+  setText("accountStatus", accountStatusLine(gate));
   // 2026-07-02 DEAD-SHELL FIX — do NOT force the full-screen #planModal (an .onboarding{position:fixed;inset:0}
   // overlay with no close) as an interaction-blocking wall. It trapped every click, including Settings, whenever
   // the trial had expired. The app now always keeps a navigable baseline (Dashboard · ARIA · Settings, + Walk-
@@ -1357,32 +1631,27 @@ function applyTabGates(state) {
   });
 }
 
-// Real days-left from the server-issued trialEndsAt (Rule 14 — no fabricated countdown). "" when unknown/past.
-function trialDaysLeftLabel(gate) {
-  const ends = gate && gate.trialEndsAt ? Date.parse(gate.trialEndsAt) : NaN;
-  if (!Number.isFinite(ends)) return "";
-  const ms = ends - Date.now();
-  if (ms <= 0) return `Your 30-day trial ended ${new Date(ends).toLocaleDateString()}.`;
-  const days = Math.ceil(ms / (24 * 60 * 60 * 1000));
-  return `${days} day${days === 1 ? "" : "s"} left in your Sentinel trial (ends ${new Date(ends).toLocaleDateString()}).`;
-}
-
-// Honest locked-tab overlay: the real upsell message + the buy path (plan picker) + "keep your Walk-Through".
+// Honest locked-tab overlay (audit R3/R20): the real reason, the real days line, what still works, and the buy path.
+// "Keep using your Walk-Through" shows ONLY when the entitlement is real (never a locked tab offered as consolation).
 function showLockedTabOverlay() {
   const gate = (state && state.gate) || {};
-  setText("lockedTabMessage", LOCKED_TAB_MESSAGE);
+  const copy = lockedTabCopy(gate);
+  setText("lockedTabKicker", trialState(gate) === "expired" ? "Trial ended" : "Paid feature");
+  setText("lockedTabMessage", copy.message);
   const info = qs("#lockedTabTrialInfo");
-  const label = trialDaysLeftLabel(gate);
-  if (info) { info.textContent = label; info.hidden = !label; }
+  if (info) { info.textContent = copy.trialInfo; info.hidden = !copy.trialInfo; }
+  const keep = qs("#lockedTabKeepWalkthrough");
+  if (keep) keep.hidden = !copy.showWalkthroughButton;
   const m = qs("#lockedTabOverlay");
-  if (m) m.hidden = false;
+  if (m) { m.hidden = false; setTimeout(() => qs("#lockedTabChoosePlan")?.focus(), 30); }
 }
 function closeLockedTabOverlay() { const m = qs("#lockedTabOverlay"); if (m) m.hidden = true; }
 function wireLockedTabOverlay() {
   bindClick("lockedTabClose", () => closeLockedTabOverlay());
   bindClick("lockedTabKeepWalkthrough", () => { closeLockedTabOverlay(); activateTab(WALKTHROUGH_TAB); });
   // "Choose a plan" opens the existing plan picker (the buy path) — never blocked.
-  bindClick("lockedTabChoosePlan", () => { closeLockedTabOverlay(); const pm = qs("#planModal"); if (pm) { pm.hidden = false; planModalShown = true; } else sentinel.openPlanPicker?.(); });
+  bindClick("lockedTabChoosePlan", () => { closeLockedTabOverlay(); openPlanModal(); });
+  qs("#lockedTabOverlay")?.addEventListener("keydown", (e) => { if (e.key === "Escape") closeLockedTabOverlay(); });
 }
 
 // Fix 5 — "Show the floating globe" toggle (persists via electron-store).
@@ -1416,10 +1685,15 @@ async function renderRoi(next) {
 }
 
 function wireLicense() {
+  // (audit R13) the trial status line is rendered from the gate main returns — never "undefined days left".
   bindClick("startTrial", (button) => runAction(button, async () => {
     const email = qs("#trialEmail")?.value?.trim() || "";
     const result = await sentinel.startTrial?.(email);
-    setText("licenseStatus", result?.ok ? `Trial active · ${result.status.daysRemaining} days left (Confirmed + Autonomous)` : "Enter a valid email to start the trial.");
+    const gate = (result && result.status) || (state && state.gate) || {};
+    if (result && result.ok) {
+      setText("licenseStatus", licenseStatusLine(state && state.license, gate));
+      showToast(result.started ? { title: "Trial started", body: licenseStatusLine(state && state.license, gate) } : { title: "Trial already running", body: licenseStatusLine(state && state.license, gate) });
+    } else setText("licenseStatus", "Couldn't start the trial just now — the desktop bridge did not answer.");
     return result;
   }));
   bindClick("checkUpdates", (button) => runAction(button, async () => {
@@ -1436,19 +1710,17 @@ function wireLicense() {
 }
 function renderLicense(next) {
   const lic = next && next.license;
-  if (!lic) return;
-  const el = qs("#licenseStatus");
-  if (!el) return;
-  // H3 (2026-07-02) — a LICENSED/admin user is NOT "trial active", and never leaks "undefined days". Trial copy
-  // shows ONLY when there's a real finite days-remaining; a paid/admin license shows "Licensed · <plan>".
-  const days = Number(lic.daysRemaining);
-  if (lic.licensed && Number.isFinite(days)) {
-    el.textContent = `Trial active · ${days} day${days === 1 ? "" : "s"} left (Confirmed + Autonomous)`;
-  } else if (lic.licensed) {
-    el.textContent = `Licensed${lic.plan ? " · " + lic.plan : ""}`;
-  } else {
-    el.textContent = "Manual mode (free). Start a 30-day trial of Confirmed + Autonomous.";
-  }
+  const gate = (next && next.gate) || {};
+  if (!lic && !next?.gate) return;
+  // (audit R3/R13) ONE sentence from trial-copy.mjs: licensed → "Licensed · plan"; active → real days left + end date;
+  // expired → what ended, what still works, how to buy; never started → the offer with the real day count.
+  setText("licenseStatus", licenseStatusLine(lic || {}, gate));
+  const st = trialState(gate);
+  // The trial is write-once (it starts at first launch): the Start button shows only when no trial exists yet.
+  const startBtn = qs("#startTrial");
+  if (startBtn) { startBtn.hidden = st !== "not-started"; startBtn.textContent = `Start ${trialDays(gate)}-day trial`; }
+  const emailField = qs("#trialEmailField");
+  if (emailField) emailField.hidden = st !== "not-started";
 }
 
 let whatsNewShown = false;
@@ -1498,7 +1770,7 @@ function defaultChecks(next) {
 
 // ===== RUN 19 — toasts · triple-confirm delete · kill-switch · trial nudge · live globe state =====
 
-const TRIAL_DURATION_MS = 12 * 60 * 60 * 1000;
+// (audit R3) no local trial constant: the trial's length arrives in gate.trial (durationMs / days) from main.
 let deletePrefs = { skipTripleFor: [] };
 let deleteFlow = null;
 let killDimmed = false;
@@ -1593,14 +1865,14 @@ function wireRun19() {
     showToast({ title: "Delete confirmations reset", body: "Every file type is triple-confirmed again." });
     return r;
   }));
-  // Kill-switch (Ctrl+Alt+K) confirmation pushed from main: dim the globe + toast.
+  // Kill-switch (Ctrl+Alt+K) confirmation pushed from main: dim the globe, reflect the run state, toast main's OWN
+  // sentence (audit R9) — never a default "last action undone" for an undo that did not run.
   sentinel.onKillSwitch?.((info) => {
-    killDimmed = true;
-    setGlobeState("dim");
-    showToast({ title: "ARIA terminated", body: (info && info.toast) || "last action undone", danger: true });
+    markKilledLocally();
+    showToast(killSwitchToast(info || {}));
   });
-  // A user Start re-arms the globe.
-  qs("#startAria")?.addEventListener("click", () => { killDimmed = false; setGlobeState("active"); });
+  // A user Start re-arms the globe + the run state.
+  qs("#startAria")?.addEventListener("click", () => { killDimmed = false; killedLocally = false; setGlobeState("active"); renderRunState(state || {}); });
 }
 
 function renderDeletePrefs() {
@@ -1628,16 +1900,17 @@ function renderRun19(next) {
   // Keep the globe dim once killed for the session.
   if (killDimmed) setGlobeState("dim");
   // Trial nudge — when active and <30% remaining (and not licensed), a dismissible top-right toast.
+  // (audit R3) the fraction uses the gate's OWN duration (trial-copy.mjs), never a local constant.
   const gate = next && next.gate;
   if (!trialNudgeShown && gate && !gate.licensed && gate.trial?.state === "active") {
-    const frac = Number(gate.trial.remainingMs || 0) / TRIAL_DURATION_MS;
-    if (frac > 0 && frac < 0.30) {
+    const frac = trialFractionLeft(gate);
+    if (frac != null && frac > 0 && frac < 0.30) {
       trialNudgeShown = true;
       showToast({
         title: "Trial ending soon",
-        body: `${gate.trial.badge} — choose a tier to keep ARIA running.`,
+        body: `${trialBadgeText(gate)} — choose a tier to keep every feature running.`,
         cta: "See plans",
-        ctaAction: () => activateTab("about")
+        ctaAction: () => openPlanModal()
       });
     }
   }
@@ -1862,7 +2135,15 @@ function wireRun22() {
   bindClick("dashDiagnose", () => { activateTab("aria"); qs("#ariaChatInput")?.focus(); }); // RUN 34-2 — route to the ARIA tab chat
   bindClick("dashHealthCheck", (b) => runAction(b, async () => { const r = await sentinel.selfHeal?.(); showToast({ title: "Health check", body: r?.summary?.headline || "Self-check complete." }); return r; }));
   bindClick("dashCheckUpdates", (b) => runAction(b, async () => { const r = await sentinel.checkUpdateChannel?.(); showToast(updateToast(r)); return r; })); // D3 — honest toast
-  bindClick("dashExportEvidence", (b) => runAction(b, () => sentinel.exportEvidence?.()));
+  // (audit R18) the Dashboard export gives feedback — a result line + toast — never a silent click.
+  bindClick("dashExportEvidence", (b) => runAction(b, async () => {
+    const st = qs("#dashQuickStatus"); if (st) { st.hidden = false; st.textContent = "Building the evidence pack…"; }
+    const r = await sentinel.exportEvidence?.();
+    const msg = r?.ok ? `Evidence pack saved → ${r.path}` : "Export unavailable in this build.";
+    if (st) st.textContent = msg;
+    showToast({ title: r?.ok ? "Evidence pack saved" : "Export unavailable", body: msg, danger: !r?.ok });
+    return r;
+  }));
   bindClick("compExportEvidence", (b) => runAction(b, async () => { const r = await sentinel.exportEvidence?.(); setText("compEvidenceResult", r?.ok ? `Saved → ${r.path}` : "Export unavailable."); return r; }));
   // Reports actions.
   bindClick("generateReport", (b) => runAction(b, async () => { const r = await sentinel.generateReport?.({ adhoc: true }); showToast({ title: r?.ok ? "Report generated" : "Report unavailable", body: r?.filename || "" }); loadReports(); return r; }));
@@ -1882,18 +2163,22 @@ function wireDeepLinks(rootId) {
 async function loadDashboard() {
   try {
     const d = (await sentinel.getDashboard?.()) || {};
-    const status = computeHeroStatus(d.sources || {});
-    const hero = qs("#heroStatus");
-    // UX 2026-07-03: no separate dot/globe — the WORD itself carries the status color (see .hero-label CSS).
-    if (hero) { hero.dataset.level = status.level; hero.innerHTML = `<strong class="hero-label">${status.label}</strong>`; }
-    setText("heroSubline", heroSubline(d.subline || {}));
+    // (audit R9) the hero word reflects the run state too: STOPPED / PAUSED are never "PROTECTED".
+    lastDashboardSources = d.sources || {};
+    lastSubline = d.subline || {};
+    renderHero(currentRunState(state));
     setHtml("kpiTiles", DashboardTab.tilesHtml(heroTiles(d.metrics || {})));
-    const pending = d.pending || [];
+    // (audit R24) a pending card deep-links only to a tab/anchor that exists; the rest fall back to Settings → About.
+    const pending = (d.pending || []).map((p) => ({ ...p, tab: p && (TAB_TITLES[p.tab] || TAB_REDIRECTS[p.tab]) ? p.tab : "about" }));
+    lastPendingCards = pending;
     const pPanel = qs("#pendingActionsPanel"); if (pPanel) pPanel.hidden = pending.length === 0;
     setHtml("pendingActions", DashboardTab.pendingHtml(pending));
     setHtml("recentActivity", DashboardTab.activityHtml((d.activity || []).map(DashboardTab.eventToActivity)));
     if (d.trust) setText("trustStrip", d.trust);
     wireDeepLinks("recentActivity"); wireDeepLinks("pendingActions");
+    renderHomeLists(state); // the "need from you" block carries the same pending cards
+    // (§4.2) a process-health snapshot gives a real "last check" age when the watcher block is not in state yet.
+    try { const ph = await sentinel.getProcessHealth?.(); const t = Date.parse(ph && (ph.timestamp || ph.ts) || ""); if (Number.isFinite(t)) { lastProcessHealthAt = t; renderRunState(state); } } catch { /* optional */ }
   } catch (e) { reportRendererError(e, "dashboard"); }
 }
 
@@ -1948,8 +2233,9 @@ async function loadPerformance() {
 async function loadSla() {
   try {
     const s = (await sentinel.getSla?.()) || {};
-    setText("slaComposite", `${s.compliance?.composite ?? 0}% SLA-met this month`);
-    setText("slaComplianceNote", SlaTab.complianceLine(s.compliance || {}));
+    // (audit R6) main sends measured:false + nulls until something was really recorded → "SLA not measured yet".
+    setText("slaComposite", SlaTab.compositeHeadline(s.compliance || {}, s));
+    setText("slaComplianceNote", SlaTab.complianceLine(s.compliance || {}, s));
     // Live chart (default view): uptime across windows on a 0–100 scale. Real-or-empty.
     const u = s.uptime || {};
     renderBarChart("slaChart", [
@@ -1972,7 +2258,10 @@ async function loadCompliance() {
     setHtml("compAudit", ComplianceTab.auditRowsHtml(c.audit || {}));
     setHtml("compPrivacy", ComplianceTab.privacyRowsHtml(c.privacy || {}));
     setHtml("compTier0", ComplianceTab.tier0RowsHtml(c.tier0 || {}));
-    setHtml("compR11", ComplianceTab.r11RowsHtml(c.r11 || {}));
+    // (audit R7) excluded folders by COUNT from the person's own settings — never a folder name.
+    setHtml("compR11", ComplianceTab.r11RowsHtml(c.r11 || {}, state && state.excludedFolders));
+    // (audit M9) endpoints: ok:null = "not available in this version" (grey), never a red failure.
+    setHtml("compEndpoints", ComplianceTab.endpointRowsHtml((state && state.endpointStatus) || []));
     setHtml("compFrameworks", ComplianceTab.frameworkTilesHtml(c.frameworks || {}));
     setHtml("compTrust", ComplianceTab.trustPostureHtml(c.trust || {})); // RUN-B B3 — honest trust/security surface
   } catch (e) { reportRendererError(e, "compliance"); }
@@ -1992,12 +2281,17 @@ async function loadReports() {
 
 // ===== RUN 23e — license-tier feature gating + upsell (single build; gates off state.features) =====
 
-// Recommended upgrade target + copy per locked feature. Plans come from the tier table; never a URL.
+// Recommended upgrade target + copy per locked feature. Plans AND prices come from pricing-tiers.mjs (audit R5) —
+// never a literal dollar figure in this file.
+const PRO_PRICE = monthlyDisplay("pro");
+const PRO_RECIPES = TIERS.pro.features.recipesCount;
+const PERSONAL_RECIPES = TIERS.personal.features.recipesCount;
 const UPSELL = {
-  confirmed: { plan: "pro", title: "Confirmed mode is a Pro feature", body: "Confirmed mode pops a fix-card and applies once you approve — upgrade to Pro ($1,500/mo) to enable it." },
-  autonomous: { plan: "pro", title: "Autonomous mode is a Pro feature", body: "Autonomous auto-applies low-risk fixes and tells you after — upgrade to Pro ($1,500/mo) to enable it." },
-  recipes: { plan: "pro", title: "The full recipe library is on Pro", body: "Personal includes 14 safe-generic fixes. Pro ($1,500/mo) unlocks the complete 77-recipe library." },
-  quarterlyPdf: { plan: "pro", title: "Quarterly PDF reports are on Pro", body: "Self-serve quarterly PDF reports are available on Pro ($1,500/mo) and up." },
+  manual: { plan: "personal", title: "Manual mode is always yours", body: "Manual mode is the free floor: ARIA watches, chats and guides. Nothing to buy for this." },
+  confirmed: { plan: "pro", title: "Confirmed mode is a Pro feature", body: `Confirmed mode pops a fix-card and applies once you approve — upgrade to Pro (${PRO_PRICE}) to enable it.` },
+  autonomous: { plan: "pro", title: "Autonomous mode is a Pro feature", body: `Autonomous auto-applies low-risk fixes and tells you after — upgrade to Pro (${PRO_PRICE}) to enable it.` },
+  recipes: { plan: "pro", title: "The full recipe library is on Pro", body: `Personal includes ${PERSONAL_RECIPES} safe-generic fixes. Pro (${PRO_PRICE}) unlocks the complete ${PRO_RECIPES}-recipe library.` },
+  quarterlyPdf: { plan: "pro", title: "Quarterly PDF reports are on Pro", body: `Self-serve quarterly PDF reports are available on Pro (${PRO_PRICE}) and up.` },
   fleetView: { plan: "smb", title: "Fleet view is a business feature", body: "Multi-device fleet view is available on Small Business and up." },
   complianceEvidence: { plan: "smb", title: "Compliance pack is a business feature", body: "The compliance evidence pack is available on Small Business and up." },
   customRecipes: { plan: "smb", title: "Custom recipes are a business feature", body: "Custom recipes are available on Small Business and up." }
@@ -2031,9 +2325,11 @@ function applyFeatureGates(state) {
   const features = (state && state.features) || { modes: ["manual"], recipesCount: 14 };
   const modes = features.modes || ["manual"];
 
-  // 1 — Mode tiles: lock any mode this plan doesn't include.
+  // 1 — Mode tiles: lock any mode this plan doesn't include. (audit R3/R20) Manual is the free floor the app
+  // already runs in (detect · chat · guided preview) — it is NEVER shown locked, so an expired trial can still
+  // click it and the lock copy never contradicts the Mode panel.
   qsa(".mode-row").forEach((row) => {
-    const allowed = modes.includes(row.dataset.mode);
+    const allowed = row.dataset.mode === "manual" || modes.includes(row.dataset.mode);
     row.classList.toggle("locked", !allowed);
     let badge = row.querySelector(".lock-badge");
     if (!allowed && !badge) {
@@ -2064,10 +2360,10 @@ function applyFeatureGates(state) {
   qsa("[data-feature]").forEach((el) => { el.hidden = !features[el.dataset.feature]; });
 }
 
-// Locked mode-tile click / upsell-button click → open the tier's Stripe checkout (env-resolved in main).
+// Locked mode-tile click / upsell-button click → the buy path (main opens the live plans page for the tier).
 function showUpgradeUpsell(modeOrKey) {
   const u = UPSELL[modeOrKey] || UPSELL.confirmed;
-  showToast({ title: u.title, body: u.body, cta: "Upgrade", ctaAction: () => sentinel.choosePlan?.(u.plan) });
+  showToast({ title: u.title, body: u.body, cta: modeOrKey === "manual" ? "OK" : "Upgrade", ctaAction: () => { if (modeOrKey !== "manual") sentinel.choosePlan?.(u.plan); } });
 }
 
 // ===== RUN 23e — Personal-tier upsell triggers (detection nudge + monthly About nudge) =====
@@ -2237,7 +2533,7 @@ function initAriaChat() {
     badge.textContent = res && res.action === "kb-match" ? "from the knowledge base · $0" : viaAnthropic ? "via Anthropic (novel question)" : res && res.provider === "local-kb" ? "from the offline knowledge base" : "";
     if (badge.textContent) bubble.appendChild(badge);
     const meta = res && res.kbMeta;
-    if (meta && Number.isFinite(Number(meta.total_chunks))) { const c = qs("#ariaChatChunks"); if (c) c.textContent = Number(meta.total_chunks) + " chunks"; }
+    if (meta && Number.isFinite(Number(meta.total_chunks))) { const c = qs("#ariaChatChunks"); if (c) c.textContent = `KB size: ${Number(meta.total_chunks)} passages`; } // (audit R6) real count only after a real answer
     // TASK 4 — the one intentional difference from web: Sentinel can RESOLVE it on this device. The chip runs
     // the matched fix through the gated control plane (Confirmed-grade, never autonomous, countdown + kill-switch).
     appendResolveChip(bubble, question);
@@ -2254,8 +2550,11 @@ function initAriaChat() {
       btn.disabled = true; st.textContent = "Asking the safety gate…";
       try {
         const fix = await window.sentinel.supervisedFix({ recipeId: offer.recipeId, mode: "confirmed", source: "chat" });
-        st.textContent = !fix || fix.ok === false ? (fix && fix.copy) || (fix && fix.reason) || "Couldn't start the fix." : fix.countdown ? `Applying in ${fix.seconds || 10}s — cancel from the countdown, or Ctrl+Alt+K.` : fix.verdict === "approval-requested" ? "Waiting for approval (Control Center → Approvals)." : fix.copy || "Done.";
-      } catch { st.textContent = "Couldn't resolve right now."; btn.disabled = false; }
+        const o = describeSupervisedResult(fix, { liveFixes: state && state.liveFixes }); // (audit R1) the real outcome, never "Done." by default
+        st.textContent = o.text; st.dataset.outcome = o.kind;
+        if (o.kind === "countdown") showCountdownCard({ id: o.countdownId, secondsLeft: o.seconds, recipeId: offer.recipeId, title: offer.title, canCancel: true });
+        if (o.ok === false) btn.disabled = false;
+      } catch { st.textContent = "Couldn't resolve right now. Nothing was changed."; btn.disabled = false; }
     });
     wrap.append(btn, st); bubble.appendChild(wrap);
   }
@@ -2304,16 +2603,12 @@ function initAriaChat() {
           return;
         }
         const fix = await window.sentinel.supervisedFix({ recipeId, mode: "confirmed" });
-        if (!fix || fix.ok === false) {
-          st.textContent = fix?.error === "r11_blocked" ? "1 personal folder excluded." : fix?.verdict === "veto" ? `Held by safety supervisor: ${fix.reason || "vetoed"}.` : fix?.copy || "Couldn't start the fix.";
-        } else if (fix.countdown) {
-          st.textContent = `Applying in ${fix.seconds || 10}s — cancel from the countdown, or Ctrl+Alt+K to abort.`;
-        } else if (fix.verdict === "approval-requested") { st.textContent = "Waiting for approval — see Control Center → Approvals (and your email)."; }
-        else if (fix.verdict === "deferred") { st.textContent = fix.copy || "Queued for your next maintenance window."; }
-        // RUN-CU / CU4 (Rule 14) — the fix runs asynchronously; say "running" and let the audit log + restore point record speak.
-        else if (fix.policy && fix.policy.dryRun === false) { st.textContent = fix.copy || "Running now — the verified outcome lands in Dashboard → Activity; a restore point is recorded only when one was really created."; }
-        else { st.textContent = "Previewed safely (dry-run)."; }
-      } catch { st.textContent = "Couldn't resolve right now."; btn.disabled = false; }
+        // (audit R1/R2) ONE describer: policy copy from main · needs-admin · declined · failed · countdown · preview · running.
+        const o = describeSupervisedResult(fix, { liveFixes: state && state.liveFixes });
+        st.textContent = o.text; st.dataset.outcome = o.kind;
+        if (o.kind === "countdown") showCountdownCard({ id: o.countdownId, secondsLeft: o.seconds, recipeId, title: recipeTitleOf(recipeId), canCancel: true });
+        if (o.ok === false) btn.disabled = false;
+      } catch { st.textContent = "Couldn't resolve right now. Nothing was changed."; btn.disabled = false; }
     });
     wrap.append(walkBtn, btn, st); bubble.appendChild(wrap);
   }
@@ -2421,10 +2716,12 @@ function initAriaChat() {
       }
     });
     // Single-turn by default (one question, one spoken answer); the toggle turns it into a conversation.
+    // (audit R12) a failed start never makes the mic vanish: it says why voice is unavailable on this install.
     mic.addEventListener("click", async () => {
       if (convo.isActive()) { await convo.globeTap(); return; }
-      const r = await convo.start();
-      if (!r || r.ok === false) { mic.hidden = true; if (voiceBar) voiceBar.hidden = true; }
+      let r = null;
+      try { r = await convo.start(); } catch { r = null; }
+      if (!r || r.ok === false) { mic.disabled = true; mic.title = "Voice isn't available on this install"; if (vstatus) vstatus.textContent = "Voice isn't available on this install — typing works. (The on-device speech engine or microphone could not start.)"; }
     });
     convoToggle?.addEventListener("change", () => { if (!convoToggle.checked && convo.isActive() && convo.state() !== "listening") convo.stop(); });
     // When the conversation toggle is OFF, end after the first spoken answer (the loop re-arms only when ON).
@@ -2443,6 +2740,15 @@ function initAriaChat() {
 // RUN 33-E — first-launch Setup wizard (6 steps). Shows once on a fresh install (state.setupNeeded) or when
 // re-run from Settings; collects prefs and persists via sentinel.completeSetup. The state machine + never-replay
 // invariant live in app-config.mjs (tested). Setup must never replay after completion.
+//
+// PROD 2026-10-14 (audit R8 / §3) — TWO TRACKS, ONE DIALOG:
+//   · QUICK (default): Hello → Who are you → What I'll do → summary ("You're all set" — the LAST screen only).
+//     "Start with safe defaults" fills every later step with the safe defaults and jumps to the summary;
+//     "Customize" opens the full track. Finish in ≤3 clicks.
+//   · FULL: the original 12 steps exactly as before (nothing removed — Rule 15) + the same summary at the end.
+//   · "Skip for now — use safe defaults" on EVERY step; the license key typed in the License step is kept and
+//     verified on Finish; the mode the person picked is respected (Manual stays Manual: the autonomy level
+//     follows the mode unless they explicitly change it); role="dialog" + focus trap + Escape (→ summary).
 let setupShown = false;
 // RUN-CU / CU4 — wizard v2 prefs live beside the v1 four (sanitized in main by app-config.mjs; this is just the form state).
 const setupPrefs = {
@@ -2450,7 +2756,7 @@ const setupPrefs = {
   identity: { kind: "personal", orgName: "" },
   deviceUser: { name: "", email: "", phone: "", smsOptIn: false },
   techContacts: [],
-  autonomyLevel: "safe-auto",
+  autonomyLevel: "approve-first", // follows the recommended Manual mode (R8: Manual must stay Manual)
   fullAutoUnderstood: false,
   approver: { mode: "self", contacts: [], timeoutMinutes: 30, onTimeout: "skip" },
   reportRecipients: [],
@@ -2458,6 +2764,8 @@ const setupPrefs = {
   maintenanceWindow: { enabled: false, windows: [] },
   notifyChannels: { desktop: true, email: true, sms: false }
 };
+// Wizard-only state (never sent to completeSetup): the typed license key, the live-fixes wish, explicit autonomy.
+const setupLocal = { licenseKey: "", liveFixes: null, liveFixesTouched: false, autonomyExplicit: false, licenseVerified: null };
 // Pure parsers shared by the wizard + the Settings form (one line per contact: "name, email, phone, role").
 function parseContactLines(text) {
   return String(text || "").split(/\r?\n/).map((l) => l.trim()).filter(Boolean).map((l) => {
@@ -2475,57 +2783,84 @@ function parseRecipientList(text) {
 function contactLinesText(list) { return (list || []).map((c) => [c.name, c.email, c.phone, c.role].filter(Boolean).join(", ")).join("\n"); }
 function recipientListText(list) { return (list || []).map((r) => r.email || r.phone).filter(Boolean).join(", "); }
 function mwFrom(prefs) { const w = (prefs.maintenanceWindow && prefs.maintenanceWindow.windows && prefs.maintenanceWindow.windows[0]) || {}; return { days: typeof w.days === "string" ? w.days : "daily", start: w.start || "02:00", durationMin: w.durationMin || 120, enabled: Boolean(prefs.maintenanceWindow && prefs.maintenanceWindow.enabled) }; }
+const liveFixesRowHtml = (id) => `<label class="setup-check setup-live-row"><input type="checkbox" id="${id}" ${setupLocal.liveFixes === true ? "checked" : ""}/> <span><b>Live fixes</b> — let ARIA apply vetted fixes for real.<br/><small>Off = ARIA shows what it would do and changes nothing. On = ARIA applies vetted fixes you confirm; Windows may ask for admin permission (UAC).</small></span></label>`;
 const SETUP_STEPS = [
   { kicker: "Welcome", title: "ARIA Sentinel — your AI IT assistant", body: () => `<p class="setup-lead">Resident IT support that answers from the knowledge base first (free), and only calls the reasoning model for novel questions. Let's get you set up in a few steps.</p>` },
-  { kicker: "License", title: "Activate or start a trial", body: () => `<p class="setup-lead">Paste a license key, or start a free 12-hour Pro trial — you can do this anytime from Settings.</p><input id="setupLicense" placeholder="Paste license key (optional)" autocomplete="off" />` },
+  { kicker: "License", title: "Activate or start a trial", id: "setup-license", body: () => `<p class="setup-lead">${escapeHtml(wizardTrialLine((state && state.gate) || {}))}</p><input id="setupLicense" placeholder="Paste license key (optional)" aria-label="License key (optional)" autocomplete="off" value="${escapeHtml(setupLocal.licenseKey)}" /><div class="button-row"><button type="button" class="ghost" id="setupVerifyLicense">Verify key now</button></div><p class="setup-inline-status" id="setupLicenseStatus">${escapeHtml(setupLocal.licenseVerified || "")}</p>` },
   { kicker: "Mode", title: "Choose your default mode", body: () => `<p class="setup-lead">Manual is recommended — ARIA previews fixes before doing anything. You can change this anytime.</p>
     <label class="setup-radio"><input type="radio" name="setupMode" value="manual" ${setupPrefs.mode === "manual" ? "checked" : ""}/> <b>Manual</b> — preview only (recommended)</label>
-    <label class="setup-radio"><input type="radio" name="setupMode" value="confirmed" ${setupPrefs.mode === "confirmed" ? "checked" : ""}/> <b>Confirmed</b> — execute after a 10s countdown</label>` },
+    <label class="setup-radio"><input type="radio" name="setupMode" value="confirmed" ${setupPrefs.mode === "confirmed" ? "checked" : ""}/> <b>Confirmed</b> — execute after a 10s countdown (needs Live fixes on)</label>` },
   { kicker: "ARIA Chat", title: "ARIA Chat", body: () => `<p class="setup-lead">ARIA Chat lives in the ARIA tab (left panel) — or press Ctrl+Alt+A anytime.</p><label class="setup-check"><input type="checkbox" id="setupLand" ${setupPrefs.landOnAria ? "checked" : ""}/> Open the ARIA tab when Sentinel starts</label>` },
   { kicker: "Notifications", title: "Notifications", body: () => `<label class="setup-check"><input type="checkbox" id="setupKbNotif" ${setupPrefs.kbNotifications ? "checked" : ""}/> Tell me when ARIA learns new fixes</label><label class="setup-check"><input type="checkbox" id="setupTray" ${setupPrefs.trayIcon ? "checked" : ""}/> Show the system-tray icon</label>` },
-  { kicker: "Done", title: "You're all set", body: () => `<p class="setup-lead">ARIA Sentinel is ready. Open the Dashboard to see status, the ARIA tab to chat, or the Learning sub-section to see what ARIA knows.</p><p class="setup-lead">A few more questions tell ARIA who to keep informed and how much to do on its own.</p>` },
+  // (audit R8) this mid-way checkpoint no longer says "all set" — only the LAST screen does.
+  { kicker: "Done", title: "Basics saved", body: () => `<p class="setup-lead">The basics are in. A few more questions tell ARIA who to keep informed and how much to do on its own — or press <b>Skip for now</b> to keep the safe defaults and finish.</p>` },
   // ── RUN-CU / CU4 — wizard v2 steps, APPENDED after the original six (ids above are untouched) ──
   { kicker: "Who uses this device", title: "Who uses this device", id: "setup-identity", body: () => `<p class="setup-lead">ARIA uses this to know who to tell when something breaks. Nothing here leaves the device except to send you those notifications.</p>
     <label class="setup-radio"><input type="radio" name="setupIdentity" value="personal" ${setupPrefs.identity.kind === "personal" ? "checked" : ""}/> <b>Personal</b> — it's my device; I decide</label>
     <label class="setup-radio"><input type="radio" name="setupIdentity" value="business" ${setupPrefs.identity.kind === "business" ? "checked" : ""}/> <b>Business</b> — an IT contact should know too</label>
-    <span class="setup-field-label">Organization (business only)</span><input id="setupOrg" type="text" value="${escapeHtml(setupPrefs.identity.orgName)}" placeholder="Acme Dental" />
-    <div class="setup-grid"><div><span class="setup-field-label">Your name</span><input id="setupUserName" type="text" value="${escapeHtml(setupPrefs.deviceUser.name)}" placeholder="Sam" /></div><div><span class="setup-field-label">Your email</span><input id="setupUserEmail" type="email" value="${escapeHtml(setupPrefs.deviceUser.email)}" placeholder="sam@company.com" /></div></div>
-    <span class="setup-field-label">Your mobile (optional)</span><input id="setupUserPhone" type="tel" value="${escapeHtml(setupPrefs.deviceUser.phone)}" placeholder="+1 416 555 0100" />
+    <span class="setup-field-label">Organization (business only)</span><input id="setupOrg" type="text" value="${escapeHtml(setupPrefs.identity.orgName)}" placeholder="Acme Dental" aria-label="Organization" />
+    <div class="setup-grid"><div><span class="setup-field-label">Your name</span><input id="setupUserName" type="text" value="${escapeHtml(setupPrefs.deviceUser.name)}" placeholder="Sam" aria-label="Your name" /></div><div><span class="setup-field-label">Your email</span><input id="setupUserEmail" type="email" value="${escapeHtml(setupPrefs.deviceUser.email)}" placeholder="sam@company.com" aria-label="Your email" /></div></div>
+    <span class="setup-field-label">Your mobile (optional)</span><input id="setupUserPhone" type="tel" value="${escapeHtml(setupPrefs.deviceUser.phone)}" placeholder="+1 416 555 0100" aria-label="Your mobile (optional)" />
     <label class="setup-check"><input type="checkbox" id="setupUserSms" ${setupPrefs.deviceUser.smsOptIn ? "checked" : ""}/> Text me when something breaks</label>` },
   { kicker: "Who should know", title: "Who should know when something breaks", id: "setup-contacts", body: () => `<p class="setup-lead">Tech contacts get the same honest note you do: what broke, which vetted fix exists, what happened. One per line — <b>name, email, phone, role</b> (admin · it-lead · approver).${setupPrefs.identity.kind === "business" ? " A business device needs at least one before ARIA fixes anything on its own." : ""}</p>
-    <textarea id="setupTechContacts" placeholder="Jordan Lee, jordan@company.com, +1 416 555 0101, admin">${escapeHtml(contactLinesText(setupPrefs.techContacts))}</textarea>` },
+    <textarea id="setupTechContacts" aria-label="Tech contacts, one per line" placeholder="Jordan Lee, jordan@company.com, +1 416 555 0101, admin">${escapeHtml(contactLinesText(setupPrefs.techContacts))}</textarea>` },
   { kicker: "Autonomy", title: "How much should Sentinel fix on its own", id: "setup-autonomy", body: () => `<p class="setup-lead">Pick one. Each card says exactly what ARIA will and won't touch. Red-tier issues always wait for a person, whatever you choose.</p>
     <div class="autonomy-cards">${autonomyCardsHtml(setupPrefs.autonomyLevel, "setup")}</div>
-    <label class="setup-check" id="setupFullAutoRow" ${setupPrefs.autonomyLevel === "full-auto" ? "" : "hidden"}><input type="checkbox" id="setupFullAutoUnderstood" ${setupPrefs.fullAutoUnderstood ? "checked" : ""}/> I understand Full-auto applies green and yellow fixes inside my maintenance window without asking first.</label>` },
+    <label class="setup-check" id="setupFullAutoRow" ${setupPrefs.autonomyLevel === "full-auto" ? "" : "hidden"}><input type="checkbox" id="setupFullAutoUnderstood" ${setupPrefs.fullAutoUnderstood ? "checked" : ""}/> I understand Full-auto applies green and yellow fixes inside my maintenance window without asking first.</label>
+    ${liveFixesRowHtml("setupLiveFixes")}` },
   { kicker: "Approver", title: "Who approves a fix before it runs", id: "setup-approver", body: () => `<p class="setup-lead">When ARIA needs a yes, who gives it? Approvals show up in Control Center and by email; a fix never runs until someone says yes.</p>
-    <span class="setup-field-label">Who can say yes</span><select id="setupApproverMode"><option value="self" ${setupPrefs.approver.mode === "self" ? "selected" : ""}>Me, on this device</option><option value="admin" ${setupPrefs.approver.mode === "admin" ? "selected" : ""}>A tech contact / approver email</option><option value="either" ${setupPrefs.approver.mode === "either" ? "selected" : ""}>Either</option></select>
-    <span class="setup-field-label">Approver emails (comma-separated)</span><input id="setupApproverContacts" type="text" value="${escapeHtml((setupPrefs.approver.contacts || []).join(", "))}" placeholder="it@company.com" />
-    <div class="setup-grid"><div><span class="setup-field-label">Wait for an answer (minutes)</span><input id="setupApproverTimeout" type="number" min="5" max="1440" value="${Number(setupPrefs.approver.timeoutMinutes) || 30}" /></div><div><span class="setup-field-label">If nobody answers</span><select id="setupApproverOnTimeout"><option value="skip" ${setupPrefs.approver.onTimeout === "skip" ? "selected" : ""}>Skip the fix, tell me</option><option value="proceed-green-only" ${setupPrefs.approver.onTimeout === "proceed-green-only" ? "selected" : ""}>Go ahead with green only</option></select></div></div>` },
+    <span class="setup-field-label">Who can say yes</span><select id="setupApproverMode" aria-label="Who can say yes"><option value="self" ${setupPrefs.approver.mode === "self" ? "selected" : ""}>Me, on this device</option><option value="admin" ${setupPrefs.approver.mode === "admin" ? "selected" : ""}>A tech contact / approver email</option><option value="either" ${setupPrefs.approver.mode === "either" ? "selected" : ""}>Either</option></select>
+    <span class="setup-field-label">Approver emails (comma-separated)</span><input id="setupApproverContacts" type="text" value="${escapeHtml((setupPrefs.approver.contacts || []).join(", "))}" placeholder="it@company.com" aria-label="Approver emails" />
+    <div class="setup-grid"><div><span class="setup-field-label">Wait for an answer (minutes)</span><input id="setupApproverTimeout" type="number" min="5" max="1440" value="${Number(setupPrefs.approver.timeoutMinutes) || 30}" aria-label="Wait for an answer (minutes)" /></div><div><span class="setup-field-label">If nobody answers</span><select id="setupApproverOnTimeout" aria-label="If nobody answers"><option value="skip" ${setupPrefs.approver.onTimeout === "skip" ? "selected" : ""}>Skip the fix, tell me</option><option value="proceed-green-only" ${setupPrefs.approver.onTimeout === "proceed-green-only" ? "selected" : ""}>Go ahead with green only</option></select></div></div>` },
   { kicker: "Reports", title: "Who gets the report", id: "setup-reports", body: () => `<p class="setup-lead">The full PDF stays on this device. Email and text carry counts and titles only — never log lines, file paths or document text.</p>
-    <span class="setup-field-label">Recipients (email or phone, comma-separated)</span><input id="setupReportRecipients" type="text" value="${escapeHtml(recipientListText(setupPrefs.reportRecipients))}" placeholder="owner@company.com" />
-    <span class="setup-field-label">How often</span><select id="setupReportCadence"><option value="per-fix" ${setupPrefs.reportCadence === "per-fix" ? "selected" : ""}>After every fix</option><option value="daily" ${setupPrefs.reportCadence === "daily" ? "selected" : ""}>Daily summary</option><option value="weekly" ${setupPrefs.reportCadence === "weekly" ? "selected" : ""}>Weekly summary</option></select>
+    <span class="setup-field-label">Recipients (email or phone, comma-separated)</span><input id="setupReportRecipients" type="text" value="${escapeHtml(recipientListText(setupPrefs.reportRecipients))}" placeholder="owner@company.com" aria-label="Report recipients" />
+    <span class="setup-field-label">How often</span><select id="setupReportCadence" aria-label="How often"><option value="per-fix" ${setupPrefs.reportCadence === "per-fix" ? "selected" : ""}>After every fix</option><option value="daily" ${setupPrefs.reportCadence === "daily" ? "selected" : ""}>Daily summary</option><option value="weekly" ${setupPrefs.reportCadence === "weekly" ? "selected" : ""}>Weekly summary</option></select>
     <div class="setup-grid"><label class="setup-check"><input type="checkbox" id="setupChDesktop" ${setupPrefs.notifyChannels.desktop ? "checked" : ""}/> Desktop notifications</label><label class="setup-check"><input type="checkbox" id="setupChEmail" ${setupPrefs.notifyChannels.email ? "checked" : ""}/> Email</label><label class="setup-check"><input type="checkbox" id="setupChSms" ${setupPrefs.notifyChannels.sms ? "checked" : ""}/> Text (SMS)</label></div>` },
   { kicker: "Maintenance", title: "When can maintenance run", id: "setup-window", body: () => { const mw = mwFrom(setupPrefs); return `<p class="setup-lead">Full-auto applies yellow-tier fixes only inside this window; everything else waits for a yes. Leave it off and yellow fixes always ask.</p>
     <label class="setup-check"><input type="checkbox" id="setupMwEnabled" ${mw.enabled ? "checked" : ""}/> Use a maintenance window</label>
-    <div class="setup-grid"><div><span class="setup-field-label">Days</span><select id="setupMwDays"><option value="daily" ${mw.days === "daily" ? "selected" : ""}>Every day</option><option value="weekdays" ${mw.days === "weekdays" ? "selected" : ""}>Weekdays</option><option value="weekends" ${mw.days === "weekends" ? "selected" : ""}>Weekends</option></select></div><div><span class="setup-field-label">Starts at (local)</span><input id="setupMwStart" type="time" value="${escapeHtml(mw.start)}" /></div></div>
-    <span class="setup-field-label">Lasts (minutes, 15–1440)</span><input id="setupMwDuration" type="number" min="15" max="1440" value="${Number(mw.durationMin) || 120}" />`; } }
+    <div class="setup-grid"><div><span class="setup-field-label">Days</span><select id="setupMwDays" aria-label="Days"><option value="daily" ${mw.days === "daily" ? "selected" : ""}>Every day</option><option value="weekdays" ${mw.days === "weekdays" ? "selected" : ""}>Weekdays</option><option value="weekends" ${mw.days === "weekends" ? "selected" : ""}>Weekends</option></select></div><div><span class="setup-field-label">Starts at (local)</span><input id="setupMwStart" type="time" value="${escapeHtml(mw.start)}" aria-label="Starts at" /></div></div>
+    <span class="setup-field-label">Lasts (minutes, 15–1440)</span><input id="setupMwDuration" type="number" min="15" max="1440" value="${Number(mw.durationMin) || 120}" aria-label="Lasts (minutes)" />`; } }
 ];
 let setupStep = 0;
+// ── PROD 2026-10-14 (audit §3) — the quick track: the three screens a buyer judges the product by + the summary ──
+const SUMMARY_STEP = { kicker: "Done", title: "You're all set", id: "setup-summary", body: () => `<p class="setup-lead">Here is exactly what ARIA will do on this computer. Press <b>Finish</b> to start — you can change any of it in Settings.</p><ul class="setup-summary">${summaryLines(setupPrefs, { liveFixes: setupLocal.liveFixes === true, licenseKey: setupLocal.licenseKey, trialLine: wizardTrialLine((state && state.gate) || {}) }).map((l) => `<li>${escapeHtml(l)}</li>`).join("")}</ul>` };
+const QUICK_STEPS = [
+  { kicker: "Hello", title: "ARIA Sentinel — resident IT support", id: "setup-hello", body: () => `<div class="setup-hello"><p class="setup-lead">I watch this computer for problems, tell you in plain words, and apply the safe, vetted fixes only when you say so. Nothing you type or open ever leaves this PC.</p>
+    <div class="setup-hello-actions"><button type="button" class="primary" id="setupSafeDefaults">Start with safe defaults</button><button type="button" class="ghost" id="setupCustomize">Customize (all 12 steps)</button></div>
+    <p class="setup-defaults-line">Safe defaults: Manual mode · ask before every fix · desktop notifications · tray icon · weekly summary · live fixes off (previews only).</p></div>` },
+  { kicker: "Who are you", title: "Who are you?", id: "setup-who", body: () => `<p class="setup-lead">Your name and email are what approvals and reports are addressed to. A license key is optional — ${escapeHtml(wizardTrialLine((state && state.gate) || {}).replace(/\.\s.*$/, "."))}</p>
+    <div class="setup-grid"><div><span class="setup-field-label">Your name</span><input id="setupUserName" type="text" value="${escapeHtml(setupPrefs.deviceUser.name)}" placeholder="Sam" aria-label="Your name" /></div><div><span class="setup-field-label">Your email</span><input id="setupUserEmail" type="email" value="${escapeHtml(setupPrefs.deviceUser.email)}" placeholder="sam@company.com" aria-label="Your email" /></div></div>
+    <span class="setup-field-label">License key (optional)</span><input id="setupLicense" placeholder="Paste license key (optional)" aria-label="License key (optional)" autocomplete="off" value="${escapeHtml(setupLocal.licenseKey)}" />
+    <p class="setup-inline-status" id="setupLicenseStatus">${escapeHtml(setupLocal.licenseVerified || "")}</p>
+    <p class="setup-defaults-line"><a href="#" id="setupForBusiness">Set up for a business (IT contacts, approver, reports) →</a></p>` },
+  { kicker: "What I'll do", title: "What should I do when I find a problem?", id: "setup-what", body: () => `<div class="what-cards">${WHAT_CARDS.map((c) => `<button type="button" class="what-card${quickChoiceOf(setupPrefs) === c.id ? " selected" : ""}" data-what-card="${c.id}"><b>${escapeHtml(c.label)}</b><span>${escapeHtml(c.consequence)}</span>${c.recommended ? "<em>recommended</em>" : ""}</button>`).join("")}</div>
+    ${liveFixesRowHtml("setupLiveFixes")}
+    <p class="setup-defaults-line"><a href="#" id="setupMoreOptions">More options (Full-auto, maintenance window) →</a></p>` },
+  SUMMARY_STEP
+];
+let setupTrack = "quick";
+function setupSteps() { return setupTrack === "quick" ? QUICK_STEPS : [...SETUP_STEPS, SUMMARY_STEP]; }
+function setupIsSummary() { const s = setupSteps()[setupStep]; return Boolean(s && s.id === "setup-summary"); }
 function maybeShowSetupWizard(state) {
   if (setupShown || !state || !state.setupNeeded) return;
-  setupShown = true; setupStep = 0; renderSetupStep();
-  const modal = qs("#setupWizard"); if (modal) modal.hidden = false;
+  setupShown = true; setupStep = 0; setupTrack = "quick";
+  if (setupLocal.liveFixes == null) setupLocal.liveFixes = Boolean(state.liveFixes && state.liveFixes.enabled);
+  renderSetupStep();
+  const modal = qs("#setupWizard"); if (modal) { modal.hidden = false; setTimeout(() => focusFirstInSetup(), 30); }
 }
 function captureSetupStep() {
-  const mode = qs('input[name="setupMode"]:checked'); if (mode) setupPrefs.mode = mode.value;
+  const mode = qs('input[name="setupMode"]:checked');
+  if (mode) { setupPrefs.mode = mode.value; if (!setupLocal.autonomyExplicit) setupPrefs.autonomyLevel = autonomyForMode(mode.value); } // (R8) the mode is respected
+  const lic = qs("#setupLicense"); if (lic) setupLocal.licenseKey = lic.value.trim(); // (R8) the typed key is KEPT
   const land = qs("#setupLand"); if (land) setupPrefs.landOnAria = land.checked;
   const kb = qs("#setupKbNotif"); if (kb) setupPrefs.kbNotifications = kb.checked;
   const tray = qs("#setupTray"); if (tray) setupPrefs.trayIcon = tray.checked;
+  const lf = qs("#setupLiveFixes"); if (lf) { setupLocal.liveFixes = lf.checked; }
   // RUN-CU / CU4 — v2 steps (each capture is a no-op when its fields are not on screen).
   const idk = qs('input[name="setupIdentity"]:checked'); if (idk) setupPrefs.identity.kind = idk.value;
   const org = qs("#setupOrg"); if (org) setupPrefs.identity.orgName = org.value.trim();
   const un = qs("#setupUserName"); if (un) setupPrefs.deviceUser.name = un.value.trim();
-  const ue = qs("#setupUserEmail"); if (ue) setupPrefs.deviceUser.email = ue.value.trim();
+  const ue = qs("#setupUserEmail"); if (ue) { setupPrefs.deviceUser.email = ue.value.trim(); if (!qs("#setupChEmail")) setupPrefs.notifyChannels.email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(setupPrefs.deviceUser.email); } // the email channel is honest: on only with an email (the Reports step's checkbox still overrides)
   const up = qs("#setupUserPhone"); if (up) setupPrefs.deviceUser.phone = up.value.trim();
   const us = qs("#setupUserSms"); if (us) setupPrefs.deviceUser.smsOptIn = us.checked;
   const tc = qs("#setupTechContacts"); if (tc) setupPrefs.techContacts = parseContactLines(tc.value);
@@ -2545,33 +2880,111 @@ function captureSetupStep() {
     setupPrefs.maintenanceWindow = { enabled: mwe.checked, windows: [w] };
   }
 }
+function focusFirstInSetup() {
+  const modal = qs("#setupWizard"); if (!modal || modal.hidden) return;
+  const first = modal.querySelector("#setupBody input:not([type=hidden]), #setupBody select, #setupBody textarea, #setupBody button, #setupNext");
+  if (first) first.focus();
+}
 function renderSetupStep() {
-  const s = SETUP_STEPS[setupStep]; if (!s) return;
+  const steps = setupSteps();
+  setupStep = Math.max(0, Math.min(setupStep, steps.length - 1));
+  const s = steps[setupStep]; if (!s) return;
   setText("setupKicker", s.kicker); setText("setupTitle", s.title);
-  const body = qs("#setupBody"); if (body) { body.innerHTML = s.body(); body.dataset.step = s.id || `setup-v1-${setupStep}`; }
-  const dots = qs("#setupDots"); if (dots) dots.innerHTML = SETUP_STEPS.map((_, i) => `<span class="onboard-dot${i === setupStep ? " active" : ""}"></span>`).join("");
+  const body = qs("#setupBody"); if (body) { body.innerHTML = s.body(); body.dataset.step = s.id || `setup-v1-${setupStep}`; body.dataset.track = setupTrack; }
+  const dots = qs("#setupDots"); if (dots) dots.innerHTML = steps.map((_, i) => `<span class="onboard-dot${i === setupStep ? " active" : ""}"></span>`).join("");
+  setText("setupProgress", progressLabel(setupStep, steps.length) + (setupTrack === "quick" ? "" : " · full setup"));
+  const summary = setupIsSummary();
   const back = qs("#setupBack"); if (back) back.style.visibility = setupStep === 0 ? "hidden" : "visible";
-  const next = qs("#setupNext"); if (next) next.textContent = setupStep === SETUP_STEPS.length - 1 ? "Finish" : "Next";
+  const next = qs("#setupNext"); if (next) next.textContent = summary ? "Finish" : "Next";
+  const skip = qs("#setupSkip"); if (skip) skip.hidden = summary; // (R8) visible on every step but the summary
   // RUN-CU / CU4 — autonomy cards select on click; Full-auto reveals its "I understand" line (never silent).
   qsa("[data-setup-level]").forEach((card) => card.addEventListener("click", () => {
-    setupPrefs.autonomyLevel = card.dataset.setupLevel;
+    setupPrefs.autonomyLevel = card.dataset.setupLevel; setupLocal.autonomyExplicit = true;
     qsa("[data-setup-level]").forEach((c) => c.classList.toggle("selected", c === card));
     const row = qs("#setupFullAutoRow"); if (row) row.hidden = setupPrefs.autonomyLevel !== "full-auto";
   }));
+  // Quick track: the three "What I'll do" cards set autonomy + mode together (setup-flow.mjs).
+  qsa("[data-what-card]").forEach((card) => card.addEventListener("click", () => {
+    Object.assign(setupPrefs, quickChoiceToPrefs(card.dataset.whatCard)); setupLocal.autonomyExplicit = true;
+    qsa("[data-what-card]").forEach((c) => c.classList.toggle("selected", c === card));
+  }));
+  qs("#setupLiveFixes")?.addEventListener("change", (e) => { setupLocal.liveFixes = e.target.checked; setupLocal.liveFixesTouched = true; });
+  qs("#setupSafeDefaults")?.addEventListener("click", () => setupUseSafeDefaults());
+  qs("#setupCustomize")?.addEventListener("click", () => { captureSetupStep(); setupTrack = "full"; setupStep = 0; renderSetupStep(); focusFirstInSetup(); });
+  qs("#setupForBusiness")?.addEventListener("click", (e) => { e.preventDefault(); captureSetupStep(); setupPrefs.identity.kind = "business"; setupTrack = "full"; setupStep = SETUP_STEPS.findIndex((x) => x.id === "setup-identity"); renderSetupStep(); focusFirstInSetup(); });
+  qs("#setupMoreOptions")?.addEventListener("click", (e) => { e.preventDefault(); captureSetupStep(); setupTrack = "full"; setupStep = SETUP_STEPS.findIndex((x) => x.id === "setup-autonomy"); renderSetupStep(); focusFirstInSetup(); });
+  qs("#setupVerifyLicense")?.addEventListener("click", () => verifySetupLicense(true));
+  qs("#setupLicense")?.addEventListener("input", () => { setupLocal.licenseVerified = null; const st = qs("#setupLicenseStatus"); if (st) st.textContent = ""; });
+}
+// "Skip for now — use safe defaults": keep what was typed, fill the rest with the safe defaults, show the summary.
+function setupUseSafeDefaults() {
+  captureSetupStep();
+  const safe = applySafeDefaults(setupPrefs);
+  Object.assign(setupPrefs, safe);
+  setupLocal.autonomyExplicit = false;
+  if (!setupLocal.liveFixesTouched) setupLocal.liveFixes = false;
+  setupStep = setupSteps().length - 1; // the summary is always the last step of either track
+  renderSetupStep();
+  setTimeout(() => qs("#setupNext")?.focus(), 30);
+}
+async function verifySetupLicense(explicit = false) {
+  captureSetupStep();
+  const key = setupLocal.licenseKey;
+  const st = qs("#setupLicenseStatus");
+  if (!key) { if (st && explicit) st.textContent = "Paste a key first (64 characters)."; return null; }
+  if (!isLicenseKeyShaped(key)) { setupLocal.licenseVerified = "That doesn't look like a license key (64 characters expected) — nothing was sent."; if (st) st.textContent = setupLocal.licenseVerified; return null; }
+  if (st) st.textContent = "Verifying…";
+  let r = null;
+  try { r = await sentinel.enterLicense?.({ key, email: setupPrefs.deviceUser.email || "" }); } catch { r = null; }
+  setupLocal.licenseVerified = r && r.ok ? `License activated${r.plan ? " · " + r.plan : ""}.` : `Couldn't activate that key${r && r.error ? " (" + String(r.error).replace(/_/g, " ") + ")" : ""} — you can try again in Settings → License.`;
+  if (st) st.textContent = setupLocal.licenseVerified;
+  return r;
+}
+async function finishSetup() {
+  captureSetupStep();
+  const prefs = { ...setupPrefs };
+  try {
+    const r = await sentinel.completeSetup?.(prefs);
+    if (r && r.applied && r.applied.note) showToast({ title: "Autonomy", body: r.applied.note });
+  } catch (e) { /* persistence best-effort */ }
+  // (R8) the license key typed in the wizard reaches enterLicense (once, unless it was already verified here).
+  if (setupLocal.licenseKey && isLicenseKeyShaped(setupLocal.licenseKey) && !/activated/i.test(setupLocal.licenseVerified || "")) {
+    const r = await verifySetupLicense(false);
+    showToast(r && r.ok ? { title: "License activated", body: "ARIA is unlocked on this machine." } : { title: "License not activated", body: setupLocal.licenseVerified || "Try again in Settings → License.", danger: true });
+  }
+  // (R1/R2) the live-fixes wish is written through the consent gate, and only when it differs from the current state.
+  const cur = Boolean(liveFixesCache && liveFixesCache.enabled);
+  if (setupLocal.liveFixes != null && setupLocal.liveFixes !== cur) {
+    try { const lf = await sentinel.setLiveFixes?.({ enabled: setupLocal.liveFixes }); if (lf && typeof lf.enabled === "boolean") renderLiveFixes(lf); } catch { /* the Settings switch still works */ }
+  }
+  const modal = qs("#setupWizard"); if (modal) modal.hidden = true;
+  if (setupPrefs.landOnAria) activateTab("aria");
+  // (R8) the coachmark tour runs AFTER the wizard, once — never stacked on top of it.
+  if (state && state.firstRunComplete === false && !onboardingShown) startTour({ auto: true });
 }
 function initSetupWizard() {
-  bindClick("setupBack", () => { captureSetupStep(); if (setupStep > 0) { setupStep--; renderSetupStep(); } });
+  bindClick("setupBack", () => { captureSetupStep(); if (setupStep > 0) { setupStep--; renderSetupStep(); focusFirstInSetup(); } });
   bindClick("setupNext", async () => {
     captureSetupStep();
-    if (setupStep < SETUP_STEPS.length - 1) { setupStep++; renderSetupStep(); return; }
-    try {
-      const r = await sentinel.completeSetup?.({ ...setupPrefs });
-      if (r && r.applied && r.applied.note) showToast({ title: "Autonomy", body: r.applied.note });
-    } catch (e) { /* persistence best-effort */ }
-    const modal = qs("#setupWizard"); if (modal) modal.hidden = true;
-    if (setupPrefs.landOnAria) activateTab("aria");
+    if (!setupIsSummary()) { setupStep++; renderSetupStep(); focusFirstInSetup(); return; }
+    await finishSetup();
   });
+  bindClick("setupSkip", () => setupUseSafeDefaults());
   bindClick("reRunSetup", async () => { try { await sentinel.reopenSetup?.(); setupShown = false; } catch (e) {} });
+}
+// (audit R8 / R16) a real dialog: Tab cycles inside the wizard, Escape goes to the summary (never closes silently).
+function wireSetupDialogA11y() {
+  const modal = qs("#setupWizard");
+  if (!modal) return;
+  modal.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { e.preventDefault(); if (!setupIsSummary()) setupUseSafeDefaults(); return; }
+    if (e.key !== "Tab") return;
+    const items = Array.from(modal.querySelectorAll("button:not([hidden]):not([disabled]), input:not([hidden]):not([disabled]), select, textarea, a[href]")).filter((el) => el.offsetParent !== null || el === document.activeElement);
+    if (!items.length) return;
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
 }
 
 // ===== RUN-CU / CU4 — Settings → Autonomy & contacts (edits the SAME prefs the wizard collects; setup:update-prefs) =====

@@ -314,3 +314,51 @@ export function monthlyDisplay(plan) {
   const base = t.priceMonthlyDisplay || t.priceDisplay;
   return t.billedAnnually ? `${base}/mo (billed annually)` : `${base}/mo`;
 }
+
+// ── PROD 2026-10-14 (audit R4/R5) — ONE buy path + ONE price line for every in-app surface ───────────────────
+// The desktop never reads Stripe env vars (a customer machine has none) and never opens a page that may 404:
+// every Subscribe / Upgrade / Buy / "full details" control opens the LIVE plans page with the tier + billing in
+// the query string, and the website takes it from there. main.mjs falls back to the same page.
+export const PLANS_URL = "https://iisupp.net/plans/";
+export const BILLING_PERIODS = Object.freeze(["monthly", "yearly"]);
+const BILLED_ANNUALLY_NOTE = "billed annually";
+
+/** The URL every in-app buy control opens: /plans/?from=app[&tier=<tier>][&billing=yearly]. Never a 404 path. */
+export function plansUrl(tier, { billing } = {}) {
+  const params = ["from=app"];
+  const t = tier == null || tier === "" ? "" : normalizePlan(tier);
+  if (t && t !== "admin" && t !== "free") params.push(`tier=${encodeURIComponent(t)}`);
+  if (billing === "yearly") params.push("billing=yearly");
+  return `${PLANS_URL}?${params.join("&")}`;
+}
+
+function usd(n) { return `$${Math.round(Number(n) || 0).toLocaleString("en-US")}`; }
+
+/** Yearly price as a display string: the stated annual price for annual tiers, 12× monthly otherwise. */
+export function yearlyDisplay(plan) {
+  const t = TIERS[normalizePlan(plan)];
+  if (!t || !t.price) return "";
+  if (t.billing === "year") return usd(t.price);
+  return usd((Number(t.priceMonthly) || Number(t.price) || 0) * 12);
+}
+
+/**
+ * The one price line a surface prints: { amount, unit, note, label }.
+ *  - monthly view of a monthly tier:  $899 /mo
+ *  - monthly view of an annual tier:  $19,500 /mo · billed annually ($234K/yr)
+ *  - yearly view of any tier:         $10,788 /yr · billed annually  (12× monthly, or the stated annual price)
+ * Never a literal: every number comes from TIERS.
+ */
+export function priceLine(plan, billing = "monthly") {
+  const t = TIERS[normalizePlan(plan)];
+  if (!t) return { amount: "", unit: "", note: "", label: "" };
+  if (!t.price || t.purchasable === false) return { amount: t.priceDisplay || "", unit: "", note: "", label: t.priceDisplay || "" };
+  const annual = t.billing === "year" || Boolean(t.billedAnnually);
+  if (billing === "yearly") {
+    const amount = yearlyDisplay(plan);
+    return { amount, unit: "/yr", note: BILLED_ANNUALLY_NOTE, label: `${amount}/yr · ${BILLED_ANNUALLY_NOTE}` };
+  }
+  const amount = t.priceMonthlyDisplay || t.priceDisplay;
+  if (annual) return { amount, unit: "/mo", note: `${BILLED_ANNUALLY_NOTE} (${t.priceDisplay}/yr)`, label: `${amount}/mo · ${BILLED_ANNUALLY_NOTE} (${t.priceDisplay}/yr)` };
+  return { amount, unit: "/mo", note: "", label: `${amount}/mo` };
+}

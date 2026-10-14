@@ -82,6 +82,24 @@ export const VERIFY_COMMANDS = {
 // Hard denylist — a destructive verb here means the action NEVER executes, allow-list or not.
 const DENY = /\b(format-volume|remove-partition|clear-disk|delete\s+shadow|bcdedit|reg\s+delete|cipher\s+\/w|diskpart|format\s)\b/i;
 
+// PROD 2026-10-14 (audit M3) — commands that need an ELEVATED token on a default Windows 10/11 install. The app runs
+// as the signed-in user (UAC split token, even for administrators), so these steps only succeed through a UAC
+// prompt the person answers. Shape-based so a recipe cannot forget the flag; `action.needsAdmin:true` is the
+// explicit, test-asserted declaration on every such registry action.
+export const NEEDS_ADMIN_RE = /\b(Restart-Service|Stop-Service|Start-Service|Checkpoint-Computer|Update-MpSignature)\b|ipconfig\s+\/release/i;
+
+/** Does this action need administrator rights? Explicit flag OR command shape (either is enough). */
+export function actionNeedsAdmin(action) {
+  if (!action) return false;
+  if (action.needsAdmin === true) return true;
+  return action.shell === "powershell" && NEEDS_ADMIN_RE.test(String(action.command || ""));
+}
+
+/** Does this recipe (registry object) have at least one live step that needs administrator rights? */
+export function recipeHasAdminStep(recipe) {
+  return Boolean(recipe && (recipe.actions || []).some((a) => a && a.shell === "powershell" && actionNeedsAdmin(a)));
+}
+
 export function isGreenRecipe(recipeId) {
   return EXECUTABLE_RECIPES.has(String(recipeId));
 }
@@ -128,6 +146,28 @@ export function buildExecution(action) {
   return {
     file: "powershell.exe",
     args: ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Restricted", "-Command", String(action.command)]
+  };
+}
+
+/**
+ * PROD 2026-10-14 (audit M3) — the elevated spawn for ONE allow-listed command: an outer, non-elevated PowerShell
+ * asks Windows for an elevated PowerShell through `Start-Process -Verb RunAs` (the UAC prompt the person answers is
+ * the consent), waits for it, and exits with ITS exit code. The inner command travels as -EncodedCommand (base64
+ * UTF-16LE) so no quote / semicolon / parenthesis can be re-interpreted on the way through the command line; the
+ * inner session is -NonInteractive -ExecutionPolicy Restricted like every other spawn. A declined prompt makes
+ * Start-Process throw → exit 1223 (ERROR_CANCELLED) so the caller can say "declined" instead of "failed". Pure.
+ */
+export const UAC_CANCELLED_EXIT = 1223;
+export function buildElevatedExecution(command) {
+  const inner = String(command || "");
+  const encoded = Buffer.from(inner, "utf16le").toString("base64");
+  const outer = "try { $p = Start-Process -FilePath 'powershell.exe' -Verb RunAs -WindowStyle Hidden -Wait -PassThru -ErrorAction Stop "
+    + `-ArgumentList @('-NoProfile','-NonInteractive','-ExecutionPolicy','Restricted','-EncodedCommand','${encoded}'); exit $p.ExitCode } catch { exit ${UAC_CANCELLED_EXIT} }`;
+  return {
+    file: "powershell.exe",
+    args: ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Restricted", "-Command", outer],
+    encodedCommand: encoded,
+    elevated: true
   };
 }
 

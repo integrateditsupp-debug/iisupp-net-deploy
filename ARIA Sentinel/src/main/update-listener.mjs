@@ -2,6 +2,8 @@
 // 09:00-11:00 ET) / wake / on-demand, parses latest.yml, and reports whether a newer build exists.
 // Pure + node-safe: the actual fetch + timers live in main; this module decides + parses.
 
+import { isSentinelArtifactName, isSignedArtifactName } from "../shared/ota-release.mjs";
+
 export const CHECK_WINDOW_START_HOUR_ET = 9;  // 09:00 ET
 export const CHECK_WINDOW_END_HOUR_ET = 11;   // 11:00 ET
 
@@ -73,9 +75,13 @@ export async function checkForUpdate({ fetchManifest, installedVersion, now = ne
   try { text = (await fetchManifest()) || ""; } catch { text = ""; }
   const parsed = text ? parseLatestYml(text) : null;
   const updateAvailable = Boolean(parsed && isNewer(installedVersion, parsed.version));
+  // PROD 2026-10-14 (F4 round 2) — the manifest's `path` may name the SIGNED (-setup.exe) or the unsigned
+  // (-unsigned.exe) installer; both are ours and both are accepted. The event says which, so the UI can say "signed".
+  const artifact = parsed && parsed.path ? String(parsed.path).split(/[\\/]/).pop() : null;
   const event = updateAvailable ? {
     version: parsed.version, releaseNotes: parsed.releaseNotes, size: parsed.size,
-    sha512: parsed.sha512, channel, publishedAt: parsed.releaseDate
+    sha512: parsed.sha512, channel, publishedAt: parsed.releaseDate,
+    artifact, artifactKnown: isSentinelArtifactName(artifact, parsed.version), signed: isSignedArtifactName(artifact)
   } : null;
   // D3 — `manifest` tells the caller whether an update feed was actually reachable, so the UI can say the
   // HONEST thing: a reachable feed with no newer build → "up to date"; NO feed → "manual updates for now"

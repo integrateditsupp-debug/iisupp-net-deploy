@@ -54,7 +54,8 @@ export const KILL_HOTKEY = Object.freeze({
   danger: true
 });
 
-export const KILL_TOAST = "ARIA terminated · last action undone";
+export const KILL_TOAST = "ARIA terminated · last action undone"; // legacy constant — used ONLY when an undo really ran
+export const KILL_TOAST_NOTHING = "ARIA terminated · nothing to undo";
 
 /** The most recent un-rolled-back restore point — the "last action" the kill-switch undoes. */
 export function pickUndoTarget(restorePoints = []) {
@@ -67,16 +68,34 @@ export function pickUndoTarget(restorePoints = []) {
 }
 
 /**
- * Build the deterministic result of a kill-switch activation, given the live children + restore points.
- * @returns {{ killedCount:number, undoId:string|null, undone:boolean, toast:string, globeState:'dim' }}
+ * PROD 2026-10-14 (audit M19) — the toast says what HAPPENED (Rule 14). "last action undone" only when an inverse
+ * action really ran; a verified restore point that exists but was not applied is offered, never claimed; nothing
+ * else is "nothing to undo". Pure.
  */
-export function buildKillResult({ children = [], restorePoints = [] } = {}) {
+export function killToast({ killedCount = 0, undone = false, undoAvailable = false, sequenceNumber = null } = {}) {
+  const stopped = killedCount > 0 ? ` · ${killedCount} process${killedCount === 1 ? "" : "es"} stopped` : "";
+  if (undone) return `${KILL_TOAST}${stopped}`;
+  if (undoAvailable) return `ARIA terminated${stopped} · undo available: System Restore point${sequenceNumber != null ? ` #${sequenceNumber}` : ""} (restart required)`;
+  return `${KILL_TOAST_NOTHING}${stopped}`;
+}
+
+/**
+ * Build the deterministic result of a kill-switch activation, given the live children + restore points.
+ * `undone` is TRUE only when the caller reports an inverse action actually ran (`undoRan:true`); a restore-point
+ * RECORD is an undo target to offer, not an undo that happened.
+ * @returns {{ killedCount:number, undoId:string|null, undone:boolean, undoAvailable:boolean, toast:string, globeState:'dim' }}
+ */
+export function buildKillResult({ children = [], restorePoints = [], undoRan = false } = {}) {
   const target = pickUndoTarget(restorePoints);
+  const killedCount = Array.isArray(children) ? children.filter(Boolean).length : 0;
+  const undoAvailable = Boolean(target && target.created === true);
+  const undone = undoRan === true;
   return {
-    killedCount: Array.isArray(children) ? children.filter(Boolean).length : 0,
+    killedCount,
     undoId: target ? target.id : null,
-    undone: Boolean(target),
-    toast: KILL_TOAST,
+    undone,
+    undoAvailable,
+    toast: killToast({ killedCount, undone, undoAvailable, sequenceNumber: target ? target.sequenceNumber : null }),
     globeState: "dim"
   };
 }

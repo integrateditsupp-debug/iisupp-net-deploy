@@ -28,6 +28,7 @@
 
 const { requireAdminToken } = require('./admin-gate.cjs');
 const { checkRateLimit } = require('../_rate-limit.js');
+const S = require('./sentinel-store.cjs');
 
 const MAX_ITEMS = 200;
 const MAX_SCAN = 2000;
@@ -36,16 +37,18 @@ const GET_RATE = { limit: 60, windowMs: 60 * 1000 };
 // ---------------------------------------------------------------- store seam
 
 let _storeFactory = null;
-/** Test seam: fn(name) → store-like { get(key, {type:'json'}), setJSON(key, value), list({prefix}?) }. */
+/** Test seam: fn(name, event) → store-like { get(key, {type:'json'}), setJSON(key, value), list({prefix}?) }. */
 function _setStoreFactory(fn) { _storeFactory = fn; }
 
-/** Open a Blobs store; null when Blobs is unavailable (the caller answers 503, never an empty 200). */
-async function openStore(name) {
-  if (_storeFactory) { try { return await _storeFactory(name); } catch { return null; } }
-  try {
-    const { getStore } = require('@netlify/blobs');
-    return getStore({ name, consistency: 'strong' });
-  } catch { return null; }
+/**
+ * Open a Blobs store; null when Blobs is unavailable (the caller answers 503, never an empty 200).
+ * SENTINEL-BACKEND 2026-10-14 (audit B1): `event` is the legacy Lambda event (or a Fetch Request — a no-op
+ * there); lib/sentinel-store.cjs runs connectLambda(event) before getStore and never asks for strong
+ * consistency, which Lambda-compat functions cannot serve.
+ */
+async function openStore(name, event) {
+  if (_storeFactory) { try { return await _storeFactory(name, event); } catch { return null; } }
+  return S.openStore(name, event);
 }
 
 // ---------------------------------------------------------------- request shape helpers
@@ -122,8 +125,8 @@ function parseLimit(raw) {
  * @returns {{ ok:true, store:string, prefix:string|null, count:number, items:Array, newest_first:true, capped:boolean, scanned:number, since:string|null }}
  *          or {{ ok:false, status:number, error:string }}
  */
-async function readCaptures({ storeName, prefix, since, limit }) {
-  const store = await openStore(storeName);
+async function readCaptures({ storeName, prefix, since, limit, event }) {
+  const store = await openStore(storeName, event);
   if (!store) return { ok: false, status: 503, error: 'blobs_unavailable', note: `Netlify Blobs store "${storeName}" could not be opened — nothing can be read, and nothing is being invented.` };
   let keys = [];
   try {
@@ -167,7 +170,7 @@ async function handleCaptureGet(r, { storeName, prefix, scope }) {
   const q = queryOf(r);
   const since = parseSince(q.since);
   if (Number.isNaN(since)) return respond(r, 400, { ok: false, error: 'bad_since', note: '`since` must be an ISO-8601 timestamp (e.g. 2026-10-01T00:00:00Z) or epoch milliseconds' });
-  const result = await readCaptures({ storeName, prefix, since, limit: parseLimit(q.limit) });
+  const result = await readCaptures({ storeName, prefix, since, limit: parseLimit(q.limit), event: r });
   if (!result.ok) return respond(r, result.status, { ok: false, error: result.error, note: result.note });
   return respond(r, 200, { ...result, via: gate.via });
 }

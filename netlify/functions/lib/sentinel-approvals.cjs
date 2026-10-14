@@ -2,12 +2,17 @@
 // (aria-sentinel-notify.js + aria-sentinel-approval.js): device authentication, HMAC-signed approve/deny
 // links, the 'sentinel-approvals' Blobs record shape, and the content-blind guard.
 //
-// Device auth (header `x-sentinel-key`): the desktop sends sha256(licenseKey) — never the raw key. A license
-// key is HMAC(SENTINEL_LICENSE_SECRET, "sentinel-license:v1:<plan>") (sentinel-resolve / sentinel-license-
-// funnel), so with the secret the server derives every plan key, hashes it and compares constant-time: no
-// store round-trip, no key on the wire. Without the secret it falls back to the license stores
-// ('licenses' keyed by hash, then a 'sentinel-licenses' scan). A revoked record denies. An internal /
-// admin token (lib/admin-gate.cjs, fail-closed) is the only other way in.
+// Device auth (header `x-sentinel-key`): the desktop sends sha256(licenseKey) — never the raw key.
+// SENTINEL-BACKEND 2026-10-14 (audit B3/B5/B14) — the check is now O(1), three reads at most, no listing:
+//   1. 'sentinel-licenses-revocations' <hash>  → the ONE revocation truth (admin revoke + Stripe
+//      subscription.deleted write it; sentinel-resolve reads the same entry)        → 401 license-revoked
+//   2. 'sentinel-license-keys' <hash>           → the per-customer key index (v2 keys; lib/sentinel-license-
+//      records.cjs). Gives the plan, seats, contacts and the per-tenant `disabled` flag → ok via 'sentinel-license-keys'
+//   3. 'licenses' <hash>                        → the device check-in registry (legacy no-secret fallback)
+//   4. v1 shared plan keys (HMAC(SENTINEL_LICENSE_SECRET, "sentinel-license:v1:<plan>")) are still derived
+//      from the secret and compared constant-time — Rule 15: every v1 key keeps working.
+// The 2,000-blob 'sentinel-licenses' scan is gone (it ran on every notify + every approval poll).
+// An internal / admin token (lib/admin-gate.cjs, fail-closed) is the only other way in.
 //
 // Approval links: `${id}.${exp36}.${hmac32}` under SENTINEL_APPROVAL_SECRET (falls back to
 // SENTINEL_LICENSE_SECRET). No secret → no links are minted (the email says "approve in the app"), never
@@ -18,11 +23,17 @@
 
 const crypto = require('node:crypto');
 const { requireAdminToken, constantTimeEqual } = require('./admin-gate.cjs');
+const S = require('./sentinel-store.cjs');
 
-const PLAN_ORDER = ['admin-lifetime', 'personal', 'pro', 'smb', 'midsize', 'enterprise'];
+// 'admin' is the shared module's name for the owner plan (pricing-tiers.mjs); 'admin-lifetime' is the message the
+// emergency sentinel-resolve signed. Both derive (audit B9) so an admin key minted by either generator authenticates.
+const PLAN_ORDER = ['admin-lifetime', 'admin', 'personal', 'pro', 'smb', 'midsize', 'enterprise'];
 const APPROVALS_STORE = 'sentinel-approvals';
 const LICENSES_STORE = 'licenses';
 const SENTINEL_LICENSES_STORE = 'sentinel-licenses';
+const SENTINEL_LICENSE_KEYS_STORE = 'sentinel-license-keys';
+const REVOCATIONS_STORE = 'sentinel-licenses-revocations';
+const KEY_RECORD_V = 'sentinel-license-key-v1';
 const APPROVAL_URL = 'https://iisupp.net/.netlify/functions/aria-sentinel-approval';
 const NOTIFY_EVENTS = ['issue-detected', 'approval-requested', 'fix-executed', 'fix-failed', 'report'];
 const SEVERITIES = ['green', 'yellow', 'red'];
@@ -39,16 +50,18 @@ const hash16 = (v) => sha256(String(v == null ? '' : v).toLowerCase().trim()).sl
 // ---------------------------------------------------------------- store seam
 
 let _storeFactory = null;
-/** Test seam: fn(name) → store-like { get(key, {type:'json'}), setJSON(key, value), list() }. */
+/** Test seam: fn(name, event) → store-like { get(key, {type:'json'}), setJSON(key, value), list() }. */
 function _setStoreFactory(fn) { _storeFactory = fn; }
 
-/** Open a Blobs store; null when Blobs is unavailable (callers decide whether that is fatal). */
-async function openStore(name) {
-  if (_storeFactory) { try { return await _storeFactory(name); } catch { return null; } }
-  try {
-    const { getStore } = require('@netlify/blobs');
-    return getStore({ name, consistency: 'strong' });
-  } catch { return null; }
+/**
+ * Open a Blobs store; null when Blobs is unavailable (callers decide whether that is fatal).
+ * `event` is the Lambda event: in Lambda-compat mode Blobs must be handed the event's credentials
+ * (`connectLambda`) BEFORE the first getStore — lib/sentinel-store.cjs does that (audit B1). Strong
+ * consistency is NOT requested any more: it is unavailable in this mode and threw on every read.
+ */
+async function openStore(name, event) {
+  if (_storeFactory) { try { return await _storeFactory(name, event); } catch { return null; } }
+  return S.openStore(name, event);
 }
 
 // ---------------------------------------------------------------- headers / env
@@ -77,70 +90,74 @@ function planKeyHash(plan, secret) {
   return sha256(key);
 }
 
+async function readJson(open, storeName, key, event) {
+  try {
+    const store = await open(storeName, event);
+    if (!store) return null;
+    const rec = await store.get(key, { type: 'json' }).catch(() => null);
+    return rec && typeof rec === 'object' ? rec : null;
+  } catch { return null; }
+}
+
 /**
- * verifyDeviceKey(presentedHash, { env, openStore })
- *   → { ok:true, via:'plan-key'|'licenses-store'|'sentinel-licenses', plan, tenant }
+ * verifyDeviceKey(presentedHash, { env, openStore, event })
+ *   → { ok:true, via:'sentinel-license-keys'|'plan-key'|'licenses-store', plan, tenant, record, device }
  *   → { ok:false, reason:'missing'|'bad-format'|'revoked'|'unknown-key' }
  * `tenant` is a 16-hex hash of the presented key hash — safe to store and to key records by.
+ * `record` is the per-customer key-index entry (null for a v1 shared plan key with no customer record);
+ * `device` is the device check-in registry record (null when the device never registered).
+ * Reads: revocation (1) + key index (1) + device registry (1). Never a listing (audit B14).
  */
 async function verifyDeviceKey(presented, opts) {
   const o = opts || {};
   const env = o.env || process.env;
   const open = o.openStore || openStore;
+  const event = o.event || null;
   const hash = String(presented || '').trim().toLowerCase();
   if (!hash) return { ok: false, reason: 'missing' };
   if (!HEX64.test(hash)) return { ok: false, reason: 'bad-format' };
   const tenant = hash16(hash);
 
+  // 1 — the one revocation truth (what sentinel-resolve reads and admin revoke / Stripe cancellation write).
+  const revocation = await readJson(open, REVOCATIONS_STORE, hash, event);
+  if (revocation && revocation.revoked !== false) return { ok: false, reason: 'revoked' };
+
+  // 2 — the per-customer key index (v2 keys; admin-minted records).
+  const recordRaw = await readJson(open, SENTINEL_LICENSE_KEYS_STORE, hash, event);
+  const record = recordRaw && recordRaw.v === KEY_RECORD_V ? recordRaw : null;
+  if (record && record.status === 'revoked') return { ok: false, reason: 'revoked' };
+
+  // 3 — the device check-in registry (legacy no-secret fallback; a revoked flag there denies too).
+  const device = await readJson(open, LICENSES_STORE, hash, event);
+  if (device && (device.status === 'revoked' || device.revoked === true)) return { ok: false, reason: 'revoked' };
+
+  // 4 — v1 shared plan keys derive from the secret (no store round-trip, no key on the wire).
   let plan = null;
   const secret = typeof env.SENTINEL_LICENSE_SECRET === 'string' ? env.SENTINEL_LICENSE_SECRET.trim() : '';
   if (secret) {
-    for (const p of PLAN_ORDER) if (constantTimeEqual(hash, planKeyHash(p, secret))) { plan = p; break; }
+    for (const p of PLAN_ORDER) if (constantTimeEqual(hash, planKeyHash(p, secret))) { plan = p === 'admin-lifetime' ? 'admin' : p; break; }
   }
 
-  // Revocation (and the no-secret fallback) come from the license stores. Plan keys are shared by every
-  // customer on that plan, so "revoked" means: records with this hash exist and NONE of them is active.
-  let found = 0, active = 0, storeHit = null;
-  try {
-    const store = await open(LICENSES_STORE);
-    const rec = store ? await store.get(hash, { type: 'json' }).catch(() => null) : null;
-    if (rec && typeof rec === 'object') { found++; if (rec.status !== 'revoked' && rec.revoked !== true) { active++; storeHit = storeHit || 'licenses-store'; } }
-  } catch { /* store unavailable → rely on the other paths */ }
-  try {
-    const store = await open(SENTINEL_LICENSES_STORE);
-    if (store && typeof store.list === 'function') {
-      const listing = await store.list().catch(() => ({ blobs: [] }));
-      const keys = ((listing && listing.blobs) || []).map((b) => b.key).slice(0, 2000);
-      for (const k of keys) {
-        const rec = await store.get(k, { type: 'json' }).catch(() => null);
-        if (!rec || typeof rec !== 'object' || !rec.key) continue;
-        if (!constantTimeEqual(sha256(rec.key), hash)) continue;
-        found++;
-        if (rec.status !== 'revoked') { active++; storeHit = storeHit || 'sentinel-licenses'; }
-      }
-    }
-  } catch { /* store unavailable → rely on the other paths */ }
-
-  if (found > 0 && active === 0) return { ok: false, reason: 'revoked' };
-  if (plan) return { ok: true, via: 'plan-key', plan, tenant };
-  if (storeHit) return { ok: true, via: storeHit, plan: null, tenant };
+  if (record) return { ok: true, via: 'sentinel-license-keys', plan: record.tier || plan, tenant, record, device };
+  if (plan) return { ok: true, via: 'plan-key', plan, tenant, record: null, device };
+  if (device) return { ok: true, via: 'licenses-store', plan: device.plan || null, tenant, record: null, device };
   return { ok: false, reason: 'unknown-key' };
 }
 
 /**
  * authenticate(event, { env, openStore }) — device key first, then an internal/admin token.
- *   → { ok:true, kind:'device'|'internal', tenant, plan?, via }
+ *   → { ok:true, kind:'device'|'internal', tenant, plan?, via, record, device }
  *   → { ok:false, status:401|503, error }
  */
 async function authenticate(event, opts) {
   const presented = headerOf(event, 'x-sentinel-key');
   if (presented) {
-    const r = await verifyDeviceKey(presented, opts);
-    if (r.ok) return { ok: true, kind: 'device', tenant: r.tenant, plan: r.plan, via: r.via };
+    const r = await verifyDeviceKey(presented, Object.assign({ event }, opts || {}));
+    if (r.ok) return { ok: true, kind: 'device', tenant: r.tenant, plan: r.plan, via: r.via, record: r.record || null, device: r.device || null };
     return { ok: false, status: 401, error: r.reason === 'revoked' ? 'license-revoked' : 'unauthorized' };
   }
   const gate = requireAdminToken(event, { envNames: ADMIN_ENV_NAMES, allowBodyToken: false });
-  if (gate.ok) return { ok: true, kind: 'internal', tenant: 'internal', plan: null, via: gate.via };
+  if (gate.ok) return { ok: true, kind: 'internal', tenant: 'internal', plan: null, via: gate.via, record: null, device: null };
   // A missing admin token on a device endpoint is "unauthorized", not "not configured": the device path is
   // the normal one and it needs no admin env. 503 only when the caller tried an admin header and none is set.
   const triedAdmin = ['x-admin-token', 'x-internal-token', 'x-sentinel-admin-token', 'authorization'].some((h) => headerOf(event, h));
@@ -262,7 +279,8 @@ function esc(str) {
 }
 
 module.exports = {
-  PLAN_ORDER, APPROVALS_STORE, LICENSES_STORE, SENTINEL_LICENSES_STORE, APPROVAL_URL, NOTIFY_EVENTS, SEVERITIES,
+  PLAN_ORDER, APPROVALS_STORE, LICENSES_STORE, SENTINEL_LICENSES_STORE, SENTINEL_LICENSE_KEYS_STORE, REVOCATIONS_STORE, KEY_RECORD_V,
+  APPROVAL_URL, NOTIFY_EVENTS, SEVERITIES,
   EXPIRY_MIN_MS, EXPIRY_MAX_MS, EXPIRY_DEFAULT_MS, ADMIN_ENV_NAMES, TOKEN_RE, HEX64,
   _setStoreFactory, openStore, headerOf, clientIp, approvalSecret, sha256, hash16,
   planKeyHash, verifyDeviceKey, authenticate,
