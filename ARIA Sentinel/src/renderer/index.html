@@ -630,6 +630,29 @@
             <h2>Integrations</h2>
             <p class="note">Identity, service, endpoint, and Microsoft&nbsp;365 connectors. Status is read-only; live writes to any directory, RSA, or ServiceNow stay gated behind per-customer approval. Nothing is sent off-device until you connect and approve.</p>
           </section>
+          <!-- JULY PORT 2026-10-14 (af5e03ab) — the Office File Safety Net. OPT-IN on this line: off until the person turns
+               it on here. Local vault only; the latest backup is proven by opening a RENAMED copy; never the live file,
+               never Office, never a macro, never a byte off the device. Rows are counts + times (path-blind). -->
+          <section class="panel office-safety-panel" id="officeSafetyPanel">
+            <div class="panel-actions">
+              <div>
+                <p class="eyebrow">Office Safety Net</p>
+                <h2>Word, Excel, PowerPoint rescue backups</h2>
+              </div>
+              <label class="office-safety-toggle">
+                <input id="officeSafetyEnabled" name="officeSafetyEnabled" type="checkbox" />
+                <span>Enabled</span>
+              </label>
+            </div>
+            <p class="note">Off until you turn it on. When on: local-only protection for recently changed Office files in your Documents, Desktop and OneDrive folders — a backup copy every 2 minutes into a vault on this device, then a check every 3 minutes that the latest backup opens, done on a renamed copy. No cloud upload, no live-file validation, no macro execution; your excluded folders are never read.</p>
+            <div id="officeSafetyRows" class="table-list office-safety-rows">
+              <div class="table-row"><span>Status</span><strong>Checking…</strong><em>Local</em></div>
+            </div>
+            <div class="button-row">
+              <button id="officeSafetyScan" class="ghost" type="button">Scan now</button>
+              <span id="officeSafetyResult" class="note"></span>
+            </div>
+          </section>
           <div id="integrationsGrid" class="integrations-groups">
             <p class="note">Loading integrations…</p>
           </div>

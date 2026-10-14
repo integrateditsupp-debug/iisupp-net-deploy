@@ -34,6 +34,11 @@ contextBridge.exposeInMainWorld("sentinel", {
   fileAssociationScan: () => ipcRenderer.invoke("sentinel:file-association-scan"),
   fileAssociationFix: (recipeId) => ipcRenderer.invoke("sentinel:file-association-fix", recipeId),
   updateKnowledge: () => ipcRenderer.invoke("sentinel:update-knowledge"),
+  // JULY PORT 2026-10-14 (af5e03ab) — Office File Safety Net (opt-in; local vault; renamed-copy validation).
+  officeSafetyStatus: () => ipcRenderer.invoke("sentinel:office-safety-status"),
+  setOfficeSafetyEnabled: (on) => ipcRenderer.invoke("sentinel:office-safety-set-enabled", on),
+  scanOfficeSafety: () => ipcRenderer.invoke("sentinel:office-safety-scan"),
+  registerOfficeFile: (filePath) => ipcRenderer.invoke("sentinel:office-safety-register-file", filePath),
   selfDiagnose: (reason) => ipcRenderer.invoke("sentinel:self-diagnose", reason),
   selfRepair: (reason) => ipcRenderer.invoke("sentinel:self-repair", reason),
   showGlobe: () => ipcRenderer.invoke("sentinel:show-globe"),

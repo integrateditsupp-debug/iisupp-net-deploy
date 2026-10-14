@@ -172,6 +172,7 @@ function runTabLoaders(target) {
   if (target === "settings") loadAutonomyPrefs(); // RUN-CU / CU4 — Autonomy & contacts form
   if (target === "control-center") renderApprovals(state); // RUN-CU / CU4 — Approvals section (pending + last 10 decided)
   if (target === "integrations") { loadIntegrations(); loadIncidents(); } // Integrations tab — status grid + ServiceNow incidents
+  if (target === "integrations") loadOfficeSafety(); // JULY PORT 2026-10-14 — Office Safety Net panel (opt-in)
   if (target === "recipes") renderTier0();
   if (target === "reports") loadReports();
   if (target === "walkthrough") loadWalkthrough();
@@ -492,6 +493,7 @@ function wireActions() {
     return result;
   }));
   wireDropzone();
+  wireOfficeSafety(); // JULY PORT 2026-10-14 — Office Safety Net toggle + Scan now
   wireOnboarding();
   bindClick("runDiagnostic", (button) => runAction(button, async () => {
     const report = await sentinel.runDiagnostic?.();
@@ -971,6 +973,7 @@ function renderState(next) {
   renderLog(state.transparencyLog || []);
   renderSystemChecks(state.systemChecks || defaultChecks(state));
   renderServiceNowStatus(state.serviceNowStatus);
+  renderOfficeSafety(state.officeSafety); // JULY PORT 2026-10-14 — path-blind Office Safety Net status
   renderRestorePoints(state.restorePoints || []);
   renderKillBanner(state);
   if (state.lastPrivacyCapture) renderCapture(state.lastPrivacyCapture);
@@ -1219,6 +1222,74 @@ function renderDiagnostic(report) {
 // Integrations tab (RESTORED 2026-07-02) — draw every integration as a status card grouped by area. Status
 // is READ-ONLY and real-or-empty: a card is "Connected" only after a verified Test connection; otherwise
 // "Not connected". Cards deep-link to the in-tab section that holds their full config (Rule 15 — nothing lost).
+// ===== JULY PORT 2026-10-14 (af5e03ab) — the Office File Safety Net panel (Integrations tab). Real-or-empty: every row
+// is a count or a time from the service's path-blind status; off = "Off — turn it on above" (never a fake "Healthy"). =====
+function formatOfficeSafetyTime(value) {
+  if (!value) return "not yet";
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return "not yet";
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function formatOfficeMinutes(ms) {
+  const minutes = Math.max(1, Math.round(Number(ms || 0) / 60000));
+  return `${minutes} min`;
+}
+
+function renderOfficeSafety(status) {
+  const rows = qs("#officeSafetyRows");
+  if (!rows || !status) return;
+  const toggle = qs("#officeSafetyEnabled");
+  if (toggle && toggle !== document.activeElement) toggle.checked = status.enabled === true;
+  const on = status.enabled === true;
+  const runningText = !on ? "Off — turn it on above" : status.running ? "Running" : "Enabled — waiting for the first scan";
+  const healthText = !on ? "Nothing is scanned or copied while off" : status.lastError ? `Needs review (${status.lastError})` : status.validationFailures ? "Review failed backups" : status.lastScanAt ? "Healthy" : "Not measured yet";
+  const validationText = on ? `${Number(status.validationsPassed || 0)} passed / ${Number(status.validationFailures || 0)} failed` : "—";
+  const skips = Number(status.excludedFolderSkips || 0);
+  rows.innerHTML = [
+    ["Status", runningText, healthText],
+    ["Cadence", `Backup ${formatOfficeMinutes(status.backupIntervalMs)} / validate ${formatOfficeMinutes(status.validationIntervalMs)}`, "Renamed copy"],
+    ["Coverage", on ? `${Number(status.filesTracked || 0)} tracked Office file(s)` : "—", on ? `${Number(status.watchRootsCount || 0)} folder(s) watched` : "off"],
+    ["Backups", on ? `${Number(status.backupsCreated || 0)} created` : "—", on ? formatOfficeSafetyTime(status.lastBackupAt) : "off"],
+    ["Validation", validationText, on ? formatOfficeSafetyTime(status.lastValidationAt) : "off"],
+    ["Safety", "Local vault only; no cloud upload; no macros", skips ? `${skips} excluded-folder skip(s)` : "Excluded folders never read"]
+  ].map(([label, value, meta]) => `
+    <div class="table-row">
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(value)}</strong>
+      <em>${escapeHtml(meta)}</em>
+    </div>
+  `).join("");
+}
+
+async function loadOfficeSafety() {
+  const fallback = state && state.officeSafety;
+  let status = fallback;
+  try { status = sentinel.officeSafetyStatus ? (await sentinel.officeSafetyStatus()) || fallback : fallback; } catch { status = fallback; }
+  renderOfficeSafety(status && typeof status === "object" && "enabled" in status ? status : fallback);
+}
+
+function wireOfficeSafety() {
+  bindClick("officeSafetyScan", (button) => runAction(button, async () => {
+    setText("officeSafetyResult", "Scanning…");
+    const result = sentinel.scanOfficeSafety ? await sentinel.scanOfficeSafety() : { ok: false, status: state?.officeSafety };
+    renderOfficeSafety(result?.status || state?.officeSafety);
+    setText("officeSafetyResult", result?.ok ? "Scan complete." : result?.copy || result?.error === "office-safety-off" ? "Office Safety Net is off — turn it on first." : "Scan needs review.");
+    return result;
+  }));
+  bindChange("officeSafetyEnabled", (input) => runAction(input, async () => {
+    setText("officeSafetyResult", input.checked ? "Enabling…" : "Disabling…");
+    const want = input.checked;
+    const result = sentinel.setOfficeSafetyEnabled ? await sentinel.setOfficeSafetyEnabled(want) : { ok: false, status: state?.officeSafety };
+    const status = result?.status || state?.officeSafety;
+    renderOfficeSafety(status);
+    const applied = status && status.enabled === want;
+    if (!applied) input.checked = !want;
+    setText("officeSafetyResult", applied ? (want ? "Protection enabled — backups start with the next scan." : "Protection disabled — nothing is scanned or copied.") : "Could not change Office Safety Net.");
+    return result;
+  }));
+}
+
 const INTEGRATION_STATUS_LABELS = { connected: "Connected", not_configured: "Not connected", error: "Error" };
 
 async function loadIntegrations() {

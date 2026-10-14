@@ -78,6 +78,8 @@ import {
   classifyTextAssociation,
   parseRegQueryValues
 } from "../shared/file-association-guard.mjs";
+// JULY PORT 2026-10-14 (af5e03ab) — the Office File Safety Net (local 2 min backups + 3 min renamed-copy validation).
+import { createOfficeSafetyService } from "./office-safety-service.mjs";
 // RUN 22 — dashboard · performance · SLA · compliance · reports · retention.
 import { computeHeroStatus, heroSubline } from "../shared/dashboard-status.mjs";
 import * as Sla from "./sla-tracker.mjs";
@@ -194,6 +196,9 @@ const store = new Store({
     // JULY PORT 2026-10-14 (ddfcac5b) — the last file-association guard status + the last surfaced issue key (dedupe).
     fileAssociationGuard: null,
     fileAssociationLastIssueKey: "",
+    // JULY PORT 2026-10-14 (af5e03ab) — Office Safety Net consent. OFF until the person turns it on (Integrations →
+    // Office Safety Net): the production line never scans or copies a person's documents unasked.
+    officeSafety: { enabled: false },
     serviceNow: {
       instanceUrl: "",
       caller: "",
@@ -289,6 +294,8 @@ let overlayPhysicsTimer = null;
 let overlayLastTick = 0;
 let overlayActiveUntil = 0;
 let fileAssociationGuardTimer = null; // JULY PORT 2026-10-14 — the 60 s read-only association re-check
+let officeSafetyService = null; // JULY PORT 2026-10-14 — the Office File Safety Net (opt-in)
+let officeSafetyRootsWarned = false;
 
 // ── RUN-CU / CU4 (2026-10-08) — autonomy · approvals · notify plumbing ─────────────────────────────────────
 // Every main-process network call goes through ONE wrapper that records {host, path, method, bytes} into a
@@ -2854,6 +2861,137 @@ async function openDefaultAppsForTextFiles(recipeId) {
   }
 }
 
+// ── JULY PORT 2026-10-14 (af5e03ab · 24a33108) — the Office File Safety Net ──────────────────────────────────
+// Local rescue backups for recently changed Word/Excel/PowerPoint files (every 2 min) proven by opening a RENAMED
+// copy (every 3 min) — never the live file, never Office, never a macro, never a byte off the device. OPT-IN on the
+// production line (store.officeSafety.enabled, default false; Integrations → Office Safety Net); July started it at
+// launch for everyone. The public status is path-blind (counts + timestamps). 🔒 The excluded-folder guard is applied
+// inside the service to every root / directory / file; the watch roots are also filtered here so the audit row can say so.
+function appPathSafe(name) {
+  try { return app.getPath(name); } catch { return ""; }
+}
+
+function officeSafetyConfigNow() {
+  const saved = store.get("officeSafety") || {};
+  const userData = appPathSafe("userData") || path.join(os.homedir(), ".aria-sentinel");
+  const defaultRoots = [
+    appPathSafe("documents"),
+    appPathSafe("desktop"),
+    process.env.ONEDRIVE,
+    process.env.OneDrive,
+    process.env.OneDriveCommercial,
+    process.env.OneDriveConsumer
+  ].filter(Boolean);
+  const wanted = Array.isArray(saved.watchRoots) && saved.watchRoots.length ? saved.watchRoots : defaultRoots;
+  const watchRoots = wanted.filter((root) => !isBlockedPath(root));
+  if (watchRoots.length !== wanted.length && !officeSafetyRootsWarned) {
+    officeSafetyRootsWarned = true; // one audit row per process, not one per re-check
+    logEvent("SECURITY", "Office Safety Net skipped a watch root inside an excluded folder.", r11AuditEntry("office-safety-roots"));
+  }
+  return {
+    ...saved,
+    enabled: saved.enabled === true, // opt-in: only an explicit true runs the scanner
+    backupRoot: saved.backupRoot || path.join(userData, "RescueBackups"),
+    watchRoots
+  };
+}
+
+function officeSafetyStatus() {
+  if (officeSafetyService) return officeSafetyService.status();
+  const cfg = store.get("officeSafety") || {};
+  return {
+    ok: true,
+    enabled: cfg.enabled === true,
+    running: false,
+    excludedFolderSkips: 0,
+    backupIntervalMs: 2 * 60 * 1000,
+    validationIntervalMs: 3 * 60 * 1000,
+    scanIntervalMs: 30 * 1000,
+    activeWindowMs: 24 * 60 * 60 * 1000,
+    watchRootsCount: 0,
+    backupVault: "local-user-vault",
+    backupRootConfigured: false,
+    filesTracked: 0,
+    backupsCreated: 0,
+    validationsPassed: 0,
+    validationFailures: 0,
+    lastScanAt: null,
+    lastBackupAt: null,
+    lastValidationAt: null,
+    lastError: "",
+    documents: [],
+    recentEvents: [],
+    safeContract: {
+      localOnly: true,
+      cloudUpload: false,
+      validatesLiveFile: false,
+      validationUsesRenamedCopy: true,
+      launchesOffice: false,
+      macrosRun: false
+    }
+  };
+}
+
+function ensureOfficeSafetyService() {
+  if (!officeSafetyService) {
+    officeSafetyService = createOfficeSafetyService({
+      fs,
+      path,
+      os,
+      config: officeSafetyConfigNow(),
+      log: (tag, message) => logEvent(tag, message),
+      onChange: () => broadcastState()
+    });
+  }
+  return officeSafetyService;
+}
+
+function startOfficeSafety() {
+  const cfg = officeSafetyConfigNow();
+  if (!cfg.enabled) return { ok: true, status: officeSafetyStatus(), skipped: "opt-in" }; // nothing scans unasked
+  const result = ensureOfficeSafetyService().start(cfg);
+  logEvent("OFFICE-SAFETY", result.ok ? "Office Safety Net started (local vault, renamed-copy validation)." : "Office Safety Net did not start cleanly.");
+  broadcastState();
+  return result;
+}
+
+function setOfficeSafetyEnabled(on) {
+  const next = { ...(store.get("officeSafety") || {}), enabled: on === true || (on && typeof on === "object" && on.enabled === true) };
+  store.set("officeSafety", next);
+  const result = ensureOfficeSafetyService().configure(officeSafetyConfigNow());
+  logEvent("OFFICE-SAFETY", `Office Safety Net ${next.enabled ? "enabled by the person at the device" : "disabled"}.`);
+  broadcastState();
+  return result;
+}
+
+function scanOfficeSafety() {
+  if ((store.get("officeSafety") || {}).enabled !== true) {
+    return { ok: false, error: "office-safety-off", status: officeSafetyStatus(), copy: "Office Safety Net is off. Turn it on to scan and back up recently changed Office files." };
+  }
+  const service = ensureOfficeSafetyService();
+  if (!service.status().running) service.start(officeSafetyConfigNow());
+  const result = service.scanNow();
+  broadcastState();
+  return result;
+}
+
+function registerOfficeSafetyFile(filePath) {
+  if (typeof filePath !== "string" || !filePath.trim() || filePath.length > 2048) {
+    return { ok: false, error: "invalid-file-path", status: officeSafetyStatus() };
+  }
+  if (isBlockedPath(filePath)) { // 🔒 never read, never copied, surfaced as the usual count
+    logEvent("SECURITY", "Office Safety Net refused a file inside an excluded folder.", r11AuditEntry("office-safety-register"));
+    return { ok: false, error: "excluded-folder", surface: "1 personal folder excluded", status: officeSafetyStatus() };
+  }
+  if ((store.get("officeSafety") || {}).enabled !== true) {
+    return { ok: false, error: "office-safety-off", status: officeSafetyStatus() };
+  }
+  const service = ensureOfficeSafetyService();
+  const result = service.registerFile(filePath);
+  broadcastState();
+  return result;
+}
+
 // ── RUN 23 — process-health poller + supervised-fix control plane ─────────────────────────────────────────
 // recipe-history.json (vetted-tier ledger) lives in userData, alongside delete-prefs.
 function recipeHistoryFile() { return path.join(app.getPath("userData"), "recipe-history.json"); }
@@ -3443,6 +3581,7 @@ function getState() {
     serviceNow: store.get("serviceNow"),
     serviceNowStatus: serviceNowSummary(),
     fileAssociationGuard: store.get("fileAssociationGuard") || null, // JULY PORT 2026-10-14 — last read-only .txt association check
+    officeSafety: officeSafetyStatus(), // JULY PORT 2026-10-14 — Office Safety Net status (path-blind; opt-in)
     knowledgeSources: store.get("knowledgeSources"),
     restorePoints: (store.get("restorePoints") || []).slice(0, 10),
     deletePrefs: readDeletePrefs(),
@@ -4844,6 +4983,11 @@ ipcMain.handle("sentinel:update-knowledge", () => updateKnowledge({ manual: true
 // (open Windows Default Apps for the person to pick Notepad; ARIA writes nothing; refused while paused/killed).
 ipcMain.handle("sentinel:file-association-scan", () => scanFileAssociationGuard("manual"));
 ipcMain.handle("sentinel:file-association-fix", (_event, recipeId) => openDefaultAppsForTextFiles(recipeId));
+// JULY PORT 2026-10-14 (af5e03ab) — the Office File Safety Net (opt-in): status · enable/disable · scan now · register a file.
+ipcMain.handle("sentinel:office-safety-status", () => officeSafetyStatus());
+ipcMain.handle("sentinel:office-safety-set-enabled", (_event, on) => setOfficeSafetyEnabled(on));
+ipcMain.handle("sentinel:office-safety-scan", () => scanOfficeSafety());
+ipcMain.handle("sentinel:office-safety-register-file", (_event, filePath) => registerOfficeSafetyFile(filePath));
 ipcMain.handle("sentinel:incident", (_event, recipeId, context) => makeIncident(recipeId, context || {}));
 ipcMain.handle("sentinel:self-diagnose", (_event, reason) => selfDiagnose(reason || "renderer"));
 ipcMain.handle("sentinel:self-repair", (_event, reason) => selfRepair(reason || "renderer"));
@@ -5273,6 +5417,7 @@ if (hasSingleInstanceLock) {
     startBridge();
     startDetection();
     startFileAssociationGuard(); // JULY PORT 2026-10-14 — read-only .txt association guard (Windows only)
+    startOfficeSafety(); // JULY PORT 2026-10-14 — Office Safety Net: runs ONLY when the person turned it on
     startProcessHealth(); // RUN 23 — 30s content-blind process-health poll feeding the globe status panel
     serviceNowDrain().catch(() => undefined); // flush any incidents queued while offline
     selfDiagnose("startup").catch((error) => handleSelfError(error, "startup-diagnose"));
@@ -5352,6 +5497,7 @@ app.on("before-quit", () => {
   stopOverlayPhysics();
   try { globalShortcut.unregisterAll(); } catch { /* nothing registered */ }
   if (fileAssociationGuardTimer) { clearInterval(fileAssociationGuardTimer); fileAssociationGuardTimer = null; } // JULY PORT 2026-10-14
+  if (officeSafetyService) { try { officeSafetyService.stop(); } catch { /* stopping never blocks quit */ } } // JULY PORT 2026-10-14
   if (detectionOrchestrator) detectionOrchestrator.stopAll();
   if (adminWindow && !adminWindow.isDestroyed()) adminWindow.destroy();
   if (overlayWindow && !overlayWindow.isDestroyed()) overlayWindow.destroy();

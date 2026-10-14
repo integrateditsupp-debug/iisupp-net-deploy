@@ -54,9 +54,12 @@ assert.doesNotMatch(main, /execSync\(/, "no execSync");
 const settingsTabs = new Set([...indexHtml.matchAll(/data-tab="([a-z-]+)"/g)].map((m) => m[1]));
 assert.equal(settingsTabs.size, 11, "settings tab count (RUN 23d 9 + RUN 33 ARIA + Walk-through = 11)");
 const adminHtml = read("admin-console", "index.html");
-// RUN 22 added Fleet Performance + Quarterly Reports + Cohort SLA (→17 admin views).
+// RUN 22 added Fleet Performance + Quarterly Reports + Cohort SLA (→17 admin views); RUN 24 added Licenses (18);
+// JULY PORT 2026-10-14 (af5e03ab) added Grant Asset RDP Access — a static, disabled, honest tab (19). This is the
+// deliberate lock bump for that addition; nothing was removed (tests/admin-rdp-access-tab.test.mjs covers the view).
 const adminViews = new Set([...adminHtml.matchAll(/data-view-target="([a-z-]+)"/g)].map((m) => m[1]));
-assert.equal(adminViews.size, 18, "admin console view count (17 + RUN 24 licenses)");
+assert.equal(adminViews.size, 19, "admin console view count (17 + RUN 24 licenses + JULY PORT rdp-access)");
+assert.ok(adminViews.has("rdp-access"), "the 19th view is the RDP rescue tab");
 
 // 7 · RUN 17 regression: the audit-integrity banner is still wired (must keep firing on tamper).
 assert.match(main, /function verifyAuditIntegrity\(\)/, "RUN 17 audit-integrity verifier still present");

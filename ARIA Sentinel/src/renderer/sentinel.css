@@ -1386,3 +1386,9 @@ select { font: inherit; }
 .fix-history-head code { color: var(--aria-gold); font-family: var(--aria-font-mono); font-size: 11px; overflow-wrap: anywhere; }
 .fix-history-pagination { display: grid; grid-template-columns: 120px 1fr 120px; align-items: center; gap: 10px; margin-top: 12px; }
 .fix-history-pagination .note { margin: 0; text-align: center; }
+
+/* ===== JULY PORT 2026-10-14 (af5e03ab) — Office Safety Net panel (Integrations tab) ===== */
+.office-safety-panel { margin-bottom: 16px; }
+.office-safety-toggle { display: inline-flex; align-items: center; gap: 8px; color: var(--aria-text-2); font-size: 12px; cursor: pointer; }
+.office-safety-toggle input { accent-color: var(--aria-gold); }
+.office-safety-rows .table-row { grid-template-columns: 128px minmax(0, 1fr) 160px; }

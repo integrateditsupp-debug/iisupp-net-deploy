@@ -604,6 +604,16 @@ const TESTS = [
   "./d2-wire-conversion.test.mjs",
   // RUN-B B1 (2026-07-01) — "Was this fixed?" feedback loop -> real deflection %% (real-or-empty; feeds dashboard tile + D2 proof).
   "./resolution-outcome.test.mjs",
+  // JULY PORT 2026-10-14 (af5e03ab, ported from cc/security-lockdown-2026-07-01) — the July ledger reconciled as a DIFF
+  // (id dedupe · not_resolved · escalated counted-never-resolved · hours_saved from roi.mjs · hasProof); the Office File
+  // Safety Net (pure planner · trainer · live service on a temp tree, opt-in + excluded-folder guard); the RDP rescue
+  // decision layer (secret-free, guard-scrubbed) + the admin console's static, disabled "Grant Asset RDP Access" tab.
+  "./resolution-outcome-july-reconcile.test.mjs",
+  "./office-file-safety.test.mjs",
+  "./office-trainer.test.mjs",
+  "./office-safety-service.test.mjs",
+  "./rdp-access.test.mjs",
+  "./admin-rdp-access-tab.test.mjs",
   "./value-proof.test.mjs",   // RUN-B B2 — real ROI $/hours + real deflection on every surface (real-or-empty)
   // RUN-B B5 (2026-07-01) — under-globe "issue resolved | email sent | ticket ref" confirmation (real-or-empty; desktop overlay + web mirror parity).
   "./b5-globe-confirmation.test.mjs",
