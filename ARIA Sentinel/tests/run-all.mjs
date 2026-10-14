@@ -1012,6 +1012,10 @@ const TESTS = [
   // …and its surfaces, fed main's REAL notices: the globe card (Notice n of 3 + Fix now · Not now · Never for this),
   // the Home "What I need from you" rows, the ARIA chat line, Settings → Autonomy, the content-blind bridge slice.
   "./advisory-ui.test.mjs",
+  // …and the REAL-Windows lab an operator runs on a test machine (scripts/fault-lab.ps1 + scripts/fault-lab-run.mjs,
+  // docs/FAULT-LAB.md): what can be proven without Windows — one catalogue, a script that cannot touch the network /
+  // DNS / registry / clock / default apps / startup types, the guard read at run time, and the verdict logic.
+  "./fault-lab-run.test.mjs",
   // The commercial surface, audited end to end and proven RED FIRST on fixtures: the response-time
   // promise (BE1), the price a stranger is quoted (BF1), the tier vocabulary (BF2), the amount a buyer
   // is actually charged (BI2), the document a conversation ends in (BL1), the intake nobody keeps
