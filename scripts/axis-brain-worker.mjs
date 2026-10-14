@@ -687,6 +687,45 @@ Reply with ONE short sentence describing what you did, or why you did not.`,
     return { answer: spokenSummary(r) };
   }
 
+  if (kind === 'grant.prepare') {
+    // Grant Radar (AXIS ONE, 2026-10-13). Ahmad: "any new grants that appear I can just hit apply and
+    // agents do the work for me." The honest version of that: Claude builds the whole application
+    // packet — every narrative field, the checklist, the exact portal steps — from what this repo and
+    // the vault already know about the company, and STOPS at the portal. Submission and sign-in are
+    // his click (credentials are never typed by an agent). Writes go only under the vault's Grants
+    // folder; the repo's code is untouched. Rule 14: unknown facts are marked, never invented.
+    if (!arg) return { error: 'no grant named' };
+    const grantPick = modelForRequest(arg, 'execute');
+    await progress('preparing grant packet on ' + grantPick.model + ': ' + arg.slice(0, 60), 'start');
+    const stamp = new Date().toISOString().slice(0, 10);
+    const r = await askClaudeIn(
+      `You are Claude Code working in the IIS/ARIA repo, following CLAUDE.md. First read
+aria-vault/01_Frontal/VISION-AND-GOAL-STANDING.md (Rule 0). Ahmad pressed Apply on this grant in the
+AXIS Grant Radar:
+
+${arg}
+${convoBlock}
+Build the complete application packet for Integrated IT Support Inc. Ground every field in files that
+exist here (aria-vault/, documents/, outputs/, knowledge-base/, senior-director-state/ when present):
+company facts, capability statement, past bids, the AI/IT automation work the company actually does.
+Write the packet as ONE markdown note at aria-vault/01_Frontal/Grants/${stamp}-<grant-slug>.md with:
+1. Eligibility check against the grant's own criteria (pass / fail / unknown, each with the source).
+2. Every narrative answer the application asks for, written to submit, in the company's voice.
+3. The checklist with each item marked READY (where it is) or NEEDS AHMAD (exactly what he must do).
+4. The exact portal steps, up to and NOT including sign-in or Submit.
+Also add a link to it in aria-vault/01_Frontal/Grants/_Grants.md (create the index if missing).
+Mark anything you cannot ground as [needs Ahmad]; never invent figures, dates, certifications,
+customers or results. Do not submit anything, open any portal account, enter credentials, spend money,
+or change any file outside aria-vault/01_Frontal/Grants/.
+
+Reply with THREE short sentences: what is ready, what still needs Ahmad, and the file path.`,
+      ['--permission-mode', 'acceptEdits'], 1500000, grantPick.model);
+    if (r.error) return { error: 'grant packet failed: ' + String(r.error).slice(-200) };
+    const said = String(r.answer || '').trim().slice(-700);
+    await progress('Grant packet ready: ' + said.slice(0, 140), 'done');
+    return { answer: said };
+  }
+
   return { error: 'unknown task kind: ' + kind };
 }
 

@@ -103,6 +103,7 @@
         <div class="axis-bar">
           <input id="axisQuick" placeholder="Ask AXIS…" autocomplete="off" aria-label="Ask AXIS">
           <button class="chip" id="axisQuickWake" title="Hands-free: wake word &ldquo;AXIS&rdquo;" aria-pressed="false" aria-label="Toggle hands-free">&#9101;</button>
+          <button class="chip axis-live" id="axisLiveGlobe" title="Talk to AXIS live (Aria&rsquo;s voice, two-way)" aria-pressed="false" aria-label="Talk to AXIS live"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg></button>
           <button class="chip" id="axisQuickHolo" title="Full-screen AXIS presence (Ctrl+Alt+A)" aria-label="Open AXIS presence">&#9906;</button><button class="chip" id="axisQuickOpen" title="Open the full conversation" aria-label="Open conversation">&#9711;</button>
         </div>
         <div class="axis-orb-chips" role="group" aria-label="AXIS quick questions">
@@ -130,7 +131,10 @@
     <header class="axis-dock-head">
       <!-- The globe: a real rotating 3-D wireframe sphere (assets/axis-globe.js), not an icon.
            Every other [data-orb] slot keeps the original SVG mark, so only this one changes. -->
-      <span class="axis-globe" data-globe></span>
+      <!-- AXIS ONE (2026-10-13): one sphere on screen. The orbit globe in the head band is THE globe; the
+           console head carries the orb mark so the identity row (name · state · hear line · wave) keeps
+           its anchor without drawing a second rotating sphere beside the first. -->
+      <span class="axis-orb axis-orb-hero" data-orb aria-hidden="true"></span>
       <div class="axis-head-meta">
         <div class="axis-hero-name">AXIS <span class="axis-state-word" id="axisStateWord" aria-live="polite">idle</span></div>
         <!-- Live line: shows the interim transcript while listening, so it is always visible whether
@@ -143,8 +147,26 @@
     <!-- Brain-state badge: visible for as long as reasoning is unavailable, so "answering from the
          board only" is never a surprise. Hidden entirely when the brain is healthy. -->
     <div class="axis-brain" id="axisBrain" hidden></div>
+    <!-- AXIS ONE tab strip (2026-10-13). Ahmad: "now there is two … merge the new voice and method and old
+         useful knowledge into one". The Lovable-era side panel (axis-exec.js: Work · To-do · Automate ·
+         Approvals · My PC · Inbox · Brief · Setup) and the floating Claude box (axis-collab.js) render
+         INSIDE this console as tabs; Talk is the original director transcript. Rule 15: nothing removed,
+         every surface reachable from one place behind one globe. -->
+    <nav class="axis-tabs" id="axisTabs" role="tablist" aria-label="AXIS console">
+      <button class="axis-tab" role="tab" data-axis-tab="talk" aria-selected="true">Talk</button>
+      <button class="axis-tab" role="tab" data-axis-tab="work" aria-selected="false">Work</button>
+      <button class="axis-tab" role="tab" data-axis-tab="todo" aria-selected="false">To-do</button>
+      <button class="axis-tab" role="tab" data-axis-tab="auto" aria-selected="false">Automate</button>
+      <button class="axis-tab" role="tab" data-axis-tab="apr" aria-selected="false">Approvals</button>
+      <button class="axis-tab" role="tab" data-axis-tab="pc" aria-selected="false">My PC</button>
+      <button class="axis-tab" role="tab" data-axis-tab="inbox" aria-selected="false">Inbox</button>
+      <button class="axis-tab" role="tab" data-axis-tab="brief" aria-selected="false">Brief</button>
+      <button class="axis-tab" role="tab" data-axis-tab="claude" aria-selected="false">Claude</button>
+      <button class="axis-tab" role="tab" data-axis-tab="setup" aria-selected="false">Setup</button>
+    </nav>
     <div class="axis-pri" id="axisPri" hidden></div>
     <div class="axis-log" id="axisLog"></div>
+    <div class="axis-panel" id="axisPanel" role="tabpanel" hidden></div>
     <!-- Compact input + one grouped control cluster, rather than a row of loose buttons. -->
     <div class="axis-input">
       <input id="axisInput" placeholder="Tell AXIS…" autocomplete="off">
@@ -160,6 +182,7 @@
     <div class="axis-foot">
       <select id="axisVoicePick" aria-label="AXIS voice"><option value="">Voice · automatic</option></select>
       <button class="chip" id="axisVoiceTest" title="Hear the selected voice">Test</button>
+      <button class="chip axis-live" id="axisLiveCall" title="Live two-way call &mdash; Aria&rsquo;s voice, as AXIS" aria-pressed="false">Live call</button>
     </div>
   </section>
 </div>
@@ -172,12 +195,15 @@
   </div>
 </div>
 
+<!-- AXIS ONE (2026-10-13): one globe, one voice, one console. axis-unify.js is no longer loaded — it hid
+     the dock, the wake word and the mic and re-mounted a second globe; its three useful behaviours (globe
+     click opens the console, Enter on the quick bar reaches the brain, double-click starts the live call)
+     live in axis-app.js. The file stays in the repo for reference. -->
 <script src="/assets/aria-live.js?v=20261009c" defer></script>
 <script src="/assets/aria-live-voice.js?v=20261009d" defer></script>
-<script src="/assets/axis-exec.js?v=20261010d" defer></script>
-<script type="module" src="/assets/axis-app.js?v=20261010d"></script>
-<script src="/assets/axis-unify.js?v=20261010c" defer></script>
-<script src="/assets/axis-collab.js?v=20261010b" defer></script>
+<script src="/assets/axis-exec.js?v=20261013a" defer></script>
+<script type="module" src="/assets/axis-app.js?v=20261013a"></script>
+<script src="/assets/axis-collab.js?v=20261013a" defer></script>
 <!-- iis-fineprint:start -->
 <div class="iis-fineprint" role="note" aria-label="Site content disclaimer">
   <div class="iis-fineprint__inner">

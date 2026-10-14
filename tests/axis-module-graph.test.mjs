@@ -81,9 +81,13 @@ const navIds = [...navBlock.matchAll(/id: '([^']+)'/g)].map(m => m[1]);
 // 17th tab `priorities` is inserted at the head of the Workspace group. Same treatment as the
 // waiting_reply addition above — nothing removed, renamed, or reordered relative to each other, and
 // the addition is declared here deliberately rather than the guard being loosened.
+// 2026-10-13 (AXIS ONE): Ahmad asked for the Grant Radar inside the command center ("any new grants
+// that appear I can just hit apply"), so an 18th tab `grants` is inserted as its own Growth group
+// between Workspace and System. Same treatment again — nothing removed, renamed or reordered relative
+// to each other; the addition is declared here rather than the guard being loosened.
 const EXPECTED = ['overview', 'inbox', 'pipeline', 'crm', 'prospects', 'outreach', 'approvals', 'waiting_reply',
-  'followups', 'priorities', 'documents', 'analytics', 'products', 'fleet', 'axis-agent-director', 'reports', 'settings'];
-t('NAV has exactly 17 tabs', navIds.length === 17);
+  'followups', 'priorities', 'documents', 'analytics', 'products', 'grants', 'fleet', 'axis-agent-director', 'reports', 'settings'];
+t('NAV has exactly 18 tabs', navIds.length === 18);
 t('NAV ids and order are unchanged', JSON.stringify(navIds) === JSON.stringify(EXPECTED));
 
 const screens = new Set();

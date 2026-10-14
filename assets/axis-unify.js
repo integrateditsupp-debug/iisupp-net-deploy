@@ -1,3 +1,9 @@
+// RETIRED FROM THE SHELL — AXIS ONE, 2026-10-13. axis.html / aperture-learning.html no longer load this
+// file. It hid the dock, the wake word and the push-to-talk mic (display:none!important), cloned the
+// orbit globe and re-mounted a second renderer, and sent quick-bar questions around the director's turn
+// grammar. Its three useful behaviours (globe click opens the console, Enter on the quick bar reaches
+// the brain, double-click starts the live call) now live in axis-app.js. Kept for reference (Rule 15);
+// loading it again would re-create the "two globes / two consoles" state Ahmad asked to end.
 // axis-unify.js — one Axis. The globe is the single face; the executive panel is the console.
 // The old dock console and its separate mic retire into the unified panel (same brain, same
 // login, nothing lost — the dock code stays dormant, its data untouched).

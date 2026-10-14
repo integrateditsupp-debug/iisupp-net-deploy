@@ -180,7 +180,11 @@ export default async (request) => {
     // 15_Research/. Read-only toward the repo and the board; confirm-gated on the console side.
     const ALLOWED = ['video.make', 'video.short', 'video.upload', 'video.status', 'self.fix',
       'cowork.ask', 'cowork.plan', 'code.build', 'machine.run',
-      'fleet.status', 'fleet.run', 'fleet.pause', 'fleet.resume', 'research.web'];
+      'fleet.status', 'fleet.run', 'fleet.pause', 'fleet.resume', 'research.web',
+      // grant.prepare (AXIS ONE, 2026-10-13): Claude on Ahmad's machine builds a grant application packet
+      // into the vault from what the repo already knows. Writes only under aria-vault/01_Frontal/Grants/;
+      // never submits, never enters credentials — the portal click stays Ahmad's.
+      'grant.prepare'];
     if (!ALLOWED.includes(kind)) return json(400, { error: 'unknown task kind' });
     const id = 't-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
     try {

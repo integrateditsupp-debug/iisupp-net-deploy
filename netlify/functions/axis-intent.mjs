@@ -28,6 +28,9 @@ const KNOWN_TYPES = new Set([
   'duplicate', 'edit', 'new_version', 'prepare_for_client',
   'export', 'send_to_axis_review', 'score_edit',
   'run_now', 'pause', 'instruct',
+  // Grant Radar (AXIS ONE, 2026-10-13). grant_apply opens the file on the board; the packet itself is
+  // built by the Claude worker (brain-queue kind grant.prepare) and the portal click stays Ahmad's.
+  'grant_apply', 'grant_scan', 'grant_report',
   'generate_report', 'rails_edit', 'integration_test',
   'add_record', 'edit_record', 'add_note', 'draft_email', 'csv_export',
 ]);

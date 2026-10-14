@@ -15,6 +15,8 @@ import { renderDirector } from './axis-director-screen.js';
 import { renderPriorities, collectPriorities, dueLabel, localAnswer, resolveRemovalTargets, unsupportedBoardCommand } from './axis-priorities.js';
 import { mountGlobes } from './axis-globe.js';
 import { toggleHologram } from './axis-hologram.js';
+// AXIS ONE (2026-10-13): Grant Radar — non-repayable grants as a native screen with one-click Apply.
+import { renderGrants } from './axis-grants.js';
 // AXIS persona + turn grammar (the JARVIS flow). Additive: the voice machinery below is unchanged;
 // this only decides who AXIS sounds like and how a spoken turn is shaped.
 import { axisPersonaBonus, AXIS_PROSODY, VOICE_POLICY_REV, ackLine, greetLine, routeTail,
@@ -49,6 +51,9 @@ const NAV = [
     { id: 'priorities', label: 'Priorities', glyph: 'PY' },
     { id: 'documents', label: 'Documents', glyph: 'DO' }, { id: 'analytics', label: 'Analytics', glyph: 'AN' },
     { id: 'products', label: 'Product Discovery', glyph: 'PD' },
+  ] },
+  { group: 'Growth', items: [
+    { id: 'grants', label: 'Grant Radar', glyph: 'GR' },
   ] },
   { group: 'System', items: [
     { id: 'fleet', label: 'Fleet', glyph: 'FL' }, { id: 'axis-agent-director', label: 'AXIS Agent Director', glyph: 'AX' },
@@ -89,6 +94,11 @@ function syncDockVisibility() {
   const dock = $('axisDock'), fab = $('axisFab');
   if (!dock || !fab) return;
   if (onDirector) {
+    // AXIS ONE: the console's work tabs (Work · To-do · Automate · …) exist nowhere else, so an
+    // explicitly opened non-Talk tab stays docked beside the Director screen. The console DOCKS
+    // (the content pane yields its width), so it no longer covers the Director's composer.
+    const tab = document.documentElement.dataset.axisTab;
+    if (tab && tab !== 'talk' && document.documentElement.dataset.axisOpen === '1' && !dock.hidden) { fab.hidden = true; return; }
     if (!dockHiddenForDirector) { dockHiddenForDirector = !dock.hidden; dock.hidden = true; }
     fab.hidden = true;
   } else if (dockHiddenForDirector) {
@@ -1402,6 +1412,28 @@ SCREENS.reports = (c) => {
   c.append(el('div', { class: 'card', style: 'padding:0' }, (st.integrations || []).map(ig => el('div', { class: 'row' }, [
     el('span', { class: 'dot ' + dot(ig.status) }), el('div', { style: 'width:120px;font-weight:600' }, ig.name),
     el('div', { style: 'flex:1;color:var(--txt-3);font-size:12px' }, ig.detail), el('span', { class: 'stage-tag' }, ig.status)]))));
+  // AXIS ONE — the rails the code actually enforces (real-or-empty, Rule 14) and the voice pipeline.
+  c.append(head('AXIS rails & voice', 'what the console enforces in code · one globe, one voice, one console', 'margin-top:16px'));
+  const railRows = [
+    ['Approval-first', 'POST /api/axis/intent only queues; the worker executes behind rails — the page never sends, approves or pays.'],
+    ['$0 law', 'Executive-assistant brain capped by AXIS_MONTHLY_CAP_USD (default $60); anything with a cost becomes an approval. New spend needs Ahmad.'],
+    ['Outbound', 'Cold outreach is drafted for approval (CASL); first batch ≤5/day; never a blast.'],
+    ['Honesty', 'Every figure comes from the snapshot or the status feed; unknowns render "Not found — never guessed".'],
+    ['Exclusions', 'No Raymond James involvement. No money-back guarantee copy. No real names in the vault. "Private pics and Vids" is never touched.'],
+    ['Kill-switch', 'Say "AXIS stop" or press Ctrl+Alt+K — aborts speech, the mic, the live call and any unconfirmed route.'],
+  ];
+  c.append(el('div', { class: 'card', style: 'padding:0' }, railRows.map(([k, v]) => el('div', { class: 'row' }, [
+    el('div', { style: 'width:120px;font-weight:600' }, k), el('div', { style: 'flex:1;color:var(--txt-3);font-size:12px' }, v)]))));
+  const micMode = axisMicMode();
+  const voiceLine = axisVoiceStatus() ? 'Aria voice (XO bridge) → browser voice fallback' : 'Aria voice unreachable right now → browser voice';
+  c.append(el('div', { class: 'card', style: 'display:flex;gap:20px;flex-wrap:wrap;align-items:flex-end;margin-top:10px' }, [
+    settingBox('Spoken replies', voiceLine),
+    settingBox('Live call', window.AriaLiveCall ? 'Two-way Aria voice · spends Lovable AI credits per call' : 'engine not loaded'),
+    el('div', {}, [el('div', { class: 'eyebrow' }, 'Push-to-talk 🎙 does'),
+      el('div', { style: 'display:flex;gap:6px;margin-top:6px' }, [
+        el('button', { class: 'chip', 'aria-selected': micMode === 'turn', onclick: () => { axisMicMode('turn'); renderModule(); } }, 'One turn → director brain'),
+        el('button', { class: 'chip', 'aria-selected': micMode === 'live', onclick: () => { axisMicMode('live'); renderModule(); } }, 'Start the live call')])]),
+  ]));
   // Data & backups
   c.append(head('Data & backups', '', 'margin-top:16px'));
   c.append(el('div', { class: 'card' }, [el('div', { style: 'font-size:12px;color:var(--txt-2)' }, `System of record: ${st.data?.db || 'data/axis-sales.db'} (SQLite, local, gitignored). Last backup: ${st.data?.last_backup || '—'}.`)]));
@@ -1444,6 +1476,9 @@ SCREENS.products = (c) => {
     c.append(card);
   });
 };
+// ── Grant Radar (AXIS ONE, 2026-10-13) ──
+SCREENS.grants = (c) => renderGrants(c, { onIntent: (type, payload) => postIntent(type, payload) });
+
 function evidenceText(e) {
   if (!e) return '—';
   if (e.need_count != null) return `${e.need_count} of ${e.of_prospects} researched prospects need this${e.sample ? ' (e.g. ' + e.sample.slice(0, 2).join(', ') + ')' : ''}`;
@@ -2319,7 +2354,12 @@ function axisSpeak(text) {
       let url;
       try { url = await load(i); load(i + 1); }
       catch (e) {
-        if (i === 0 && gen === ariaGen) { ariaVoiceDown = Date.now() + 60000; ariaGen++; axisSpeakBrowser(text); return; }
+        if (i === 0 && gen === ariaGen) {
+          ariaVoiceDown = Date.now() + 60000; ariaGen++;
+          // Rule 14: say which voice is talking. A 402 means the Lovable credits behind Aria's voice are out.
+          axisVoiceNote(/402/.test(String(e && e.message)) ? 'Aria voice: credits out — browser voice for now' : 'Aria voice unreachable — browser voice for 60s');
+          axisSpeakBrowser(text); return;
+        }
         return finish(true);
       }
       if (gen !== ariaGen) { URL.revokeObjectURL(url); return; }
@@ -2333,6 +2373,20 @@ function axisSpeak(text) {
   } catch { return axisSpeakBrowser(text); }
 }
 
+function axisVoiceStatus() { return Date.now() >= ariaVoiceDown; }
+window.axisVoiceStatus = axisVoiceStatus;
+let __voiceNoted = '';
+function axisVoiceNote(msg) {
+  if (__voiceNoted === msg) return; __voiceNoted = msg;
+  try { toast(msg); } catch {}
+  const b = $('axisBrain'); if (b && b.hidden) { b.textContent = msg; b.hidden = false; setTimeout(() => { if (b.textContent === msg) { b.hidden = true; b.textContent = ''; } }, 60000); }
+}
+// Push-to-talk policy. 'turn' (default) = one spoken turn through the director brain (board, roster,
+// intents, approvals — the old knowledge). 'live' = the 🎙 starts the two-way Aria call instead.
+function axisMicMode(set) {
+  if (set === 'turn' || set === 'live') { try { localStorage.setItem('axis-mic-mode', set); } catch {} }
+  try { return localStorage.getItem('axis-mic-mode') === 'live' ? 'live' : 'turn'; } catch { return 'turn'; }
+}
 function axisSpeakBrowser(text) {
   try {
     if (!axisVoiceOn || !window.speechSynthesis) return false;
@@ -2496,7 +2550,10 @@ function axisMicError(e) {
 // Push-to-talk, shared by the dock and the public panel (one mic at a time).
 function axisMicToggle(micId = 'axisMic', inputId = 'axisInput', send = axisSend, auto = false) {
   axisMicAutoOpen = !!auto;
-  if (state.token && window.axisLiveToggle) {
+  // AXIS ONE: the 2026-10-09 change sent EVERY mic press into the live call, which bypasses the director
+  // brain (board, roster, intents, approvals). Push-to-talk is one turn through that brain again; the
+  // live call has its own controls (orbit bar, console foot, double-click on the globe) and this setting.
+  if (state.token && window.axisLiveToggle && axisMicMode() === 'live' && micId === 'axisMic') {
     axisHandsFree = false;
     axisWakePause();
     if (axisRec) { axisRec.onend = null; axisRec.onresult = null; try { axisRec.abort(); } catch {} }
@@ -2982,13 +3039,77 @@ async function doLogin() {
 
 // ── Theme + dock + wiring ──
 function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('axis_theme', t); }
-function openDock() {
-  // On the Director tab the dock would cover that screen's own command channel — send there instead.
-  if (state.module === 'axis-agent-director') { const i = $('axisDirectorInput'); if (i) i.focus(); return; }
+function openDock(tab) {
+  const want = AXIS_TABS.includes(tab) ? tab : null;
+  // On the Director tab the dock's TALK would duplicate that screen's own command channel — send Talk
+  // there. A work tab (Work · To-do · …) exists only in the console, so it docks beside the Director.
+  if (state.module === 'axis-agent-director' && (!want || want === 'talk')) { const i = $('axisDirectorInput'); if (i) i.focus(); return; }
   $('axisDock').hidden = false; $('axisFab').hidden = true;
   document.documentElement.dataset.axisDock = 'open';   // content pane yields the console's width
-  renderDock(); $('axisInput').focus();
+  setAxisTab(want || document.documentElement.dataset.axisTab || 'talk');
+  renderDock(); if (!want || want === 'talk') $('axisInput').focus();
 }
+// ── AXIS ONE console tabs (2026-10-13) ────────────────────────────────────────
+// Talk is the original director transcript. Every other tab is drawn into #axisPanel by the module
+// that owns it (axis-exec.js: work/todo/auto/apr/pc/inbox/brief/setup · axis-collab.js: claude) when
+// it hears 'axis:tab'. The strip is static DOM, so the choice survives every snapshot repaint.
+const AXIS_TABS = ['talk', 'work', 'todo', 'auto', 'apr', 'pc', 'inbox', 'brief', 'claude', 'setup'];
+function setAxisTab(tab, { silent = false } = {}) {
+  if (!AXIS_TABS.includes(tab)) tab = 'talk';
+  document.documentElement.dataset.axisTab = tab;
+  document.querySelectorAll('#axisTabs [data-axis-tab]').forEach((b) => b.setAttribute('aria-selected', b.dataset.axisTab === tab ? 'true' : 'false'));
+  const panel = $('axisPanel');
+  if (panel) { panel.hidden = tab === 'talk'; if (tab !== 'talk' && !panel.childElementCount) panel.innerHTML = '<p class="k" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)">Loading…</p>'; }
+  try { sessionStorage.setItem('axisTab', tab); } catch {}
+  if (!silent) window.dispatchEvent(new CustomEvent('axis:tab', { detail: { tab } }));
+}
+$('axisTabs')?.addEventListener('click', (e) => { const b = e.target.closest('[data-axis-tab]'); if (b) setAxisTab(b.dataset.axisTab); });
+try { setAxisTab(sessionStorage.getItem('axisTab') || 'talk', { silent: true }); } catch { setAxisTab('talk', { silent: true }); }
+// A line AXIS says from any surface lands in the one transcript — and is spoken by the one voice.
+function axisConsoleSay(text, speak = true) {
+  dockLog.push({ role: 'axis', text: String(text) }); renderDock();
+  if (speak && !window.axisLiveActive) { try { if (axisSpeak(String(text))) __turnDone = axisTurnDone; } catch {} }
+}
+window.addEventListener('axis:open', (e) => {
+  const d = e.detail || {};
+  if (!state.token) return;
+  axisOpenConsole(AXIS_TABS.includes(d.tab) ? d.tab : 'talk');
+  if (d.say) axisConsoleSay(d.say, false);
+});
+window.addEventListener('axis:say', (e) => { const t = e.detail && e.detail.text; if (t && state.token) axisConsoleSay(t, true); });
+// The live call's transcript (both voices) is mirrored into the same transcript as typed turns.
+window.addEventListener('axis:transcript', (e) => {
+  const d = e.detail || {}; if (!d.text) return;
+  dockLog.push({ role: d.role === 'user' ? 'user' : 'axis', text: String(d.text) }); renderDock();
+});
+window.addEventListener('axis:live-state', (e) => axisLiveSync((e.detail && e.detail.state) || 'idle'));
+const LIVE_TITLE = { axisLiveGlobe: 'Talk to AXIS live (Aria’s voice, two-way)', axisLiveCall: 'Live two-way call — Aria’s voice, as AXIS' };
+function axisLiveSync(st) {
+  const live = st !== 'idle';
+  for (const id of ['axisLiveGlobe', 'axisLiveCall']) {
+    const b = $(id); if (!b) continue;
+    b.setAttribute('aria-pressed', live ? 'true' : 'false');
+    b.title = st === 'connecting' ? 'Connecting…' : st === 'stopping' ? 'Ending…' : live ? 'End the live call' : LIVE_TITLE[id];
+    if (id === 'axisLiveCall') b.textContent = st === 'connecting' ? 'Connecting…' : st === 'stopping' ? 'Ending…' : live ? 'End call' : 'Live call';
+  }
+  if (live) {
+    setAxisState(st === 'connecting' ? 'thinking' : 'listening');
+    axisSetHear(st === 'connecting' ? 'Connecting the live call…' : 'Live call — Aria’s voice. Say “AXIS stop” or press End call.', true);
+  } else { setAxisState('idle'); axisSetHear('', false); axisWakeResume(); }
+}
+function axisLiveToggleFromUi() {
+  if (!state.token) return;
+  if (!window.axisLiveToggle) { toast('Live voice engine not loaded — push-to-talk still works'); return; }
+  axisHandsFree = false; axisWakePause(); axisSyncWakeBtn();
+  if (axisRec) { axisRec.onend = null; axisRec.onresult = null; try { axisRec.abort(); } catch {} }
+  axisListening = false; ariaStop();
+  try { window.speechSynthesis && speechSynthesis.cancel(); } catch {}
+  if ($('axisDock').hidden && state.module !== 'axis-agent-director') axisOpenConsole('talk');
+  window.axisLiveToggle();
+}
+$('axisLiveGlobe')?.addEventListener('click', axisLiveToggleFromUi);
+$('axisLiveCall')?.addEventListener('click', axisLiveToggleFromUi);
+$('axisOrbGlobe')?.addEventListener('dblclick', (e) => { e.preventDefault(); axisLiveToggleFromUi(); });
 function closeDock() { $('axisDock').hidden = true; $('axisFab').hidden = false; delete document.documentElement.dataset.axisDock; try { sessionStorage.setItem('axisDockDismissed', '1'); } catch {} }
 $('themeBtn').addEventListener('click', () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
 applyTheme(localStorage.getItem('axis_theme') || 'dark');
@@ -3008,10 +3129,10 @@ $('axisWake')?.addEventListener('click', axisHandsFreeToggle);
 // ── AXIS orbit: the resting presence ─────────────────────────────────────────
 // Globe floats bottom-centre with a one-line bar. Typing there sends immediately and only THEN
 // opens the transcript, so a quick question never requires opening a panel first.
-function axisOpenConsole() {
+function axisOpenConsole(tab) {
   document.documentElement.dataset.axisOpen = '1';
   try { sessionStorage.removeItem('axisDockDismissed'); } catch {}
-  openDock();
+  openDock(typeof tab === 'string' ? tab : undefined);   // click handlers pass a MouseEvent here
 }
 function axisCloseConsole() { delete document.documentElement.dataset.axisOpen; closeDock(); }
 $('axisOrbGlobe')?.addEventListener('click', axisOpenConsole);
