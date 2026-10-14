@@ -39,6 +39,7 @@ import { isConversational } from '../netlify/functions/lib/axis-brain.cjs';
 // model prose. This is the only module allowed to hold detection logic.
 import { detectAppsInText, formatMeasuredBlock, availabilityClaimGuard } from './lib/axis-app-detect.mjs';
 import { logBootstrapHeader } from './autonomy-supervisor-core.mjs';
+import { readCeoLedger, ceoLedgerBlock } from './lib/axis-ceo-ledger.mjs';
 
 const JOBS = 'axis-brain-jobs';
 const KB_LIVE = 'aria-kb-live';
@@ -179,6 +180,14 @@ function conversationBlock(turns, board) {
     if (lines.length) parts.push('The conversation so far (AXIS is you):\n' + lines.join('\n'));
   }
   if (board) parts.push(String(board).trim());
+  // RUN-AX2 (2026-10-13): this worker runs on Ahmad's machine, next to his CEO-CRITICAL ledger. When
+  // the board that rode in does not already carry it (jobs queued straight from the console do not;
+  // director turns do, inside their LIVE SITUATION block), read it here so no model-backed job on this
+  // side answers "I don't have your tasks" while the list sits one directory away.
+  const boardText = String(board || '');
+  if (!/CEO-CRITICAL LEDGER|LIVE SITUATION/.test(boardText)) {
+    try { const blk = ceoLedgerBlock(readCeoLedger(REPO)); if (blk) parts.push(blk); } catch { /* no ledger here */ }
+  }
   return parts.join('\n\n');
 }
 

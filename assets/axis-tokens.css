@@ -833,3 +833,19 @@ html[data-theme] body { background:var(--bg) !important; color:var(--txt); font-
 :root[data-theme="light"] .card, :root[data-theme="light"] .kpi { box-shadow:0 1px 2px rgba(22,18,8,.04); }
 .app .axis-bar input { background:transparent; border:0; }
 .axis-head { padding-top:20px; }
+
+/* ── RUN-AX2 (2026-10-13): "Today — needs you" rows. The text column owns the width; the controls sit
+   right on desktop and drop to their own line on a phone, so a long ledger row never squeezes to one
+   word per line and a one-click note never overlaps the title. ── */
+.sit-row { align-items:flex-start; }
+.sit-row .sit-n { font-size:11px; color:var(--txt-3); min-width:18px; padding-top:2px; }
+.sit-row .sit-main { flex:1 1 240px; min-width:0; }
+.sit-row .sit-badge { font-size:10px; margin-left:8px; font-weight:700; letter-spacing:.04em; }
+.sit-row .sit-why { color:var(--txt-3); font-size:12px; margin-top:2px; }
+.sit-row .sit-oneclick { font-size:11px; color:var(--txt-3); margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sit-row .sit-acts { display:flex; gap:6px; align-items:center; flex-wrap:wrap; justify-content:flex-end; margin-left:auto; }
+@media (max-width:720px) {
+  .sit-row { flex-wrap:wrap; }
+  .sit-row .sit-main { flex-basis:100%; }
+  .sit-row .sit-acts { width:100%; justify-content:flex-start; margin-left:0; padding-left:0; }
+}

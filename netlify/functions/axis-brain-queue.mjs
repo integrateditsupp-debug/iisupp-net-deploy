@@ -67,7 +67,7 @@ export default async (request) => {
         // The conversation and the on-screen board, so the worker's model call is not an orphan.
         // Sanitized here because this mailbox is the trust boundary between cloud and machine.
         turns: sanitizeTurns(body.turns),
-        board: String(body.board || '').slice(0, 1500),
+        board: String(body.board || '').slice(0, 6000), // RUN-AX2: carries the live situation block too
       });
       return json(200, { ok: true, id });
     } catch (e) { return json(200, { ok: false, reason: 'enqueue-failed', detail: e.message }); }
@@ -194,7 +194,7 @@ export default async (request) => {
         // Cowork and Claude Code need the conversation too: "remove the items you just mentioned"
         // is meaningless as a lone sentence — the antecedent lives in the prior turns.
         turns: sanitizeTurns(body.turns),
-        board: String(body.board || '').slice(0, 1500),
+        board: String(body.board || '').slice(0, 6000), // RUN-AX2: carries the live situation block too
       });
       return json(200, { ok: true, id, kind });
     } catch (e) { return json(200, { ok: false, reason: 'task-failed', detail: e.message }); }

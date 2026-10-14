@@ -43,6 +43,7 @@ const ENV = { ...process.env, TMPDIR: SCRATCH, TEMP: SCRATCH, TMP: SCRATCH, AXIS
 // the page grows a second console, a second globe, or a voice path that bypasses the director brain.
 const GUARD = [
   'tests/axis-one.test.mjs',
+  'tests/axis-situation.test.mjs',
   'tests/axis-module-graph.test.mjs',
   'tests/axis-overview-panels.test.mjs',
   'tests/axis-voice-hearing.test.mjs',

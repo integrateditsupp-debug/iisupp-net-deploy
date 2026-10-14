@@ -161,7 +161,18 @@ exports.handler = async (event) => {
         .slice(-10)
         .map((m) => ({ role: m.role, content: String(m.content).slice(0, 600) }))
     : [];
-  const board = typeof body.board === 'string' ? body.board.slice(0, 1500) : '';
+  const clientBoard = typeof body.board === 'string' ? body.board.slice(0, 1500) : '';
+  // RUN-AX2 (2026-10-13): the situation rides with every chat turn. Until now the only context the
+  // brains had was the conversation plus the eight priority rows the page sent — so "let's work on the
+  // top urgent items" was answered with "I don't have access to your tasks" and a UTC-guessed date.
+  // One picture (board + CEO ledger + assistant store + worker queue + fleet state, with the local
+  // Toronto clock and an honest list of what is NOT connected) is built here, once, bounded at 2.5 s,
+  // and handed to every tier that reasons: the Claude worker (as the board), the metered API and the
+  // XO bridge (in the system prompt). Nothing below can break the old path: null → no block.
+  const { loadSituationSafe, situationInstruction, situationBoard } = require('./lib/axis-situation.cjs');
+  const situation = await loadSituationSafe({ fnDir: __dirname });
+  const board = situationBoard(situation, clientBoard);
+  const SYSTEM_WITH_SITUATION = situation ? `${SYSTEM_PROMPT}\n\n${situationInstruction(situation)}` : SYSTEM_PROMPT;
   if (askText && body.cascade !== false) {
     try {
       const { askBrain } = require('./lib/axis-brain.cjs');
@@ -219,12 +230,12 @@ exports.handler = async (event) => {
 
   try {
     const authB = (event.headers && (event.headers.authorization || event.headers.Authorization)) || '';
-    const viaBridge = () => require('./lib/axis-bridge.cjs').bridgeChat({ system: SYSTEM_PROMPT, messages: cleanMsgs, maxTokens: 900, auth: authB });
+    const viaBridge = () => require('./lib/axis-bridge.cjs').bridgeChat({ system: SYSTEM_WITH_SITUATION, messages: cleanMsgs, maxTokens: 900, auth: authB });
     let bridged = null;
     const r = !apiKey ? { ok: false, status: 401, text: async () => 'no key' } : await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-      body: JSON.stringify({ model, max_tokens: 900, system: SYSTEM_PROMPT, messages: cleanMsgs }),
+      body: JSON.stringify({ model, max_tokens: 900, system: SYSTEM_WITH_SITUATION, messages: cleanMsgs }),
     });
     if (!r.ok) {
       const errBody = await r.text();

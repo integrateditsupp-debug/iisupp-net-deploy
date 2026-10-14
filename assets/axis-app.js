@@ -28,7 +28,7 @@ import { axisPersonaBonus, AXIS_PROSODY, VOICE_POLICY_REV, ackLine, greetLine, r
 const TOKEN_KEY = 'aperture_jwt';
 
 const ACTIONABLE = ['reply_to_outreach', 'new_inbound_request'];
-const state = { token: localStorage.getItem(TOKEN_KEY) || '', snap: {}, version: null, module: 'overview', programStatus: null,
+const state = { token: localStorage.getItem(TOKEN_KEY) || '', snap: {}, version: null, module: 'overview', programStatus: null, situation: null, situationErr: null,
   ui: { inboxFilter: 'all', thread: null, apTab: 'pending', apOpen: null, apSel: new Set(), apCursor: 0, crmTab: 'contact', crmFilter: '', crmDrawer: null,
     prospect: null, prospectFilter: '', realOnly: false, pipeView: 'kanban', fuView: 'due_today', doc: null, anTab: 'research' } };
 const authHeaders = (extra = {}) => ({ Authorization: 'Bearer ' + state.token, ...extra });
@@ -790,6 +790,96 @@ function globalSection() {
   return wrap;
 }
 
+// ── RUN-AX2 (2026-10-13): "Today — needs you" ────────────────────────────────────────────────
+// Ahmad: "if there is anything in the company that needs my attention AXIS would be aware of it,
+// bring it up in front of me." This card IS what AXIS is aware of: the ranked list from
+// /api/axis/situation — the very block injected into every brain call — so what he sees and what
+// AXIS says can never disagree. Each row carries the way to act on it: open the screen, open the
+// console tab, or the one-click his ledger names. "Work it" hands the row to AXIS as a turn.
+const SIT_TONE = { over: 'var(--crit)', today: 'var(--gold)', soon: 'var(--txt-2)', none: 'var(--txt-3)' };
+function sitBadge(it) {
+  const l = it.dueLabel || '';
+  if (/OVERDUE/.test(l)) return ['OVERDUE', SIT_TONE.over];
+  if (/today/.test(l)) return ['TODAY', SIT_TONE.today];
+  if (/tomorrow/.test(l)) return ['TOMORROW', SIT_TONE.today];
+  if (/in (\d+)d/.test(l)) return [l.replace('due in ', '') , SIT_TONE.soon];
+  return ['', SIT_TONE.none];
+}
+function sitAct(it) {
+  const a = it.action; if (!a) return null;
+  if (a.type === 'screen') return el('button', { class: 'chip', onclick: () => go(a.target) }, 'Open');
+  if (a.type === 'console') return el('button', { class: 'chip', onclick: () => axisOpenConsole(a.target) }, 'Open');
+  if (a.type === 'url') return el('a', { class: 'chip', href: a.target, target: '_blank', rel: 'noopener' }, 'Open');
+  return null; // a 'text' one-click renders under the title (sitOneClick), not as a control
+}
+function sitOneClick(it) {
+  const a = it.action; if (!a || a.type !== 'text') return null;
+  return el('div', { class: 'mono sit-oneclick', title: a.target }, 'one-click: ' + a.target);
+}
+function sitWorkIt(it) {
+  return el('button', { class: 'chip', title: 'Hand this row to AXIS', onclick: () => {
+    axisOpenConsole('talk');
+    const input = $('axisInput'); if (!input) return;
+    input.value = `Let's work on: ${it.title}`;
+    axisSend('axisInput');
+  } }, 'Work it');
+}
+function situationSection() {
+  const wrap = el('div');
+  const s = state.situation;
+  const sub = s ? `${s.counts.needsAhmad} ranked · ${s.counts.overdue} overdue · ${s.counts.today} today · ${s.local.weekday} ${s.local.date} ${s.local.time}` : (state.situationErr ? 'did not answer' : 'loading');
+  wrap.append(head('Today — needs you', sub, 'margin-top:22px'));
+  const card = el('div', { class: 'card', style: 'padding:0' });
+  if (!s) {
+    card.append(el('div', { class: 'empty' }, state.situationErr
+      ? `The situation did not answer (${state.situationErr}). The lists below still work; AXIS answers from them.`
+      : 'Reading the board, the ledger, the assistant store and the worker…'));
+    wrap.append(card); return wrap;
+  }
+  const rows = (s.needsAhmad || []).slice(0, 12);
+  if (!rows.length) card.append(el('div', { class: 'empty' }, 'Nothing on the board needs you right now. The sources line below says what is and is not connected.'));
+  rows.forEach((it, i) => {
+    const [badge, tone] = sitBadge(it);
+    card.append(el('div', { class: 'row sit-row' }, [
+      el('span', { class: 'mono sit-n' }, String(i + 1)),
+      el('span', { class: 'stage-tag' }, it.source),
+      el('div', { class: 'sit-main' }, [
+        el('div', { style: 'font-weight:600' }, [it.title, badge ? el('span', { class: 'mono sit-badge', style: `color:${tone}` }, badge) : null]),
+        it.why ? el('div', { class: 'sit-why' }, it.why) : null,
+        sitOneClick(it),
+      ]),
+      el('div', { class: 'sit-acts' }, [sitAct(it), sitWorkIt(it)]),
+    ]));
+  });
+  if ((s.counts.needsAhmad || 0) > rows.length) card.append(el('div', { class: 'row', style: 'color:var(--txt-3);font-size:12px' }, [`…and ${s.counts.needsAhmad - rows.length} more — `, el('button', { class: 'chip', onclick: () => go('priorities') }, 'All priorities')]));
+  wrap.append(card);
+
+  // What AXIS is carrying — the half he does not have to touch.
+  const can = s.axisCanDo || [];
+  if (can.length) {
+    const det = el('details', { class: 'card', style: 'margin-top:10px;padding:10px 14px' });
+    det.append(el('summary', { style: 'cursor:pointer;font-weight:600' }, `AXIS is handling ${can.length} ${can.length === 1 ? 'thing' : 'things'}`));
+    can.slice(0, 8).forEach((x) => det.append(el('div', { style: 'display:flex;gap:10px;padding:6px 0;border-top:1px solid var(--line)' }, [
+      el('span', { class: 'stage-tag' }, x.source), el('div', { style: 'flex:1;min-width:0' }, [el('div', {}, x.title), el('div', { style: 'color:var(--txt-3);font-size:12px' }, x.how)])])));
+    wrap.append(det);
+  }
+
+  // Sources — real-or-empty (Rule 14). Two are not connected on purpose until Ahmad's one click.
+  const src = s.sources || {};
+  const dot = (ok) => el('span', { class: 'dot ' + (ok ? 'dot-ok' : 'dot-warn'), style: ok ? '' : 'background:var(--crit)' });
+  const item = (ok, label) => el('span', { style: 'display:inline-flex;align-items:center;gap:6px;font-size:12px' }, [dot(ok), label]);
+  wrap.append(el('div', { class: 'card', style: 'margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;align-items:center;padding:10px 14px' }, [
+    item(src.board === 'live', `board ${src.board}`),
+    item(!!src.ceo_ledger, src.ceo_ledger ? 'CEO ledger' : 'CEO ledger — not pushed yet (worker tick)'),
+    item(!!src.exec, src.exec ? 'assistant store' : 'assistant store — unavailable'),
+    item(!!src.worker_online, `Claude worker ${src.worker_online ? 'online' : 'offline'}`),
+    item(!!src.calendar, src.calendar ? 'calendar' : 'calendar — not connected'),
+    item(!!src.mailboxes, src.mailboxes ? 'mailboxes' : 'mailboxes — not connected'),
+    (!src.calendar || !src.mailboxes) ? el('span', { class: 'mono', style: 'font-size:11px;color:var(--txt-3)' }, 'one-click: Google sign-in (scripts/gmail-auth.mjs → AXIS_GMAIL_* in Netlify)') : null,
+  ]));
+  return wrap;
+}
+
 SCREENS.overview = (c) => {
   const d = data('overview'); const k = d.kpis || {};
   // The director field is gone. Ahmad, 2026-08-12: "Remove the one above the globe" — its counts
@@ -800,6 +890,7 @@ SCREENS.overview = (c) => {
     ['Client messages waiting', k.messages_waiting ?? 0], ['Follow-ups due', k.followups_due ?? 0],
     ['Meetings this week', k.meetings_week ?? 0], ['MRR', fmtMoney(k.mrr)]];
   c.append(el('div', { class: 'kpi-grid' }, kpis.map(([l, v]) => el('div', { class: 'kpi' }, [el('div', { class: 'label' }, l), el('div', { class: 'value' }, v)]))));
+  c.append(situationSection());   // RUN-AX2: "Today — needs you" — the same ranked picture the brains read
   c.append(procurementSection()); // live bid/contract + whitelisting status (2026-08-05)
   c.append(globalSection());      // global bids, worldwide whitelisting + free-channel queue (2026-08-06)
   c.append(head('Needs You Now', 'top by revenue impact', 'margin-top:22px'));
@@ -1524,8 +1615,24 @@ async function fetchProgramStatus() {
     if (j && j.ok) { state.programStatus = j; if (state.module === 'axis-agent-director' && !overlayOpen()) renderModule(); }
   } catch {}
 }
+// RUN-AX2 (2026-10-13): the situation — the one ranked picture the brains read before they answer
+// (board + CEO ledger + assistant store + Claude worker + fleet, with the Toronto clock and an honest
+// list of what is NOT connected). Authed-only. A failure leaves state.situation as it was and records
+// why, so the Overview card says "did not answer" instead of showing an empty list as "all clear".
+async function fetchSituation() {
+  try {
+    const r = await fetch('/api/axis/situation', { headers: authHeaders(), cache: 'no-store' });
+    if (r.status === 401) return;
+    const j = await r.json().catch(() => null);
+    if (j && j.ok) { state.situation = j; state.situationErr = null; }
+    else state.situationErr = (j && j.reason) || ('HTTP ' + r.status);
+  } catch (e) { state.situationErr = e.message || 'network'; }
+  try { renderOrbStatus(); } catch {}
+  if (state.module === 'overview' && !overlayOpen()) renderModule();
+}
 async function fetchSnapshots() {
   fetchProgramStatus();
+  fetchSituation();
   const r = await fetch('/api/axis/snapshot?module=all', { headers: authHeaders(), cache: 'no-store' });
   if (r.status === 401) return logout();
   const j = await r.json();
@@ -2928,6 +3035,10 @@ function renderOrbStatus() {
   if (n1) bits.push(n1 + (n1 === 1 ? ' approval' : ' approvals') + ' waiting');
   if (n2) bits.push(n2 + (n2 === 1 ? ' client reply' : ' client replies') + ' waiting');
   if (n3) bits.push(n3 + (n3 === 1 ? ' follow-up' : ' follow-ups') + ' due');
+  // RUN-AX2: the situation counts his ledger, the to-dos and the worker too. "All quiet" above ten
+  // ranked rows would be the Overview contradicting the orbit (Rule 14), so the ranked total leads.
+  const s = state.situation && state.situation.counts;
+  if (s && s.needsAhmad) bits.unshift(`${s.needsAhmad} need${s.needsAhmad === 1 ? 's' : ''} you${s.overdue ? ` · ${s.overdue} overdue` : ''}${s.today ? ` · ${s.today} today` : ''}`);
   box.textContent = bits.length ? bits.join(' · ') : 'All quiet. AXIS is watching.';
 }
 
@@ -3011,6 +3122,9 @@ function renderPalette() {
 // ── Auth ──
 function showApp() { $('login').style.display = 'none'; $('app').style.display = 'grid'; renderNav(); renderModule(); fetchSnapshots();
   clearInterval(window.__axisPoll); window.__axisPoll = setInterval(() => { if (!document.hidden) pollVersion(); }, 15000);
+  // The situation re-ranks itself every two minutes (deadlines roll over; the worker queue moves) —
+  // plus on every snapshot change via fetchSnapshots().
+  clearInterval(window.__axisSitPoll); window.__axisSitPoll = setInterval(() => { if (!document.hidden) fetchSituation(); }, 120000);
   // The orbit (globe + one-line bar, bottom centre) is the resting presence — the transcript no
   // longer auto-opens. Ahmad, 2026-08-11: "without a chat field unless I press a button."
   // The spoken boot briefing below still runs; it just does not force the panel open.

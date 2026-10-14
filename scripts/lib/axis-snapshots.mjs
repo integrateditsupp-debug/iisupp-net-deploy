@@ -6,10 +6,17 @@
 //   - a 'version' key = { v, modules: {module: v}, tick } — UI polls this, refetches only changed modules
 // Snapshots are SANITIZED: no secrets, business identity uses the Lead-NNN handle in list views; full
 // name/contact only inside a record the authed operator opened (still behind the JWT).
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { SNAPSHOT_MODULES, PIPELINE_PHASES, PIPELINE_STAGES, ACTIONABLE_CLASSES, BLOBS, DEFAULT_RAILS, CASL, OUTREACH_PACING } from './axis-constants.mjs';
 import { followupViews } from './followups.mjs';
 import { buildReplyDraft } from './sentry.mjs';
 import { generateOutreach } from './outreach.mjs';
+import { readCeoLedger } from './axis-ceo-ledger.mjs';
+
+// The repo root on the machine running this worker — where senior-director-state/ lives (gitignored,
+// so only Ahmad's machine has it; everywhere else the ledger reads as empty and the board says so).
+const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
 // The composer must show the EXACT bytes that will transmit, and the browser is not allowed to invent
 // outbound wording. So the read model ships worker-produced copy with the CASL block already attached —
@@ -19,7 +26,8 @@ const caslBlock = () => `\n\n—\n${CASL.line}`;
 const j = (row, col, fallback) => { try { return JSON.parse(row[col]); } catch { return fallback; } };
 
 // ── Per-module computation. Each returns a plain JSON-able object. ──
-export function computeSnapshots(db) {
+// `opts.ceoLedger` overrides the file read (tests); `opts.repoRoot` points the read elsewhere.
+export function computeSnapshots(db, opts = {}) {
   const out = {};
   const all = (sql, ...a) => db.prepare(sql).all(...a);
   const one = (sql, ...a) => db.prepare(sql).get(...a);
@@ -329,6 +337,11 @@ export function computeSnapshots(db) {
       mrr: (one("SELECT COALESCE(SUM(o.est_mrr),0) s FROM opportunities o JOIN businesses b ON b.id=o.business_id WHERE o.status='won' AND b.is_real=1") || {}).s || 0,
     },
     needs_you_now: pending.slice(0, 5).map(i => ({ id: i.id, subject: i.subject, business_id: i.business_id, kind: i.kind })),
+    // RUN-AX2 (2026-10-13): Ahmad's own CEO-CRITICAL ledger rides inside overview (a field, not a new
+    // module — the push allow-list stays 15). Read off this machine each tick; the cloud brains and the
+    // Overview's "Today — needs you" card rank it above everything else. Open + Watch rows only.
+    // (No read-at stamp on purpose: diffAndBump would bump overview every tick for nothing.)
+    ceo_critical: Array.isArray(opts.ceoLedger) ? opts.ceoLedger : readCeoLedger(opts.repoRoot || REPO_ROOT),
   };
 
   // Ensure every declared module exists (empty-but-present beats undefined).

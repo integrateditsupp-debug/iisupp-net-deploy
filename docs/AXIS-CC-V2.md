@@ -302,3 +302,17 @@ design: `docs/AXIS-ONE-2026-10-13.md`. Guard: `tests/axis-one.test.mjs` (in the 
   `aria-vault/01_Frontal/Grants/`, stops at the portal). Scan = `research.web`. Submission stays his click.
 - **Rules on rails.** The director (`axis-director.js`) and executive-assistant (`axis-exec-core.mjs`) prompts
   carry the standing rules verbatim; Settings lists the rails the code actually enforces.
+
+## AXIS sees everything — the Situation Model (RUN-AX2, 2026-10-13)
+- **One picture before any answer.** `netlify/functions/lib/axis-situation.cjs` builds, per request, the ranked
+  "needs Ahmad" list from the board (Blobs `axis-snapshots`), the CEO-CRITICAL ledger (`overview.ceo_critical`,
+  bridged off his machine by the worker via `scripts/lib/axis-ceo-ledger.mjs`), the assistant store (Blobs
+  `axis-exec`), the Claude worker queue (`axis-brain-jobs`) and the fleet files — with the America/Toronto clock
+  and an honest sources line (calendar + the three mailboxes: NOT connected until the Google sign-in).
+- **Every brain reads it.** Director: system prompt of the metered API and the XO bridge, and the `board` slot of
+  the Claude-worker tier (caps raised 1500 → 6000). Workspace brain (`workspace.open/edit`) and the `brief`: same
+  block + "never say you lack access; never guess the date; Faster: … when a cheaper route exists; HOW HE DECIDES".
+- **The console shows the same list.** `GET /api/axis/situation` (Aperture-gated, read-only) → Overview
+  "Today — needs you" (badges, Open / Work it / one-click, "AXIS is handling N", sources line); the orbit status
+  leads with "N need you"; the Talk rail / Priorities / board text carry the ledger rows. Guard:
+  `tests/axis-situation.test.mjs`. Write-up: `docs/AXIS-SITUATION.md`.

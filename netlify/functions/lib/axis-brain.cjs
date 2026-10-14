@@ -139,7 +139,8 @@ async function subscriptionTier(query, { origin, auth, waitMs = SUB_WAIT_MS, tur
     const q = await queueCall(origin, auth, {
       action: 'enqueue', query: String(query).slice(0, 4000),
       turns: Array.isArray(turns) ? turns.slice(-10) : [],
-      board: String(board || '').slice(0, 1500),
+      // 6000, not 1500 (RUN-AX2): the board now carries the live situation block, not just eight rows.
+      board: String(board || '').slice(0, 6000),
     });
     if (!q || !q.ok || !q.id) return null;
 
