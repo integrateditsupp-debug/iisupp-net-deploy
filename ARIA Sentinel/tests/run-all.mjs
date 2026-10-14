@@ -540,6 +540,12 @@ const TESTS = [
   "./l1-l3-director-scenarios.test.mjs",
   // D2 (2026-07-03) — Ask-ARIA usage recorded to local memory + stats (Memory/Dashboard reflect real asks).
   "./chat-stats.test.mjs",
+  // JULY PORT 2026-10-14 (a7f9e111 Phase F D2) — every stored chat turn is guard-scrubbed + capped on disk at the one
+  // choke point; parseSessions counts USER turns as asks. The content-blind browser-outcome ledger (local bridge
+  // POST /browser-outcome · GET /browser-outcomes/fleet-packet, local-only) + its frozen fleet-packet contract.
+  "./chat-activity-recording.test.mjs",
+  "./browser-outcome.test.mjs",
+  "./browser-outcome-fleet-contract.test.mjs",
   // RUN 32-B — 3-mode proof-of-life (Manual/Confirmed/Autonomous execution pipeline).
   "./mode-execution.test.mjs",
   // RUN 34-4 — 3-mode × 13-error matrix (every Windows error class × Manual/Confirmed/Autonomous disposition).

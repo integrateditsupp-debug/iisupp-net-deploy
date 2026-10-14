@@ -80,6 +80,9 @@ import {
 } from "../shared/file-association-guard.mjs";
 // JULY PORT 2026-10-14 (af5e03ab) — the Office File Safety Net (local 2 min backups + 3 min renamed-copy validation).
 import { createOfficeSafetyService } from "./office-safety-service.mjs";
+// JULY PORT 2026-10-14 (a7f9e111) — the content-blind browser-outcome ledger (bridge) + the chat-activity scrub/cap.
+import { appendBrowserOutcome, browserOutcomeToResolutionPayload, buildBrowserOutcomeFleetPacket } from "../shared/browser-outcome.mjs";
+import { scrubChatText, capSessionTurns } from "../shared/chat-activity.mjs";
 // RUN 22 — dashboard · performance · SLA · compliance · reports · retention.
 import { computeHeroStatus, heroSubline } from "../shared/dashboard-status.mjs";
 import * as Sla from "./sla-tracker.mjs";
@@ -189,6 +192,7 @@ const store = new Store({
     incidents: [],
     transparencyLog: [],
     resolutionOutcomes: [],
+    browserOutcomes: [], // JULY PORT 2026-10-14 — content-blind outcomes the companion extension reports (never URLs/titles)
     // RUN-CU / CU4 — approvals ledger (pending + decided) + fixes queued to a maintenance window.
     // (keepSystemFixesDryRun is deliberately NOT defaulted: undefined = "follow the mode", the RUN 29-A rule.)
     approvals: [],
@@ -2176,6 +2180,7 @@ function pilotMetricsNow() {
 // RUN-B B1 — the "Was this fixed?" feedback loop -> a real, defensible deflection %. Outcomes persist
 // locally (no external send); the metric is real-or-empty and moves ONLY on a real resolved outcome.
 function resolutionOutcomesLog() { return store.get("resolutionOutcomes") || []; }
+function browserOutcomesLog() { return store.get("browserOutcomes") || []; } // JULY PORT 2026-10-14
 function resolutionStatsNow() { return deflectionStats(resolutionOutcomesLog()); }
 // RUN-B B2 — the ONE real-or-empty value proof (ROI $/hours + real deflection %) every surface renders. fixes =
 // the SAME audit-log RUN count the D2 pilot proof uses; outcomes = the real B1 "was this fixed?" events.
@@ -2263,6 +2268,46 @@ function recordResolutionOutcome(payload = {}) {
   if (!res.deduped) logEvent("FEEDBACK", `Answer marked "${res.record.outcome}"${res.record.confidence ? ` (${res.record.confidence.level} confidence)` : ""}.`);
   return { ok: true, deduped: res.deduped, stats: resolutionStatsNow() };
 }
+// JULY PORT 2026-10-14 (a7f9e111) — a browser issue outcome reported by the companion extension over the local bridge.
+// The pure module keeps only symbolic data (issue id · signal · action · outcome · origin CATEGORY · severity); a URL,
+// title, page text or credential never enters the ledger. A resolved / failed / live-help outcome also feeds the SAME
+// real "was this fixed?" deflection ledger (resolved · not-yet · escalated) — real-or-empty, deduped per issue.
+// The managed browser-protection policy evaluator the July line ran here (decision-only) is NOT ported (out of scope).
+function recordBrowserOutcome(payload = {}) {
+  const res = appendBrowserOutcome(browserOutcomesLog(), payload || {});
+  if (!res.ok) return { ok: false, errors: res.errors, stats: resolutionStatsNow() };
+  store.set("browserOutcomes", res.events);
+  let proof = null;
+  const resolutionPayload = browserOutcomeToResolutionPayload(res.record);
+  if (resolutionPayload) proof = recordResolutionOutcome(resolutionPayload);
+  if (!res.deduped) {
+    logEvent("BROWSER", `Browser issue ${res.record.signal} marked ${res.record.outcome}.`, {
+      signal: res.record.signal,
+      outcome: res.record.outcome,
+      action: res.record.action,
+      originCategory: res.record.originCategory
+    });
+  }
+  broadcastState();
+  return {
+    ok: true,
+    deduped: res.deduped,
+    record: res.record,
+    proof,
+    browserOutcomes: res.events.length,
+    stats: resolutionStatsNow()
+  };
+}
+
+// The content-blind fleet packet (handles + ISO times + counts), served LOCALLY over the bridge only — no outbound
+// path is added; the 6-host telemetry allowlist does not grow.
+function browserOutcomeFleetPacketNow() {
+  return buildBrowserOutcomeFleetPacket(browserOutcomesLog(), {
+    now: Date.now(),
+    endpointSeed: "local-browser"
+  });
+}
+
 function conversionMomentNow() {
   return conversionMoment({ pilot: readPilot(), metrics: pilotMetricsNow() });
 }
@@ -4322,7 +4367,9 @@ function persistChatAsk(message, reply, kind) {
     const file = path.join(dir, `${sid}.json`);
     let session = {};
     try { session = JSON.parse(fs.readFileSync(file, "utf8")); } catch { session = { id: sid }; }
-    session = recordAsk(session, { message, reply, kind, at });
+    // JULY PORT 2026-10-14 (a7f9e111) — every stored turn is scrubbed on disk (excluded folders through the guard, then
+    // drive / home paths → "[path]") and the session is capped at MAX_SESSION_TURNS; parseSessions scrubs again on render.
+    session = capSessionTurns(recordAsk(session, { message: scrubChatText(message), reply: scrubChatText(reply), kind, at }));
     if (!session.id) session.id = sid;
     fs.writeFileSync(file, JSON.stringify(session, null, 2));
   } catch { /* memory persistence is best-effort; never break the chat reply over it */ }
@@ -4782,6 +4829,9 @@ function startBridge() {
       if (req.method === "GET" && url.pathname === "/dist-info") return sendJson(res, 200, readDistInfo());
       if (req.method === "POST" && url.pathname === "/signature") return sendJson(res, 200, { ok: true, signature: sanitizeToSignature(await readJson(req)) });
       if (req.method === "POST" && url.pathname === "/detect") return sendJson(res, 200, await detectIssue(await readJson(req)));
+      // JULY PORT 2026-10-14 (a7f9e111) — the extension reports a content-blind issue outcome; the fleet packet is local-only.
+      if (req.method === "POST" && url.pathname === "/browser-outcome") return sendJson(res, 200, recordBrowserOutcome(await readJson(req)));
+      if (req.method === "GET" && url.pathname === "/browser-outcomes/fleet-packet") return sendJson(res, 200, browserOutcomeFleetPacketNow());
       if (req.method === "POST" && url.pathname === "/run-recipe") {
         // Routed through runSupervisedFix (R11 → supervisor → policy → approval/countdown); the caller's
         // dryRun / confirmed flags are stripped by sanitizeRunRecipeBody — the bridge can ask, never force.
