@@ -51,7 +51,14 @@
             <a href="#aria-agents" data-anchor="aria-agents">Agents</a>
           </div>
           <button class="nav-item" data-tab="control-center"><span class="nav-dot"></span>Control Center</button>
-          <button class="nav-item" data-tab="recipes"><span class="nav-dot"></span>Recipes</button>
+          <button class="nav-item" data-tab="recipes"><span class="nav-dot"></span>Recipes<span class="nav-caret">▸</span></button>
+          <!-- JULY PORT 2026-10-14 (c0a0f6b4) — the Resolution surface lives INSIDE the Recipes tab as two sub-anchors
+               (Fix It · Fix History). The July line relabelled the tab "Resolution"; Rule 15 keeps the Recipes name and the
+               11-tab budget (six count-locks), so the sections are additive sub-anchors like Dashboard's. -->
+          <div class="nav-sub" data-sub="recipes">
+            <a href="#fix-it" data-anchor="fix-it">Fix It</a>
+            <a href="#fix-history" data-anchor="fix-history">Fix History</a>
+          </div>
           <button class="nav-item" data-tab="walkthrough"><span class="nav-dot"></span>Walk-through</button>
           <button class="nav-item" data-tab="compliance-privacy"><span class="nav-dot"></span>Compliance &amp; Privacy<span class="nav-caret">▸</span></button>
           <div class="nav-sub" data-sub="compliance-privacy">
@@ -369,9 +376,14 @@
           </section>
         </section>
 
-        <!-- ============ RECIPES (unchanged) ============ -->
+        <!-- ============ RECIPES (+ JULY PORT 2026-10-14: the Resolution surface — Fix It search/filter + Fix History) ============ -->
         <section id="recipes" class="tab-panel">
-          <section class="panel">
+          <!-- ## Fix It (JULY PORT c0a0f6b4) — search + family filter over the SAME vetted-fix and Tier-0 lists below. -->
+          <div class="merge-head" id="fix-it">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Resolution</p><h2>Fix It</h2><p class="merge-sub">Search vetted fixes, filter by family, and run only through Sentinel's approval gates.</p></div>
+          </div>
+          <section class="panel" id="fixItBrowser">
             <div class="panel-actions">
               <div>
                 <p class="eyebrow">Local recipe registry</p>
@@ -379,14 +391,49 @@
               </div>
               <button id="simulateAriaError" class="ghost" hidden>Trigger ARIA bridge check</button>
             </div>
+            <div class="fix-toolbar" aria-label="Resolution filters">
+              <label class="field">
+                Search fixes
+                <input id="fixSearch" type="search" name="fixSearch" placeholder="Search printer, Outlook, Adobe, blue screen..." autocomplete="off" />
+              </label>
+              <label class="field">
+                Fix family
+                <select id="fixCategory" name="fixCategory" aria-label="Filter fixes by family">
+                  <option value="all">All fixes</option>
+                </select>
+              </label>
+            </div>
             <p id="recipeCatalogMeta" class="note">Loading recipes.</p>
+            <div class="fix-section-title"><span>Interactive fixes</span><em id="recipeFilterMeta">Loading</em></div>
             <div id="recipeList" class="recipe-list compact-list"></div>
           </section>
           <section class="panel">
             <p class="eyebrow">Tier-0 · safe-generic</p>
             <h2>Safe Generic fixes</h2>
             <p class="note">Run when a symptom does not match a specific cause. These fixes stay content-blind, audit-logged, and gated before any machine change. Manual mode previews them; Confirmed and Autonomous can execute them only after the supervisor, countdown, and kill-switch checks pass.</p>
+            <div class="fix-section-title tier0-title"><span>Safe generic fixes</span><em id="tier0FilterMeta">Loads when this tab opens</em></div>
             <div id="tier0List" class="recipe-list compact-list"></div>
+          </section>
+          <!-- ## Fix History (JULY PORT c0a0f6b4) — REAL local troubleshooting activity from detections + the audit log,
+               last 30 days, newest first, max 50, 10 per page (≤ 5 pages). Real-or-empty: no rows = an honest sentence. -->
+          <div class="merge-head" id="fix-history">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Resolution</p><h2>Fix History</h2><p class="merge-sub">Last 30 days of Sentinel detections, previews, fixes, and safety stops on this device. Newest first.</p></div>
+          </div>
+          <section class="panel" id="fixHistoryPanel">
+            <div class="panel-actions">
+              <div>
+                <p class="eyebrow">Troubleshoot history</p>
+                <h2>Last 30 days</h2>
+              </div>
+              <span id="fixHistorySummary" class="chip">Loading</span>
+            </div>
+            <div id="fixHistoryList" class="fix-history-list" aria-live="polite"></div>
+            <div class="fix-history-pagination">
+              <button id="fixHistoryPrev" class="ghost" type="button">Previous</button>
+              <span id="fixHistoryPage" class="note">Page 1 of 1</span>
+              <button id="fixHistoryNext" class="ghost" type="button">Next</button>
+            </div>
           </section>
         </section>
 

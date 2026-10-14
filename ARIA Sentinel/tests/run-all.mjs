@@ -501,6 +501,9 @@ const TESTS = [
   "./r11-publish-paths.test.mjs",
   // RUN 23d — tab IA 17→9 consolidation (Dashboard/Compliance&Privacy/System/Settings merges + redirects).
   "./tab-ia-consolidation.test.mjs",
+  // JULY PORT 2026-10-14 (c0a0f6b4) — the Resolution surface as sub-anchors of the Recipes tab: Fix It search/family
+  // filter over the same lists + the real 30-day paginated Fix History (names kept — Rule 15; 11-tab budget kept).
+  "./resolution-tab.test.mjs",
   // RUN 23e — single build + license-tier feature gating + plan picker + upsell + shouldBump hotfix.
   "./pricing-tiers.test.mjs",
   "./license-features.test.mjs",

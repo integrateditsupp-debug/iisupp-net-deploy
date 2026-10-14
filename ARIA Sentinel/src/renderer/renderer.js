@@ -32,6 +32,17 @@ let state;
 let sentinel;
 
 const HOUR_MS = 60 * 60 * 1000;
+// JULY PORT 2026-10-14 (c0a0f6b4) — the Resolution surface inside the Recipes tab: Fix It (search + family filter over
+// the same vetted-fix / Tier-0 lists) and Fix History (REAL local activity: detections + audit rows, last 30 days,
+// newest first, max 50, 10 per page). Real-or-empty — never a fabricated row.
+const FIX_HISTORY_DAYS = 30;
+const FIX_HISTORY_MAX = 50;
+const FIX_HISTORY_PAGE_SIZE = 10;
+let recipeCatalogCache = [];
+let tier0Cache = [];
+let fixSearchTerm = "";
+let fixCategoryFilter = "all";
+let fixHistoryPage = 1;
 // RUN 23d — IA consolidated 17→9 tabs. TAB_TITLES holds the 9 canonical nav tabs.
 const TAB_TITLES = {
   dashboard: "Dashboard",
@@ -60,6 +71,9 @@ const TAB_REDIRECTS = {
   sla: { tab: "dashboard", anchor: "sla" },
   compliance: { tab: "compliance-privacy", anchor: "compliance" },
   privacy: { tab: "compliance-privacy", anchor: "privacy" },
+  // JULY PORT 2026-10-14 (c0a0f6b4) — Resolution sub-anchors inside the Recipes tab (Fix It · Fix History).
+  "fix-it": { tab: "recipes", anchor: "fix-it" },
+  "fix-history": { tab: "recipes", anchor: "fix-history" },
   "system-context": { tab: "system", anchor: "system-context" },
   "cross-platform": { tab: "system", anchor: "cross-platform" },
   // Integrations restore — old "servicenow" tab/deep-link routes to the Integrations tab's ServiceNow section
@@ -439,6 +453,7 @@ function wireActions() {
   wireLockedTabOverlay(); // SENTINEL TRIAL GATING 2026-07-02 — locked-tab upsell overlay + buy path
   wireAutonomyPrefs();    // RUN-CU / CU4 — Settings → Autonomy & contacts + keep-dry-run + test notification
   wireCommonCallDemo();   // JULY PORT 2026-10-14 — the scripted demo lab in Control Center (copy only, never an action)
+  wireResolutionControls(); // JULY PORT 2026-10-14 — Fix It search/filter + Fix History pagination (Recipes tab)
 
   bindClick("showGlobe", (button) => runAction(button, () => sentinel.showGlobe()));
   bindClick("pauseOneHour", (button) => runAction(button, () => sentinel.setPaused(HOUR_MS)));
@@ -949,6 +964,7 @@ function renderState(next) {
 
   setText("recipeCatalogMeta", `${Number(catalog.localInteractive || recipes.length || 0)} local interactive recipes. Admin-only release gates live in the separate web console.`);
   renderRecipes(recipes);
+  renderFixHistory(state); // JULY PORT 2026-10-14 — Fix History from the real detections + audit rows
   renderKnowledge(state.knowledgeSources || []);
   renderRouting(state.routingTargets || []);
   renderOutbound(state.allowedOutboundPaths || []);
@@ -1459,9 +1475,94 @@ async function finishOnboarding() {
 }
 
 function renderRecipes(recipes) {
-  setHtml("recipeList", recipes.map((recipe) => `
-    <article class="recipe-card">
-      <span class="chip">${escapeHtml(recipe.chip)}</span>
+  // JULY PORT 2026-10-14 — the list is rendered through the Fix It browser (search + family filter); with no filter
+  // every recipe renders exactly as before.
+  recipeCatalogCache = Array.isArray(recipes) ? recipes : [];
+  populateFixCategoryFilter();
+  renderFixBrowser();
+}
+
+// ===== JULY PORT 2026-10-14 (c0a0f6b4) — the Fix It browser + Fix History =====
+function wireResolutionControls() {
+  const search = qs("#fixSearch");
+  if (search) {
+    search.addEventListener("input", () => {
+      fixSearchTerm = String(search.value || "").trim().toLowerCase();
+      renderFixBrowser();
+    });
+  }
+  const category = qs("#fixCategory");
+  if (category) {
+    category.addEventListener("change", () => {
+      fixCategoryFilter = category.value || "all";
+      renderFixBrowser();
+    });
+  }
+  bindClick("fixHistoryPrev", () => {
+    fixHistoryPage = Math.max(1, fixHistoryPage - 1);
+    renderFixHistory(state);
+  });
+  bindClick("fixHistoryNext", () => {
+    fixHistoryPage += 1;
+    renderFixHistory(state);
+  });
+}
+
+function normalizeFixCategory(value) {
+  return String(value || "other").trim().toLowerCase().replace(/\s+/g, "-");
+}
+
+function fixCategoryLabel(value) {
+  const raw = String(value || "Other").replace(/[-_]+/g, " ").trim();
+  return raw.toUpperCase() === raw ? raw : titleCase(raw);
+}
+
+function recipeCategory(recipe) {
+  return recipe?.family || String(recipe?.signal || "").split(".")[0] || recipe?.chip || "Other";
+}
+
+function tier0Category(recipe) {
+  return recipe?.category || recipe?.family || "Tier-0 safe generic";
+}
+
+function populateFixCategoryFilter() {
+  const select = qs("#fixCategory");
+  if (!select) return;
+  const previous = fixCategoryFilter || select.value || "all";
+  const categories = new Map();
+  for (const recipe of recipeCatalogCache) categories.set(normalizeFixCategory(recipeCategory(recipe)), fixCategoryLabel(recipeCategory(recipe)));
+  for (const recipe of tier0Cache) categories.set(normalizeFixCategory(tier0Category(recipe)), fixCategoryLabel(tier0Category(recipe)));
+  const rows = [...categories.entries()].sort((a, b) => a[1].localeCompare(b[1]));
+  select.innerHTML = `<option value="all">All fixes</option>${rows.map(([value, label]) => `<option value="${escapeHtml(value)}">${escapeHtml(label)}</option>`).join("")}`;
+  select.value = rows.some(([value]) => value === previous) ? previous : "all";
+  fixCategoryFilter = select.value;
+}
+
+function fixMatchesSearch(item, category) {
+  const categoryKey = normalizeFixCategory(category);
+  if (fixCategoryFilter !== "all" && categoryKey !== fixCategoryFilter) return false;
+  if (!fixSearchTerm) return true;
+  const haystack = [item.id, item.recipeId, item.title, item.summary, item.signal, item.chip, item.family, category].filter(Boolean).join(" ").toLowerCase();
+  return haystack.includes(fixSearchTerm);
+}
+
+function renderFixBrowser() {
+  const recipes = (recipeCatalogCache || []).filter((recipe) => fixMatchesSearch(recipe, recipeCategory(recipe)));
+  const tier0 = (tier0Cache || []).filter((recipe) => fixMatchesSearch(recipe, tier0Category(recipe)));
+  setText("recipeFilterMeta", `${recipes.length}/${(recipeCatalogCache || []).length} shown`);
+  setText("tier0FilterMeta", tier0Loaded ? `${tier0.length}/${tier0Cache.length} shown` : "Loads when this tab opens");
+  setHtml("recipeList", recipes.length ? recipes.map(interactiveRecipeCardHtml).join("") : `<p class="note fix-empty">${recipeCatalogCache.length ? "No interactive fixes match this search." : "Loading recipes."}</p>`);
+  const tier0Host = qs("#tier0List");
+  if (tier0Host && tier0Loaded) tier0Host.innerHTML = tier0.length ? tier0.map(tier0RecipeCardHtml).join("") : `<p class="note fix-empty">${tier0Cache.length ? "No safe generic fixes match this search." : "No Tier-0 recipes available."}</p>`;
+  bindFixBrowserActions();
+}
+
+// The SAME card as before the port (walk · resolve · dry-run), plus the family label for the filter.
+function interactiveRecipeCardHtml(recipe) {
+  const category = recipeCategory(recipe);
+  return `
+    <article class="recipe-card" data-fix-family="${escapeHtml(normalizeFixCategory(category))}">
+      <div class="fix-card-head"><span class="chip">${escapeHtml(recipe.chip || fixCategoryLabel(category))}</span><em>${escapeHtml(fixCategoryLabel(category))}</em></div>
       <h3>${escapeHtml(recipe.title)}</h3>
       <p>${escapeHtml(recipe.summary)}</p>
       <div class="button-row">
@@ -1470,9 +1571,24 @@ function renderRecipes(recipes) {
         <button class="ghost" data-recipe-run="${escapeHtml(recipe.id)}">Dry-run</button>
       </div>
       <p class="note resolve-status" data-resolve-status="${escapeHtml(recipe.id)}" hidden></p>
-    </article>
-  `).join(""));
+    </article>`;
+}
 
+function tier0RecipeCardHtml(recipe) {
+  const id = recipe.recipeId || recipe.id || "";
+  const category = tier0Category(recipe);
+  return `
+    <article class="recipe-card tier0-card" data-fix-family="${escapeHtml(normalizeFixCategory(category))}">
+      <div class="fix-card-head"><span class="chip">${escapeHtml(recipe.readOnly ? "READ-ONLY" : "SAFE")}</span><em>${escapeHtml(fixCategoryLabel(category))}</em></div>
+      <h3>${escapeHtml(recipe.title || id)}</h3>
+      <p>${escapeHtml(recipe.summary || "")}</p>
+      <div class="button-row">
+        <button class="ghost" data-tier0="${escapeHtml(id)}">Dry-run</button>
+      </div>
+    </article>`;
+}
+
+function bindFixBrowserActions() {
   // "Walk me through it" — open the Walk-through tab in GUIDE mode for this recipe (changes nothing).
   qsa("[data-walk-recipe]").forEach((button) => button.addEventListener("click", () => {
     activateTab("walkthrough"); renderWalkthrough({ recipeId: button.dataset.walkRecipe, mode: "guide" });
@@ -1490,10 +1606,109 @@ function renderRecipes(recipes) {
       return r;
     }));
   });
+  // Tier-0 dry-run preview (the same toast as before the port).
+  qsa("[data-tier0]").forEach((btn) => btn.addEventListener("click", () => runAction(btn, async () => {
+    const r = await sentinel.previewTier0?.(btn.dataset.tier0);
+    showToast({ title: `${r?.title || "Dry-run"}`, body: `${r?.summary || ""}${r?.requiresReboot ? " (needs reboot)" : ""}` });
+    return r;
+  })));
   // RUN 36 / TASK 3 — "Resolve it for me": run the matched fix LOCALLY through the gated control plane
   // (R11 → supervisor → execution policy → 10s countdown → kill-switch). Confirmed-grade gating; never
   // autonomous. The countdown indicator is the visible confirm/cancel; Ctrl+Alt+K aborts mid-fix.
   qsa("[data-resolve-fix]").forEach((button) => bindResolveFix(button));
+}
+
+function parseHistoryTime(value) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  const parsed = Date.parse(value || "");
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function isResolutionLogEntry(entry = {}) {
+  const tag = String(entry.tag || "").toUpperCase();
+  const text = String(entry.text || "");
+  const directTags = new Set(["DETECT", "RUN", "FIX", "DONE", "ERROR", "REVIEW", "ESCALATE", "SUPERVISOR", "SECURITY", "KILL-SWITCH", "CANCEL", "RESTORE PT", "SELF-ERROR", "AUTONOMOUS", "AUTONOMY", "POLICY", "WATCH", "GUIDE"]);
+  return directTags.has(tag) || /\b(fix|recipe|diagnos|detect|repair|guard|resolution|verify|incident|supervisor)\b/i.test(text);
+}
+
+function historyTimeLabel(ms) {
+  if (!ms) return "Unknown time";
+  try { return new Date(ms).toLocaleString(); } catch { return "Unknown time"; }
+}
+
+function buildFixHistory(next = state, now = Date.now()) {
+  const cutoff = now - FIX_HISTORY_DAYS * 24 * 60 * 60 * 1000;
+  const rows = [];
+  for (const detection of next?.detections || []) {
+    const ms = parseHistoryTime(detection.ts);
+    if (!ms || ms < cutoff) continue;
+    rows.push({
+      ts: detection.ts,
+      sort: ms,
+      kind: "DETECTED",
+      title: detection.title || detection.signal || "Issue detected",
+      detail: `${detection.signal || detection.chip || "Local signal"} - ${detection.source || "desktop"} - ${detection.mode || "manual"}`,
+      recipeId: detection.recipeId || "",
+      tone: detection.risk === "red" || detection.risk === "orange" ? "red" : detection.risk === "yellow" ? "amber" : "green",
+      source: "Detection"
+    });
+  }
+  for (const entry of next?.transparencyLog || []) {
+    const ms = parseHistoryTime(entry.ts);
+    if (!ms || ms < cutoff || !isResolutionLogEntry(entry)) continue;
+    const tag = String(entry.tag || "LOG").toUpperCase();
+    rows.push({
+      ts: entry.ts,
+      sort: ms,
+      kind: tag,
+      title: fixHistoryTitle(entry),
+      detail: entry.text || "",
+      recipeId: entry.recipeId || "",
+      tone: tag.includes("ERROR") || tag.includes("SECURITY") || tag.includes("KILL") ? "red" : tag.includes("REVIEW") || tag.includes("ESCALATE") || tag.includes("CANCEL") || tag.includes("POLICY") ? "amber" : "green",
+      source: "Audit"
+    });
+  }
+  return rows
+    .sort((a, b) => b.sort - a.sort)
+    .slice(0, FIX_HISTORY_MAX);
+}
+
+function fixHistoryTitle(entry = {}) {
+  const text = String(entry.text || "").trim();
+  if (!text) return String(entry.tag || "Resolution event");
+  return text.length > 86 ? `${text.slice(0, 83).trim()}...` : text;
+}
+
+function renderFixHistory(next = state) {
+  const host = qs("#fixHistoryList");
+  if (!host) return;
+  const rows = buildFixHistory(next);
+  const totalPages = Math.max(1, Math.min(5, Math.ceil(rows.length / FIX_HISTORY_PAGE_SIZE)));
+  fixHistoryPage = Math.min(Math.max(1, fixHistoryPage), totalPages);
+  const start = (fixHistoryPage - 1) * FIX_HISTORY_PAGE_SIZE;
+  const pageRows = rows.slice(start, start + FIX_HISTORY_PAGE_SIZE);
+  setText("fixHistorySummary", rows.length ? `${rows.length} event${rows.length === 1 ? "" : "s"}` : "No events yet");
+  setText("fixHistoryPage", `Page ${fixHistoryPage} of ${totalPages}`);
+  const prev = qs("#fixHistoryPrev");
+  const nextBtn = qs("#fixHistoryNext");
+  if (prev) prev.disabled = fixHistoryPage <= 1;
+  if (nextBtn) nextBtn.disabled = fixHistoryPage >= totalPages;
+  host.innerHTML = pageRows.length
+    ? pageRows.map(fixHistoryCardHtml).join("")
+    : `<p class="note fix-empty">No troubleshooting history in the last ${FIX_HISTORY_DAYS} days. When ARIA detects, previews or applies something on this device, it is listed here with its real outcome.</p>`;
+}
+
+function fixHistoryCardHtml(item) {
+  const recipe = item.recipeId ? `<code>${escapeHtml(item.recipeId)}</code>` : `<code>${escapeHtml(item.source)}</code>`;
+  return `
+    <article class="fix-history-card ${escapeHtml(item.tone || "")}">
+      <div class="fix-history-when"><strong>${escapeHtml(relativeTime(item.ts))}</strong><span>${escapeHtml(historyTimeLabel(item.sort))}</span></div>
+      <div class="fix-history-body">
+        <div class="fix-history-head"><span class="chip">${escapeHtml(item.kind)}</span>${recipe}</div>
+        <h3>${escapeHtml(item.title)}</h3>
+        <p>${escapeHtml(item.detail || "Resolution event recorded.")}</p>
+      </div>
+    </article>`;
 }
 
 // Wire one "Resolve it for me" button to the gated pipeline. P1: a vetted/bound Tier-0 recipe goes through the
@@ -2274,26 +2489,15 @@ async function loadBlueprints() {
 }
 
 async function renderTier0() {
-  if (tier0Loaded) return;
+  // JULY PORT 2026-10-14 — the Tier-0 list is loaded once into the Fix It browser cache and rendered through the same
+  // search/family filter as the interactive fixes (the card + dry-run toast are unchanged).
+  if (tier0Loaded) { renderFixBrowser(); return; }
   try {
     const list = await sentinel.listTier0?.();
     tier0Loaded = true;
-    const host = qs("#tier0List");
-    if (!host) return;
-    host.innerHTML = (list || []).map((r) => `
-      <article class="recipe-card">
-        <span class="chip">${escapeHtml(r.readOnly ? "READ-ONLY" : "SAFE")}</span>
-        <h3>${escapeHtml(r.title)}</h3>
-        <p>${escapeHtml(r.summary || "")}</p>
-        <div class="button-row">
-          <button class="ghost" data-tier0="${escapeHtml(r.recipeId)}">Dry-run</button>
-        </div>
-      </article>`).join("") || `<p class="note">No Tier-0 recipes available.</p>`;
-    qsa("[data-tier0]").forEach((btn) => btn.addEventListener("click", () => runAction(btn, async () => {
-      const r = await sentinel.previewTier0?.(btn.dataset.tier0);
-      showToast({ title: `${r?.title || "Dry-run"}`, body: `${r?.summary || ""}${r?.requiresReboot ? " (needs reboot)" : ""}` });
-      return r;
-    })));
+    tier0Cache = Array.isArray(list) ? list : [];
+    populateFixCategoryFilter();
+    renderFixBrowser();
   } catch (e) { reportRendererError(e, "tier-0"); }
 }
 
@@ -2743,7 +2947,7 @@ function shapeReadableAriaAnswer(rawText, res, question) {
   if (!kb || res?.action !== "kb-match") return null;
   const sourceText = String(rawText || "")
     .replace(/^\s*(?:->|→)?\s*Full article:.*$/gim, "")
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, (_m, label) => label) // markdown links → their label (no "$n" literal: pricing-surface-sync)
     .trim();
   const lines = sourceText
     .split(/\r?\n+/)
