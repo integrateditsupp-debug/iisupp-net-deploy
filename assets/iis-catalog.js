@@ -392,7 +392,7 @@
     {
       id: 'br-instock', section: 'recommended', kind: 'physical',
       title: 'In-Stock Certified Hardware', blurb: 'Tested devices ready to buy now — inspected, with warranty.',
-      audience: ['human', 'business'], cta: 'View inventory', url: '/services.html#inventory'
+      audience: ['human', 'business'], cta: 'View inventory', url: '/purchase-tech.html#inventory'
     },
     {
       id: 'br-axis', section: 'tech-support', kind: 'subscription',

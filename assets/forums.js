@@ -179,7 +179,7 @@ async function runSearch(query) {
       `<span class="meter low" style="display:block;max-width:160px;margin-bottom:10px"><span style="width:${r.confidence.value}%"></span></span>` +
       `<b>No confident match — we won't guess.</b>` +
       `<p class="muted" style="font-size:13.5px;line-height:1.55">Top retriever score ${r.confidence.raw} is below the abstain threshold (${ABSTAIN_THRESHOLD}). Ask the community or escalate to a human.</p>` +
-      `<div class="rowbtn"><a class="btn ghost" href="#discussions">Ask the community</a><a class="btn gold" href="/#contact">Escalate to IIS</a></div></div>`;
+      `<div class="rowbtn"><a class="btn ghost" href="#discussions">Ask the community</a><a class="btn gold" href="/?contact=1&amp;subject=Forums%20escalation%20to%20IIS">Escalate to IIS</a></div></div>`;
     return;
   }
 
@@ -229,7 +229,7 @@ async function renderSolution(slug) {
     `<div class="sol-body">${md(d.body)}</div>` +
     `<h2 class="sec">Still stuck? Show ARIA the error</h2>` +
     `<div class="dropzone" role="button" tabindex="0" aria-label="Drop a screenshot for visual diagnosis"><div class="di" aria-hidden="true">🖼</div><b>Drop a screenshot, log, or photo of the error</b><div class="muted" style="font-size:13px;margin-top:6px">Once it's online, Fable 5 visual diagnosis will read BSODs, dialogs, and config screens.</div><div class="chip gold" style="margin-top:12px"><span class="led"></span>Visual diagnosis coming online</div></div>` +
-    `<div class="rowbtn" style="margin-top:18px"><a class="btn gold" href="/#contact">Escalate to IIS →</a><span class="muted" style="font-size:12.5px;align-self:center">Complex case? A human takes over.</span></div>` +
+    `<div class="rowbtn" style="margin-top:18px"><a class="btn gold" href="/?contact=1&amp;subject=Forums%20escalation%20to%20IIS">Escalate to IIS →</a><span class="muted" style="font-size:12.5px;align-self:center">Complex case? A human takes over.</span></div>` +
     `</article>`;
   wireDropzones(el);
 }
@@ -380,7 +380,7 @@ $("#aiAsk").addEventListener("submit", async (e) => {
   if (r.abstain) {
     thinking.querySelector(".bubble").innerHTML =
       `<b>No confident match — we won't guess.</b><div class="muted" style="font-size:13px;margin-top:6px">Top retriever score ${r.confidence.raw} (threshold ${ABSTAIN_THRESHOLD}).</div>` +
-      `<div class="rowbtn"><a class="btn ghost" href="#discussions">Open a discussion</a><a class="btn gold" href="/#contact">Escalate to IIS</a></div>`;
+      `<div class="rowbtn"><a class="btn ghost" href="#discussions">Open a discussion</a><a class="btn gold" href="/?contact=1&amp;subject=Forums%20escalation%20to%20IIS">Escalate to IIS</a></div>`;
     return;
   }
   const d = r.results[0].doc;

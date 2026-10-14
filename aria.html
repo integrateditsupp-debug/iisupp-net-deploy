@@ -2538,7 +2538,12 @@ function buildGlobe(size = 380, withSun = true){
 }
 
 document.getElementById('globeWrap').innerHTML = buildGlobe(380, true);
-document.getElementById('voiceGlobeContainer').innerHTML = buildGlobe(420, true);
+// Site sweep 2026-10-14: buildGlobe() writes three fixed ids (dotGlow, trafficArcs, trafficPackets), so the second globe
+// duplicated them and its glow pointed at the right-panel globe's filter. The arc/packet scripts only ever touch
+// #globeWrap, so this copy simply gets its own ids.
+document.getElementById('voiceGlobeContainer').innerHTML = buildGlobe(420, true)
+  .replace(/id="(dotGlow|trafficArcs|trafficPackets)"/g, 'id="$1-voice"')
+  .replace(/url\(#dotGlow\)/g, 'url(#dotGlow-voice)');
 
 /* orbital satellites — JS-driven so they trace the actual ellipse, not a circle */
 function animateSatellites(rootSel){
@@ -3103,7 +3108,10 @@ function queueUnknownFallback(text){
 
 /* ============== AUTO-UPDATE — fetch manifest, swap KB / caps when newer ============== */
 const ARIA_VERSION = { kb: 1, caps: 1 };
-const UPDATE_MANIFEST_URL = 'https://iisupp.net/aria/v1/manifest.json';
+// Site sweep 2026-10-14: nothing has ever been published at https://iisupp.net/aria/v1/manifest.json (no such file in
+// any commit, no netlify.toml rule), so this fetch answered 404 on every load and every 5 minutes and the KB/caps swap
+// below never ran. Empty = keep the embedded KB/caps and fetch nothing; set the real URL when a manifest ships.
+const UPDATE_MANIFEST_URL = '';
 const CLIENT_UPDATE_WATCH = ['/aria.html', '/assets/aria-v04-ext.js', '/sw.js', '/manifest.webmanifest'];
 const CLIENT_UPDATE_POLL_MS = 2 * 60 * 1000;
 const CLIENT_UPDATE_DISMISS_KEY = 'aria_client_update_dismissed';
@@ -3281,7 +3289,7 @@ function watchServiceWorkerRegistration(reg){
 }
 
 async function checkForUpdates(){
-  if (!navigator.onLine) return;
+  if (!UPDATE_MANIFEST_URL || !navigator.onLine) return;
   try {
     const r = await fetch(UPDATE_MANIFEST_URL, { cache:'no-cache', mode:'cors' });
     if (!r.ok) return;

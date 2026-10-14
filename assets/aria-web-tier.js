@@ -18,11 +18,12 @@
         secondary: { label: 'Try the free chat', action: 'trial', href: '/aria' },
       };
     }
-    // Not configured yet → never offer a broken checkout.
+    // Not configured yet → never offer a broken checkout. (Site sweep 2026-10-14: "Contact us" pointed at
+    // /contact.html, which does not exist; it now opens the same mailto sales path /plans uses.)
     return {
       heading: name, price: price, features: features,
       primary: { label: 'Start free trial', action: 'trial', href: '/aria' },
-      secondary: { label: 'Contact us', action: 'contact', href: '/contact.html' },
+      secondary: { label: 'Contact us', action: 'contact', href: 'mailto:ahmad.wasee@iisupp.net?subject=ARIA%20Web%20%2B%20AI%20Edge' },
     };
   }
 
