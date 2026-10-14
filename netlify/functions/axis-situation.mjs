@@ -10,6 +10,7 @@
 import { verifyAperture } from './aperture-auth.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getStore } from '@netlify/blobs';
 import { loadSituationSafe } from './lib/axis-situation.cjs';
 
 const FN_DIR = path.dirname(fileURLToPath(import.meta.url)); // NOT "__dirname" — esbuild injects its own shim
@@ -28,7 +29,7 @@ export default async (req) => {
   if (!verifyAperture(req)) return jr(401, { ok: false, reason: 'unauthorized — Aperture login required' });
 
   // The console can wait a little longer than a brain call can.
-  const sit = await loadSituationSafe({ fnDir: FN_DIR, timeoutMs: 6000 });
+  const sit = await loadSituationSafe({ fnDir: FN_DIR, timeoutMs: 6000, getStore });
   if (!sit) return jr(503, { ok: false, reason: 'situation unavailable — a store did not answer in time; the board still works' });
 
   const format = new URL(req.url).searchParams.get('format');

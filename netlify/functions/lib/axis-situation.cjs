@@ -161,9 +161,14 @@ function buildSituation(inp = {}) {
 // `fnDir` = the functions directory at runtime. Callers pass it (CJS: __dirname; ESM: dirname of
 // import.meta.url) because esbuild shims __dirname differently per entry format — the state/status
 // functions learned this the hard way ("NOT __dirname — esbuild injects its own shim").
-async function loadSituation({ now = new Date(), fnDir = null } = {}) {
-  let getStore = null;
-  try { ({ getStore } = require('@netlify/blobs')); } catch { getStore = null; }
+async function loadSituation({ now = new Date(), fnDir = null, getStore: injected = null } = {}) {
+  // LIVE FINDING (2026-10-13 22:55 ET, first publish): `require('@netlify/blobs')` here worked from the CJS
+  // director but NOT from the ESM functions (axis-situation.mjs, axis-exec.mjs) — esbuild turns a require()
+  // inside an ESM bundle into a shim that throws "Dynamic require … is not supported", the try/catch swallowed
+  // it, and the live Overview said "board seed · assistant store unavailable" beside an orbit line that had
+  // the live counts. A dynamic import() survives both output formats; callers may also inject getStore.
+  let getStore = injected;
+  if (!getStore) { try { ({ getStore } = await import('@netlify/blobs')); } catch { getStore = null; } }
   const safe = async (fn, fallback) => { try { return await fn(); } catch { return fallback; } };
   let FN_DIR = fnDir;
   if (!FN_DIR) { try { FN_DIR = __dirname.replace(/[\\/]lib$/, ''); } catch { FN_DIR = null; } }
@@ -230,11 +235,11 @@ function situationInstruction(sit) {
 // Bounded + never throws: a brain call must not stall or die because one store was slow. On timeout
 // or error the brain answers without the block, and the sources line is simply absent (Rule 14: it
 // will not invent one). 2.5 s leaves the director well inside its 10 s budget.
-async function loadSituationSafe({ now = new Date(), fnDir = null, timeoutMs = 2500 } = {}) {
+async function loadSituationSafe({ now = new Date(), fnDir = null, timeoutMs = 2500, getStore = null } = {}) {
   let timer = null;
   try {
     const timeout = new Promise((resolve) => { timer = setTimeout(() => resolve(null), timeoutMs); });
-    const sit = await Promise.race([loadSituation({ now, fnDir }).catch(() => null), timeout]);
+    const sit = await Promise.race([loadSituation({ now, fnDir, getStore }).catch(() => null), timeout]);
     return sit && sit.ok ? sit : null;
   } catch { return null; } finally { if (timer) clearTimeout(timer); }
 }

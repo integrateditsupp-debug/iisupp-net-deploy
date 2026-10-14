@@ -9,6 +9,7 @@ import {
   PERSONA, claude, pickTier, parseJSON, readJSON, writeJSON, id, now, requestApproval, apollo,
   integrationStatus, monthSpend, attention, esc,
 } from './lib/axis-exec-core.mjs';
+import { getStore as blobStore } from '@netlify/blobs';
 import { loadSituationSafe, situationInstruction } from './lib/axis-situation.cjs';
 
 const FN_DIR = path.dirname(fileURLToPath(import.meta.url)); // NOT "__dirname" — esbuild injects its own shim
@@ -30,7 +31,7 @@ YOU HAVE THE LIVE SITUATION. The block below this system prompt is the company's
 // work on top urgent items" it truthfully answered that it had no access to tasks, calendar or
 // messages, and dated the page from UTC. Now every Workspace and brief call reads the same picture
 // the director reads (lib/axis-situation.cjs), with the Toronto clock.
-const situationFor = () => loadSituationSafe({ fnDir: FN_DIR });
+const situationFor = () => loadSituationSafe({ fnDir: FN_DIR, getStore: blobStore });
 const withSituation = (system, sit) => (sit ? `${system}\n\n${situationInstruction(sit)}` : system);
 
 export default async (request) => {

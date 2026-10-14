@@ -101,3 +101,12 @@ survived at 1m47s; one more function tipped it. Fix (netlify.toml): `@netlify/bl
 modules are scoped per function to exactly the 17 functions whose bundles reach them (esbuild metafile).
 Result: 3.2 GB → 138 MB of zips, every bundled JS byte-identical. Guard: `tests/netlify-function-externals.test.mjs`
 (static import graph ↔ per-function blocks, both directions).
+
+## Live finding after the first publish (22:55 ET) — Blobs unreachable from the ESM functions
+The live Overview said "board seed · assistant store — unavailable · Claude worker offline" beside an orbit line
+carrying the live counts. Cause: `lib/axis-situation.cjs` did `require('@netlify/blobs')`; bundled into the ESM
+functions (`axis-situation.mjs`, `axis-exec.mjs`) esbuild turns that into a shim that throws "Dynamic require …
+is not supported", the try/catch swallowed it, and every store read as missing (the CJS director was fine). Fix:
+`await import('@netlify/blobs')` (survives both output formats, verified in the zisi output) and the ESM callers
+inject the `getStore` they already import. Honest-by-construction held — it reported the stores as missing
+rather than inventing rows — but "missing" was the wrong truth.
