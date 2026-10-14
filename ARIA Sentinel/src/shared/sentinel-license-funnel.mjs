@@ -147,9 +147,11 @@ You're in. Here's your license key for ARIA ${label}:
     ${record.key}
 
 Three steps:
-1. Install ARIA Sentinel for Windows — the installer link is on ${DOWNLOADS_URL} (pilot builds are emailed with this key while the signed installer is being set up; Windows SmartScreen will warn on an unsigned build — "More info → Run anyway").
+1. Install ARIA Sentinel for Windows — we email the Windows pilot installer to this address within one business day (there is nothing to download from ${DOWNLOADS_URL} yet; that page explains the pilot). It is a per-user install, no admin rights needed. The pilot build is unsigned, so Windows SmartScreen will warn — "More info → Run anyway".
 2. Open it, choose "Start with safe defaults", and paste the key when prompted.
 3. Turn on "Live fixes" in Settings → Autonomy when you want ARIA to apply fixes (Windows may ask for admin permission).
+
+Installer not here after one business day? Reply to this email and it is sent by hand.
 
 Your tier also unlocks ARIA web today.
 
@@ -260,6 +262,8 @@ Stripe customer: ${record.customer_id}
 Stripe subscription: ${record.subscription_id}
 Key issued: ${maskKey(record.key)}
 Issued at: ${record.issued_at}
+
+ACTION (yours, within one business day): email the Windows pilot installer (dist\\ARIA-Sentinel-<version>-unsigned.exe + its SHA-256 from dist\\RELEASE-<version>.json) to ${record.email}. The welcome email promised it; nothing on the website serves it yet.
 
 Full record in admin console → Licenses tab.`;
   return { subject, text };
