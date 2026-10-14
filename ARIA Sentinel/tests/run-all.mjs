@@ -1001,8 +1001,14 @@ const TESTS = [
   // folder IPC, signed-artifact names, live-fix counting only, device/key headers.
   "./round2-main-wiring.test.mjs",
   // 2026-10-14 (cc/sentinel-prod-2026-10-14): Autonomous mode's "advise three times, then act" rule —
-  // the pure escalation machine (cadence, choices, kill, freeze, restart resume).
+  // the pure escalation machine (cadence, choices, kill, freeze, restart resume), then the REAL
+  // main.mjs driven on a simulated Windows machine (tests/lib/fault-lab.mjs): every catalogued fault
+  // down the no-answer path, every person choice, every mode × trust level (writes
+  // docs/MODE-BEHAVIOUR-MATRIX.md), and a 200-sequence seeded soak with invariants.
   "./advisory-escalation.test.mjs",
+  "./fault-lab-autonomous.test.mjs",
+  "./fault-lab-modes.test.mjs",
+  "./fault-lab-soak.test.mjs",
   // The commercial surface, audited end to end and proven RED FIRST on fixtures: the response-time
   // promise (BE1), the price a stranger is quoted (BF1), the tier vocabulary (BF2), the amount a buyer
   // is actually charged (BI2), the document a conversation ends in (BL1), the intake nobody keeps
