@@ -65,6 +65,12 @@ contextBridge.exposeInMainWorld("sentinel", {
   approveFix: (id) => ipcRenderer.invoke("sentinel:approve-fix", { id }),
   denyFix: (id) => ipcRenderer.invoke("sentinel:deny-fix", { id }),
   listApprovals: () => ipcRenderer.invoke("sentinel:list-approvals"),
+  // ADVISORY ESCALATION (2026-10-14) — "advise three times, then act": the three choices on a notice (Fix now · Not now ·
+  // Never for this), the advise-first prefs (interval · snooze · Allow again) and the notice push for the globe card.
+  advisoryAck: (id, choice) => ipcRenderer.invoke("sentinel:advisory-ack", { id, choice }),
+  getAdvisoryPrefs: () => ipcRenderer.invoke("sentinel:get-advisory-prefs"),
+  setAdvisoryPrefs: (prefs) => ipcRenderer.invoke("sentinel:set-advisory-prefs", prefs),
+  onAdvisory: (cb) => { const l = (_e, view) => cb(view); ipcRenderer.on("sentinel:advisory", l); return () => ipcRenderer.removeListener("sentinel:advisory", l); },
   setKeepDryRun: (on) => ipcRenderer.invoke("sentinel:set-keep-dry-run", on),
   testNotification: () => ipcRenderer.invoke("sentinel:test-notification"),
   voiceApprove: (recipeId) => ipcRenderer.invoke("sentinel:voice-approve", { recipeId }),

@@ -1000,6 +1000,9 @@ const TESTS = [
   // status in state, kill switch stops, manual-mode globe clickable, window fits 1366×768, reports
   // folder IPC, signed-artifact names, live-fix counting only, device/key headers.
   "./round2-main-wiring.test.mjs",
+  // 2026-10-14 (cc/sentinel-prod-2026-10-14): Autonomous mode's "advise three times, then act" rule —
+  // the pure escalation machine (cadence, choices, kill, freeze, restart resume).
+  "./advisory-escalation.test.mjs",
   // The commercial surface, audited end to end and proven RED FIRST on fixtures: the response-time
   // promise (BE1), the price a stranger is quoted (BF1), the tier vocabulary (BF2), the amount a buyer
   // is actually charged (BI2), the document a conversation ends in (BL1), the intake nobody keeps

@@ -40,6 +40,11 @@ import { parseControlPlaneKill, remediationDecision, blockedRecipeResult, KILL_H
 // RUN-CU / CU4 (2026-10-08) — autonomy levels · approvals · notify · real restore points · evidence · bridge auth.
 import { normalizeSetupPrefs, updateSetupPrefs, resolveAutonomy, autonomyLevelToMode, AUTONOMY_LEVELS } from "../shared/app-config.mjs";
 import { decideExecution, describeDecision } from "../shared/approval-policy.mjs";
+// ADVISORY ESCALATION (2026-10-14) — "advise three times, then act" (Autonomous mode only). The pure clock + promises;
+// the effects (notices, the supervised run, the IT-contact escalation) are performed below through the existing paths.
+import { createAdvisoryEscalation, normalizeAdvisoryPrefs, advisoryView, ruleSentence, ADVISORY_CHOICES, ADVISORY_INTERVAL_MIN, ADVISORY_INTERVAL_MAX, ADVISORY_SNOOZE_MIN_H, ADVISORY_SNOOZE_MAX_H } from "../shared/advisory-escalation.mjs";
+import { COOLDOWN_MS as AUTOFIRE_COOLDOWN_MS } from "../shared/autonomous.mjs";
+import { redactPrivate as advisoryRedact } from "../shared/path-guard.mjs";
 import { checkMaintenanceWindow } from "./plan-maintenance-window.mjs";
 import { createApprovalsFlow } from "./approvals.mjs";
 import { createNotifyDispatcher, NOTIFY_ENDPOINT } from "./notify-dispatch.mjs";
@@ -278,6 +283,9 @@ let bridgeStatus = { listening: false, conflict: false, port: BRIDGE_PORT, owner
 let isQuitting = false;
 let overlayExpanded = false;
 let overlayCompanion = false; // the interactive assistant panel is open on the globe overlay
+// 2026-10-14 — an advise-first notice (Notice n of 3 + three choices) is taller than a detector card: while one is up the
+// expanded window grows so the card never hides its choices behind a scrollbar. Cleared on dismiss / hide / companion.
+let overlayAdvisory = false;
 // RUN 19 §3 — every ARIA-spawned child process is tracked so the kill-switch can terminate them all.
 const childProcesses = new Set();
 // (audit M27) the watcher / process-scan PowerShell children join the same set, so Ctrl+Alt+K ends them too.
@@ -804,7 +812,7 @@ function overlayBounds() {
   if (overlayExpanded) {
     const wa = screen.getPrimaryDisplay().workArea;
     const width = 360;
-    const height = Math.min(340, wa.height - 80); // was 214 → clipped the card behind a scrollbar
+    const height = Math.min(overlayAdvisory ? 500 : 340, wa.height - 80); // was 214 → clipped the card behind a scrollbar
     return { width, height, x: Math.round(wa.x + (wa.width - width) / 2), y: wa.y + 44 };
   }
   if (overlayPhysics && Number.isFinite(overlayPhysics.x)) {
@@ -823,6 +831,8 @@ function positionOverlay() {
 function showOverlay(options = {}) {
   if (!app.isReady()) return;
   overlayCompanion = Boolean(options.companion);
+  if (options.advisory) overlayAdvisory = true;
+  if (overlayCompanion) overlayAdvisory = false;
   // The companion panel reuses the "expanded" (pinned + interactive, physics off) window path, just bigger.
   overlayExpanded = Boolean(options.expanded) || overlayCompanion;
   // Fix 5: when the user has hidden the floating globe, the ambient globe never shows (a detection
@@ -854,6 +864,7 @@ function hideOverlay() {
   if (!overlayWindow || overlayWindow.isDestroyed()) return;
   overlayExpanded = false;
   overlayCompanion = false;
+  overlayAdvisory = false;
   stopOverlayPhysics();
   overlayWindow.webContents.send("sentinel:overlay-mode", "globe");
   overlayWindow.hide();
@@ -1014,6 +1025,9 @@ function activateKillSwitch() {
   // ariaStopped:true so the renderer's Start button re-arms from the truth, not from a local guess.
   try { if (detectionOrchestrator) detectionOrchestrator.stopAll(); } catch { /* ignore */ }
   store.set("ariaStopped", true);
+  // ADVISORY ESCALATION (2026-10-14) — every open "advise three times, then act" escalation is BLOCKED (audited) and never
+  // resumes on its own. Done BEFORE the countdowns are aborted so an in-flight auto-fix is recorded as blocked, not cancelled.
+  try { const k = advisoryMachine.kill("kill-switch"); if (k.blocked) logEvent("KILL-SWITCH", `Ctrl+Alt+K: ${k.blocked} advisory escalation(s) blocked — they will not resume on their own.`, { advisoriesBlocked: k.blocked }); } catch { /* best-effort under panic */ }
   // RUN 23 — abort any pending pre-execution countdowns so an in-flight fix never lands after the kill.
   try { const aborted = countdownManager.abortAll(); if (aborted) { closeActionIndicator(); logEvent("KILL-SWITCH", `Aborted ${aborted} pending action countdown(s).`); } } catch { /* best-effort under panic */ }
   setAgentState("idle");
@@ -2591,6 +2605,13 @@ async function autoFireIfEligible(recipe, context = {}) {
   // safe-auto / full-auto may act on their own (green only here; evaluateAutoFire keeps yellow out), observe and
   // approve-first never do (approve-first turns the detection into an approval request instead).
   const auto = autonomyNow();
+  // ADVISORY ESCALATION (2026-10-14) — "Never for this": the person opted this recipe out of fixing on its own, so on
+  // this device it behaves as approve-first (an approval request, never an unattended run).
+  if (advisoryMachine.isNever(recipe.id)) { advisoryNeverDetection(recipe); return; }
+  // ADVISORY ESCALATION — Autonomous mode + live fixes on: instead of firing now, the problem is ADVISED three times
+  // first (a fix ARIA may make on its own → the auto-fix track; red / needs-admin / not-yet-vetted / needs-a-yes → the
+  // IT-contact track). Everything the rule does not take falls through to the unchanged paths below.
+  if (!autonomousPaused() && !agentBlocked() && considerAdvisory(recipe, context)) return;
   const levelActs = auto.level === "safe-auto" || auto.level === "full-auto";
   if (!(store.get("mode") === "autonomous" || levelActs) || autonomousPaused() || agentBlocked()) {
     if (auto.level === "approve-first" && !agentBlocked() && !autonomousPaused()) {
@@ -2649,8 +2670,11 @@ function afterFixOutcome(recipeId, result, meta = {}) {
     const dryRun = Boolean(result && result.dryRun);
     const failed = !result || result.ok === false;
     const rp = result && result.restorePoint;
-    // (audit M18) a watcher-sourced auto-fix reports its REAL outcome to the Slack/Teams webhook from here.
-    if (meta.source === "detection" && !dryRun) {
+    // ADVISORY ESCALATION — an auto-fix made after three unanswered notices reports its real outcome to its escalation.
+    advisoryFixOutcome(recipeId, result, meta);
+    // (audit M18) a watcher-sourced auto-fix reports its REAL outcome to the Slack/Teams webhook from here (the
+    // advisory auto-fix is watcher-sourced too: source "detection:advisory").
+    if (/^detection(?::|$)/.test(String(meta.source || "")) && !dryRun) {
       const recipe = recipeById(recipeId);
       sendAutoFixNotify({ recipeId, signal: (recipe && recipe.signal) || recipeId, outcome: failed ? "failed" : "applied", endpoint: os.hostname(), durationMs: Math.max(0, Date.now() - (Number(meta.startedAt) || Date.now())), tier: recipeColor(recipeId) === "green" ? "green" : "yellow" }).catch(() => undefined);
     }
@@ -2663,6 +2687,293 @@ function afterFixOutcome(recipeId, result, meta = {}) {
     }
     // daily/weekly cadences: the outcome is already in the audit log, which the aggregate report summarizes.
   } catch { /* reporting never affects the fix */ }
+}
+
+// ── ADVISORY ESCALATION (2026-10-14) — "advise three times, then act" (Autonomous mode only) ─────────────────────────
+// src/shared/advisory-escalation.mjs keeps the clock and the promises (pure); this block performs its effects through the
+// EXISTING paths and nothing else:
+//   · notice n of 3 → desktopNotify + the globe card (sentinel:advisory) + the Home "What I need from you" row + an
+//     "ADVISORY n/3" audit row, in plain words, with Fix now · Not now · Never for this;
+//   · no answer after notice 3 + one interval → the autonomous guards (evaluateAutoFire) → an "AUTO-FIX after 3
+//     advisories" audit row → runSupervisedFix (kill switch → R11 → supervisor → vetted-tier policy → approval policy →
+//     needs-admin → the visible, cancellable 10-s countdown → executor → verify → audit) → afterFixOutcome (notify-after);
+//   · red / needs-admin / not-yet-vetted / yellow (needs a yes) problems get the same notices but end with the IT contact
+//     told (notifyEvent fix-failed + sendAutoFixNotify escalated) — never an execution;
+//   · Ctrl+Alt+K blocks every open escalation for good; pause · fleet/customer kill · license · Stop ARIA · live fixes
+//     off FREEZE them in place (the remaining time is kept; nothing skips ahead); leaving Autonomous closes them.
+// Which track a detection takes is decided from the REAL gates (decideExecution · executionPolicy · the needs-admin rule ·
+// the supervisor) so a notice never promises a fix the pipeline would refuse (Rule 14).
+const ADVISORY_TICK_MS = 15 * 1000;
+let advisoryTimer = null;
+const advisoryMachine = createAdvisoryEscalation({
+  now: () => Date.now(),
+  load: () => store.get("advisoryEscalations") || null,
+  save: (s) => store.set("advisoryEscalations", s)
+});
+/** { intervalMinutes, snoozeHours } — the person's advisory prefs (Settings → Autonomy), defaults filled in. */
+function advisoryPrefsNow() { return normalizeAdvisoryPrefs(setupPrefsNow()); }
+/** The rule applies only in Autonomous mode with live fixes on (otherwise every fix previews and nothing escalates). */
+function advisoryApplies() { return store.get("mode") === "autonomous" && allowSystemFixes() && !globalDryRun(); }
+/** Why open escalations must stand still right now ("" = they may advance). */
+function advisoryFrozenReason() {
+  if (remediationKilled()) return "fixes-disabled-by-policy";
+  if (Number(store.get("pausedUntil") || 0) > Date.now()) return "paused";
+  if (autonomousPaused()) return "autonomous-paused";
+  if (store.get("ariaStopped")) return "aria-stopped";
+  if (!allowSystemFixes()) return "live-fixes-off";
+  try { if (!gateStatus().unlocked) return "license"; } catch { return "license"; }
+  return "";
+}
+/** Does the recipe have a live step ARIA could apply at all (an executor binding or a cleared registry action)? */
+function recipeHasLiveSteps(recipeId) {
+  const id = String(recipeId || "");
+  if (resolveExecutorId(id)) return true;
+  if (!isExecutableRecipe(id)) return false;
+  const r = recipeById(id);
+  return Boolean(r && (r.actions || []).some((a) => a && a.shell === "powershell" && a.command));
+}
+/**
+ * The track a detection takes under the rule, read from the REAL gates. null = the rule does not take it (the unchanged
+ * paths decide: approval / maintenance window / observe / preview / guide-only).
+ *   auto-fix     — green, user-space, vetted for unattended runs, supervisor-clean → notices, then the supervised fix
+ *   tech-contact — red · needs administrator rights · not yet vetted for unattended runs · yellow (always needs a yes)
+ */
+function advisoryTrackFor(recipe) {
+  const id = String((recipe && recipe.id) || "");
+  if (!id || isBlockedPath(id)) return null;
+  const auto = autonomyNow();
+  const color = recipeColor(id);
+  const win = maintenanceWindowNow(id);
+  // A yellow fix is only ever promised conditionally: a REAL restore point is made at the last step, never at notice time.
+  const decision = decideExecution({ level: auto.level, color, tier: vettedTierOf(id), approverMode: auto.approverMode, inWindow: win.within, hasRestorePoint: color === "yellow", killed: remediationKilled(), blocked: agentBlocked() });
+  if (decision.action === "notify-only" && decision.reason === "red-never-automated") return { track: "tech-contact", kind: "red", color };
+  if (decision.action !== "execute") return null;
+  if (!recipeHasLiveSteps(id)) return null; // guide-only: nothing ARIA could apply on its own
+  if (recipeNeedsAdmin(id)) return { track: "tech-contact", kind: "needs-admin", color };
+  // recipe-runner + autonomous.mjs: a yellow fix NEVER fires on its own — it always waits for a person's yes.
+  if (color === "yellow" || !isGreenRecipe(id)) return { track: "tech-contact", kind: "needs-confirm", color };
+  const policy = executionPolicy({ vettedCount: vettedCountOf(readRecipeHistory(), id), mode: "confirmed", dryRunCheckbox: store.get("keepSystemFixesDryRun"), supervisorVerdict: "approve", humanInitiated: false });
+  if (policy.dryRun) return null; // "keep every fix in preview" → the preview path, unchanged
+  if (!policy.allowed) return { track: "tech-contact", kind: "not-yet-vetted", color };
+  if (!isRecipeAllowedByPolicy(store.get("policyOverlay") || null, id)) return null;
+  const sup = superviseProposal({ recipeId: id, riskTier: (recipe && recipe.risk) || "medium", expectedImpact: recipeSideEffects(id), rollbackPlan: "restore-point" }, { mode: "confirmed", history: [], now: Date.now(), vettedCatalog: supervisedVettedCatalog() });
+  if (sup.verdict === "veto") return null;
+  return { track: "auto-fix", kind: "green", color };
+}
+/** autoFireIfEligible → true when the rule took this detection (the immediate auto-fire is then skipped). */
+function considerAdvisory(recipe, context = {}) {
+  if (!recipe || !advisoryApplies()) return false;
+  const frozen = advisoryFrozenReason();
+  if (frozen) {
+    // A license / Stop-ARIA freeze: nothing unattended happens at all (no notice, no fix) until it clears.
+    logEvent("ADVISORY", `Noted ${advisoryRedact(recipeTitle(recipe.id))} — not advising or fixing on its own while ${frozen}.`, { recipeId: recipe.id, frozen });
+    return true;
+  }
+  const t = advisoryTrackFor(recipe);
+  if (!t) return false;
+  const r = advisoryMachine.open({
+    detectionId: String(context.detectionId || ""),
+    recipeId: recipe.id,
+    title: advisoryRedact(recipeTitle(recipe.id)),
+    summary: advisoryRedact(String(recipe.summary || "")),
+    color: t.color,
+    track: t.track,
+    kind: t.kind
+  }, advisoryPrefsNow());
+  if (!r.opened) return r.reason !== "never" && r.reason !== "bad-recipe"; // an open / snoozed escalation already owns it
+  performAdvisoryEffects(r.effects);
+  ensureAdvisoryTimer();
+  return true;
+}
+/** A Never-listed recipe detected again: approve-first on this device (red is never automated, so it is only noted). */
+function advisoryNeverDetection(recipe) {
+  const color = recipeColor(recipe.id);
+  if (color !== "red" && !agentBlocked()) {
+    approvals.request({ recipeId: recipe.id, title: recipe.title, color, tier: vettedTierOf(recipe.id), requestedBy: "watcher", reason: "never-for-this", source: "detection" });
+    ensureApprovalPolling();
+  }
+  logEvent("ADVISORY", `${advisoryRedact(recipeTitle(recipe.id))}: you chose "Never for this" — ${color === "red" ? "noted only; nothing runs" : "asking for a yes instead of fixing it on its own"}.`, { recipeId: recipe.id });
+}
+/** Notice n of 3: audit row + desktop notification (when that channel is on) + the globe card + the Home row (state). */
+function advisoryNotice(rec, n) {
+  const prefs = advisoryPrefsNow();
+  const view = advisoryView(rec, prefs, Date.now());
+  logEvent("ADVISORY", `ADVISORY ${n}/${rec.of}: ${rec.title} — ${view.copy.when}`, { recipeId: rec.recipeId, advisoryId: rec.id, advisory: n, of: rec.of, track: rec.track, kind: rec.kind, cycle: rec.cycle });
+  if ((setupPrefsNow().notifyChannels || {}).desktop !== false) desktopNotify({ title: `${view.copy.line}: ${rec.title}`, body: `${view.copy.willDo} ${view.copy.when}` });
+  pushAdvisoryCard(view);
+}
+function pushAdvisoryCard(view) {
+  try {
+    overlayActiveUntil = Date.now() + 8000;
+    if (overlayWindow && !overlayWindow.isDestroyed()) { showOverlay({ expanded: true, advisory: true }); overlayWindow.webContents.send("sentinel:advisory", view); }
+    if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send("sentinel:advisory", view);
+  } catch { /* the card is best-effort; the state + the Home row carry the same notice */ }
+}
+/** The last step of the auto-fix track: the autonomous guards, then the supervised pipeline (countdown first). */
+async function advisoryAutoFix(rec) {
+  const recipe = recipeById(rec.recipeId);
+  if (!recipe) { advisoryMachine.settle(rec.id, "closed", "recipe-missing"); broadcastState(); return { ok: false, reason: "recipe-missing" }; }
+  if (!advisoryApplies()) { advisoryMachine.settle(rec.id, "closed", "autonomous-off"); logEvent("ADVISORY", `${rec.title}: Autonomous mode or live fixes are off now — nothing runs on its own.`, { recipeId: rec.recipeId, advisoryId: rec.id }); broadcastState(); return { ok: false, reason: "autonomous-off" }; }
+  const t = advisoryTrackFor(recipe);
+  if (!t || t.track !== "auto-fix") {
+    // The gates changed since notice 1 (vetting, a new organization rule, the window): ARIA may no longer fix it alone.
+    advisoryMachine.settle(rec.id, "escalated", `gates-changed${t ? "-" + t.kind : ""}`);
+    advisoryEscalate({ ...rec, kind: t ? t.kind : rec.kind }, "gates-changed");
+    broadcastState();
+    return { ok: false, reason: "gates-changed" };
+  }
+  // The same autonomous guards autoFireIfEligible applies: 3 per recipe per 24 h · 30 min between automatic fixes · fleet limit.
+  const history = store.get("autoFireHistory") || [];
+  const guard = evaluateAutoFire({ recipeId: rec.recipeId, tier: isGreenRecipe(rec.recipeId) ? "green" : "yellow", mode: "autonomous", now: Date.now(), history });
+  if (!guard.allow) {
+    if (guard.reason === "cooldown") {
+      const lastAny = history.reduce((m, h) => Math.max(m, Number(h.ts) || 0), 0);
+      const until = lastAny + AUTOFIRE_COOLDOWN_MS + 1000;
+      advisoryMachine.defer(rec.id, until, "the 30-minute gap between automatic fixes");
+      logEvent("ADVISORY", `Ready to fix ${rec.title} — waiting for the 30-minute gap between automatic fixes (until ${new Date(until).toISOString()}).`, { recipeId: rec.recipeId, advisoryId: rec.id });
+      broadcastState();
+      return { ok: false, reason: "cooldown", until };
+    }
+    advisoryMachine.settle(rec.id, "held", `autofire-${guard.reason}`);
+    approvals.request({ recipeId: rec.recipeId, title: rec.title, color: rec.color, tier: vettedTierOf(rec.recipeId), requestedBy: "advisory", reason: `advisory-${guard.reason}`, source: "advisory" });
+    ensureApprovalPolling();
+    logEvent("ADVISORY", `${rec.title}: not fixed on its own (${guard.reason}) — asked for a yes instead. Nothing was changed.`, { recipeId: rec.recipeId, advisoryId: rec.id });
+    broadcastState();
+    return { ok: false, reason: guard.reason };
+  }
+  store.set("autoFireHistory", recordAutoFire(history, { recipeId: rec.recipeId, ts: Date.now() }, Date.now()));
+  advisoryMachine.markFixing(rec.id);
+  logEvent("AUTO-FIX", `AUTO-FIX after ${rec.of} advisories: ${rec.title} — no answer, so ARIA is fixing it through the supervised pipeline (countdown first).`, { recipeId: rec.recipeId, advisoryId: rec.id, advisories: rec.advisory });
+  const result = await runSupervisedFix({ recipeId: rec.recipeId, mode: "confirmed", source: "detection:advisory", risk: recipe.risk || "medium", startedAt: Date.now(), detectionId: rec.detectionId || undefined });
+  advisoryFollowPipeline(rec, result);
+  broadcastState();
+  return result;
+}
+/** What the supervised pipeline said: a countdown is followed (cancel → the escalation ends); a refusal ends it honestly. */
+function advisoryFollowPipeline(rec, result) {
+  const r = result || {};
+  if (r.countdown === true && r.countdownId) {
+    const cd = countdownManager.list().find((c) => c && c.id === r.countdownId);
+    if (cd && cd.signal && typeof cd.signal.addEventListener === "function") {
+      cd.signal.addEventListener("abort", () => {
+        const s = advisoryMachine.settle(rec.id, "cancelled", "countdown-cancelled");
+        if (s.ok) { logEvent("ADVISORY", `${rec.title}: the countdown was cancelled — nothing was changed, and ARIA will not retry on its own.`, { recipeId: rec.recipeId, advisoryId: rec.id }); broadcastState(); }
+      }, { once: true });
+    }
+    return; // completion arrives through afterFixOutcome → advisoryFixOutcome
+  }
+  if (r.verdict === "approve" || r.verdict === "approve-fast") return; // running now (no countdown); the result arrives the same way
+  const verdict = String(r.verdict || r.error || "refused");
+  const status = verdict === "blocked" ? "blocked" : "held";
+  advisoryMachine.settle(rec.id, status, verdict === "approval-requested" ? "approval-requested" : verdict);
+  logEvent("ADVISORY", `${rec.title}: not fixed on its own — ${advisoryRedact(String(r.copy || r.reason || verdict)).slice(0, 160)}`, { recipeId: rec.recipeId, advisoryId: rec.id, verdict });
+}
+/** afterFixOutcome → the auto-fix's real outcome closes its escalation (fixed / fix-failed / preview-only). */
+function advisoryFixOutcome(recipeId, result, meta = {}) {
+  try {
+    if (!/^detection:advisory/.test(String(meta.source || ""))) return;
+    const rec = advisoryMachine.state.records.find((r) => r.recipeId === recipeId && r.status === "fixing");
+    if (!rec) return;
+    const dryRun = Boolean(result && result.dryRun);
+    const failed = !result || result.ok === false;
+    const status = dryRun ? "held" : failed ? "fix-failed" : "fixed";
+    const outcome = dryRun ? "preview-only" : failed ? String((result && (result.reason || result.outcome)) || "failed") : result.verified === false ? "applied-unverified" : result.verified === true ? "verified" : String(result.outcome || "applied");
+    advisoryMachine.settle(rec.id, status, outcome);
+    logEvent("ADVISORY", `${rec.title}: ${status === "fixed" ? `fixed on its own after ${rec.of} notices (${outcome})` : status === "held" ? "previewed only — nothing was changed" : `the fix did not complete (${outcome}) — nothing further was changed`}.`, { recipeId, advisoryId: rec.id, status, outcome });
+    broadcastState();
+  } catch { /* reporting never affects the fix */ }
+}
+/** The IT-contact track's last step (or "Get help now" on a red notice): the EXISTING notify paths, never an execution. */
+function advisoryEscalate(rec, why = "unanswered") {
+  const prefs = setupPrefsNow();
+  const contacts = Array.isArray(prefs.techContacts) ? prefs.techContacts.length : 0;
+  const reason = why === "fix-now" ? "you asked for help" : why === "gates-changed" ? "it can no longer be fixed on its own" : `no answer after ${rec.of} notices`;
+  notifyEvent("fix-failed", { title: rec.title, recipeId: rec.recipeId, severity: rec.color, outcome: why === "fix-now" ? "needs a person - help requested" : "needs a person - no answer" });
+  sendAutoFixNotify({ recipeId: rec.recipeId, signal: (recipeById(rec.recipeId) || {}).signal || rec.recipeId, outcome: "escalated", endpoint: os.hostname(), durationMs: 0, tier: rec.color === "green" ? "green" : rec.color === "red" ? "red" : "yellow" }).catch(() => undefined);
+  // A fix a person CAN approve (needs admin · not yet vetted · needs a yes) also waits as an approval; red never runs.
+  if (rec.kind !== "red" && rec.color !== "red") {
+    approvals.request({ recipeId: rec.recipeId, title: rec.title, color: rec.color, tier: vettedTierOf(rec.recipeId), requestedBy: "advisory", reason: `advisory-${rec.kind}`, source: "advisory" });
+    ensureApprovalPolling();
+  }
+  logEvent("ESCALATE", `ESCALATED to ${contacts ? "your IT contact" : "the device user (no IT contact configured)"} — ${reason}: ${rec.title}. Nothing was changed.`, { recipeId: rec.recipeId, advisoryId: rec.id, kind: rec.kind, why });
+}
+/** "Fix now": the person chose — the SAME supervised pipeline, human-initiated (UAC when needed, countdown first). */
+async function advisoryFixNow(rec) {
+  logEvent("ADVISORY", `Fix now: ${rec.title} — you chose to fix it at notice ${rec.advisory}/${rec.of}; running it through the supervised pipeline.`, { recipeId: rec.recipeId, advisoryId: rec.id });
+  const recipe = recipeById(rec.recipeId) || {};
+  return runSupervisedFix({ recipeId: rec.recipeId, mode: "confirmed", source: "advisory-fix-now", risk: recipe.risk || "medium", startedAt: Date.now(), detectionId: rec.detectionId || undefined });
+}
+function performAdvisoryEffects(effects = []) {
+  for (const e of Array.isArray(effects) ? effects : []) {
+    const rec = advisoryMachine.find(e.id);
+    if (!rec) continue;
+    const meta = { recipeId: rec.recipeId, advisoryId: rec.id };
+    try {
+      if (e.type === "advise") advisoryNotice(rec, e.n);
+      else if (e.type === "auto-fix") advisoryAutoFix(rec).catch(() => undefined);
+      else if (e.type === "escalate") advisoryEscalate(rec, e.why);
+      else if (e.type === "snoozed") logEvent("ADVISORY", `Not now: ${rec.title} — snoozed until ${new Date(e.until).toISOString()}; nothing runs before then.`, meta);
+      else if (e.type === "never") { logEvent("ADVISORY", `Never for this: ${rec.title} — ARIA will not fix this on its own on this device again; it asks for a yes instead (approve-first).`, meta); if (rec.color !== "red") { approvals.request({ recipeId: rec.recipeId, title: rec.title, color: rec.color, tier: vettedTierOf(rec.recipeId), requestedBy: "advisory", reason: "never-for-this", source: "advisory" }); ensureApprovalPolling(); } }
+      else if (e.type === "frozen") logEvent("ADVISORY", `Paused at notice ${rec.advisory}/${rec.of}: ${rec.title} (${e.reason}) — nothing advances until this clears.`, { ...meta, frozen: e.reason });
+      else if (e.type === "unfrozen") logEvent("ADVISORY", `Resumed at notice ${rec.advisory}/${rec.of}: ${rec.title} — the remaining time was kept.`, meta);
+      else if (e.type === "resumed") logEvent("ADVISORY", `ADVISORY ${e.n}/${rec.of} resumed after restart: ${rec.title} — the next step waits at least ${advisoryPrefsNow().intervalMinutes} min.`, { ...meta, resumed: true, was: e.was });
+      else if (e.type === "reopened") logEvent("ADVISORY", `Snooze over: ${rec.title} — telling you again (round ${e.cycle}).`, meta);
+      else if (e.type === "closed") logEvent("ADVISORY", `Advisory closed: ${rec.title} (${e.reason}) — nothing runs on its own.`, meta);
+    } catch { /* one effect never breaks the next */ }
+  }
+  if (effects && effects.length) broadcastState();
+}
+/** The ONE interval that drives the machine (15 s). Leaving Autonomous closes; a freeze holds; otherwise the clock runs. */
+function advisoryTick() {
+  const closeAll = store.get("mode") !== "autonomous" ? "autonomous-mode-off" : "";
+  const frozen = closeAll ? "" : advisoryFrozenReason();
+  const r = advisoryMachine.tick({ closeAll, frozen }, advisoryPrefsNow());
+  performAdvisoryEffects(r.effects);
+  return r;
+}
+function ensureAdvisoryTimer() {
+  if (advisoryTimer) return;
+  advisoryTimer = setInterval(() => { try { advisoryTick(); } catch { /* the tick never throws into the loop */ } }, ADVISORY_TICK_MS);
+  advisoryTimer.unref?.();
+}
+/** At launch: resume persisted escalations CONSERVATIVELY (same notice number, a full interval before the next step). */
+function startAdvisoryEscalation() {
+  try { performAdvisoryEffects(advisoryMachine.restore(advisoryPrefsNow()).effects); } catch { /* never blocks startup */ }
+  ensureAdvisoryTimer();
+}
+/** sentinel:advisory-ack {id, choice} — Fix now · Not now · Never for this. Any choice ends the escalation. */
+async function handleAdvisoryAck(payload) {
+  const p = payload && typeof payload === "object" ? payload : {};
+  const id = String(p.id || "").slice(0, 96);
+  const choice = String(p.choice || "");
+  if (!id || isBlockedPath(id) || !ADVISORY_CHOICES.includes(choice)) return { ok: false, error: "bad-request" };
+  const r = advisoryMachine.ack(id, choice, advisoryPrefsNow());
+  if (!r.ok) return { ok: false, error: r.reason };
+  const rec = r.record;
+  logEvent("ADVISORY", `You chose ${choice === "fix-now" ? (rec.kind === "red" ? "Get help now" : "Fix now") : choice === "not-now" ? "Not now" : "Never for this"} at notice ${rec.advisory}/${rec.of}: ${rec.title}.`, { recipeId: rec.recipeId, advisoryId: rec.id, choice });
+  performAdvisoryEffects(r.effects.filter((e) => e.type !== "run-now"));
+  let fix = null;
+  if (r.effects.some((e) => e.type === "run-now")) fix = await advisoryFixNow(rec);
+  broadcastState();
+  return { ok: true, choice, advisory: advisoryView(advisoryMachine.find(id), advisoryPrefsNow(), Date.now()), fix };
+}
+/** sentinel:get-advisory-prefs — the interval/snooze, their limits, the rule in plain words and the Never list. */
+function advisoryPrefsPayload() {
+  return { ok: true, prefs: advisoryPrefsNow(), limits: { intervalMinutes: [ADVISORY_INTERVAL_MIN, ADVISORY_INTERVAL_MAX], snoozeHours: [ADVISORY_SNOOZE_MIN_H, ADVISORY_SNOOZE_MAX_H] }, rule: ruleSentence(setupPrefsNow()), never: advisoryMachine.neverList() };
+}
+/** sentinel:set-advisory-prefs { intervalMinutes?, snoozeHours?, allowAgain?: [recipeId] } — clamped, stored in the setup prefs. */
+function setAdvisoryPrefs(payload) {
+  const p = payload && typeof payload === "object" ? payload : {};
+  const partial = {};
+  if ("intervalMinutes" in p) partial.advisoryIntervalMinutes = p.intervalMinutes;
+  if ("snoozeHours" in p) partial.advisorySnoozeHours = p.snoozeHours;
+  if (Object.keys(partial).length) store.set("setupConfig", updateSetupPrefs(readSetupConfig(), partial));
+  const allowed = [];
+  for (const rid of Array.isArray(p.allowAgain) ? p.allowAgain.slice(0, 50) : []) { if (advisoryMachine.clearNever(String(rid || "")).removed) allowed.push(String(rid)); }
+  const now = advisoryPrefsNow();
+  logEvent("SETUP", `Advise-first rule: a notice every ${now.intervalMinutes} min, Not now waits ${now.snoozeHours} h${allowed.length ? ` · allowed again: ${allowed.join(", ")}` : ""}.`);
+  broadcastState();
+  return advisoryPrefsPayload();
 }
 
 function openMacPermissions(pane = "fulldisk") {
@@ -2680,6 +2991,7 @@ function openMacPermissions(pane = "fulldisk") {
 function dismissOverlay() {
   overlayExpanded = false;
   overlayCompanion = false;
+  overlayAdvisory = false;
   if (overlayWindow && !overlayWindow.isDestroyed()) {
     positionOverlay();
     overlayWindow.webContents.send("sentinel:overlay-mode", "globe");
@@ -3574,6 +3886,13 @@ function getState() {
     // RUN-CU / CU4 — autonomy level + approvals + platform honesty + the wizard prefs (for Settings → Autonomy & contacts).
     autonomy: { level: auto.level, clamped: auto.clamped, reason: auto.reason, mode: auto.mode, approverMode: auto.approverMode, levels: AUTONOMY_LEVELS },
     approvals: approvals.forState(),
+    // ADVISORY ESCALATION (2026-10-14) — the open notices ({ id, recipeId, title, advisory, of: 3, nextAt, choices, copy }),
+    // the person's interval/snooze, the rule in plain words, recent outcomes (content-blind) and the Never list.
+    advisories: advisoryMachine.forState(advisoryPrefsNow()),
+    advisoryPrefs: advisoryPrefsNow(),
+    advisoryRule: ruleSentence(setupPrefsNow()),
+    advisoryOutcomes: advisoryMachine.recentOutcomes(10),
+    advisoryNever: advisoryMachine.neverList(),
     deferredFixes: (store.get("deferredFixes") || []).slice(0, 10),
     platformCapabilities: platformCapabilities(process.platform),
     setupPrefs: setupPrefsNow(),
@@ -3799,8 +4118,9 @@ function addDetection(recipe, context = {}) {
   // RUN-CU / CU4 — "who should know when something breaks": desktop/email/SMS per the wizard channels,
   // deduped per issue for 6h, content-blind (catalog title + id + severity + platform only).
   notifyEvent("issue-detected", { title: recipe.title, recipeId: recipe.id, severity: recipeColor(recipe.id), detectionId: detection.id });
-  // Autonomous mode may auto-apply a green recipe — gated by the opt-in + cap/cooldown/fleet guards.
-  autoFireIfEligible(recipe, context).catch(() => undefined);
+  // Autonomous mode may auto-apply a green recipe — gated by the opt-in + cap/cooldown/fleet guards. (ADVISORY ESCALATION:
+  // the detection id travels along so its escalation is idempotent per detection.)
+  autoFireIfEligible(recipe, { ...context, detectionId: detection.id }).catch(() => undefined);
   overlayActiveUntil = Date.now() + 8000; // run the globe at 60fps through the fix animation
   if (overlayWindow) {
     showOverlay({ expanded: true });
@@ -5248,6 +5568,10 @@ ipcMain.handle("sentinel:deny-fix", async (_event, payload) => {
   return r;
 });
 ipcMain.handle("sentinel:list-approvals", () => approvals.forState());
+// ADVISORY ESCALATION (2026-10-14) — the three choices on a notice + the advise-first prefs (Settings → Autonomy).
+ipcMain.handle("sentinel:advisory-ack", (_event, payload) => handleAdvisoryAck(payload));
+ipcMain.handle("sentinel:get-advisory-prefs", () => advisoryPrefsPayload());
+ipcMain.handle("sentinel:set-advisory-prefs", (_event, payload) => setAdvisoryPrefs(payload));
 // RUN-CU / CU4 (fix f) — the "Keep fixes in dry-run" checkbox finally has a writer. true = always preview;
 // false = live (still gated); unset = follow the mode (RUN 29-A default).
 ipcMain.handle("sentinel:set-keep-dry-run", (_event, on) => {
@@ -5499,6 +5823,8 @@ if (hasSingleInstanceLock) {
     // RUN-CU / CU4 — approvals: expire overdue asks + poll remote decisions while anything is pending; aggregate
     // report (daily/weekly per reportCadence) on launch + hourly.
     if (approvals.pending().length) ensureApprovalPolling();
+    // ADVISORY ESCALATION (2026-10-14) — resume persisted escalations conservatively + start the one 15 s interval.
+    startAdvisoryEscalation();
     setTimeout(() => maybeSendAggregateReport().catch(() => undefined), 20 * 1000).unref?.();
     setInterval(() => maybeSendAggregateReport().catch(() => undefined), 60 * 60 * 1000).unref?.();
     try { powerMonitor.on("resume", () => { runUpdateCheck("wake").catch(() => undefined); refreshLicense().catch(() => undefined); }); } catch { /* powerMonitor may be unavailable */ }
@@ -5548,6 +5874,7 @@ app.on("before-quit", () => {
   try { globalShortcut.unregisterAll(); } catch { /* nothing registered */ }
   if (fileAssociationGuardTimer) { clearInterval(fileAssociationGuardTimer); fileAssociationGuardTimer = null; } // JULY PORT 2026-10-14
   if (officeSafetyService) { try { officeSafetyService.stop(); } catch { /* stopping never blocks quit */ } } // JULY PORT 2026-10-14
+  if (advisoryTimer) { clearInterval(advisoryTimer); advisoryTimer = null; } // ADVISORY ESCALATION — state is already persisted
   if (detectionOrchestrator) detectionOrchestrator.stopAll();
   if (adminWindow && !adminWindow.isDestroyed()) adminWindow.destroy();
   if (overlayWindow && !overlayWindow.isDestroyed()) overlayWindow.destroy();

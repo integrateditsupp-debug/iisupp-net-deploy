@@ -134,6 +134,7 @@
       "src/renderer/tabs/reports.mjs",
       "src/renderer/tabs/sla.mjs",
       "src/renderer/voice-conversation.mjs",
+      "src/shared/advisory-escalation.mjs",
       "src/shared/app-config.mjs",
       "src/shared/approval-policy.mjs",
       "src/shared/aria-brain-client.mjs",

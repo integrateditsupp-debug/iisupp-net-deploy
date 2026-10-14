@@ -2,6 +2,7 @@
 // The renderer (src/renderer/onboarding/*) draws the splash + 3-step walkthrough; THIS module owns the
 // state machine + the one invariant that matters: once the user completes OR skips onboarding, it NEVER
 // replays. 🔒 R11 — pure JSON state, no filesystem paths, no PII.
+import { clampAdvisoryInterval, clampSnoozeHours } from "./advisory-escalation.mjs";
 
 export const ONBOARDING_VERSION = 1;     // bump to re-introduce the walkthrough after a major UX change
 export const ONBOARDING_TOTAL_STEPS = 3; // (1) tray pointer · (2) mode picker · (3) first-scan countdown
@@ -224,6 +225,10 @@ export function sanitizePrefs(p) {
   // PROD 2026-10-14 (audit M8) — optional network-watcher probe targets (host/IP shapes only; blank = the device's own
   // gateway / DNS server + the NCSI name Windows already resolves). Never user content, never a URL.
   if ("networkProbe" in p) out.networkProbe = sanitizeNetworkProbe(p.networkProbe);
+  // ADVISORY ESCALATION (2026-10-14) — the advise-first rule's interval (1–60 min, default 3) and "Not now" snooze (1–72 h,
+  // default 4). Optional keys (absent = the defaults in advisory-escalation.mjs); never part of defaultV2Prefs (Rule 15).
+  if ("advisoryIntervalMinutes" in p) out.advisoryIntervalMinutes = clampAdvisoryInterval(p.advisoryIntervalMinutes);
+  if ("advisorySnoozeHours" in p) out.advisorySnoozeHours = clampSnoozeHours(p.advisorySnoozeHours);
   return out;
 }
 const PROBE_HOST_RE = /^[A-Za-z0-9.:-]{1,253}$/;

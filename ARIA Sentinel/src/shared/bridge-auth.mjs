@@ -57,6 +57,36 @@ export function sanitizeRunRecipeBody(body = {}) {
   return out; // dryRun / confirmed / mode / approved / approvalId deliberately dropped
 }
 
+// 2026-10-14 — the advise-first escalations ("advise three times, then act"), CONTENT-BLIND: catalog recipe ids, status
+// words, counters and ISO times only — no titles, no notice copy, no log text, no contact. Every field FAILS CLOSED to
+// null when it is not the expected shape. This is what an operator's on-device fault-lab run polls (scripts/fault-lab-run.mjs).
+const ADVISORY_ID_RE = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,95}$/;
+const ADVISORY_WORD_RE = /^[a-z][a-z0-9-]{0,39}$/;
+export function advisoryPublicSlice(state = {}) {
+  const s = state && typeof state === "object" ? state : {};
+  const id = (v) => (typeof v === "string" && ADVISORY_ID_RE.test(v) ? v : null);
+  const word = (v) => (typeof v === "string" && ADVISORY_WORD_RE.test(v) ? v : null);
+  const iso = (v) => { const t = typeof v === "string" ? Date.parse(v) : NaN; return Number.isFinite(t) ? new Date(t).toISOString() : null; };
+  const int = (v) => (Number.isInteger(v) && v >= 0 && v <= 999 ? v : null);
+  const obj = (v) => (v && typeof v === "object" ? v : {});
+  const active = (Array.isArray(s.advisories) ? s.advisories : []).slice(0, 20).map(obj).map((a) => ({
+    id: id(a.id), recipeId: id(a.recipeId), track: word(a.track), kind: word(a.kind), status: word(a.status),
+    advisory: int(a.advisory), of: int(a.of), nextAt: iso(a.nextAt), frozen: Boolean(a.frozen)
+  }));
+  const outcomes = (Array.isArray(s.advisoryOutcomes) ? s.advisoryOutcomes : []).slice(0, 20).map(obj).map((o) => ({
+    id: id(o.id), recipeId: id(o.recipeId), track: word(o.track), status: word(o.status), outcome: word(o.outcome),
+    advisories: int(o.advisories), of: int(o.of), choice: word(o.choice), closedAt: iso(o.closedAt)
+  }));
+  const auditTags = { advisory: 0, autoFix: 0, escalate: 0 };
+  for (const e of Array.isArray(s.transparencyLog) ? s.transparencyLog : []) {
+    const tag = e && typeof e === "object" ? e.tag : "";
+    if (tag === "ADVISORY") auditTags.advisory++;
+    else if (tag === "AUTO-FIX") auditTags.autoFix++;
+    else if (tag === "ESCALATE") auditTags.escalate++;
+  }
+  return { active, outcomes, auditTags };
+}
+
 /**
  * The public, content-blind slice of getState() served at GET /state. Keeps operational facts + counts;
  * drops the transparency log, license key/email, contacts/prefs, approvals detail, restore points, detections.
@@ -88,6 +118,7 @@ export function scrubPublicState(state = {}) {
     },
     externalAiCalls: Boolean(s.externalAiCalls),
     auditIntegrity: s.auditIntegrity ? { ok: s.auditIntegrity.ok !== false } : null,
+    advisory: advisoryPublicSlice(s),
     contentBlind: true
   };
 }
