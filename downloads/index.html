@@ -126,7 +126,7 @@
   </div>
 </section>
 
-<section class="cards">
+<section class="cards" id="tiers">
   <article class="card">
     <h3>Personal</h3>
     <div class="price">$899<small>/mo</small></div>
@@ -176,7 +176,8 @@
                         own (advisory-escalation.mjs advisoryCopy / ruleSentence); nothing runs on the visitor's PC.
      #sentinel-savings  savings estimate from the visitor's inputs (inline script below; prices from #sentinel-plan-prices,
                         copied from ARIA Sentinel/src/shared/pricing-tiers.mjs).
-     -->
+     #get-sentinel      the purchase path; reads ./sentinel-release.json — windows:null keeps the emailed pilot build copy.
+     Guarded by tests/sentinel-downloads-page.test.mjs. -->
 <section class="sim" id="sentinel-sim" aria-labelledby="sim-title">
   <div class="sim-shell">
     <p class="sim-kicker">See it work</p>
@@ -241,6 +242,37 @@
   </div>
 </section>
 <script type="application/json" id="sentinel-plan-prices">{"source":"ARIA Sentinel/src/shared/pricing-tiers.mjs","currency":"USD","plans":[{"plan":"personal","label":"Personal","priceMonthly":899,"priceMonthlyDisplay":"$899","billedAnnually":false,"priceYearly":null,"seats":"1 user · 1 device","maxDevices":1},{"plan":"pro","label":"Pro","priceMonthly":2250,"priceMonthlyDisplay":"$2,250","billedAnnually":false,"priceYearly":null,"seats":"Small team","maxDevices":null},{"plan":"smb","label":"Small Business","priceMonthly":19500,"priceMonthlyDisplay":"$19,500","billedAnnually":true,"priceYearly":234000,"seats":"Small business fleet","maxDevices":null},{"plan":"midsize","label":"Mid Size","priceMonthly":39000,"priceMonthlyDisplay":"$39,000","billedAnnually":true,"priceYearly":468000,"seats":"Mid-size org fleet","maxDevices":null},{"plan":"enterprise","label":"Enterprise","priceMonthly":78125,"priceMonthlyDisplay":"$78,125","billedAnnually":true,"priceYearly":937500,"seats":"Enterprise fleet","maxDevices":null}]}</script>
+
+<section class="rel" id="get-sentinel" aria-labelledby="rel-title" data-release="pilot">
+  <div class="rel-shell">
+    <p class="sim-kicker">Get it</p>
+    <h2 class="sim-h2" id="rel-title">Get ARIA Sentinel</h2>
+    <div class="rel-grid">
+      <div>
+        <p class="rel-version">Current version <b id="rel-version">0.2.1</b> &middot; Windows</p>
+        <div class="rel-state" id="rel-pilot">
+          <p><b>Windows pilot build.</b> The installer and your license key are emailed after checkout &mdash; see &ldquo;How delivery works right now&rdquo; above.</p>
+        </div>
+        <div class="rel-state" id="rel-download" hidden>
+          <p><a class="rel-btn" id="rel-dl" href="#get-sentinel" rel="noopener">Download for Windows</a></p>
+          <dl class="rel-meta">
+            <dt>Version</dt><dd id="rel-dl-version"></dd>
+            <dt>Size</dt><dd id="rel-size"></dd>
+            <dt>Published</dt><dd id="rel-date"></dd>
+            <dt>SHA-256</dt><dd><code class="rel-sha" id="rel-sha" tabindex="0"></code></dd>
+          </dl>
+          <p class="rel-warn" id="rel-unsigned" hidden>This build is not yet code-signed, so Windows SmartScreen shows &ldquo;Windows protected your PC&rdquo; on first run &mdash; choose <em>More info &rarr; Run anyway</em>.</p>
+          <p>Check the file before you run it: in PowerShell, <code>Get-FileHash .\ARIA-Sentinel-Setup.exe -Algorithm SHA256</code> (use the file's own name) must print the SHA-256 above.</p>
+        </div>
+      </div>
+      <div class="rel-links">
+        <a class="rel-link" href="#tiers"><span>Subscribe<small>Pick a tier above &mdash; its SUBSCRIBE button starts checkout</small></span><span aria-hidden="true">&uarr;</span></a>
+        <a class="rel-link" href="/plans/"><span>View plans<small>Every tier, side by side</small></span><span aria-hidden="true">&rarr;</span></a>
+        <a class="rel-link" href="/services.html"><span>Managed services<small>Prefer people to software? Our managed IT services</small></span><span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section class="features">
   <p class="features-tag">WHAT THIS UNLOCKS FOR YOU</p>
@@ -361,7 +393,7 @@
 </script>
 
 <script>
-/* 2026-10-14 — #sentinel-savings: an estimate from the visitor's inputs, worked out here, no network. */
+/* 2026-10-14 — #sentinel-savings (estimate from the visitor's inputs, no network) and #get-sentinel (release file). */
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
@@ -425,6 +457,45 @@
     update();
   }
 
+  // ---- Get ARIA Sentinel: ./sentinel-release.json ----
+  // Contract: { version, windows: null | { url, sha256, sizeBytes, signed, publishedAt }, updatedAt }. windows:null, a
+  // malformed entry or a failed fetch leave the emailed pilot-build copy exactly as it is.
+  var box = $('get-sentinel');
+  if (!box || typeof fetch !== 'function') return;
+  // Relative to this page's folder. Built from the path, not './' alone: /downloads (no slash) is served by a rewrite,
+  // where './' would point at the site root.
+  var dir = location.pathname.replace(/\/index\.html$/, '/');
+  if (dir.slice(-1) !== '/') dir += '/';
+  var releaseUrl = new URL('./sentinel-release.json', location.origin + dir).href;
+  function safeUrl(u) {
+    u = String(u || '');
+    if (/^https:\/\/[^\s"'<>]+$/i.test(u)) return u;
+    if (/^\/(?!\/)[^\s"'<>]*$/.test(u)) return u;
+    return '';
+  }
+  fetch(releaseUrl, { cache: 'no-store', credentials: 'omit' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (rel) {
+      if (!rel || typeof rel !== 'object') return;
+      var version = /^\d+\.\d+\.\d+([.-][0-9A-Za-z.-]+)?$/.test(String(rel.version || '')) ? String(rel.version) : '';
+      if (version) $('rel-version').textContent = version;
+      var w = rel.windows;
+      if (!w || typeof w !== 'object') return;
+      var url = safeUrl(w.url), sha = String(w.sha256 || '').toLowerCase(), size = Number(w.sizeBytes);
+      if (!url || !/^[0-9a-f]{64}$/.test(sha) || !(size > 0) || !isFinite(size)) return;
+      $('rel-dl').setAttribute('href', url);
+      $('rel-dl').textContent = 'Download ARIA Sentinel ' + (version || '') + ' for Windows';
+      $('rel-dl-version').textContent = version || '—';
+      $('rel-size').textContent = (size / 1048576).toFixed(1) + ' MB (' + size.toLocaleString('en-US') + ' bytes)';
+      var when = Date.parse(w.publishedAt);
+      $('rel-date').textContent = isFinite(when) ? new Date(when).toISOString().slice(0, 10) : '—';
+      $('rel-sha').textContent = sha;
+      $('rel-unsigned').hidden = w.signed === true;
+      $('rel-download').hidden = false;
+      $('rel-pilot').hidden = true;
+      box.setAttribute('data-release', 'available');
+    })
+    .catch(function () { /* the pilot-build copy stays */ });
 })();
 </script>
 <script src="/assets/sentinel-sim.js?v=20261014a" defer></script>

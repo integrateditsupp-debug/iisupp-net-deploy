@@ -10,14 +10,14 @@
  "evidenceCaveat": "Every standaloneExit here was read by running `node <file>` on the build machine's working tree, which is dirty and is not the shared line. That is why NOTHING is registered this cycle on the strength of it: a pass read here is evidence a guard is alive, not proof it is green on a clean extract.",
  "runBxReading": "RUN-BX (2026-10-09) read all 70 on a clean extract of cc/run-cv-2026-10-09 @ 8d02679 (Linux): every one exits 0 standalone from the registry's cwd with the runner's scratch env, and the site runner reads 142/142. The reading a standalone run cannot take is whether `await import()` into the one-process desktop registry lets the runner finish; each file was probed that way. 53 could join honestly and are registered in ARIA Sentinel/tests/run-all.mjs under the RUN-BX block (registry after: 461 of 461 suites taken — all green · 1341 tests · 1284 pass · 0 fail · 57 not taken, measured 2026-10-09 on this extract); their entries leave this ledger because a registered file's entry is stale by the gate's own rule. 17 stay, each now `exempt` with the measured reason: 14 end in an unconditional process.exit that kills the importer with exit 0 and no census (a one-line fix each, outside this cycle's remit), one carries a Windows-only floor the module's positive cache cannot meet, one would deadlock the emit script on feed freshness, and one binds a scratch vault into a module-level constant with a write path. Each of the 17 is still counted by the site runner; none is invisible. The prior build-machine readings are kept under evidence.buildMachineReading.",
  "counts": {
-  "entries": 18,
-  "passedStandalone": 18,
+  "entries": 19,
+  "passedStandalone": 19,
   "didNotPassStandalone": 0,
   "exempt": 18,
-  "registerPending": 0,
+  "registerPending": 1,
   "dead": 0,
   "registeredByRunBx": 53,
-  "total": 18
+  "total": 19
  },
  "entries": [
   {
@@ -407,6 +407,19 @@
     "readAt": "2026-10-14T13:30:58.000Z",
     "inProcessImport": "would kill the importer: unconditional process.exit at line 122",
     "siteRunner": "guard 8/8 (node scripts/run-tests.mjs) on this extract"
+   }
+  },
+  {
+   "file": "tests/sentinel-downloads-page.test.mjs",
+   "verdict": "register-pending",
+   "reason": "Read and run standalone by the site sweep that wrote it (2026-10-14): exit 0, every assertion passing; it is a pure node:assert script (no process.exit, throws on failure), so the registry can import it in-process like tests/sentinel-sell-pages.test.mjs. It already runs in the root guard set (scripts/run-tests.mjs GUARD). Its registration in ARIA Sentinel/tests/run-all.mjs belongs to the ARIA Sentinel lane, which the site sweep may not edit; this entry is removed in the same change that registers it there.",
+   "openedAt": "2026-10-14T23:21:56Z",
+   "decidedBy": "SITE SWEEP 2026-10-14 (cc/sentinel-prod-2026-10-14)",
+   "evidence": {
+    "standaloneExit": 0,
+    "readOn": "worktree cc/sentinel-prod-2026-10-14 (Linux, node v22.22.0)",
+    "readAt": "2026-10-14T23:21:56Z",
+    "standaloneOutput": "sentinel-downloads-page passed (184 checks: banner verbatim · 3 scenarios == advisoryCopy for every notice · legend == ruleSentence() · recipes/ROI/prices == ap"
    }
   }
  ],

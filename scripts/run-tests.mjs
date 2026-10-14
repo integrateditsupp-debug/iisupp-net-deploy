@@ -44,6 +44,9 @@ const ENV = { ...process.env, TMPDIR: SCRATCH, TEMP: SCRATCH, TMP: SCRATCH, AXIS
 // SENTINEL-BACKEND 2026-10-14: the six Sentinel server suites join the guard set. They run the DEPLOYED
 // netlify/functions/sentinel-* and aria-sentinel-* handlers against in-memory Blobs with fetch stubbed
 // (no network, no node_modules, <1 s each) — the audit found the deployed handlers had never been tested.
+// SITE SWEEP 2026-10-14: the /downloads/ sell page joins the guard set. Its simulation quotes the app's own notice
+// copy (advisoryCopy / ruleSentence), its savings estimate quotes roi.mjs + pricing-tiers.mjs and its release block
+// reads downloads/sentinel-release.json — the suite fails the moment any of those drifts from the app (<1 s).
 const GUARD = [
   'tests/axis-one.test.mjs',
   'tests/axis-situation.test.mjs',
@@ -59,6 +62,7 @@ const GUARD = [
   'tests/sentinel-stripe-webhook.test.mjs',
   'tests/sentinel-fleet-endpoints.test.mjs',
   'tests/sentinel-notify-binding-and-contracts.test.mjs',
+  'tests/sentinel-downloads-page.test.mjs',
 ];
 
 const files = all
