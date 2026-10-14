@@ -39,7 +39,11 @@ const ENV = { ...process.env, TMPDIR: SCRATCH, TEMP: SCRATCH, TMP: SCRATCH, AXIS
 // because they guard the shell too: whether AXIS can hear a wake word the browser actually returns,
 // whether a dead brain says what is wrong instead of "try again in a sec", and whether the
 // priorities panel ever invents a due date.
+// AXIS ONE (2026-10-13) joins the guard set for the same reason: it is the suite that fails the moment
+// the page grows a second console, a second globe, or a voice path that bypasses the director brain.
 const GUARD = [
+  'tests/axis-one.test.mjs',
+  'tests/axis-situation.test.mjs',
   'tests/axis-module-graph.test.mjs',
   'tests/axis-overview-panels.test.mjs',
   'tests/axis-voice-hearing.test.mjs',

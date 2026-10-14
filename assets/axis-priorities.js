@@ -39,7 +39,9 @@ export function dueLabel(dueAt, now = new Date()) {
 
 // Rank: overdue first, then soonest. Undated work sorts last — it is real work, but it cannot
 // out-rank something with an actual deadline.
-const rank = (it) => (it.dueAt ? daysUntil(it.dueAt) : 9999);
+// Undated CEO-ledger rows sit first among the undated (his list over the agents'); a row the ledger
+// itself stamps OVERDUE with no parseable date ranks with the overdue.
+const rank = (it) => (it.dueAt ? daysUntil(it.dueAt) : it.overdue ? -1 : it.ceo ? 9998 : 9999);
 
 // Flatten the snapshot into one list. `dueAt: null` is meaningful and preserved, never defaulted.
 export function collectPriorities(snap, now = new Date()) {
@@ -70,6 +72,16 @@ export function collectPriorities(snap, now = new Date()) {
     if ((d.status || '').toLowerCase() === 'draft')
       items.push({ title: d.title || d.type || 'Document', source: 'Document', dueAt: d.due_at || null,
         detail: 'draft — not sent', screen: 'documents' });
+
+  // RUN-AX2 (2026-10-13): Ahmad's own CEO-CRITICAL ledger, read off his machine by the worker and
+  // shipped inside overview.ceo_critical. His list outranks everything the agents raised, so the
+  // rows ride into the Talk rail, the Priorities screen and the board block the brains read. Open
+  // rows only; Watch rows are not yet critical by the ledger's own rule and stay on the Overview.
+  for (const r of mod('overview').ceo_critical || [])
+    if (r && r.section === 'open' && !r.closed && !r.cleared)
+      items.push({ title: `${r.ref ? r.ref + ' ' : ''}${r.what || ''}`.trim(), source: 'CEO ledger', dueAt: r.deadline || null,
+        detail: (r.one_click ? 'one-click: ' + r.one_click : (r.who || 'your call')) + (r.overdue && !r.deadline ? ' · OVERDUE' : ''),
+        screen: 'overview', ceo: true, overdue: !!r.overdue });
 
   return items.sort((a, b) => rank(a) - rank(b));
 }

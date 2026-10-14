@@ -652,3 +652,200 @@ a { color:var(--gold); text-decoration:none; }
   .axis-holo { animation:none; }
   .axis-holo-scan::after { animation:none; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   AXIS ONE — 2026-10-13. Ahmad: "I want the globe to be linked to the new voice and
+   functions and features that I cannot see … now there is two … merge the new voice
+   and method and old useful knowledge into one functional autonomous agentic center."
+   One globe (the orbit), one console (the dock, now tabbed), one voice pipeline.
+   Everything below is additive; every id and class the guards know is unchanged.
+   ══════════════════════════════════════════════════════════════════════════════ */
+/* The orbit globe at the size the live page already shows (axis-unify.js used to force 220px). */
+.axis-orbit .axis-globe { width:220px; height:220px; }
+@media (max-width:720px) { .axis-orbit .axis-globe { width:154px; height:154px; } }
+
+/* Console width: the workspace tab carries documents, so the rail is wider than the chat-only dock. */
+.axis-dock { width:min(480px,calc(100vw - 36px)); }
+:root[data-axis-open="1"][data-axis-dock="open"] .content,
+:root[data-axis-open="1"][data-axis-dock="open"] .axis-head { padding-right:calc(min(480px,calc(100vw - 36px)) + 30px); }
+
+/* Tab strip — mono eyebrows, gold hairline under the live one, scrolls sideways on a phone. */
+.axis-tabs { display:flex; gap:2px; padding:6px 10px 0; border-bottom:1px solid color-mix(in srgb, var(--gold) 12%, var(--line));
+  overflow-x:auto; scrollbar-width:none; flex:none; }
+.axis-tabs::-webkit-scrollbar { display:none; }
+.axis-tab { flex:none; background:none; border:0; border-bottom:1px solid transparent; color:var(--txt-3);
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; padding:7px 9px 8px; cursor:pointer;
+  transition:color .15s, border-color .15s; }
+.axis-tab:hover { color:var(--txt); }
+.axis-tab[aria-selected="true"] { color:var(--gold-2); border-bottom-color:var(--gold); text-shadow:0 0 12px color-mix(in srgb, var(--gold) 40%, transparent); }
+.axis-tab .badge { margin-left:5px; }
+
+/* Tab panel — same scroll region the transcript uses; only one of the two is shown at a time. */
+.axis-panel { flex:1; overflow-y:auto; padding:14px; min-height:120px; }
+:root[data-axis-tab]:not([data-axis-tab="talk"]) .axis-log,
+:root[data-axis-tab]:not([data-axis-tab="talk"]) .axis-pri { display:none; }
+
+/* Live-call controls: a lit chip while the call is up, in the orbit bar and in the console foot. */
+.axis-live[aria-pressed="true"] { background:var(--gold); color:var(--gold-ink); box-shadow:0 0 14px color-mix(in srgb, var(--gold) 55%, transparent); }
+.axis-bar .axis-live[aria-pressed="true"] { background:var(--gold); }
+.axis-foot .axis-live { margin-left:auto; }
+
+/* The command-center title under the XO elite theme (5221e01a): that theme sets every h1 to
+   clamp(2.4rem,5.5vw,4.6rem) !important for the public pages. Here the title lives in a three-column
+   top bar and at that size runs over the tick, health and sign-out controls. Keep the serif gold
+   treatment the theme gives it, at a size that fits its own column — and let it elide, never overflow. */
+.topbar .cc-title { font-size:clamp(14px, 1.8vw, 26px) !important; line-height:1.1; min-width:0; overflow:hidden;
+  white-space:nowrap; text-overflow:ellipsis; text-align:center; letter-spacing:.12em; }
+@media (max-width:760px) { .topbar .cc-title { font-size:13px !important; letter-spacing:.08em; } }
+/* The XO elite theme also pads every <section> by clamp(3rem,7vw,6rem) for the public pages' rhythm. The
+   console (#axisDock) and the public ask panel are sections too, so each grew ~96px of dead space top
+   and bottom. Scoped out here; the public pages keep the theme's rhythm untouched. */
+.app section, .login section.axis-public { padding-top:0; padding-bottom:0; }
+section.axis-dock { padding-top:0; padding-bottom:0; }
+/* …but a section that is also a card keeps the card's own padding (the Director screen builds some). */
+.app section.card { padding:14px; }
+/* Ten tabs do not fit one 480px row; on desktop they wrap into two tidy rows instead of clipping. */
+@media (min-width:721px) { .axis-tabs { flex-wrap:wrap; row-gap:0; } }
+/* On a phone the console floats over the app (glass), so neither the content nor the head band yields width. */
+@media (max-width:980px) {
+  :root[data-axis-open="1"][data-axis-dock="open"] .content,
+  :root[data-axis-open="1"][data-axis-dock="open"] .axis-head { padding-right:16px; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   AXIS PRO LOOK — 2026-10-13. Ahmad: "give IIS command center a new professional
+   look. Easy to understand, simple and all information there. all functional, do
+   not lose any functions and features or data. just give it a better look with
+   simple options to perform all the work on the site."
+   A SKIN. Same DOM, same ids, same data, same screens (Rule 15). What changes:
+   type (labels in Inter, sentence-case subtitles, mono kept for data), a cockpit
+   head band (globe left, controls right — the board starts higher), calmer cards,
+   a clearer nav, and a visible Actions menu (the ⌘K palette, now listing every
+   job on the site by name).
+   ══════════════════════════════════════════════════════════════════════════════ */
+body { font-size:13.5px; line-height:1.5; }
+
+/* Labels: small caps in the UI face, not the code face. Data stays mono (.mono, .tick, values). */
+.eyebrow, .kpi .label, .nav-group, .stage-tag, .footnote, .axis-brain, .kpi .delta, .chip .count, .badge,
+.axis-tab, .axis-hero-name, .axis-hero-name .axis-state-word, .axis-fab-pill, .axis-pri-d, .cc-title, .nav-glyph,
+.axis-public .eyebrow, .toast {
+  font-family:var(--sans); }
+.eyebrow { font-size:10.5px; letter-spacing:.08em; font-weight:600; color:var(--txt-3); }
+.screen-head { align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:16px; }
+.screen-title { font-size:17px; font-weight:650; letter-spacing:-.01em; }
+.screen-head .eyebrow { text-transform:none; letter-spacing:0; font-size:12px; font-weight:500; color:var(--txt-2); }
+
+/* Sidebar */
+.sidebar { padding:14px 12px; gap:1px; }
+.brand { padding:8px 8px 16px; }
+.brand-text { font-size:15px; display:flex; flex-direction:column; line-height:1.1; }
+.brand-sub { font-size:10.5px; font-weight:500; color:var(--txt-3); letter-spacing:.02em; }
+.app[data-collapsed] .brand-sub { display:none; }
+.nav-group { font-size:10px; letter-spacing:.1em; font-weight:600; padding:14px 10px 5px; }
+.nav-item { padding:8px 10px; border-radius:9px; gap:10px; }
+.nav-item[aria-current="true"] { box-shadow:inset 2px 0 0 var(--gold); border-radius:4px 9px 9px 4px; }
+.nav-glyph { width:24px; height:24px; font-size:9px; font-weight:650; border-radius:6px; background:var(--surface-2); }
+.nav-item[aria-current="true"] .nav-glyph { border-color:color-mix(in srgb, var(--gold) 45%, transparent); background:var(--gold-dim); }
+.nav-label { font-size:13px; }
+
+/* Top bar */
+.topbar { padding:10px 20px; gap:14px; }
+.topbar .search { border-radius:10px; padding:8px 12px; font-size:12.5px; }
+.topbar-right { gap:10px; }
+.tick { font-size:10.5px; }
+.iconbtn { border-radius:9px; padding:7px 10px; }
+.actions-btn { border-color:color-mix(in srgb, var(--gold) 55%, transparent); color:var(--gold); font-weight:600; font-size:12.5px;
+  padding:7px 13px; background:var(--gold-dim); }
+.actions-btn:hover { border-color:var(--gold); color:var(--gold-2); background:color-mix(in srgb, var(--gold) 18%, transparent); }
+
+/* Action menu (the palette) */
+.palette-box { border-radius:16px; width:min(620px,94vw); box-shadow:0 40px 90px -40px #000; }
+.palette-box input { font-size:15.5px; padding:16px 18px; }
+.palette-item { padding:10px 18px; justify-content:space-between; gap:14px; }
+.palette-label { font-weight:550; }
+.palette-hint { color:var(--txt-3); font-size:12px; text-align:right; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.palette-item[aria-selected="true"] .palette-hint { color:color-mix(in srgb, var(--gold) 70%, var(--txt-2)); }
+
+/* The cockpit: globe on the left, AXIS line + ask bar + quick chips on the right. The board starts
+   ~200px higher than the stacked layout and nothing is removed — same elements, new arrangement. */
+.axis-head { padding:14px 22px 10px; align-items:stretch; gap:0; }
+.axis-orbit { display:grid; grid-template-columns:auto minmax(0,1fr); grid-template-areas:"globe status" "globe bar" "globe chips";
+  column-gap:24px; row-gap:9px; align-items:center; justify-items:start; width:100%; max-width:1120px; margin:0 auto; }
+.axis-orbit .axis-globe { grid-area:globe; width:150px; height:150px; align-self:center; }
+.axis-orb-status { grid-area:status; text-align:left; font-size:14px; color:var(--txt); font-weight:500; }
+.axis-orbit .axis-bar { grid-area:bar; width:min(680px,100%); }
+.axis-bar input { flex:1; width:auto; min-width:0; font-size:13px; }
+.axis-orb-chips { grid-area:chips; justify-content:flex-start; }
+.axis-bar .chip, .axis-orb-chips .chip { font-size:12.5px; }
+:root[data-axis-open="1"] .axis-orbit .axis-globe { width:110px; height:110px; }
+/* Grant Radar, Director and the other screens inherit the same band — one head, every screen. */
+
+/* Cards, KPIs, rows */
+.card { border-radius:14px; padding:16px; box-shadow:inset 0 1px 0 rgba(255,255,255,.03); }
+.kpi { border-radius:14px; padding:16px 18px; }
+.kpi .label { font-size:10.5px; letter-spacing:.08em; font-weight:600; }
+.kpi .value { font-size:26px; letter-spacing:-.01em; margin-top:8px; }
+.kpi .delta { font-size:11px; margin-top:4px; }
+.row { padding:12px 16px; }
+.row:nth-child(even) { background:color-mix(in srgb, var(--surface-2) 45%, transparent); }
+.row:hover { background:var(--surface-2); }
+.chip { padding:6px 13px; font-size:12.5px; }
+.stage-tag { font-size:10px; letter-spacing:.04em; font-weight:600; border-radius:6px; padding:2px 7px; }
+.footnote { font-size:10.5px; padding:3px 10px; }
+.badge { font-size:10px; font-weight:650; }
+.empty { font-size:13px; }
+
+/* Console */
+.axis-dock-head { padding:16px 16px 14px; }
+.axis-hero-name { font-size:13px; letter-spacing:.22em; }
+.axis-hero-name .axis-state-word { font-size:10px; letter-spacing:.08em; }
+.axis-tab { font-size:10.5px; letter-spacing:.08em; font-weight:600; padding:8px 10px 9px; }
+.axis-brain { font-size:10.5px; letter-spacing:.06em; font-weight:600; }
+.axis-msg { font-size:13px; }
+.axis-input input { font-size:13px; }
+
+/* Phone: the cockpit stacks again, centred, like the original orbit. */
+@media (max-width:720px) {
+  /* minmax(0,1fr): the ask bar's min-content (the input's intrinsic width) must not widen the track past the phone. */
+  .axis-orbit { grid-template-columns:minmax(0,1fr); grid-template-areas:"globe" "status" "bar" "chips"; justify-items:center; row-gap:8px; }
+  .axis-orbit .axis-bar { width:100%; max-width:100%; }
+  .axis-orbit .axis-globe { width:120px; height:120px; }
+  .axis-orb-status { text-align:center; font-size:13px; }
+  .axis-orb-chips { justify-content:center; }
+  .actions-btn { padding:7px 10px; }
+}
+
+/* ── Theme firewall (AXIS PRO LOOK) ───────────────────────────────────────────
+   xo-elite-theme.css (batch 5221e01a) is a dark-only overlay for the public pages: it forces the body
+   background with !important, paints inputs #0b0d12, and sets b/strong/label to its own ivory. On the
+   command center that broke the ◐ light theme since 2026-10-09 (black pane, white-on-white numbers).
+   Only the two command-center shells load this file, so this scope touches nothing public. The tokens
+   stay the single source of colour in BOTH themes. */
+html[data-theme] body { background:var(--bg) !important; color:var(--txt); font-family:var(--sans); line-height:1.5; }
+.app b, .app strong, .app label, .login b, .login strong, .login label { color:inherit; }
+.app input, .app select, .app textarea, .login input, .login select, .login textarea {
+  background:var(--surface-2); color:var(--txt); border-color:var(--line); }
+.app a, .login a { color:var(--gold); }
+.app code { background:var(--gold-dim) !important; color:var(--gold-2) !important; }
+/* Light theme polish: the gold-on-light gradient title reads better as the solid dark-gold token. */
+:root[data-theme="light"] .topbar .cc-title { background:none; -webkit-text-fill-color:var(--gold-2); color:var(--gold-2) !important; }
+:root[data-theme="light"] .axis-bar { background:color-mix(in srgb, var(--surface) 80%, transparent); }
+:root[data-theme="light"] .card, :root[data-theme="light"] .kpi { box-shadow:0 1px 2px rgba(22,18,8,.04); }
+.app .axis-bar input { background:transparent; border:0; }
+.axis-head { padding-top:20px; }
+
+/* ── RUN-AX2 (2026-10-13): "Today — needs you" rows. The text column owns the width; the controls sit
+   right on desktop and drop to their own line on a phone, so a long ledger row never squeezes to one
+   word per line and a one-click note never overlaps the title. ── */
+.sit-row { align-items:flex-start; }
+.sit-row .sit-n { font-size:11px; color:var(--txt-3); min-width:18px; padding-top:2px; }
+.sit-row .sit-main { flex:1 1 240px; min-width:0; }
+.sit-row .sit-badge { font-size:10px; margin-left:8px; font-weight:700; letter-spacing:.04em; }
+.sit-row .sit-why { color:var(--txt-3); font-size:12px; margin-top:2px; }
+.sit-row .sit-oneclick { font-size:11px; color:var(--txt-3); margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sit-row .sit-acts { display:flex; gap:6px; align-items:center; flex-wrap:wrap; justify-content:flex-end; margin-left:auto; }
+@media (max-width:720px) {
+  .sit-row { flex-wrap:wrap; }
+  .sit-row .sit-main { flex-basis:100%; }
+  .sit-row .sit-acts { width:100%; justify-content:flex-start; margin-left:0; padding-left:0; }
+}

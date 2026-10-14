@@ -15,6 +15,8 @@ import { renderDirector } from './axis-director-screen.js';
 import { renderPriorities, collectPriorities, dueLabel, localAnswer, resolveRemovalTargets, unsupportedBoardCommand } from './axis-priorities.js';
 import { mountGlobes } from './axis-globe.js';
 import { toggleHologram } from './axis-hologram.js';
+// AXIS ONE (2026-10-13): Grant Radar — non-repayable grants as a native screen with one-click Apply.
+import { renderGrants } from './axis-grants.js';
 // AXIS persona + turn grammar (the JARVIS flow). Additive: the voice machinery below is unchanged;
 // this only decides who AXIS sounds like and how a spoken turn is shaped.
 import { axisPersonaBonus, AXIS_PROSODY, VOICE_POLICY_REV, ackLine, greetLine, routeTail,
@@ -26,7 +28,7 @@ import { axisPersonaBonus, AXIS_PROSODY, VOICE_POLICY_REV, ackLine, greetLine, r
 const TOKEN_KEY = 'aperture_jwt';
 
 const ACTIONABLE = ['reply_to_outreach', 'new_inbound_request'];
-const state = { token: localStorage.getItem(TOKEN_KEY) || '', snap: {}, version: null, module: 'overview', programStatus: null,
+const state = { token: localStorage.getItem(TOKEN_KEY) || '', snap: {}, version: null, module: 'overview', programStatus: null, situation: null, situationErr: null,
   ui: { inboxFilter: 'all', thread: null, apTab: 'pending', apOpen: null, apSel: new Set(), apCursor: 0, crmTab: 'contact', crmFilter: '', crmDrawer: null,
     prospect: null, prospectFilter: '', realOnly: false, pipeView: 'kanban', fuView: 'due_today', doc: null, anTab: 'research' } };
 const authHeaders = (extra = {}) => ({ Authorization: 'Bearer ' + state.token, ...extra });
@@ -49,6 +51,9 @@ const NAV = [
     { id: 'priorities', label: 'Priorities', glyph: 'PY' },
     { id: 'documents', label: 'Documents', glyph: 'DO' }, { id: 'analytics', label: 'Analytics', glyph: 'AN' },
     { id: 'products', label: 'Product Discovery', glyph: 'PD' },
+  ] },
+  { group: 'Growth', items: [
+    { id: 'grants', label: 'Grant Radar', glyph: 'GR' },
   ] },
   { group: 'System', items: [
     { id: 'fleet', label: 'Fleet', glyph: 'FL' }, { id: 'axis-agent-director', label: 'AXIS Agent Director', glyph: 'AX' },
@@ -89,6 +94,11 @@ function syncDockVisibility() {
   const dock = $('axisDock'), fab = $('axisFab');
   if (!dock || !fab) return;
   if (onDirector) {
+    // AXIS ONE: the console's work tabs (Work · To-do · Automate · …) exist nowhere else, so an
+    // explicitly opened non-Talk tab stays docked beside the Director screen. The console DOCKS
+    // (the content pane yields its width), so it no longer covers the Director's composer.
+    const tab = document.documentElement.dataset.axisTab;
+    if (tab && tab !== 'talk' && document.documentElement.dataset.axisOpen === '1' && !dock.hidden) { fab.hidden = true; return; }
     if (!dockHiddenForDirector) { dockHiddenForDirector = !dock.hidden; dock.hidden = true; }
     fab.hidden = true;
   } else if (dockHiddenForDirector) {
@@ -780,6 +790,96 @@ function globalSection() {
   return wrap;
 }
 
+// ── RUN-AX2 (2026-10-13): "Today — needs you" ────────────────────────────────────────────────
+// Ahmad: "if there is anything in the company that needs my attention AXIS would be aware of it,
+// bring it up in front of me." This card IS what AXIS is aware of: the ranked list from
+// /api/axis/situation — the very block injected into every brain call — so what he sees and what
+// AXIS says can never disagree. Each row carries the way to act on it: open the screen, open the
+// console tab, or the one-click his ledger names. "Work it" hands the row to AXIS as a turn.
+const SIT_TONE = { over: 'var(--crit)', today: 'var(--gold)', soon: 'var(--txt-2)', none: 'var(--txt-3)' };
+function sitBadge(it) {
+  const l = it.dueLabel || '';
+  if (/OVERDUE/.test(l)) return ['OVERDUE', SIT_TONE.over];
+  if (/today/.test(l)) return ['TODAY', SIT_TONE.today];
+  if (/tomorrow/.test(l)) return ['TOMORROW', SIT_TONE.today];
+  if (/in (\d+)d/.test(l)) return [l.replace('due in ', '') , SIT_TONE.soon];
+  return ['', SIT_TONE.none];
+}
+function sitAct(it) {
+  const a = it.action; if (!a) return null;
+  if (a.type === 'screen') return el('button', { class: 'chip', onclick: () => go(a.target) }, 'Open');
+  if (a.type === 'console') return el('button', { class: 'chip', onclick: () => axisOpenConsole(a.target) }, 'Open');
+  if (a.type === 'url') return el('a', { class: 'chip', href: a.target, target: '_blank', rel: 'noopener' }, 'Open');
+  return null; // a 'text' one-click renders under the title (sitOneClick), not as a control
+}
+function sitOneClick(it) {
+  const a = it.action; if (!a || a.type !== 'text') return null;
+  return el('div', { class: 'mono sit-oneclick', title: a.target }, 'one-click: ' + a.target);
+}
+function sitWorkIt(it) {
+  return el('button', { class: 'chip', title: 'Hand this row to AXIS', onclick: () => {
+    axisOpenConsole('talk');
+    const input = $('axisInput'); if (!input) return;
+    input.value = `Let's work on: ${it.title}`;
+    axisSend('axisInput');
+  } }, 'Work it');
+}
+function situationSection() {
+  const wrap = el('div');
+  const s = state.situation;
+  const sub = s ? `${s.counts.needsAhmad} ranked · ${s.counts.overdue} overdue · ${s.counts.today} today · ${s.local.weekday} ${s.local.date} ${s.local.time}` : (state.situationErr ? 'did not answer' : 'loading');
+  wrap.append(head('Today — needs you', sub, 'margin-top:22px'));
+  const card = el('div', { class: 'card', style: 'padding:0' });
+  if (!s) {
+    card.append(el('div', { class: 'empty' }, state.situationErr
+      ? `The situation did not answer (${state.situationErr}). The lists below still work; AXIS answers from them.`
+      : 'Reading the board, the ledger, the assistant store and the worker…'));
+    wrap.append(card); return wrap;
+  }
+  const rows = (s.needsAhmad || []).slice(0, 12);
+  if (!rows.length) card.append(el('div', { class: 'empty' }, 'Nothing on the board needs you right now. The sources line below says what is and is not connected.'));
+  rows.forEach((it, i) => {
+    const [badge, tone] = sitBadge(it);
+    card.append(el('div', { class: 'row sit-row' }, [
+      el('span', { class: 'mono sit-n' }, String(i + 1)),
+      el('span', { class: 'stage-tag' }, it.source),
+      el('div', { class: 'sit-main' }, [
+        el('div', { style: 'font-weight:600' }, [it.title, badge ? el('span', { class: 'mono sit-badge', style: `color:${tone}` }, badge) : null]),
+        it.why ? el('div', { class: 'sit-why' }, it.why) : null,
+        sitOneClick(it),
+      ]),
+      el('div', { class: 'sit-acts' }, [sitAct(it), sitWorkIt(it)]),
+    ]));
+  });
+  if ((s.counts.needsAhmad || 0) > rows.length) card.append(el('div', { class: 'row', style: 'color:var(--txt-3);font-size:12px' }, [`…and ${s.counts.needsAhmad - rows.length} more — `, el('button', { class: 'chip', onclick: () => go('priorities') }, 'All priorities')]));
+  wrap.append(card);
+
+  // What AXIS is carrying — the half he does not have to touch.
+  const can = s.axisCanDo || [];
+  if (can.length) {
+    const det = el('details', { class: 'card', style: 'margin-top:10px;padding:10px 14px' });
+    det.append(el('summary', { style: 'cursor:pointer;font-weight:600' }, `AXIS is handling ${can.length} ${can.length === 1 ? 'thing' : 'things'}`));
+    can.slice(0, 8).forEach((x) => det.append(el('div', { style: 'display:flex;gap:10px;padding:6px 0;border-top:1px solid var(--line)' }, [
+      el('span', { class: 'stage-tag' }, x.source), el('div', { style: 'flex:1;min-width:0' }, [el('div', {}, x.title), el('div', { style: 'color:var(--txt-3);font-size:12px' }, x.how)])])));
+    wrap.append(det);
+  }
+
+  // Sources — real-or-empty (Rule 14). Two are not connected on purpose until Ahmad's one click.
+  const src = s.sources || {};
+  const dot = (ok) => el('span', { class: 'dot ' + (ok ? 'dot-ok' : 'dot-warn'), style: ok ? '' : 'background:var(--crit)' });
+  const item = (ok, label) => el('span', { style: 'display:inline-flex;align-items:center;gap:6px;font-size:12px' }, [dot(ok), label]);
+  wrap.append(el('div', { class: 'card', style: 'margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;align-items:center;padding:10px 14px' }, [
+    item(src.board === 'live', `board ${src.board}`),
+    item(!!src.ceo_ledger, src.ceo_ledger ? 'CEO ledger' : 'CEO ledger — not pushed yet (worker tick)'),
+    item(!!src.exec, src.exec ? 'assistant store' : 'assistant store — unavailable'),
+    item(!!src.worker_online, `Claude worker ${src.worker_online ? 'online' : 'offline'}`),
+    item(!!src.calendar, src.calendar ? 'calendar' : 'calendar — not connected'),
+    item(!!src.mailboxes, src.mailboxes ? 'mailboxes' : 'mailboxes — not connected'),
+    (!src.calendar || !src.mailboxes) ? el('span', { class: 'mono', style: 'font-size:11px;color:var(--txt-3)' }, 'one-click: Google sign-in (scripts/gmail-auth.mjs → AXIS_GMAIL_* in Netlify)') : null,
+  ]));
+  return wrap;
+}
+
 SCREENS.overview = (c) => {
   const d = data('overview'); const k = d.kpis || {};
   // The director field is gone. Ahmad, 2026-08-12: "Remove the one above the globe" — its counts
@@ -790,6 +890,7 @@ SCREENS.overview = (c) => {
     ['Client messages waiting', k.messages_waiting ?? 0], ['Follow-ups due', k.followups_due ?? 0],
     ['Meetings this week', k.meetings_week ?? 0], ['MRR', fmtMoney(k.mrr)]];
   c.append(el('div', { class: 'kpi-grid' }, kpis.map(([l, v]) => el('div', { class: 'kpi' }, [el('div', { class: 'label' }, l), el('div', { class: 'value' }, v)]))));
+  c.append(situationSection());   // RUN-AX2: "Today — needs you" — the same ranked picture the brains read
   c.append(procurementSection()); // live bid/contract + whitelisting status (2026-08-05)
   c.append(globalSection());      // global bids, worldwide whitelisting + free-channel queue (2026-08-06)
   c.append(head('Needs You Now', 'top by revenue impact', 'margin-top:22px'));
@@ -1402,6 +1503,28 @@ SCREENS.reports = (c) => {
   c.append(el('div', { class: 'card', style: 'padding:0' }, (st.integrations || []).map(ig => el('div', { class: 'row' }, [
     el('span', { class: 'dot ' + dot(ig.status) }), el('div', { style: 'width:120px;font-weight:600' }, ig.name),
     el('div', { style: 'flex:1;color:var(--txt-3);font-size:12px' }, ig.detail), el('span', { class: 'stage-tag' }, ig.status)]))));
+  // AXIS ONE — the rails the code actually enforces (real-or-empty, Rule 14) and the voice pipeline.
+  c.append(head('AXIS rails & voice', 'what the console enforces in code · one globe, one voice, one console', 'margin-top:16px'));
+  const railRows = [
+    ['Approval-first', 'POST /api/axis/intent only queues; the worker executes behind rails — the page never sends, approves or pays.'],
+    ['$0 law', 'Executive-assistant brain capped by AXIS_MONTHLY_CAP_USD (default $60); anything with a cost becomes an approval. New spend needs Ahmad.'],
+    ['Outbound', 'Cold outreach is drafted for approval (CASL); first batch ≤5/day; never a blast.'],
+    ['Honesty', 'Every figure comes from the snapshot or the status feed; unknowns render "Not found — never guessed".'],
+    ['Exclusions', 'No Raymond James involvement. No money-back guarantee copy. No real names in the vault. "Private pics and Vids" is never touched.'],
+    ['Kill-switch', 'Say "AXIS stop" or press Ctrl+Alt+K — aborts speech, the mic, the live call and any unconfirmed route.'],
+  ];
+  c.append(el('div', { class: 'card', style: 'padding:0' }, railRows.map(([k, v]) => el('div', { class: 'row' }, [
+    el('div', { style: 'width:120px;font-weight:600' }, k), el('div', { style: 'flex:1;color:var(--txt-3);font-size:12px' }, v)]))));
+  const micMode = axisMicMode();
+  const voiceLine = axisVoiceStatus() ? 'Aria voice (XO bridge) → browser voice fallback' : 'Aria voice unreachable right now → browser voice';
+  c.append(el('div', { class: 'card', style: 'display:flex;gap:20px;flex-wrap:wrap;align-items:flex-end;margin-top:10px' }, [
+    settingBox('Spoken replies', voiceLine),
+    settingBox('Live call', window.AriaLiveCall ? 'Two-way Aria voice · spends Lovable AI credits per call' : 'engine not loaded'),
+    el('div', {}, [el('div', { class: 'eyebrow' }, 'Push-to-talk 🎙 does'),
+      el('div', { style: 'display:flex;gap:6px;margin-top:6px' }, [
+        el('button', { class: 'chip', 'aria-selected': micMode === 'turn', onclick: () => { axisMicMode('turn'); renderModule(); } }, 'One turn → director brain'),
+        el('button', { class: 'chip', 'aria-selected': micMode === 'live', onclick: () => { axisMicMode('live'); renderModule(); } }, 'Start the live call')])]),
+  ]));
   // Data & backups
   c.append(head('Data & backups', '', 'margin-top:16px'));
   c.append(el('div', { class: 'card' }, [el('div', { style: 'font-size:12px;color:var(--txt-2)' }, `System of record: ${st.data?.db || 'data/axis-sales.db'} (SQLite, local, gitignored). Last backup: ${st.data?.last_backup || '—'}.`)]));
@@ -1444,6 +1567,9 @@ SCREENS.products = (c) => {
     c.append(card);
   });
 };
+// ── Grant Radar (AXIS ONE, 2026-10-13) ──
+SCREENS.grants = (c) => renderGrants(c, { onIntent: (type, payload) => postIntent(type, payload) });
+
 function evidenceText(e) {
   if (!e) return '—';
   if (e.need_count != null) return `${e.need_count} of ${e.of_prospects} researched prospects need this${e.sample ? ' (e.g. ' + e.sample.slice(0, 2).join(', ') + ')' : ''}`;
@@ -1489,8 +1615,24 @@ async function fetchProgramStatus() {
     if (j && j.ok) { state.programStatus = j; if (state.module === 'axis-agent-director' && !overlayOpen()) renderModule(); }
   } catch {}
 }
+// RUN-AX2 (2026-10-13): the situation — the one ranked picture the brains read before they answer
+// (board + CEO ledger + assistant store + Claude worker + fleet, with the Toronto clock and an honest
+// list of what is NOT connected). Authed-only. A failure leaves state.situation as it was and records
+// why, so the Overview card says "did not answer" instead of showing an empty list as "all clear".
+async function fetchSituation() {
+  try {
+    const r = await fetch('/api/axis/situation', { headers: authHeaders(), cache: 'no-store' });
+    if (r.status === 401) return;
+    const j = await r.json().catch(() => null);
+    if (j && j.ok) { state.situation = j; state.situationErr = null; }
+    else state.situationErr = (j && j.reason) || ('HTTP ' + r.status);
+  } catch (e) { state.situationErr = e.message || 'network'; }
+  try { renderOrbStatus(); } catch {}
+  if (state.module === 'overview' && !overlayOpen()) renderModule();
+}
 async function fetchSnapshots() {
   fetchProgramStatus();
+  fetchSituation();
   const r = await fetch('/api/axis/snapshot?module=all', { headers: authHeaders(), cache: 'no-store' });
   if (r.status === 401) return logout();
   const j = await r.json();
@@ -2319,7 +2461,12 @@ function axisSpeak(text) {
       let url;
       try { url = await load(i); load(i + 1); }
       catch (e) {
-        if (i === 0 && gen === ariaGen) { ariaVoiceDown = Date.now() + 60000; ariaGen++; axisSpeakBrowser(text); return; }
+        if (i === 0 && gen === ariaGen) {
+          ariaVoiceDown = Date.now() + 60000; ariaGen++;
+          // Rule 14: say which voice is talking. A 402 means the Lovable credits behind Aria's voice are out.
+          axisVoiceNote(/402/.test(String(e && e.message)) ? 'Aria voice: credits out — browser voice for now' : 'Aria voice unreachable — browser voice for 60s');
+          axisSpeakBrowser(text); return;
+        }
         return finish(true);
       }
       if (gen !== ariaGen) { URL.revokeObjectURL(url); return; }
@@ -2333,6 +2480,20 @@ function axisSpeak(text) {
   } catch { return axisSpeakBrowser(text); }
 }
 
+function axisVoiceStatus() { return Date.now() >= ariaVoiceDown; }
+window.axisVoiceStatus = axisVoiceStatus;
+let __voiceNoted = '';
+function axisVoiceNote(msg) {
+  if (__voiceNoted === msg) return; __voiceNoted = msg;
+  try { toast(msg); } catch {}
+  const b = $('axisBrain'); if (b && b.hidden) { b.textContent = msg; b.hidden = false; setTimeout(() => { if (b.textContent === msg) { b.hidden = true; b.textContent = ''; } }, 60000); }
+}
+// Push-to-talk policy. 'turn' (default) = one spoken turn through the director brain (board, roster,
+// intents, approvals — the old knowledge). 'live' = the 🎙 starts the two-way Aria call instead.
+function axisMicMode(set) {
+  if (set === 'turn' || set === 'live') { try { localStorage.setItem('axis-mic-mode', set); } catch {} }
+  try { return localStorage.getItem('axis-mic-mode') === 'live' ? 'live' : 'turn'; } catch { return 'turn'; }
+}
 function axisSpeakBrowser(text) {
   try {
     if (!axisVoiceOn || !window.speechSynthesis) return false;
@@ -2496,7 +2657,10 @@ function axisMicError(e) {
 // Push-to-talk, shared by the dock and the public panel (one mic at a time).
 function axisMicToggle(micId = 'axisMic', inputId = 'axisInput', send = axisSend, auto = false) {
   axisMicAutoOpen = !!auto;
-  if (state.token && window.axisLiveToggle) {
+  // AXIS ONE: the 2026-10-09 change sent EVERY mic press into the live call, which bypasses the director
+  // brain (board, roster, intents, approvals). Push-to-talk is one turn through that brain again; the
+  // live call has its own controls (orbit bar, console foot, double-click on the globe) and this setting.
+  if (state.token && window.axisLiveToggle && axisMicMode() === 'live' && micId === 'axisMic') {
     axisHandsFree = false;
     axisWakePause();
     if (axisRec) { axisRec.onend = null; axisRec.onresult = null; try { axisRec.abort(); } catch {} }
@@ -2871,6 +3035,10 @@ function renderOrbStatus() {
   if (n1) bits.push(n1 + (n1 === 1 ? ' approval' : ' approvals') + ' waiting');
   if (n2) bits.push(n2 + (n2 === 1 ? ' client reply' : ' client replies') + ' waiting');
   if (n3) bits.push(n3 + (n3 === 1 ? ' follow-up' : ' follow-ups') + ' due');
+  // RUN-AX2: the situation counts his ledger, the to-dos and the worker too. "All quiet" above ten
+  // ranked rows would be the Overview contradicting the orbit (Rule 14), so the ranked total leads.
+  const s = state.situation && state.situation.counts;
+  if (s && s.needsAhmad) bits.unshift(`${s.needsAhmad} need${s.needsAhmad === 1 ? 's' : ''} you${s.overdue ? ` · ${s.overdue} overdue` : ''}${s.today ? ` · ${s.today} today` : ''}`);
   box.textContent = bits.length ? bits.join(' · ') : 'All quiet. AXIS is watching.';
 }
 
@@ -2917,24 +3085,46 @@ async function pubAsk(q) {
 // ── Command palette ──
 let palSel = 0;
 function paletteItems() {
-  const nav = NAV.flatMap(g => g.items).map(i => ({ label: 'Go to ' + i.label, run: () => go(i.id) }));
-  return nav.concat([
-    { label: 'Approve all pending', run: () => { go('approvals'); (data('approvals').rows || []).filter(r => r.status === 'pending').forEach(bulkApprove); } },
-    { label: 'Open Action Inbox', run: () => go('inbox') },
-    { label: 'Talk to AXIS', run: () => openDock() },
-  ]);
+  // AXIS PRO LOOK (2026-10-13): the palette is the one action menu — every job on the site, by name,
+  // before the screen list. Ahmad: "simple options to perform all the work on the site."
+  const act = [
+    { label: 'Ask AXIS', hint: 'type or talk — the director brain', run: () => axisOpenConsole('talk') },
+    { label: 'Start a live call', hint: 'two-way, Aria’s voice', run: () => axisLiveToggleFromUi() },
+    { label: 'Pull up a working doc', hint: 'leads list, email, proposal, plan', run: () => axisOpenConsole('work') },
+    { label: 'Add a to-do', hint: 'prioritised, flags what needs you', run: () => axisOpenConsole('todo') },
+    { label: 'Automate a task', hint: 'runs on its own, emails when it needs you', run: () => axisOpenConsole('auto') },
+    { label: 'Review approvals', hint: 'nothing sends until you say so', run: () => go('approvals') },
+    { label: 'Approve all pending', hint: 'bulk — agent-queued approvals', run: () => { go('approvals'); (data('approvals').rows || []).filter(r => r.status === 'pending').forEach(bulkApprove); } },
+    { label: 'Open Action Inbox', hint: 'client replies and new requests', run: () => go('inbox') },
+    { label: 'Draft outreach', hint: 'approved template only', run: () => go('outreach') },
+    { label: 'Apply for a grant', hint: 'AXIS builds the packet, you submit', run: () => go('grants') },
+    { label: 'Send Claude a task', hint: 'the worker on your PC', run: () => axisOpenConsole('claude') },
+    { label: 'Give my PC a task', hint: 'Axis Local', run: () => axisOpenConsole('pc') },
+    { label: 'Today’s brief', hint: 'done · waiting · next', run: () => axisOpenConsole('brief') },
+    { label: 'Export reports', hint: 'xlsx / csv / pdf from the worker', run: () => go('reports') },
+    { label: 'Hands-free wake word on / off', hint: 'say “AXIS” to start a turn', run: () => axisHandsFreeToggle() },
+    { label: 'Switch light / dark', hint: 'theme', run: () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark') },
+    { label: 'Talk to AXIS', hint: 'open the console', run: () => openDock() },
+  ];
+  const nav = NAV.flatMap(g => g.items).map(i => ({ label: 'Go to ' + i.label, hint: g2(i.id), run: () => go(i.id) }));
+  return act.concat(nav);
 }
+const g2 = (id) => (NAV.find(g => g.items.some(i => i.id === id)) || {}).group || '';
 function openPalette() { $('palette').hidden = false; $('paletteInput').value = ''; palSel = 0; renderPalette(); $('paletteInput').focus(); }
 function renderPalette() {
-  const q = $('paletteInput').value.toLowerCase(); const items = paletteItems().filter(i => i.label.toLowerCase().includes(q));
+  const q = $('paletteInput').value.toLowerCase(); const items = paletteItems().filter(i => (i.label + ' ' + (i.hint || '')).toLowerCase().includes(q));
   const list = $('paletteList'); list.innerHTML = ''; palSel = Math.min(palSel, items.length - 1);
-  items.forEach((it, i) => list.append(el('div', { class: 'palette-item', 'aria-selected': i === palSel, onclick: () => { it.run(); $('palette').hidden = true; } }, it.label)));
+  items.forEach((it, i) => list.append(el('div', { class: 'palette-item', 'aria-selected': i === palSel, onclick: () => { it.run(); $('palette').hidden = true; } },
+    [el('span', { class: 'palette-label' }, it.label), it.hint ? el('span', { class: 'palette-hint' }, it.hint) : ''])));
   list._items = items;
 }
 
 // ── Auth ──
 function showApp() { $('login').style.display = 'none'; $('app').style.display = 'grid'; renderNav(); renderModule(); fetchSnapshots();
   clearInterval(window.__axisPoll); window.__axisPoll = setInterval(() => { if (!document.hidden) pollVersion(); }, 15000);
+  // The situation re-ranks itself every two minutes (deadlines roll over; the worker queue moves) —
+  // plus on every snapshot change via fetchSnapshots().
+  clearInterval(window.__axisSitPoll); window.__axisSitPoll = setInterval(() => { if (!document.hidden) fetchSituation(); }, 120000);
   // The orbit (globe + one-line bar, bottom centre) is the resting presence — the transcript no
   // longer auto-opens. Ahmad, 2026-08-11: "without a chat field unless I press a button."
   // The spoken boot briefing below still runs; it just does not force the panel open.
@@ -2982,13 +3172,77 @@ async function doLogin() {
 
 // ── Theme + dock + wiring ──
 function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('axis_theme', t); }
-function openDock() {
-  // On the Director tab the dock would cover that screen's own command channel — send there instead.
-  if (state.module === 'axis-agent-director') { const i = $('axisDirectorInput'); if (i) i.focus(); return; }
+function openDock(tab) {
+  const want = AXIS_TABS.includes(tab) ? tab : null;
+  // On the Director tab the dock's TALK would duplicate that screen's own command channel — send Talk
+  // there. A work tab (Work · To-do · …) exists only in the console, so it docks beside the Director.
+  if (state.module === 'axis-agent-director' && (!want || want === 'talk')) { const i = $('axisDirectorInput'); if (i) i.focus(); return; }
   $('axisDock').hidden = false; $('axisFab').hidden = true;
   document.documentElement.dataset.axisDock = 'open';   // content pane yields the console's width
-  renderDock(); $('axisInput').focus();
+  setAxisTab(want || document.documentElement.dataset.axisTab || 'talk');
+  renderDock(); if (!want || want === 'talk') $('axisInput').focus();
 }
+// ── AXIS ONE console tabs (2026-10-13) ────────────────────────────────────────
+// Talk is the original director transcript. Every other tab is drawn into #axisPanel by the module
+// that owns it (axis-exec.js: work/todo/auto/apr/pc/inbox/brief/setup · axis-collab.js: claude) when
+// it hears 'axis:tab'. The strip is static DOM, so the choice survives every snapshot repaint.
+const AXIS_TABS = ['talk', 'work', 'todo', 'auto', 'apr', 'pc', 'inbox', 'brief', 'claude', 'setup'];
+function setAxisTab(tab, { silent = false } = {}) {
+  if (!AXIS_TABS.includes(tab)) tab = 'talk';
+  document.documentElement.dataset.axisTab = tab;
+  document.querySelectorAll('#axisTabs [data-axis-tab]').forEach((b) => b.setAttribute('aria-selected', b.dataset.axisTab === tab ? 'true' : 'false'));
+  const panel = $('axisPanel');
+  if (panel) { panel.hidden = tab === 'talk'; if (tab !== 'talk' && !panel.childElementCount) panel.innerHTML = '<p class="k" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)">Loading…</p>'; }
+  try { sessionStorage.setItem('axisTab', tab); } catch {}
+  if (!silent) window.dispatchEvent(new CustomEvent('axis:tab', { detail: { tab } }));
+}
+$('axisTabs')?.addEventListener('click', (e) => { const b = e.target.closest('[data-axis-tab]'); if (b) setAxisTab(b.dataset.axisTab); });
+try { setAxisTab(sessionStorage.getItem('axisTab') || 'talk', { silent: true }); } catch { setAxisTab('talk', { silent: true }); }
+// A line AXIS says from any surface lands in the one transcript — and is spoken by the one voice.
+function axisConsoleSay(text, speak = true) {
+  dockLog.push({ role: 'axis', text: String(text) }); renderDock();
+  if (speak && !window.axisLiveActive) { try { if (axisSpeak(String(text))) __turnDone = axisTurnDone; } catch {} }
+}
+window.addEventListener('axis:open', (e) => {
+  const d = e.detail || {};
+  if (!state.token) return;
+  axisOpenConsole(AXIS_TABS.includes(d.tab) ? d.tab : 'talk');
+  if (d.say) axisConsoleSay(d.say, false);
+});
+window.addEventListener('axis:say', (e) => { const t = e.detail && e.detail.text; if (t && state.token) axisConsoleSay(t, true); });
+// The live call's transcript (both voices) is mirrored into the same transcript as typed turns.
+window.addEventListener('axis:transcript', (e) => {
+  const d = e.detail || {}; if (!d.text) return;
+  dockLog.push({ role: d.role === 'user' ? 'user' : 'axis', text: String(d.text) }); renderDock();
+});
+window.addEventListener('axis:live-state', (e) => axisLiveSync((e.detail && e.detail.state) || 'idle'));
+const LIVE_TITLE = { axisLiveGlobe: 'Talk to AXIS live (Aria’s voice, two-way)', axisLiveCall: 'Live two-way call — Aria’s voice, as AXIS' };
+function axisLiveSync(st) {
+  const live = st !== 'idle';
+  for (const id of ['axisLiveGlobe', 'axisLiveCall']) {
+    const b = $(id); if (!b) continue;
+    b.setAttribute('aria-pressed', live ? 'true' : 'false');
+    b.title = st === 'connecting' ? 'Connecting…' : st === 'stopping' ? 'Ending…' : live ? 'End the live call' : LIVE_TITLE[id];
+    if (id === 'axisLiveCall') b.textContent = st === 'connecting' ? 'Connecting…' : st === 'stopping' ? 'Ending…' : live ? 'End call' : 'Live call';
+  }
+  if (live) {
+    setAxisState(st === 'connecting' ? 'thinking' : 'listening');
+    axisSetHear(st === 'connecting' ? 'Connecting the live call…' : 'Live call — Aria’s voice. Say “AXIS stop” or press End call.', true);
+  } else { setAxisState('idle'); axisSetHear('', false); axisWakeResume(); }
+}
+function axisLiveToggleFromUi() {
+  if (!state.token) return;
+  if (!window.axisLiveToggle) { toast('Live voice engine not loaded — push-to-talk still works'); return; }
+  axisHandsFree = false; axisWakePause(); axisSyncWakeBtn();
+  if (axisRec) { axisRec.onend = null; axisRec.onresult = null; try { axisRec.abort(); } catch {} }
+  axisListening = false; ariaStop();
+  try { window.speechSynthesis && speechSynthesis.cancel(); } catch {}
+  if ($('axisDock').hidden && state.module !== 'axis-agent-director') axisOpenConsole('talk');
+  window.axisLiveToggle();
+}
+$('axisLiveGlobe')?.addEventListener('click', axisLiveToggleFromUi);
+$('axisLiveCall')?.addEventListener('click', axisLiveToggleFromUi);
+$('axisOrbGlobe')?.addEventListener('dblclick', (e) => { e.preventDefault(); axisLiveToggleFromUi(); });
 function closeDock() { $('axisDock').hidden = true; $('axisFab').hidden = false; delete document.documentElement.dataset.axisDock; try { sessionStorage.setItem('axisDockDismissed', '1'); } catch {} }
 $('themeBtn').addEventListener('click', () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
 applyTheme(localStorage.getItem('axis_theme') || 'dark');
@@ -3008,10 +3262,10 @@ $('axisWake')?.addEventListener('click', axisHandsFreeToggle);
 // ── AXIS orbit: the resting presence ─────────────────────────────────────────
 // Globe floats bottom-centre with a one-line bar. Typing there sends immediately and only THEN
 // opens the transcript, so a quick question never requires opening a panel first.
-function axisOpenConsole() {
+function axisOpenConsole(tab) {
   document.documentElement.dataset.axisOpen = '1';
   try { sessionStorage.removeItem('axisDockDismissed'); } catch {}
-  openDock();
+  openDock(typeof tab === 'string' ? tab : undefined);   // click handlers pass a MouseEvent here
 }
 function axisCloseConsole() { delete document.documentElement.dataset.axisOpen; closeDock(); }
 $('axisOrbGlobe')?.addEventListener('click', axisOpenConsole);
@@ -3072,6 +3326,7 @@ axisSyncWakeBtn();  // hands-free defaults OFF (it holds the mic open) — refle
 try { if (localStorage.getItem('axis-hands-free') === '1') { const b = $('axisWake'); if (b) b.title = 'Hands-free was on — click to resume'; } } catch {}
 $('axisInput').addEventListener('keydown', (e) => e.key === 'Enter' && axisSend());
 $('search').addEventListener('click', openPalette);
+$('actionsBtn')?.addEventListener('click', openPalette);
 $('paletteInput')?.addEventListener('input', renderPalette);
 
 // Keyboard: ⌘K palette, Esc close, and Approvals J/K/A/X/S/E/R/N (ignored in inputs)

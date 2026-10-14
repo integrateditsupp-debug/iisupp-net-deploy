@@ -3,10 +3,15 @@
 // inbox overview, daily brief, integration status. Spending always waits for Ahmad's approval.
 import { bearerFromEvent } from './_verify-bearer.cjs';
 import { createHash, randomBytes } from 'node:crypto';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   PERSONA, claude, pickTier, parseJSON, readJSON, writeJSON, id, now, requestApproval, apollo,
   integrationStatus, monthSpend, attention, esc,
 } from './lib/axis-exec-core.mjs';
+import { loadSituationSafe, situationInstruction } from './lib/axis-situation.cjs';
+
+const FN_DIR = path.dirname(fileURLToPath(import.meta.url)); // NOT "__dirname" — esbuild injects its own shim
 
 const json = (status, body) => new Response(JSON.stringify(body), {
   status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
@@ -16,7 +21,17 @@ const WORKSPACE_SYSTEM = `${PERSONA}
 
 You are working ON SCREEN with Ahmad. Produce or update a working document he can see and edit.
 Return ONLY JSON: {"title": string, "kind": "leads"|"email"|"invoice"|"campaign"|"client"|"plan"|"tax"|"calendar"|"report"|"other", "content": markdown string (the actual working document — tables, drafts, checklists), "say": one or two short warm sentences Axis says aloud, "next": [up to 3 short next-step choices]}.
-Never invent client data, prices or figures; mark unknowns as [needs info].`;
+Never invent client data, prices or figures; mark unknowns as [needs info].
+
+YOU HAVE THE LIVE SITUATION. The block below this system prompt is the company's board, the CEO-critical ledger, the to-dos, the automations, the approvals and the Claude worker queue, with the local Toronto date and time. When Ahmad asks for the urgent items, what needs him, or "let's work on the top items", build the document FROM that list: ranked rows, each with the next concrete step and who does it (AXIS or Ahmad). Never write that you lack access to his tasks, board, approvals or to-dos — you have them. Only two sources are not connected: the calendar and the three mailboxes; if they matter, say so in one line and name the one-click (Google sign-in). Never guess the date — use the local date in the block. If the block is absent, say the board did not answer in time and work from what Ahmad typed.`;
+
+// RUN-AX2 (2026-10-13): the situation block for this request — bounded, never throws, null when a
+// store is slow. The Workspace brain used to receive Ahmad's sentence and nothing else; asked "let's
+// work on top urgent items" it truthfully answered that it had no access to tasks, calendar or
+// messages, and dated the page from UTC. Now every Workspace and brief call reads the same picture
+// the director reads (lib/axis-situation.cjs), with the Toronto clock.
+const situationFor = () => loadSituationSafe({ fnDir: FN_DIR });
+const withSituation = (system, sit) => (sit ? `${system}\n\n${situationInstruction(sit)}` : system);
 
 export default async (request) => {
   if (request.method !== 'POST') return json(405, { error: 'POST required' });
@@ -48,7 +63,8 @@ export default async (request) => {
       const user = current
         ? `Current document "${current.title}":\n${current.content}\n\nAhmad's change: ${request_}`
         : `Ahmad: ${request_}${context ? `\n\n${context}` : ''}`;
-      const out = await claude({ system: WORKSPACE_SYSTEM, messages: [{ role: 'user', content: user }], tier: pickTier(request_, body.tier), maxTokens: 2500 });
+      const sit = await situationFor();
+      const out = await claude({ system: withSituation(WORKSPACE_SYSTEM, sit), messages: [{ role: 'user', content: user }], tier: pickTier(request_, body.tier), maxTokens: 2500 });
       const parsed = parseJSON(out.text, { title: 'Working draft', kind: 'other', content: out.text, say: 'Here it is.', next: [] });
       const doc = { ...(current || { id: id('ws'), created_at: now() }), title: parsed.title, kind: parsed.kind, content: parsed.content, updated_at: now(), model: out.model };
       await writeJSON('workspace', [doc, ...docs.filter((d) => d.id !== doc.id)].slice(0, 100));
@@ -138,10 +154,12 @@ export default async (request) => {
 
     // ── Daily brief ──────────────────────────────────────────────────────
     if (action === 'brief') {
-      const [tasks, approvals, inbox] = await Promise.all([readJSON('tasks', []), readJSON('approvals', []), readJSON('inbox-log', [])]);
+      const [tasks, approvals, inbox, sit] = await Promise.all([readJSON('tasks', []), readJSON('approvals', []), readJSON('inbox-log', []), situationFor()]);
       const facts = `Automations: ${tasks.map((t) => `${t.title} [${t.status}] last: ${t.last_result?.summary || 'not run'}`).join('; ') || 'none'}\nPending approvals: ${approvals.filter((a) => a.status === 'pending').map((a) => a.title).join('; ') || 'none'}\nRecent inbox: ${inbox.slice(0, 10).map((m) => `${m.from}: ${m.subject} (${m.action})`).join('; ') || 'none'}`;
-      const out = await claude({ messages: [{ role: 'user', content: `Give Ahmad today's brief in 5 short lines max: done, waiting on him, next revenue move. Facts only:\n${facts}` }], tier: 'fast', maxTokens: 400 });
-      return json(200, { ok: true, text: out.text });
+      // The brief is the situation, spoken: the ranked list above the assistant's own three lists.
+      const dateLine = sit ? `Today is ${sit.local.weekday} ${sit.local.date}, ${sit.local.time} ${sit.local.tz}. ` : '';
+      const out = await claude({ system: withSituation(PERSONA, sit), messages: [{ role: 'user', content: `${dateLine}Give Ahmad today's brief in 6 short lines max: the top three that need him (from the live situation, ranked, with the one next step each), what AXIS is handling, the next revenue move. Facts only — never say you lack access:\n${facts}` }], tier: 'fast', maxTokens: 500 });
+      return json(200, { ok: true, text: out.text, situation: sit ? { counts: sit.counts, local: sit.local, sources: sit.sources } : null });
     }
 
     // ── Axis Local (PC helper) ───────────────────────────────────────────

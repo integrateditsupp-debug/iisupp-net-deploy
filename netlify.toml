@@ -32,7 +32,10 @@
   external_node_modules = ["stripe", "@netlify/blobs", "pdfkit", "jszip", "pdf-parse", "mammoth", "busboy"]
   # The authed /api/axis-state function reads the worker-emitted full state. Bundle that non-public file with
   # the functions; it is NOT served at a public URL (/netlify/* is redirect-blocked).
-  included_files = ["netlify/functions/_axis-state-full.json", "netlify/functions/_axis-snapshots-seed.json"]
+  # RUN-AX2 (2026-10-13): _axis-status-full.json joins the list — /api/axis-status and the situation model
+  # (lib/axis-situation.cjs) both read it next to the function; without the explicit include the bundler only
+  # ships it when its static analysis happens to spot the path, which a variable-built path defeats.
+  included_files = ["netlify/functions/_axis-state-full.json", "netlify/functions/_axis-snapshots-seed.json", "netlify/functions/_axis-status-full.json"]
 
 [[headers]]
   for = "/*"
@@ -824,6 +827,12 @@
     Cache-Control = "public, max-age=0, must-revalidate"
 [[headers]]
   for = "/assets/axis-claim-figures.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+# RUN-AX2 (2026-10-13, Rule-16 sweep): axis-grants.js joined the graph in AXIS ONE as a bare import of
+# axis-app.js — without this rule a browser would keep its first copy for seven days.
+[[headers]]
+  for = "/assets/axis-grants.js"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 

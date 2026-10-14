@@ -267,3 +267,52 @@ a bypassing writer fails the suite; `tests/axis-status-emitter.test.mjs` proves 
 - Old consoles (`/command-center`, `/agents`, `/agent-command-center.html`) keep their Basic-auth edge
   gate (`aperture-gate.ts`) and then 301 → `/aperture-learning.html`. The double auth on those
   deprecated URLs is harmless; the login edge function was intentionally not modified.
+
+## AXIS ONE — one globe, one voice, one console (2026-10-13)
+
+Ahmad: *"I want the globe to be linked to the new voice and functions and features that I cannot see. I tried to
+update it via lovable but now there is two. I want the new voice and method and old useful knowledge to be merged
+into one functional Autonomous agentic center AI system … follows all the rules I had applied prior."*
+
+What was "two": the 2026-10-09/10 commits bolted `axis-unify.js` (hid the dock, wake word and mic; re-mounted a
+second globe), `axis-exec.js` (a second right-rail console with its own tabs and launch row) and `axis-collab.js`
+(a floating Claude box that covered that launch row) onto the shell beside the original dock. Full findings and
+design: `docs/AXIS-ONE-2026-10-13.md`. Guard: `tests/axis-one.test.mjs` (in the default guard set).
+
+- **One console.** `#axisDock` carries a tab strip (`#axisTabs`): Talk (the original transcript, persona, wake
+  word, priorities rail, voice picker) · Work · To-do · Automate · Approvals · My PC · Inbox · Brief · Claude ·
+  Setup. `axis-exec.js` and `axis-collab.js` render into `#axisPanel` when it exists and keep their stand-alone
+  UIs for a page without the console (Rule 15). Events: `axis:open {tab,say}` · `axis:say {text}` ·
+  `axis:tab {tab}` · `axis:transcript {role,text}` · `axis:live-state {state}`.
+- **One globe.** The orbit globe (`#axisOrbGlobe`) is the face; the console head shows the orb mark.
+  Click → console (Talk). Double-click, the orbit-bar mic chip (`#axisLiveGlobe`) or the foot's **Live call**
+  (`#axisLiveCall`) → the two-way Aria call.
+- **One voice pipeline.** Spoken replies: Aria's voice via the XO bridge (server MP3), browser voice as the
+  honest fallback — the brain badge says which is talking. 🎙 push-to-talk = one turn through the director
+  brain (board, roster, intents, approvals). Settings → "AXIS rails & voice" can flip the 🎙 to start the live
+  call instead (`localStorage['axis-mic-mode']`). "AXIS stop" / Ctrl+Alt+K also ends a live call.
+- **Cost line (Rule 14).** The XO bridge spends Lovable AI credits on the Creator Hub project: `speech` =
+  `openai/gpt-4o-mini-tts`, the live call = `openai/gpt-live-1` + `gpt-6-astra` per turn. A 402 means the
+  credits are out; AXIS keeps talking in the browser voice and says so. The bridge authenticates by calling
+  back to `iisupp.net/api/axis/exec` with the aperture JWT (any 2xx = staff).
+- **Theme leaks fixed.** `xo-elite-theme.css` (batch 5221e01a) set every `h1` to 2.4–4.6rem and padded every
+  `<section>` by ~96px; both are scoped out of the command center in `axis-tokens.css`.
+- **Grant Radar** (nav → Growth, `assets/axis-grants.js`). Apply = the `grant_apply` intent (board trail) +
+  brain-queue kind `grant.prepare` (Claude on Ahmad's machine builds the packet into
+  `aria-vault/01_Frontal/Grants/`, stops at the portal). Scan = `research.web`. Submission stays his click.
+- **Rules on rails.** The director (`axis-director.js`) and executive-assistant (`axis-exec-core.mjs`) prompts
+  carry the standing rules verbatim; Settings lists the rails the code actually enforces.
+
+## AXIS sees everything — the Situation Model (RUN-AX2, 2026-10-13)
+- **One picture before any answer.** `netlify/functions/lib/axis-situation.cjs` builds, per request, the ranked
+  "needs Ahmad" list from the board (Blobs `axis-snapshots`), the CEO-CRITICAL ledger (`overview.ceo_critical`,
+  bridged off his machine by the worker via `scripts/lib/axis-ceo-ledger.mjs`), the assistant store (Blobs
+  `axis-exec`), the Claude worker queue (`axis-brain-jobs`) and the fleet files — with the America/Toronto clock
+  and an honest sources line (calendar + the three mailboxes: NOT connected until the Google sign-in).
+- **Every brain reads it.** Director: system prompt of the metered API and the XO bridge, and the `board` slot of
+  the Claude-worker tier (caps raised 1500 → 6000). Workspace brain (`workspace.open/edit`) and the `brief`: same
+  block + "never say you lack access; never guess the date; Faster: … when a cheaper route exists; HOW HE DECIDES".
+- **The console shows the same list.** `GET /api/axis/situation` (Aperture-gated, read-only) → Overview
+  "Today — needs you" (badges, Open / Work it / one-click, "AXIS is handling N", sources line); the orbit status
+  leads with "N need you"; the Talk rail / Priorities / board text carry the ledger rows. Guard:
+  `tests/axis-situation.test.mjs`. Write-up: `docs/AXIS-SITUATION.md`.
