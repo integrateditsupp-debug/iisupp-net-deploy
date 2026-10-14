@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1280">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Downloads · ARIA Sentinel — Integrated IT Support</title>
 <meta name="description" content="ARIA Sentinel — resident desktop IT support agent for Windows. Subscribe, get your license key and the installer by email, install, paste the key. Content-blind by design.">
 <link rel="icon" type="image/png" href="/favicon.svg">
@@ -83,6 +83,7 @@
     <link rel="stylesheet" href="/assets/iis-motion.css?v=20260710L">
   <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&display=swap"><link rel="stylesheet" href="/assets/xo-elite-theme.css">
+<link rel="stylesheet" href="/assets/sentinel-sim.css?v=20261014a">
 </head>
 <body>
 <nav class="nav">
@@ -169,6 +170,77 @@
 </section>
 
 <p class="honest"><b>How delivery works right now.</b> The Windows installer is a <b>pilot build</b>: it is sent by email with your license key after purchase rather than downloaded from this page, and it is <b>not yet code-signed</b>, so Windows SmartScreen warns on first run. A signed public download replaces this the moment signing is complete &mdash; leave your email below to hear when. Business tiers bundle a minimal number of on-site visits per year; any further human support is a separate, quote-based contract. No tier includes 24/7 human support or SMS alerts in this version.</p>
+
+<!-- 2026-10-14 additions (additive: every section above and below is unchanged).
+     #sentinel-sim      scripted simulation: assets/sentinel-sim.js + assets/sentinel-sim.css. Notice wording is the app's
+                        own (advisory-escalation.mjs advisoryCopy / ruleSentence); nothing runs on the visitor's PC.
+     #sentinel-savings  savings estimate from the visitor's inputs (inline script below; prices from #sentinel-plan-prices,
+                        copied from ARIA Sentinel/src/shared/pricing-tiers.mjs).
+     -->
+<section class="sim" id="sentinel-sim" aria-labelledby="sim-title">
+  <div class="sim-shell">
+    <p class="sim-kicker">See it work</p>
+    <h2 class="sim-h2" id="sim-title">See ARIA Sentinel work</h2>
+    <p class="sim-banner" id="sim-banner">Simulation — scripted on this page. Nothing runs on your computer.</p>
+    <p class="sim-lead">Three everyday problems, played the way ARIA Sentinel handles them with <b>Autonomous mode</b> and <b>live fixes</b> switched on. Out of the box it starts in Manual mode with live fixes off, so it only previews. Every notice below uses the app's own wording.</p>
+    <div class="sim-modes" role="list" aria-label="The three modes">
+      <div class="sim-mode" role="listitem"><span class="sim-mode-name">Manual</span><span class="sim-mode-short">Previews only</span><p>ARIA shows what a fix would do and changes nothing on the PC.</p></div>
+      <div class="sim-mode" role="listitem"><span class="sim-mode-name">Confirmed</span><span class="sim-mode-short">Asks once</span><p>Nothing runs until you say yes &mdash; except a green fix that is vendor-vetted or already proven on this device, which runs after the 10-second countdown you can cancel.</p></div>
+      <div class="sim-mode sim-mode--auto" role="listitem"><span class="sim-mode-name">Autonomous</span><span class="sim-mode-short">The 3-notice rule</span><p id="sim-rule-autonomous">In Autonomous mode, when ARIA finds a problem it can fix, it tells you first — 3 times, 3 minutes apart. If nobody answers, it fixes the problem on its own after a 10-second countdown you can cancel, through the same safety checks as every fix. Problems that need administrator rights or a person are never fixed on their own: after 3 unanswered notices ARIA tells your IT contact instead. Every notice lets you choose Fix now, Not now (waits 4 hours) or Never for this.</p></div>
+    </div>
+    <p class="sim-modes-foot">Confirmed and Autonomous come with Pro and every business tier; Personal is Manual only. The 3 minutes and the 4 hours are defaults you can change in Settings &rarr; Autonomy.</p>
+    <div class="sim-tabs" role="tablist" aria-label="Scenarios">
+      <button type="button" class="sim-tab" role="tab" id="sim-tab-dns" aria-selected="true" aria-controls="sim-panel" data-sim-scenario="dns"><span class="sim-tab-dot sim-tone-green" aria-hidden="true"></span><span class="sim-tab-txt"><span class="sim-tab-k">Green &middot; ARIA fixes it</span><span class="sim-tab-t">Wi-Fi connected, no internet / stale DNS</span></span></button>
+      <button type="button" class="sim-tab" role="tab" id="sim-tab-printer" aria-selected="false" aria-controls="sim-panel" data-sim-scenario="printer" tabindex="-1"><span class="sim-tab-dot sim-tone-amber" aria-hidden="true"></span><span class="sim-tab-txt"><span class="sim-tab-k">Admin rights &middot; a person runs it</span><span class="sim-tab-t">Printer stuck / queue frozen</span></span></button>
+      <button type="button" class="sim-tab" role="tab" id="sim-tab-critical" aria-selected="false" aria-controls="sim-panel" data-sim-scenario="critical" tabindex="-1"><span class="sim-tab-dot sim-tone-red" aria-hidden="true"></span><span class="sim-tab-txt"><span class="sim-tab-k">Red &middot; never automatic</span><span class="sim-tab-t">Critical system files / BitLocker recovery</span></span></button>
+    </div>
+    <div class="sim-stage" id="sim-panel" role="tabpanel" aria-labelledby="sim-tab-dns">
+      <p class="sim-badge sim-badge--green" id="sim-badge">Green &middot; user-level fix &middot; no administrator rights</p>
+      <h3 class="sim-h3" id="sim-scn-title">Wi-Fi connected, no internet / stale DNS</h3>
+      <p class="sim-intro" id="sim-intro">Scripted with Autonomous mode and live fixes on. The DNS refresh is a vendor-vetted green fix: it ships with a check that must pass afterwards and has nothing to undo, so ARIA may run it on its own &mdash; but only after telling you three times.</p>
+      <div class="sim-controls">
+        <button type="button" class="sim-play" id="sim-play" data-sim-play>Play</button>
+        <span class="sim-speed">sped up: 3 minutes → 3 seconds</span>
+        <span class="sim-status" id="sim-status" role="status">Ready</span>
+      </div>
+      <ol class="sim-timeline" id="sim-timeline" aria-live="polite" aria-relevant="additions" aria-label="Simulation timeline"><li class="sim-empty">Press Play to run this scenario.</li></ol>
+    </div>
+    <noscript><p class="sim-noscript">The simulation needs JavaScript. In short: ARIA tells you three times, 3 minutes apart. A green fix like the DNS refresh then runs after a 10-second countdown you can cancel; a fix that needs administrator rights goes to your IT contact instead; red problems are never fixed automatically.</p></noscript>
+  </div>
+</section>
+
+<section class="sav" id="sentinel-savings" aria-labelledby="sav-title">
+  <div class="sav-shell">
+    <p class="sim-kicker">What it could save</p>
+    <h2 class="sim-h2" id="sav-title">Estimate your savings</h2>
+    <p class="sim-lead">Use your own numbers. Every figure below is an <b>estimate from your inputs</b>, worked out on this page &mdash; not a measured result &mdash; and nothing you type leaves your browser.</p>
+    <div class="sav-grid">
+      <div class="sav-fields">
+        <div class="sav-field"><label for="sav-devices">Devices</label><input type="number" id="sav-devices" min="1" max="100000" step="1" value="25" inputmode="numeric"></div>
+        <div class="sav-field"><label for="sav-incidents">Incidents per device per month</label><input type="number" id="sav-incidents" min="0" max="100" step="0.5" value="2" inputmode="decimal"></div>
+        <div class="sav-field"><label for="sav-minutes">Minutes lost per incident</label><input type="number" id="sav-minutes" min="1" max="480" step="1" value="20" inputmode="numeric" aria-describedby="sav-minutes-hint"><span class="sav-hint" id="sav-minutes-hint">ARIA's default estimate per fix &mdash; the same 20 minutes the app's own savings panel uses.</span></div>
+        <div class="sav-field"><label for="sav-rate">Loaded hourly cost (CA$)</label><input type="number" id="sav-rate" min="0" max="1000" step="1" value="45" inputmode="decimal" aria-describedby="sav-rate-hint"><span class="sav-hint" id="sav-rate-hint">What an hour of someone's time costs you: pay plus overhead.</span></div>
+        <div class="sav-field"><label for="sav-share">Share of incidents ARIA resolves or guides</label><div class="sav-range"><input type="range" id="sav-share" min="10" max="90" step="5" value="60" aria-describedby="sav-share-hint"><output id="sav-share-out" for="sav-share">60%</output></div><span class="sav-hint" id="sav-share-hint">Your assumption. ARIA Sentinel does not promise a resolution rate.</span></div>
+        <div class="sav-field"><label for="sav-fx">Exchange rate (CA$ per US$1)</label><input type="number" id="sav-fx" min="0.5" max="3" step="0.01" value="1.36" inputmode="decimal" aria-describedby="sav-fx-hint"><span class="sav-hint" id="sav-fx-hint">Plan prices are billed in US dollars; set today's rate.</span></div>
+      </div>
+      <div class="sav-out" aria-live="polite">
+        <p class="sav-out-label">Estimate from your inputs</p>
+        <div class="sav-kpis">
+          <div class="sav-kpi"><span class="sav-kpi-v" id="sav-hours">10.0</span><span class="sav-kpi-k">hours saved a month</span><span class="sav-est">estimate from your inputs</span></div>
+          <div class="sav-kpi"><span class="sav-kpi-v" id="sav-month">CA$450</span><span class="sav-kpi-k">saved a month</span><span class="sav-est">estimate from your inputs</span></div>
+          <div class="sav-kpi"><span class="sav-kpi-v" id="sav-year">CA$5,400</span><span class="sav-kpi-k">saved a year</span><span class="sav-est">estimate from your inputs</span></div>
+        </div>
+        <p class="sav-fine">Hours = devices &times; incidents &times; share &times; minutes &divide; 60. Savings = hours &times; your hourly cost.</p>
+      </div>
+    </div>
+    <div class="sav-plans">
+      <p class="sav-plans-head">Net against each plan's price, converted at your exchange rate &mdash; an estimate from your inputs. Personal covers one device, so its line counts one device.</p>
+      <div id="sav-plan-rows" role="table" aria-label="Net against each plan, estimate from your inputs"></div>
+    </div>
+    <p class="sav-fine">This counts only time lost to incidents. It leaves out compliance reporting, bundled on-site visits and outages avoided, and it is not a measured result.</p>
+  </div>
+</section>
+<script type="application/json" id="sentinel-plan-prices">{"source":"ARIA Sentinel/src/shared/pricing-tiers.mjs","currency":"USD","plans":[{"plan":"personal","label":"Personal","priceMonthly":899,"priceMonthlyDisplay":"$899","billedAnnually":false,"priceYearly":null,"seats":"1 user · 1 device","maxDevices":1},{"plan":"pro","label":"Pro","priceMonthly":2250,"priceMonthlyDisplay":"$2,250","billedAnnually":false,"priceYearly":null,"seats":"Small team","maxDevices":null},{"plan":"smb","label":"Small Business","priceMonthly":19500,"priceMonthlyDisplay":"$19,500","billedAnnually":true,"priceYearly":234000,"seats":"Small business fleet","maxDevices":null},{"plan":"midsize","label":"Mid Size","priceMonthly":39000,"priceMonthlyDisplay":"$39,000","billedAnnually":true,"priceYearly":468000,"seats":"Mid-size org fleet","maxDevices":null},{"plan":"enterprise","label":"Enterprise","priceMonthly":78125,"priceMonthlyDisplay":"$78,125","billedAnnually":true,"priceYearly":937500,"seats":"Enterprise fleet","maxDevices":null}]}</script>
 
 <section class="features">
   <p class="features-tag">WHAT THIS UNLOCKS FOR YOU</p>
@@ -287,6 +359,75 @@
   });
 })();
 </script>
+
+<script>
+/* 2026-10-14 — #sentinel-savings: an estimate from the visitor's inputs, worked out here, no network. */
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+
+  // ---- savings estimate ----
+  var plans = [];
+  try { plans = JSON.parse(($('sentinel-plan-prices') || {}).textContent || '{}').plans || []; } catch (e) { plans = []; }
+  var f = { devices: $('sav-devices'), incidents: $('sav-incidents'), minutes: $('sav-minutes'), rate: $('sav-rate'), share: $('sav-share'), fx: $('sav-fx') };
+  var ready = Object.keys(f).every(function (k) { return f[k]; });
+  var cad = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 });
+  var usd = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  function num(el, lo, hi, dflt) { var v = parseFloat(el.value); return isFinite(v) ? Math.min(hi, Math.max(lo, v)) : dflt; }
+  function signed(v) { var s = cad.format(Math.abs(Math.round(v))); return (Math.round(v) < 0 ? '−' : '+') + s; }
+  function cell(cls, text, small, key) {
+    var d = document.createElement('div');
+    d.className = cls; d.setAttribute('role', 'cell');
+    if (key) d.setAttribute('data-k', key);
+    d.appendChild(document.createTextNode(text));
+    if (small) { var s = document.createElement('small'); s.textContent = small; d.appendChild(s); }
+    return d;
+  }
+  function update() {
+    var devices = num(f.devices, 1, 100000, 25), incidents = num(f.incidents, 0, 100, 2), minutes = num(f.minutes, 1, 480, 20);
+    var rate = num(f.rate, 0, 1000, 45), share = num(f.share, 10, 90, 60) / 100, fx = num(f.fx, 0.5, 3, 1.36);
+    var hoursPerDevice = incidents * share * minutes / 60;
+    var hours = devices * hoursPerDevice;
+    $('sav-share-out').textContent = Math.round(share * 100) + '%';
+    $('sav-hours').textContent = hours.toFixed(1);
+    $('sav-month').textContent = cad.format(Math.round(hours * rate));
+    $('sav-year').textContent = cad.format(Math.round(hours * rate * 12));
+    var rows = $('sav-plan-rows');
+    if (!rows) return;
+    rows.textContent = '';
+    var head = document.createElement('div');
+    head.className = 'sav-plan sav-plan--head'; head.setAttribute('role', 'row');
+    ['Plan', 'Price (US$)', 'At your rate', 'Net a month · estimate', 'Net a year · estimate'].forEach(function (h) {
+      var c = document.createElement('div'); c.setAttribute('role', 'columnheader'); c.textContent = h; head.appendChild(c);
+    });
+    rows.appendChild(head);
+    plans.forEach(function (p) {
+      var covered = p.maxDevices ? Math.min(devices, p.maxDevices) : devices;
+      var saveMonth = covered * hoursPerDevice * rate;
+      var costMonth = p.priceMonthly * fx;
+      var netMonth = saveMonth - costMonth;
+      var netYear = p.billedAnnually && p.priceYearly ? saveMonth * 12 - p.priceYearly * fx : netMonth * 12;
+      var row = document.createElement('div');
+      row.className = 'sav-plan'; row.setAttribute('role', 'row');
+      var name = cell('sav-plan-name', p.label, p.seats + (p.maxDevices && devices > p.maxDevices ? ' — counts ' + p.maxDevices + ' of your ' + devices + ' devices' : ''));
+      name.setAttribute('role', 'rowheader');
+      row.appendChild(name);
+      row.appendChild(cell('sav-plan-cell', usd.format(p.priceMonthly) + '/mo', p.billedAnnually ? usd.format(p.priceYearly) + '/yr billed annually' : 'billed monthly', 'Price (US$)'));
+      row.appendChild(cell('sav-plan-cell', '≈ ' + cad.format(Math.round(costMonth)) + '/mo', 'estimate from your inputs', 'At your rate'));
+      var nm = cell('sav-plan-cell ' + (netMonth >= 0 ? 'sav-pos' : 'sav-neg'), signed(netMonth), 'estimate from your inputs', 'Net a month');
+      var ny = cell('sav-plan-cell ' + (netYear >= 0 ? 'sav-pos' : 'sav-neg'), signed(netYear), 'estimate from your inputs', 'Net a year');
+      row.appendChild(nm); row.appendChild(ny);
+      rows.appendChild(row);
+    });
+  }
+  if (ready) {
+    Object.keys(f).forEach(function (k) { f[k].addEventListener('input', update); f[k].addEventListener('change', update); });
+    update();
+  }
+
+})();
+</script>
+<script src="/assets/sentinel-sim.js?v=20261014a" defer></script>
 
   <script src="/assets/iis-motion.js?v=20260710L" defer></script>
 <!-- iis-fineprint:start -->
