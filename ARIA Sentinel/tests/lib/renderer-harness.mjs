@@ -51,7 +51,7 @@ export function firstLaunchState(overrides = {}) {
   const startedAt = Date.now() - 60000;
   const endsAt = new Date(startedAt + TRIAL_DAYS * DAY_MS).toISOString();
   return {
-    version: "0.2.0", devMode: false, mode: "manual", dryRun: true, systemFixesEnabled: false, keepSystemFixesDryRun: false,
+    version: "0.2.1", devMode: false, mode: "manual", dryRun: true, systemFixesEnabled: false, keepSystemFixesDryRun: false,
     liveFixes: { enabled: false, source: "store", elevation: "uac", note: "Live fixes are off — every fix previews only. Turn them on to let ARIA apply vetted fixes you confirm." },
     excludedFolders: { count: 1, label: "1 excluded folder never touched", configured: [] },
     externalAiCalls: false, reasoningMode: "local-symbolic", lastChatProvider: null,
@@ -69,7 +69,7 @@ export function firstLaunchState(overrides = {}) {
       { id: "pause", action: "pause-24h", label: "Pause watching for 24 hours", combo: "CommandOrControl+Alt+P", status: "failed", usedFallback: false },
       { id: "kill", action: "kill-aria", label: "Kill ARIA (panic)", combo: "CommandOrControl+Alt+K", status: "active", usedFallback: false }
     ],
-    auditIntegrity: { ok: true }, updates: { current: "0.2.0", autoUpdate: true, mode: "manual", history: [], rollbackTargets: [] },
+    auditIntegrity: { ok: true }, updates: { current: "0.2.1", autoUpdate: true, mode: "manual", history: [], rollbackTargets: [] },
     license: { mode: "manual", licensed: false, email: null, plan: null, licenseSignal: "personal", licenseMessage: "", trialEndsAt: endsAt, daysLeft: TRIAL_DAYS, trialDays: TRIAL_DAYS },
     gate: { licensed: false, plan: null, email: null, walkthroughEntitled: false, trialEndsAt: endsAt, daysLeft: TRIAL_DAYS, trialDays: TRIAL_DAYS, trial: { state: "active", remainingMs: TRIAL_DAYS * DAY_MS - 60000, endsAt, daysLeft: TRIAL_DAYS, durationMs: TRIAL_DAYS * DAY_MS, days: TRIAL_DAYS, badge: "Trial · 29d 23h left" }, pilot: { state: "not-started" }, conversion: { show: false }, unlocked: true },
     whatsNew: { show: false }, lastPrivacyCapture: null,
