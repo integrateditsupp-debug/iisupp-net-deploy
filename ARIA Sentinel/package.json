@@ -161,6 +161,7 @@
       "src/shared/diagnostic.mjs",
       "src/shared/entra-graph-client.mjs",
       "src/shared/evidence-pack.mjs",
+      "src/shared/file-association-guard.mjs",
       "src/shared/fix-outcome.mjs",
       "src/shared/globe-anchor.mjs",
       "src/shared/globe-confirmation.mjs",

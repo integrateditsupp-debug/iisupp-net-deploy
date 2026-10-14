@@ -29,6 +29,10 @@ contextBridge.exposeInMainWorld("sentinel", {
   ariaMemory: () => ipcRenderer.invoke("aria:memory"),
   ariaAgents: () => ipcRenderer.invoke("aria:agents"),
   scan: () => ipcRenderer.invoke("sentinel:scan"),
+  // JULY PORT 2026-10-14 (ddfcac5b) — the read-only .txt association guard: manual re-check + the one guide action
+  // (open Windows Default Apps for the person to pick Notepad; ARIA writes nothing).
+  fileAssociationScan: () => ipcRenderer.invoke("sentinel:file-association-scan"),
+  fileAssociationFix: (recipeId) => ipcRenderer.invoke("sentinel:file-association-fix", recipeId),
   updateKnowledge: () => ipcRenderer.invoke("sentinel:update-knowledge"),
   selfDiagnose: (reason) => ipcRenderer.invoke("sentinel:self-diagnose", reason),
   selfRepair: (reason) => ipcRenderer.invoke("sentinel:self-repair", reason),

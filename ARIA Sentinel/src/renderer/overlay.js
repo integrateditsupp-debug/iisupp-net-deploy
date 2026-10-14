@@ -28,9 +28,15 @@ const sentinel = window.sentinel || {
   supervisedFix: async () => ({ ok: false, error: "bridge_unavailable", reason: "Desktop bridge unavailable." }),
   diagnose: async () => ({ ok: false, error: "bridge_unavailable" }),
   isVettedRecipe: async () => ({ vetted: false }),
-  voiceApprove: async () => ({ ok: false, error: "bridge_unavailable" }) // RUN-CU / CU4
+  voiceApprove: async () => ({ ok: false, error: "bridge_unavailable" }), // RUN-CU / CU4
+  fileAssociationFix: async () => ({ ok: false, error: "bridge_unavailable", message: "Desktop bridge unavailable." }) // JULY PORT 2026-10-14
 };
 let currentDetection = null;
+// JULY PORT 2026-10-14 (ddfcac5b) — the read-only .txt association guard's two recipes. Their only action is opening
+// Windows Default Apps for the PERSON to choose Notepad (sentinel.fileAssociationFix → ms-settings:defaultapps):
+// the card's button says exactly that ("Fix in Settings") and ARIA writes nothing.
+const ASSOCIATION_RECIPE_IDS = new Set(["app-txt-default-adobe-v1", "app-txt-openwith-adobe-risk-v1"]);
+const fixButton = document.getElementById("overlayFix");
 let wiggledThisSession = false;
 const body = document.body;
 const card = document.getElementById("overlayCard");
@@ -261,6 +267,7 @@ document.getElementById("overlayDismiss").addEventListener("click", async () => 
   chip.textContent = modeChip();
   title.textContent = "ARIA is watching";
   copy.textContent = "Local self-diagnosis is active.";
+  if (fixButton) fixButton.textContent = "Open fix";
   setMode("globe");
   setGlobeState("idle");
   await sentinel.dismissOverlay?.();
@@ -283,6 +290,17 @@ document.getElementById("overlayFix").addEventListener("click", async () => {
     title.textContent = (result && result.recipe && result.recipe.title) || "ARIA self-repair";
     copy.textContent = (result && result.message) || "Self-repair completed.";
     setGlobeState(result && result.ok ? "done" : "escalation");
+    setTimeout(() => setGlobeState("idle"), 2400);
+    return;
+  }
+  // JULY PORT 2026-10-14 — a text-file association card: open Windows Default Apps for the person (a guide action;
+  // nothing is written by ARIA; refused by main while paused/killed). The card says what really happened.
+  if (ASSOCIATION_RECIPE_IDS.has(currentDetection.recipeId)) {
+    const r = await sentinel.fileAssociationFix(currentDetection.recipeId);
+    chip.textContent = r && r.opened ? "SETTINGS OPENED" : "REVIEW";
+    title.textContent = currentDetection.title || "Text-file default app";
+    copy.textContent = (r && r.message) || "Open Windows Settings > Apps > Default apps and choose Notepad for .txt files.";
+    setGlobeState(r && r.opened ? "done" : "escalation");
     setTimeout(() => setGlobeState("idle"), 2400);
     return;
   }
@@ -328,6 +346,7 @@ function render(detection) {
   chip.textContent = detection.chip;
   title.textContent = detection.title;
   copy.textContent = detection.summary;
+  if (fixButton) fixButton.textContent = ASSOCIATION_RECIPE_IDS.has(detection.recipeId) ? "Fix in Settings" : "Open fix";
 }
 
 // ============================================================================================================

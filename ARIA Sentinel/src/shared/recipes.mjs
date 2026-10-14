@@ -1261,6 +1261,23 @@ export const RECIPES = [
     actions: [{ id: "popup-guide", label: "Open pop-up guidance", shell: "manual", risk: "green", requiresConfirm: false, command: "Manual: allow pop-ups for this origin and retry.", dryRunResult: "Would open the pop-up allow walkthrough." }],
     success: "Pop-up guidance opened.", escalation: "Service Desk if the app needs broader settings."
   },
+  // JULY PORT 2026-10-14 (ddfcac5b) — the read-only .txt file-association guard's two recipes. Both are MANUAL
+  // (guide) recipes: the only "action" is opening Windows Default Apps so the person picks Notepad themselves;
+  // nothing here writes a registry key (asserted in tests/file-association-guard.test.mjs).
+  {
+    id: "app-txt-default-adobe-v1", family: "APP", signal: "APP.TXT.DEFAULT_ADOBE", title: ".txt files are opening in Adobe", chip: "APP - TXT DEFAULT",
+    risk: "orange", mode: "confirmed", confidenceKeywords: ["txt files opening in adobe", "text files open in adobe", "txt default adobe", "notepad association changed", "txt files are opening in adobe"],
+    summary: "Problem detected: text files are opening in Adobe. Shall I switch them back to Notepad?", detector: "Read-only Windows file-association guard sees .txt UserChoice pointing at Adobe/Acrobat/PDF.",
+    actions: [{ id: "open-default-apps-settings", label: "Open Notepad default-app fix", shell: "manual", risk: "green", requiresConfirm: true, command: "Manual: open Windows Default Apps and select Notepad for .txt files.", dryRunResult: "Would open Windows Default Apps so the user can choose Notepad for .txt files." }],
+    success: "Default-app correction opened. ARIA will re-scan after the user chooses Notepad.", escalation: "Desktop Support if policy blocks changing the default text-file app."
+  },
+  {
+    id: "app-txt-openwith-adobe-risk-v1", family: "APP", signal: "APP.TXT.OPENWITH_ADOBE_RISK", title: "Adobe is listed for text files", chip: "APP - TXT WARNING",
+    risk: "green", mode: "manual", confidenceKeywords: ["acrobat listed for txt files", "adobe in open with for text files", "txt openwith adobe risk", "text file open with adobe"],
+    summary: "Heads up: Adobe is in the text-file Open With list. Keep Notepad selected for .txt files; I will warn you if it becomes the default.", detector: "Read-only Windows file-association guard sees Adobe/Acrobat in .txt OpenWith history while Notepad remains current.",
+    actions: [{ id: "review-default-apps-settings", label: "Review text-file default app", shell: "manual", risk: "green", requiresConfirm: false, command: "Manual: review Windows Default Apps and keep Notepad selected for .txt files.", dryRunResult: "Would open Windows Default Apps for a quick text-file default-app review." }],
+    success: "Default-app review opened.", escalation: "Desktop Support if a corporate default-app policy keeps reintroducing the wrong handler."
+  },
   {
     id: "system-time-drift-v1", family: "SYSTEM", signal: "SYSTEM.TIME.DRIFT", title: "System clock drift", chip: "SYSTEM - TIME",
     risk: "green", mode: "manual", confidenceKeywords: ["system clock drift", "windows time out of sync", "time service drift"],

@@ -69,6 +69,15 @@ import { RUN_KEY, RUN_VALUE_NAME, TASK_NAME, registryRunEntry, taskDefinition, s
 import { classifyRemoval, buildTamperAudit, disabledBanner } from "./startup-watchdog.mjs";
 import { buildHeartbeatPayload } from "./heartbeat.mjs";
 import { isBlockedPath, r11AuditEntry, configureExcludedFolders, excludedFolderCount, excludedFoldersLabel, configuredExcludedFolders } from "../shared/path-guard.mjs";
+// JULY PORT 2026-10-14 (ddfcac5b) — the READ-ONLY .txt file-association guard (reg query only; never a write).
+import {
+  FILE_ASSOCIATION_GUARD_INTERVAL_MS,
+  TEXT_ASSOCIATION_PRIMARY_RECIPE_ID,
+  TEXT_ASSOCIATION_RISK_RECIPE_ID,
+  buildAssociationGuardStatus,
+  classifyTextAssociation,
+  parseRegQueryValues
+} from "../shared/file-association-guard.mjs";
 // RUN 22 — dashboard · performance · SLA · compliance · reports · retention.
 import { computeHeroStatus, heroSubline } from "../shared/dashboard-status.mjs";
 import * as Sla from "./sla-tracker.mjs";
@@ -182,6 +191,9 @@ const store = new Store({
     // (keepSystemFixesDryRun is deliberately NOT defaulted: undefined = "follow the mode", the RUN 29-A rule.)
     approvals: [],
     deferredFixes: [],
+    // JULY PORT 2026-10-14 (ddfcac5b) — the last file-association guard status + the last surfaced issue key (dedupe).
+    fileAssociationGuard: null,
+    fileAssociationLastIssueKey: "",
     serviceNow: {
       instanceUrl: "",
       caller: "",
@@ -276,6 +288,7 @@ let overlayPhysics = null;
 let overlayPhysicsTimer = null;
 let overlayLastTick = 0;
 let overlayActiveUntil = 0;
+let fileAssociationGuardTimer = null; // JULY PORT 2026-10-14 — the 60 s read-only association re-check
 
 // ── RUN-CU / CU4 (2026-10-08) — autonomy · approvals · notify plumbing ─────────────────────────────────────
 // Every main-process network call goes through ONE wrapper that records {host, path, method, bytes} into a
@@ -2692,6 +2705,155 @@ function startDetection() {
   return detectionOrchestrator;
 }
 
+// ── JULY PORT 2026-10-14 (ddfcac5b) — the READ-ONLY .txt file-association guard ────────────────────────────
+// Ported from cc/security-lockdown-2026-07-01 and re-wired to the production gates. What it does: on launch, every
+// 60 s, on a manual scan and when Autonomous mode is switched on, read the Windows .txt association with positional
+// `reg query` calls (never `reg add` / `reg delete` / Set-ItemProperty — asserted by the suite), classify it in the
+// pure module, and surface a NORMAL detection (addDetection → globe card → the same supervised pipeline as every other
+// recipe). The two recipes are MANUAL/guide recipes, so the executor can never "apply" them; the only action ARIA
+// offers is opening Windows Default Apps for the person to pick Notepad themselves (openDefaultAppsForTextFiles —
+// user-initiated, audit-logged, nothing written). 🔒 Registry-derived strings pass the excluded-folder guard in the
+// module; a redaction is logged here as a SECURITY audit row. Windows only; anywhere else the scan is a no-op.
+function runRegQuery(args, timeoutMs = 5000) {
+  return new Promise((resolve) => {
+    if (process.platform !== "win32" || !Array.isArray(args) || args.length === 0) return resolve("");
+    let out = "";
+    let child;
+    try {
+      child = spawn("reg", args, { windowsHide: true, timeout: timeoutMs, stdio: ["ignore", "pipe", "ignore"] });
+    } catch {
+      return resolve("");
+    }
+    childProcesses.add(child); // tracked so Ctrl+Alt+K ends it like every other child
+    child.stdout?.on("data", (d) => { if (out.length < 64000) out += d.toString(); });
+    child.on("error", () => { childProcesses.delete(child); resolve(""); });
+    child.on("close", () => { childProcesses.delete(child); resolve(out); });
+  });
+}
+
+function safeProgIdForRegPath(progId) {
+  const text = String(progId || "").trim();
+  return /^[A-Za-z0-9_.!{}-]{1,180}$/.test(text) ? text : "";
+}
+
+async function readClassValues(progId, subkey) {
+  const safeProgId = safeProgIdForRegPath(progId);
+  if (!safeProgId) return {};
+  const suffix = subkey ? `\\${subkey}` : "";
+  for (const root of ["HKCU\\Software\\Classes", "HKCR"]) {
+    const values = parseRegQueryValues(await runRegQuery(["query", `${root}\\${safeProgId}${suffix}`]));
+    if (Object.keys(values).length) return values;
+  }
+  return {};
+}
+
+async function readTextAssociationSnapshot() {
+  if (process.platform !== "win32") {
+    return { extension: ".txt", source: "unsupported-platform" };
+  }
+  const userChoice = parseRegQueryValues(await runRegQuery([
+    "query",
+    "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.txt\\UserChoice",
+    "/v",
+    "ProgId"
+  ]));
+  const openWithList = parseRegQueryValues(await runRegQuery([
+    "query",
+    "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.txt\\OpenWithList"
+  ]));
+  const openWithExecutables = Object.entries(openWithList)
+    .filter(([key]) => /^[a-z]$/i.test(key))
+    .map(([, value]) => value)
+    .filter(Boolean);
+  const association = parseRegQueryValues(await runRegQuery(["query", "HKCR\\.txt"]));
+  const userChoiceProgId = userChoice.ProgId || "";
+  const appValues = await readClassValues(userChoiceProgId, "Application");
+  const commandValues = await readClassValues(userChoiceProgId, "Shell\\open\\command");
+  return {
+    extension: ".txt",
+    source: "windows-registry-readonly",
+    userChoiceProgId,
+    userChoiceApplicationName: appValues.ApplicationName || "",
+    userChoiceCommand: commandValues["(Default)"] || "",
+    associationProgId: association["(Default)"] || "",
+    openWithExecutables
+  };
+}
+
+async function scanFileAssociationGuard(reason = "interval") {
+  if (process.platform !== "win32") {
+    const status = { ...buildAssociationGuardStatus(null), status: "unsupported", summary: "The text-file association guard runs on Windows only.", reason };
+    store.set("fileAssociationGuard", status);
+    return { ok: true, status, issue: null, unsupported: true };
+  }
+  const snapshot = await readTextAssociationSnapshot();
+  const classification = classifyTextAssociation(snapshot);
+  if (classification.snapshot && classification.snapshot.r11Redacted) {
+    logEvent("SECURITY", "File association guard redacted a registry value that referenced an excluded folder.", r11AuditEntry("file-association-guard"));
+  }
+  const status = buildAssociationGuardStatus(classification);
+  store.set("fileAssociationGuard", { ...status, reason });
+
+  if (!classification.issue) {
+    if (store.get("fileAssociationLastIssueKey")) store.set("fileAssociationLastIssueKey", "");
+    broadcastState();
+    return { ok: true, status, issue: null };
+  }
+
+  const issue = classification.issue;
+  const lastKey = String(store.get("fileAssociationLastIssueKey") || "");
+  if (issue.key !== lastKey || reason === "mode-autonomous" || reason === "manual") {
+    const recipe = recipeById(issue.recipeId);
+    if (recipe) {
+      addDetection(recipe, {
+        source: "desktop-scan",
+        signal: issue.signal,
+        issue: issue.summary,
+        signature: { code: issue.signal, family: issue.family, confidence: issue.confidence, source: "desktop" }
+      });
+      logEvent("WATCH", `File association guard surfaced ${issue.signal} (${reason}).`, { recipeId: recipe.id });
+    }
+    store.set("fileAssociationLastIssueKey", issue.key);
+  } else {
+    broadcastState();
+  }
+  return { ok: true, status, issue };
+}
+
+function startFileAssociationGuard() {
+  if (fileAssociationGuardTimer || process.platform !== "win32") return;
+  scanFileAssociationGuard("startup").catch((error) => handleSelfError(error, "association-guard-startup"));
+  fileAssociationGuardTimer = setInterval(() => {
+    if (agentBlocked()) return; // paused / stopped ARIA does not scan
+    scanFileAssociationGuard("interval").catch(() => undefined);
+  }, FILE_ASSOCIATION_GUARD_INTERVAL_MS);
+  fileAssociationGuardTimer.unref?.();
+}
+
+// The ONLY "fix" the guard offers: open Windows Default Apps (ms-settings:defaultapps) so the PERSON selects Notepad.
+// User-initiated (a click on the globe card / fix card), audit-logged, nothing written by ARIA, re-scan afterwards.
+// Refused while the kill switch / a pause is active so the guard behaves like every other remediation surface.
+async function openDefaultAppsForTextFiles(recipeId) {
+  const id = String(recipeId || "");
+  if (![TEXT_ASSOCIATION_PRIMARY_RECIPE_ID, TEXT_ASSOCIATION_RISK_RECIPE_ID].includes(id)) return { ok: false, error: "recipe_not_found" };
+  const recipe = recipeById(id);
+  if (!recipe) return { ok: false, error: "recipe_not_found" };
+  if (remediationKilled() || agentBlocked()) {
+    return { ok: false, opened: false, recipe: publicRecipe(recipe), message: "ARIA is paused or stopped — open Windows Settings > Apps > Default apps yourself and choose Notepad for .txt files." };
+  }
+  if (process.platform !== "win32") {
+    return { ok: false, opened: false, recipe: publicRecipe(recipe), message: "Default-app settings can only be opened on Windows." };
+  }
+  try {
+    await shell.openExternal("ms-settings:defaultapps");
+    logEvent("GUIDE", "Opened Windows Default Apps so the person can choose Notepad for .txt files (nothing changed by ARIA).", { recipeId: id });
+    setTimeout(() => { scanFileAssociationGuard("post-fix-opened").catch(() => undefined); }, 45000).unref?.();
+    return { ok: true, opened: true, recipe: publicRecipe(recipe), message: "Opened Windows Default Apps. Choose Notepad for .txt files — ARIA re-checks in a minute and nothing was changed by ARIA." };
+  } catch {
+    return { ok: false, opened: false, recipe: publicRecipe(recipe), message: "Windows Default Apps could not be opened automatically. Open Windows Settings > Apps > Default apps and choose Notepad for .txt files." };
+  }
+}
+
 // ── RUN 23 — process-health poller + supervised-fix control plane ─────────────────────────────────────────
 // recipe-history.json (vetted-tier ledger) lives in userData, alongside delete-prefs.
 function recipeHistoryFile() { return path.join(app.getPath("userData"), "recipe-history.json"); }
@@ -3280,6 +3442,7 @@ function getState() {
     transparencyLog: store.get("transparencyLog") || [],
     serviceNow: store.get("serviceNow"),
     serviceNowStatus: serviceNowSummary(),
+    fileAssociationGuard: store.get("fileAssociationGuard") || null, // JULY PORT 2026-10-14 — last read-only .txt association check
     knowledgeSources: store.get("knowledgeSources"),
     restorePoints: (store.get("restorePoints") || []).slice(0, 10),
     deletePrefs: readDeletePrefs(),
@@ -4586,7 +4749,10 @@ ipcMain.handle("sentinel:set-mode", (_event, mode, optIn) => {
   }
   store.set("mode", mode);
   applyModeBehavior(mode);
-  if (mode === "autonomous") logEvent("MODE", "Autonomous mode enabled via explicit opt-in.");
+  if (mode === "autonomous") {
+    logEvent("MODE", "Autonomous mode enabled via explicit opt-in.");
+    scanFileAssociationGuard("mode-autonomous").catch(() => undefined); // JULY PORT 2026-10-14 — immediate read-only re-check
+  }
   // RUN-CU / CU4 — keep the autonomy level in step with a manual Mode change (one truth, two controls):
   // autonomous → full-auto · confirmed → safe-auto · manual → approve-first. Business clamp still applies.
   try {
@@ -4674,6 +4840,10 @@ ipcMain.handle("aria:agents", () => {
 });
 ipcMain.handle("sentinel:scan", () => scanDisk());
 ipcMain.handle("sentinel:update-knowledge", () => updateKnowledge({ manual: true }));
+// JULY PORT 2026-10-14 (ddfcac5b) — the read-only .txt association guard: a manual re-check, and the ONE guide action
+// (open Windows Default Apps for the person to pick Notepad; ARIA writes nothing; refused while paused/killed).
+ipcMain.handle("sentinel:file-association-scan", () => scanFileAssociationGuard("manual"));
+ipcMain.handle("sentinel:file-association-fix", (_event, recipeId) => openDefaultAppsForTextFiles(recipeId));
 ipcMain.handle("sentinel:incident", (_event, recipeId, context) => makeIncident(recipeId, context || {}));
 ipcMain.handle("sentinel:self-diagnose", (_event, reason) => selfDiagnose(reason || "renderer"));
 ipcMain.handle("sentinel:self-repair", (_event, reason) => selfRepair(reason || "renderer"));
@@ -5102,6 +5272,7 @@ if (hasSingleInstanceLock) {
     applyModeBehavior(store.get("mode"));
     startBridge();
     startDetection();
+    startFileAssociationGuard(); // JULY PORT 2026-10-14 — read-only .txt association guard (Windows only)
     startProcessHealth(); // RUN 23 — 30s content-blind process-health poll feeding the globe status panel
     serviceNowDrain().catch(() => undefined); // flush any incidents queued while offline
     selfDiagnose("startup").catch((error) => handleSelfError(error, "startup-diagnose"));
@@ -5180,6 +5351,7 @@ app.on("before-quit", () => {
   isQuitting = true;
   stopOverlayPhysics();
   try { globalShortcut.unregisterAll(); } catch { /* nothing registered */ }
+  if (fileAssociationGuardTimer) { clearInterval(fileAssociationGuardTimer); fileAssociationGuardTimer = null; } // JULY PORT 2026-10-14
   if (detectionOrchestrator) detectionOrchestrator.stopAll();
   if (adminWindow && !adminWindow.isDestroyed()) adminWindow.destroy();
   if (overlayWindow && !overlayWindow.isDestroyed()) overlayWindow.destroy();

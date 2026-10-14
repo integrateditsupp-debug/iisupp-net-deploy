@@ -543,6 +543,9 @@ const TESTS = [
   "./mode-error-matrix.test.mjs",
   // RUN 34-5 — 20+ Windows-error detector sweep (every live watcher mapper, each content-blind under PII input).
   "./windows-error-sweep.test.mjs",
+  // JULY PORT 2026-10-14 (ddfcac5b) — the READ-ONLY .txt file-association guard: reg query only, two manual/guide
+  // recipes, the normal detection pipeline, the excluded-folder guard on every registry string, Settings as the fix.
+  "./file-association-guard.test.mjs",
   // RUN 33 PIVOT — ARIA Chat in-tab (Chat sub-section of the ARIA parent tab; detached window removed).
   "./aria-chat-window-ui.test.mjs",
   // RUN 35-1 — chat scroll containment (inner log scrolls; outer tab never grows).
