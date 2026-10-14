@@ -6,6 +6,10 @@ import { repairTruncatedTail } from "../shared/kb-text.mjs"; // F2 — never ren
 import { splitShapedAnswer } from "../shared/kb-answer-shape.mjs"; // P7 — concise lead + collapsible "more help"
 import { walkStepsFor, hasWalkSteps, listFlows, getFlow, flowStep, resolveStep, LAUNCHER_GROUPS } from "../shared/walkthrough-steps.mjs"; // ONE shared source — recipe steps + companion flows + launcher groups
 import { confidenceBadge } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — per-answer confidence + "Was this fixed?" feedback
+// JULY PORT 2026-10-14 — the web ARIA entry flow (welcome + quick-issue chips) and the SCRIPTED demo lab
+// (100-call library · live capture chain · autonomous takeover choice). The demo is copy, never an action.
+import { ARIA_WEB_QUICK_ACTIONS, ARIA_WEB_WELCOME } from "../shared/aria-web-surface.mjs";
+import { COMMON_CALL_DEMO_SCENARIOS, buildAutonomousTakeoverDemo, buildLiveCaptureDemo, demoDisposition, summarizeCommonCallDemo } from "../shared/common-call-demo.mjs";
 // SENTINEL TRIAL GATING 2026-07-02 — per-tab enable/lock map (Walk-Through survives trial expiry; the buy path never locks).
 import { tabGateMap, LOCKED_TAB_MESSAGE, WALKTHROUGH_TAB } from "../shared/tab-gating.mjs";
 // RUN 22 — dashboard / performance / SLA / compliance / reports tab builders + status.
@@ -434,6 +438,7 @@ function wireActions() {
   wireRun23e();
   wireLockedTabOverlay(); // SENTINEL TRIAL GATING 2026-07-02 — locked-tab upsell overlay + buy path
   wireAutonomyPrefs();    // RUN-CU / CU4 — Settings → Autonomy & contacts + keep-dry-run + test notification
+  wireCommonCallDemo();   // JULY PORT 2026-10-14 — the scripted demo lab in Control Center (copy only, never an action)
 
   bindClick("showGlobe", (button) => runAction(button, () => sentinel.showGlobe()));
   bindClick("pauseOneHour", (button) => runAction(button, () => sentinel.setPaused(HOUR_MS)));
@@ -648,6 +653,248 @@ function renderHero(rs) {
 }
 let lastProcessHealthAt = 0;
 function processHealthAgeMs() { return lastProcessHealthAt ? Math.max(0, Date.now() - lastProcessHealthAt) : null; }
+
+// ===== JULY PORT 2026-10-14 — the SCRIPTED demo lab (Control Center). Ported from cd518cea · 9f2b9bd7 · 69058206.
+// Rule 14: everything rendered here is pre-written copy from src/shared/common-call-demo.mjs, labelled as a scripted
+// demonstration in the markup. None of these runners calls window.sentinel — no probe, no recipe, no executor, no
+// supervisor; a timer only advances which scripted step is highlighted. The golden frame is a visual label. =====
+let commonCallDemoTimer = null;
+let liveCaptureDemoTimer = null;
+let autonomyDemoTimer = null;
+
+function wireCommonCallDemo() {
+  bindClick("runLiveCaptureDemo", () => runLiveCaptureDemo());
+  bindClick("runAutonomousTakeoverDemo", () => renderAutonomyChoice());
+  bindClick("runAutonomyFrontend", () => runAutonomousTakeoverDemo("frontend"));
+  bindClick("runAutonomyBackend", () => runAutonomousTakeoverDemo("backend"));
+  bindClick("runCommonCallManual", () => runCommonCallDemo("manual"));
+  bindClick("runCommonCallConfirmed", () => runCommonCallDemo("confirmed"));
+  bindClick("runCommonCallAutonomous", () => runCommonCallDemo("autonomous"));
+  renderLiveCaptureDemo(-1);
+  renderAutonomyChoice();
+  renderCommonCallDemoSummary("manual", 0);
+}
+
+function listHtml(items) {
+  return (items || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+}
+
+function proofReportFor(demo, stepIndex) {
+  const done = stepIndex >= demo.steps.length;
+  const active = done ? demo.steps[demo.steps.length - 1] : demo.steps[Math.max(0, stepIndex)];
+  const completed = demo.steps.slice(0, Math.max(0, Math.min(stepIndex + 1, demo.steps.length)));
+  if (stepIndex < 0) return "No proof report yet.";
+  return [
+    `Report: ${demo.case.reportId} (scripted demonstration — not measured on this device)`,
+    `Case: ${demo.case.title}`,
+    `Status: ${done ? "VERIFIED - safe demo complete" : "RUNNING - " + active.label}`,
+    "",
+    "Before:",
+    ...demo.case.before.map((line) => `- ${line}`),
+    "",
+    "Troubleshooting chain:",
+    ...completed.map((step) => `- ${step.label}: ${step.proof}`),
+    "",
+    "After:",
+    ...(done ? demo.case.after.map((line) => `- ${line}`) : ["- Waiting for verification to finish."]),
+    ...(done ? ["", demo.completedText] : []),
+    "",
+    `Safety: ${demo.safety}`
+  ].join("\n");
+}
+
+function renderLiveCaptureDemo(stepIndex = -1) {
+  const demo = buildLiveCaptureDemo();
+  const title = qs("#liveCaptureTitle");
+  const status = qs("#liveCaptureStatus");
+  const before = qs("#liveCaptureBefore");
+  const after = qs("#liveCaptureAfter");
+  const timeline = qs("#liveCaptureTimeline");
+  const report = qs("#liveCaptureReport");
+  const progress = qs("#liveCaptureProgress");
+  if (!title || !timeline) return;
+  const done = stepIndex >= demo.steps.length;
+  const running = stepIndex >= 0 && !done;
+  title.textContent = running || done ? demo.case.title : "Ready for live capture";
+  if (status) status.textContent = done ? "verified (scripted)" : running ? "capturing (scripted)" : "standby";
+  if (before) before.innerHTML = listHtml(demo.case.before);
+  if (after) after.innerHTML = done ? listHtml(demo.case.after) : "<li>Waiting for verification to finish.</li>";
+  if (progress) progress.style.width = `${done ? 100 : stepIndex < 0 ? 0 : Math.round(((stepIndex + 1) / demo.steps.length) * 100)}%`;
+  timeline.innerHTML = demo.steps.map((step, index) => {
+    const state = done || index < stepIndex ? "done" : index === stepIndex ? "running" : "pending";
+    return `
+      <article class="live-capture-step ${state}">
+        <span>${String(index + 1).padStart(2, "0")}</span>
+        <div>
+          <strong>${escapeHtml(step.label)}</strong>
+          <p>${escapeHtml(step.detail)}</p>
+          <small>${escapeHtml(step.proof)}</small>
+        </div>
+      </article>`;
+  }).join("");
+  if (report) report.textContent = proofReportFor(demo, stepIndex);
+}
+
+function runLiveCaptureDemo() {
+  if (liveCaptureDemoTimer) window.clearInterval(liveCaptureDemoTimer);
+  setAriaUsingComputerFrame(false);
+  let stepIndex = 0;
+  renderLiveCaptureDemo(stepIndex);
+  liveCaptureDemoTimer = window.setInterval(() => {
+    stepIndex += 1;
+    renderLiveCaptureDemo(stepIndex);
+    if (stepIndex >= buildLiveCaptureDemo().steps.length) {
+      window.clearInterval(liveCaptureDemoTimer);
+      liveCaptureDemoTimer = null;
+    }
+  }, 760);
+}
+
+function setAriaUsingComputerFrame(active, mode = "frontend") {
+  const frame = qs("#ariaUsingComputerFrame");
+  if (!frame) return;
+  frame.hidden = !active;
+  frame.dataset.mode = mode;
+  document.body.classList.toggle("aria-control-active", Boolean(active));
+}
+
+function autonomyRebootPlanHtml(demo, done) {
+  if (!demo?.rebootPolicy?.required) return "";
+  const policy = demo.rebootPolicy;
+  const attempts = policy.attempts || [];
+  const attemptHtml = attempts.map((item, index) => `<li><strong>Attempt ${index + 1}:</strong> ${escapeHtml(item)}</li>`).join("");
+  const options = (policy.postponeOptions || []).map((item) => `<button class="ghost autonomy-postpone" type="button" disabled title="Scripted demo — this does not schedule anything">${escapeHtml(item)}</button>`).join("");
+  return `
+    <h4>Reboot reminder plan</h4>
+    <p>${done ? "A reboot is needed for some real fixes. ARIA reminds the user, but this build does not force a restart without user/admin approval." : "If the verified fix needs a reboot, ARIA will show this reminder plan after remediation."}</p>
+    <ol>${attemptHtml}</ol>
+    <div class="autonomy-postpone-row">${options}</div>
+    <small>Forced reboot policy: ${policy.forceEnabled ? "enabled by admin policy" : "disabled in this production-safe demo build"}.</small>`;
+}
+
+function autonomyReportFor(demo, stepIndex) {
+  if (stepIndex < 0) return "Waiting for user choice: front end visible control or back end remediation.";
+  const done = stepIndex >= demo.steps.length;
+  const completed = demo.steps.slice(0, Math.max(0, Math.min(stepIndex + 1, demo.steps.length)));
+  return [
+    `Report: ${demo.reportId} (scripted demonstration — not measured on this device)`,
+    `Mode: ${demo.choice.label}`,
+    `Status: ${done ? "VERIFIED - autonomous proof complete" : "RUNNING"}`,
+    "",
+    "Control chain:",
+    ...completed.map((step) => `- ${step.label}: ${step.proof}`),
+    "",
+    done ? demo.completedText : "ARIA is still running the selected workflow.",
+    "",
+    `Safety: ${demo.safety}`
+  ].join("\n");
+}
+
+function renderAutonomyChoice(mode = null, stepIndex = -1) {
+  const demo = buildAutonomousTakeoverDemo(mode || "frontend");
+  const title = qs("#autonomyChoiceTitle");
+  const status = qs("#autonomyRunStatus");
+  const prompt = qs("#autonomyChoicePrompt");
+  const timeline = qs("#autonomyTimeline");
+  const reboot = qs("#autonomyRebootPlan");
+  if (!title || !timeline) return;
+  const standby = !mode && stepIndex < 0;
+  const done = !standby && stepIndex >= demo.steps.length;
+  const running = !standby && stepIndex >= 0 && !done;
+  title.textContent = standby ? "Issue detected - choose how ARIA should run" : demo.issueTitle;
+  if (status) status.textContent = done ? "verified (scripted)" : running ? demo.choice.label : "waiting";
+  if (prompt) prompt.textContent = standby ? demo.prompt : `${demo.choice.detail} ${demo.safety}`;
+  timeline.innerHTML = standby ? demo.choices.map((choice) => `
+    <article class="live-capture-step running autonomy-choice-option">
+      <span>${choice.id === "frontend" ? "FE" : "BE"}</span>
+      <div>
+        <strong>${escapeHtml(choice.label)}</strong>
+        <p>${escapeHtml(choice.detail)}</p>
+        <small>${choice.id === "frontend" ? "User can watch ARIA work." : "User gets status updates while ARIA works quietly."}</small>
+      </div>
+    </article>`).join("") : demo.steps.map((step, index) => {
+      const state = done || index < stepIndex ? "done" : index === stepIndex ? "running" : "pending";
+      return `
+        <article class="live-capture-step ${state}">
+          <span>${String(index + 1).padStart(2, "0")}</span>
+          <div>
+            <strong>${escapeHtml(step.label)}</strong>
+            <p>${escapeHtml(step.detail)}</p>
+            <small>${escapeHtml(step.proof)}</small>
+          </div>
+        </article>`;
+    }).join("");
+  if (reboot) {
+    reboot.innerHTML = `${autonomyRebootPlanHtml(demo, done)}<pre class="live-capture-report">${escapeHtml(autonomyReportFor(demo, stepIndex))}</pre>`;
+  }
+}
+
+function runAutonomousTakeoverDemo(mode = "frontend") {
+  if (autonomyDemoTimer) window.clearInterval(autonomyDemoTimer);
+  const demo = buildAutonomousTakeoverDemo(mode);
+  let stepIndex = 0;
+  setAriaUsingComputerFrame(demo.visibleFrame, mode);
+  renderAutonomyChoice(mode, stepIndex);
+  autonomyDemoTimer = window.setInterval(() => {
+    stepIndex += 1;
+    renderAutonomyChoice(mode, stepIndex);
+    if (stepIndex >= demo.steps.length) {
+      window.clearInterval(autonomyDemoTimer);
+      autonomyDemoTimer = null;
+      setAriaUsingComputerFrame(false, mode);
+    }
+  }, 860);
+}
+
+function renderCommonCallDemoSummary(mode, completed = 0) {
+  const host = qs("#commonCallDemoSummary");
+  if (!host) return;
+  const summary = summarizeCommonCallDemo(mode);
+  const demoLabel = /demo/i.test(summary.label) ? summary.label : `${summary.label} demo`;
+  host.innerHTML = `
+    <strong>${escapeHtml(demoLabel)}: ${completed}/${summary.count} scripted calls shown</strong>
+    <span>${escapeHtml(summary.categories)} categories · ${escapeHtml(summary.green)} low-risk · ${escapeHtml(summary.highRisk)} high/critical approval stops · ${escapeHtml(summary.safety)} Scripted demonstration — not a measurement.</span>`;
+}
+
+function runCommonCallDemo(mode) {
+  const list = qs("#commonCallDemoList");
+  const progress = qs("#commonCallDemoProgress");
+  if (!list) return;
+  if (commonCallDemoTimer) window.clearInterval(commonCallDemoTimer);
+  setAriaUsingComputerFrame(false);
+  const scenarios = COMMON_CALL_DEMO_SCENARIOS;
+  const rows = scenarios.map((scenario, index) => {
+    const disposition = demoDisposition(scenario, mode);
+    return `
+      <article class="common-call-row" data-common-call-index="${index}">
+        <div class="ccr-top">
+          <span class="ccr-number">${String(index + 1).padStart(3, "0")}</span>
+          <strong>${escapeHtml(scenario.title)}</strong>
+          <em class="ccr-risk ${escapeHtml(scenario.risk)}">${escapeHtml(scenario.riskLabel)}</em>
+        </div>
+        <p>${escapeHtml(scenario.visualSymptom)}</p>
+        <div class="ccr-meta"><span>${escapeHtml(scenario.category)}</span><span>${escapeHtml(disposition.label)} · ${escapeHtml(disposition.status)}</span></div>
+        <small>${escapeHtml(disposition.summary)}</small>
+      </article>`;
+  }).join("");
+  list.innerHTML = rows;
+  let completed = 0;
+  const step = Math.max(2, Math.ceil(scenarios.length / 28));
+  const tick = () => {
+    completed = Math.min(scenarios.length, completed + step);
+    qsa(".common-call-row", list).forEach((row, index) => row.classList.toggle("live", index < completed));
+    renderCommonCallDemoSummary(mode, completed);
+    if (progress) progress.style.width = `${Math.round((completed / scenarios.length) * 100)}%`;
+    if (completed >= scenarios.length && commonCallDemoTimer) {
+      window.clearInterval(commonCallDemoTimer);
+      commonCallDemoTimer = null;
+    }
+  };
+  renderCommonCallDemoSummary(mode, 0);
+  if (progress) progress.style.width = "0%";
+  tick();
+  commonCallDemoTimer = window.setInterval(tick, 80);
+}
 
 function bindClick(id, handler) {
   const element = qs(`#${id}`);
@@ -2472,6 +2719,88 @@ function setChip(id, text, tone = "") {
   if (tone) element.classList.add(tone);
 }
 
+// JULY PORT 2026-10-14 (cd518cea) — readable KB answers. The July line shaped a raw KB blob into a guided card
+// (kicker · article title · the question · up to 5 "safest first checks" · the gate note · a "Show KB detail"
+// drawer). The current line already leads with the P7 concise lead + "More help" drawer, so the card is a FRAME
+// around that content: the extracted steps render only when the lead carries no list of its own (a raw blob),
+// never as a duplicate of steps the lead already shows. Pure string shaping; nothing here touches the device.
+function cleanAriaAnswerLine(line) {
+  return String(line || "")
+    .replace(/^#{1,6}\s+/, "")
+    .replace(/^[-*]\s+/, "")
+    .replace(/^\d+[.)]\s+/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function shortenAriaAnswerLine(line, max = 168) {
+  const clean = cleanAriaAnswerLine(line);
+  return clean.length > max ? `${clean.slice(0, max - 3).trim()}...` : clean;
+}
+
+function shapeReadableAriaAnswer(rawText, res, question) {
+  const kb = res && res.kbMatch;
+  if (!kb || res?.action !== "kb-match") return null;
+  const sourceText = String(rawText || "")
+    .replace(/^\s*(?:->|→)?\s*Full article:.*$/gim, "")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .trim();
+  const lines = sourceText
+    .split(/\r?\n+/)
+    .map(cleanAriaAnswerLine)
+    .filter((line) => line && line.length > 12 && !/^full article/i.test(line));
+  const actionable = [];
+  const fallback = [];
+  const seen = new Set();
+  for (const line of lines) {
+    const compact = shortenAriaAnswerLine(line);
+    const key = compact.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    if (/\b(check|open|restart|reset|clear|verify|try|select|choose|update|reconnect|repair|save|backup|restore|escalate|ask|confirm|run)\b/i.test(compact)) {
+      actionable.push(compact);
+    } else {
+      fallback.push(compact);
+    }
+    if (actionable.length >= 5) break;
+  }
+  const steps = (actionable.length >= 2 ? actionable : actionable.concat(fallback)).slice(0, 5);
+  return {
+    title: kb.title || kb.slug || "ARIA knowledge-base match",
+    lead: "ARIA matched this to the knowledge base. Start with the safest checks below, then use Resolve it for me only if you want Sentinel to open the gated local fix path.",
+    question: shortenAriaAnswerLine(question || "", 120),
+    steps: steps.length ? steps : [
+      "Confirm the visible symptom and affected app or device.",
+      "Try the lowest-risk check first before changing settings.",
+      "Escalate if the issue involves security, identity, file loss, or policy authority."
+    ],
+    detail: sourceText.length > 1100 ? `${sourceText.slice(0, 1100).trim()}...` : sourceText
+  };
+}
+
+// Builds the card frame. `contentNodes` (the P7 lead + "More help" drawer) go inside it; `showSteps` adds the
+// extracted "safest first checks" list only when the lead has no list of its own.
+function renderReadableAriaAnswer(model, { contentNodes = [], showSteps = true } = {}) {
+  const wrap = document.createElement("div");
+  wrap.className = "aria-answer-card";
+  const questionHtml = model.question ? `<p class="aria-answer-question">${escapeHtml(model.question)}</p>` : "";
+  const stepsHtml = showSteps ? `<ol class="aria-answer-steps">${model.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol>` : "";
+  wrap.innerHTML = `<p class="aria-answer-kicker">Knowledge-base match</p><h3 class="aria-answer-title">${escapeHtml(model.title)}</h3>${questionHtml}<p class="aria-answer-lead">${escapeHtml(model.lead)}</p>${stepsHtml}`;
+  const body = document.createElement("div"); body.className = "aria-answer-body";
+  for (const node of contentNodes) if (node) body.appendChild(node);
+  wrap.appendChild(body);
+  const note = document.createElement("p"); note.className = "aria-answer-note";
+  note.textContent = "Sentinel never applies a fix from chat without the normal approval gates, rollback notes, and kill-switch.";
+  wrap.appendChild(note);
+  if (model.detail) {
+    const details = document.createElement("details");
+    details.className = "aria-answer-details";
+    details.innerHTML = `<summary>Show KB detail</summary><div class="aria-answer-detail-md">${renderMarkdown(model.detail)}</div>`;
+    wrap.appendChild(details);
+  }
+  return wrap;
+}
+
 // RUN 33 PIVOT — in-tab ARIA Chat (Chat sub-section of the ARIA tab). Reuses the Slice 0 design + the same
 // window.sentinel.chat brain (KB-first → Anthropic → local). 🔒 frontmatter-strip + escaping; no node access.
 function initAriaChat() {
@@ -2481,6 +2810,29 @@ function initAriaChat() {
   const esc = (s) => String(s == null ? "" : s).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]));
   const stripFm = (s) => String(s == null ? "" : s).replace(/^﻿?\s*---\r?\n[\s\S]*?\r?\n---\r?\n?/, "").trim();
   let dropped = false;
+  // JULY PORT 2026-10-14 (69058206) — the desktop chat mirrors the iisupp.net/aria entry flow: the web welcome copy
+  // + the quick-issue chips. A chip only fills the composer and submits through the SAME pipeline as typing.
+  setText("ariaWebWelcomeTitle", ARIA_WEB_WELCOME.title);
+  setText("ariaWebWelcomeBody", ARIA_WEB_WELCOME.body);
+  function submitAriaQuestion(text) {
+    const value = String(text || "").trim();
+    if (!value || input.disabled) return;
+    input.value = value;
+    input.style.height = "auto";
+    input.style.height = Math.min(140, input.scrollHeight) + "px";
+    input.focus();
+    form.requestSubmit();
+  }
+  function renderAriaWebQuickActions() {
+    const host = qs("#ariaWebQuickActions");
+    if (!host || host.dataset.ready === "1") return;
+    host.innerHTML = ARIA_WEB_QUICK_ACTIONS.map((item) => `<button class="aria-web-chip" type="button" data-aria-web-ask="${escapeHtml(item.ask)}">${escapeHtml(item.label)}</button>`).join("");
+    qsa("[data-aria-web-ask]", host).forEach((button) => {
+      button.addEventListener("click", () => submitAriaQuestion(button.getAttribute("data-aria-web-ask") || ""));
+    });
+    host.dataset.ready = "1";
+  }
+  renderAriaWebQuickActions();
   const drop = () => { if (dropped) return; dropped = true; if (panel) panel.classList.add("chatting"); const w = qs("#ariaChatWelcome"); if (w) w.remove(); };
   // RUN 35-1 — auto-scroll to bottom on new content, BUT pause if the user has scrolled up to read history.
   // stickToBottom flips false when they scroll away from the bottom, true again when they return near it.
@@ -2512,13 +2864,19 @@ function initAriaChat() {
     const full = repairTruncatedTail(stripFm((res && res.text) || "I couldn't get an answer just now — please try again."));
     const { lead, more } = splitShapedAnswer(full);
     answer.innerHTML = renderMarkdown(lead || full);
-    bubble.textContent = ""; bubble.appendChild(answer);
+    bubble.textContent = "";
+    let moreDrawer = null;
     if (more) {
       const det = document.createElement("details"); det.className = "aria-chat-more";
       const sum = document.createElement("summary"); sum.textContent = "More help — verify, escalate, prevent";
       const body2 = document.createElement("div"); body2.className = "aria-chat-md"; body2.innerHTML = renderMarkdown(more);
-      det.append(sum, body2); bubble.appendChild(det);
+      det.append(sum, body2); moreDrawer = det;
     }
+    // JULY PORT 2026-10-14 — a KB match renders inside the readable answer card (frame around the P7 lead + drawer);
+    // the extracted "safest first checks" appear only when the lead has no list of its own. Anything else is unchanged.
+    const readable = shapeReadableAriaAnswer(full, res, question);
+    if (readable) { bubble.appendChild(renderReadableAriaAnswer(readable, { contentNodes: [answer, moreDrawer], showSteps: !/<li>/i.test(answer.innerHTML) })); }
+    else { bubble.appendChild(answer); if (moreDrawer) bubble.appendChild(moreDrawer); }
     const kb = res && res.kbMatch;
     if (kb && (kb.title || kb.slug)) {
       const card = document.createElement("div"); card.className = "aria-chat-article";

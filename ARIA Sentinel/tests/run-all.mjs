@@ -547,6 +547,13 @@ const TESTS = [
   "./aria-chat-window-ui.test.mjs",
   // RUN 35-1 — chat scroll containment (inner log scrolls; outer tab never grows).
   "./chat-scroll-containment.test.mjs",
+  // JULY PORT 2026-10-14 (cd518cea · 9f2b9bd7 · 69058206, ported from cc/security-lockdown-2026-07-01) — desktop ARIA
+  // chat KB answers framed as readable cards around the P7 lead; the web entry flow (welcome + quick chips); the
+  // SCRIPTED 100-call demo lab in Control Center (copy only — the runners reach nothing on the device).
+  "./aria-chat-readable-answer.test.mjs",
+  "./aria-chat-web-alignment.test.mjs",
+  "./common-call-demo.test.mjs",
+  "./common-call-demo-ui.test.mjs",
   // RUN 35-2 — aria-kb-query routing iter 7 (security families/takeover · wifi no-word · printer tightened).
   "./aria-kb-routing-iter7.test.mjs",
   // RUN 36 round-3 — routing coverage for calendar · external display · conference-room AV (top50-gaps).

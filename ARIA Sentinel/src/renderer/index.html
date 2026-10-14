@@ -21,6 +21,11 @@
         <button id="securityBannerDismiss" class="security-banner-btn ghost">Dismiss</button>
       </div>
     </div>
+    <!-- JULY PORT 2026-10-14 (demo lab) — the golden "ARIA using computer" frame. Shown ONLY while the scripted
+         autonomous demo plays in front-end mode; it is a visual label, never a control surface. -->
+    <div id="ariaUsingComputerFrame" class="aria-using-computer-frame" aria-hidden="true" hidden>
+      <span>ARIA using computer · scripted demo</span>
+    </div>
     <main class="settings-shell">
       <aside class="settings-rail">
         <div class="settings-brand">
@@ -119,8 +124,12 @@
               <div class="aria-chat-divider"></div>
             </div>
             <div class="aria-chat-log" id="ariaChatLog">
-              <div class="aria-chat-welcome" id="ariaChatWelcome"><strong>Ask ARIA anything.</strong><br/>Windows, Mac, iPhone, iPad, Android, ChromeOS or Linux — answered from the knowledge base first, instantly.</div>
+              <!-- JULY PORT 2026-10-14 — the welcome mirrors the iisupp.net/aria entry flow (ARIA_WEB_WELCOME fills the
+                   two hosts at init); the markup below is the static fallback. -->
+              <div class="aria-chat-welcome" id="ariaChatWelcome"><strong id="ariaWebWelcomeTitle">How can I help you today?</strong><br/><span id="ariaWebWelcomeBody">Ask ARIA anything — Windows, Mac, iPhone, iPad, Android, ChromeOS or Linux — answered from the knowledge base first, instantly.</span></div>
             </div>
+            <!-- JULY PORT 2026-10-14 — the web quick-issue chips (ARIA_WEB_QUICK_ACTIONS); a chip submits a normal question. -->
+            <div class="aria-web-quick-actions" id="ariaWebQuickActions" aria-label="ARIA quick issue shortcuts"></div>
             <form class="aria-chat-composer" id="ariaChatForm">
               <textarea id="ariaChatInput" placeholder="Ask ARIA anything…" aria-label="Ask ARIA anything" rows="1"></textarea>
               <!-- RUN-CU / CU4 — on-device voice: the mic shows ONLY when the bundled local model exists (never a cloud recognizer). -->
@@ -295,6 +304,68 @@
             <h3 style="margin-top:14px">Recent decisions</h3>
             <div id="approvalsDecided" class="log-list"></div>
             <div id="deferredFixes" class="health-list" hidden></div>
+          </section>
+          <!-- JULY PORT 2026-10-14 — the 100-call demo lab (ported from the July line, cd518cea · 9f2b9bd7 · 69058206).
+               SCRIPTED DEMONSTRATION (Rule 14): every step, number and "result" below is pre-written copy from
+               src/shared/common-call-demo.mjs so a recording can show the workflow. Nothing on this panel probes,
+               changes or fixes anything on this device — it never calls the executor, the supervisor or a recipe. -->
+          <section class="panel common-call-demo-panel" id="commonCallDemoPanel">
+            <div class="panel-actions">
+              <div>
+                <p class="eyebrow">Demo lab · scripted demonstration</p>
+                <h2>100+ common support calls</h2>
+              </div>
+              <span class="active-badge">simulation only</span>
+            </div>
+            <p class="note">Use this while recording: ARIA walks through common corporate issues in Manual, Confirmed, and Autonomous safe-demo mode. Every step and result shown here is scripted for the demonstration — nothing is measured on this device, and nothing runs. It creates visual proof without changing Windows, locking accounts, bypassing policy, or granting hidden access; a real fix still goes through the normal approval gates, countdown and kill switch.</p>
+            <div class="common-call-demo-actions">
+              <button id="runLiveCaptureDemo" class="primary" type="button">Run live capture demo</button>
+              <button id="runAutonomousTakeoverDemo" class="primary" type="button">Run autonomous takeover demo</button>
+              <button id="runCommonCallManual" class="ghost" type="button">Run Manual demo</button>
+              <button id="runCommonCallConfirmed" class="ghost" type="button">Run Confirmed demo</button>
+              <button id="runCommonCallAutonomous" class="ghost" type="button">Run Autonomous safe demo</button>
+            </div>
+            <section class="autonomy-choice-card" id="autonomyChoiceCard" aria-live="polite">
+              <div class="live-capture-head">
+                <div>
+                  <p class="eyebrow">Autonomous mode · scripted</p>
+                  <h3 id="autonomyChoiceTitle">Ready for autonomous takeover demo</h3>
+                </div>
+                <span id="autonomyRunStatus">standby</span>
+              </div>
+              <p id="autonomyChoicePrompt" class="autonomy-choice-prompt">Run the demo to show how ARIA asks before visible control or background remediation.</p>
+              <div class="autonomy-choice-buttons">
+                <button id="runAutonomyFrontend" class="primary" type="button">Front end - show me</button>
+                <button id="runAutonomyBackend" class="ghost" type="button">Back end - run quietly</button>
+              </div>
+              <div id="autonomyTimeline" class="live-capture-timeline"></div>
+              <div id="autonomyRebootPlan" class="autonomy-reboot-plan"></div>
+            </section>
+            <section class="live-capture-card" id="liveCaptureDemoCard" aria-live="polite">
+              <div class="live-capture-head">
+                <div>
+                  <p class="eyebrow">Troubleshooting proof · scripted</p>
+                  <h3 id="liveCaptureTitle">Ready for live capture</h3>
+                </div>
+                <span id="liveCaptureStatus">standby</span>
+              </div>
+              <div class="live-capture-grid">
+                <div>
+                  <h4>Before</h4>
+                  <ul id="liveCaptureBefore"><li>Waiting for capture.</li></ul>
+                </div>
+                <div>
+                  <h4>After</h4>
+                  <ul id="liveCaptureAfter"><li>Run the demo to verify.</li></ul>
+                </div>
+              </div>
+              <div class="live-capture-progress"><span id="liveCaptureProgress"></span></div>
+              <div id="liveCaptureTimeline" class="live-capture-timeline"></div>
+              <pre id="liveCaptureReport" class="live-capture-report">No proof report yet.</pre>
+            </section>
+            <div id="commonCallDemoSummary" class="common-call-demo-summary">Ready to simulate 100+ common calls.</div>
+            <div class="common-call-progress"><span id="commonCallDemoProgress"></span></div>
+            <div id="commonCallDemoList" class="common-call-demo-list" aria-live="polite"></div>
           </section>
         </section>
 
