@@ -91,3 +91,13 @@ Talk rail, the Priorities screen and the board text the brains read now carry th
 1. `AHMAD-MERGE-AXIS-ONE.cmd` (lands RUN-CV + AXIS ONE + PRO LOOK + this) → Netlify publish.
 2. Google sign-in for the calendar + three mailboxes (`scripts/gmail-auth.mjs`, then `AXIS_GMAIL_*` in Netlify).
 3. Keep the worker running on his machine — the CEO ledger reaches the cloud only through its hourly tick.
+
+## Hotfix — the Netlify build box ran out of disk (2026-10-13 22:45 ET)
+Both builds of the merge (`2e045e8`) died at ~1m40s of function bundling with `ENOSPC: no space left on device`.
+Reproduced with `@netlify/zip-it-and-ship-it` locally: with the esbuild bundler it copies every module in
+`[functions].external_node_modules` into every v1 function's zip whether used or not — 104 CommonJS functions
+× 28 MB (stripe + pdfjs-dist + pdfkit + mammoth + jszip) = 3.2 GB of zips per build. The `860146f8` build had
+survived at 1m47s; one more function tipped it. Fix (netlify.toml): `@netlify/blobs` stays global; the six heavy
+modules are scoped per function to exactly the 17 functions whose bundles reach them (esbuild metafile).
+Result: 3.2 GB → 138 MB of zips, every bundled JS byte-identical. Guard: `tests/netlify-function-externals.test.mjs`
+(static import graph ↔ per-function blocks, both directions).

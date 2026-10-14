@@ -29,13 +29,60 @@
   # imports lib/content-assurance.mjs, which imports pdfkit, so all six went down at once and the
   # Content Assurance preview broke. jszip/pdf-parse/mammoth/busboy are externalised for the same
   # class of reason (CJS interop + runtime file reads that do not survive inlining).
-  external_node_modules = ["stripe", "@netlify/blobs", "pdfkit", "jszip", "pdf-parse", "mammoth", "busboy"]
+  #
+  # RUN-AX2 hotfix (2026-10-13 22:45 ET, measured): with the esbuild bundler, zip-it-and-ship-it copies EVERY
+  # module listed here into EVERY v1 function's zip whether the function imports it or not (getSrcFiles →
+  # getSrcFilesForDependencies walks the configured list, not the bundle's imports). 104 CommonJS functions —
+  # health.js, axis-director.js, aria-chat.js … — each shipped stripe + pdfjs-dist + pdfkit + mammoth + jszip:
+  # 28 MB a zip, ~3.2 GB of zips per build. The 860146f8 build survived at 1m47s of bundling; the AXIS ONE
+  # merge (one more function) tipped the build box over: "ENOSPC: no space left on device" at 1m40s, twice.
+  # Fix: only @netlify/blobs stays global (4 files). The heavy modules are listed per function below, for
+  # exactly the functions whose bundles reference them (esbuild metafile, tests/netlify-function-externals.test.mjs
+  # keeps the two in step). Every bundle's JS is byte-identical to before — only the copied node_modules shrink.
+  external_node_modules = ["@netlify/blobs"]
   # The authed /api/axis-state function reads the worker-emitted full state. Bundle that non-public file with
   # the functions; it is NOT served at a public URL (/netlify/* is redirect-blocked).
   # RUN-AX2 (2026-10-13): _axis-status-full.json joins the list — /api/axis-status and the situation model
   # (lib/axis-situation.cjs) both read it next to the function; without the explicit include the bundler only
   # ships it when its static analysis happens to spot the path, which a variable-built path defeats.
   included_files = ["netlify/functions/_axis-state-full.json", "netlify/functions/_axis-snapshots-seed.json", "netlify/functions/_axis-status-full.json"]
+
+# RUN-AX2 hotfix: the heavy externals, scoped to the functions whose bundles use them (see [functions] above).
+# A per-function block REPLACES external_node_modules for that function, so @netlify/blobs is repeated where used.
+[functions."ca-analyze"]
+  external_node_modules = ["@netlify/blobs", "busboy", "jszip", "mammoth", "pdf-parse", "pdfkit"]
+[functions."ca-checkout"]
+  external_node_modules = ["@netlify/blobs", "jszip", "pdfkit", "stripe"]
+[functions."ca-delivery"]
+  external_node_modules = ["@netlify/blobs", "jszip", "pdfkit", "stripe"]
+[functions."ca-email"]
+  external_node_modules = ["@netlify/blobs", "jszip", "pdfkit"]
+[functions."ca-expert-search"]
+  external_node_modules = ["@netlify/blobs", "jszip", "pdfkit"]
+[functions."ca-purge-cron"]
+  external_node_modules = ["@netlify/blobs", "jszip", "pdfkit"]
+[functions."aria-account-delete"]
+  external_node_modules = ["@netlify/blobs", "stripe"]
+[functions."aria-data-export"]
+  external_node_modules = ["@netlify/blobs", "stripe"]
+[functions."aria-renewal-reminders"]
+  external_node_modules = ["@netlify/blobs", "stripe"]
+[functions."aria-renewal-reminders-cron"]
+  external_node_modules = ["@netlify/blobs", "stripe"]
+[functions."sentinel-stripe-webhook"]
+  external_node_modules = ["@netlify/blobs", "stripe"]
+[functions."stripe-confirm"]
+  external_node_modules = ["@netlify/blobs", "stripe"]
+[functions."stripe-webhook"]
+  external_node_modules = ["@netlify/blobs", "stripe"]
+[functions."aria-mrr-dashboard"]
+  external_node_modules = ["stripe"]
+[functions."aria-plan-change"]
+  external_node_modules = ["stripe"]
+[functions."library-download"]
+  external_node_modules = ["stripe"]
+[functions."stripe-checkout"]
+  external_node_modules = ["stripe"]
 
 [[headers]]
   for = "/*"
