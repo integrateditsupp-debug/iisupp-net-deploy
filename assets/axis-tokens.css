@@ -711,3 +711,125 @@ section.axis-dock { padding-top:0; padding-bottom:0; }
   :root[data-axis-open="1"][data-axis-dock="open"] .content,
   :root[data-axis-open="1"][data-axis-dock="open"] .axis-head { padding-right:16px; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   AXIS PRO LOOK — 2026-10-13. Ahmad: "give IIS command center a new professional
+   look. Easy to understand, simple and all information there. all functional, do
+   not lose any functions and features or data. just give it a better look with
+   simple options to perform all the work on the site."
+   A SKIN. Same DOM, same ids, same data, same screens (Rule 15). What changes:
+   type (labels in Inter, sentence-case subtitles, mono kept for data), a cockpit
+   head band (globe left, controls right — the board starts higher), calmer cards,
+   a clearer nav, and a visible Actions menu (the ⌘K palette, now listing every
+   job on the site by name).
+   ══════════════════════════════════════════════════════════════════════════════ */
+body { font-size:13.5px; line-height:1.5; }
+
+/* Labels: small caps in the UI face, not the code face. Data stays mono (.mono, .tick, values). */
+.eyebrow, .kpi .label, .nav-group, .stage-tag, .footnote, .axis-brain, .kpi .delta, .chip .count, .badge,
+.axis-tab, .axis-hero-name, .axis-hero-name .axis-state-word, .axis-fab-pill, .axis-pri-d, .cc-title, .nav-glyph,
+.axis-public .eyebrow, .toast {
+  font-family:var(--sans); }
+.eyebrow { font-size:10.5px; letter-spacing:.08em; font-weight:600; color:var(--txt-3); }
+.screen-head { align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:16px; }
+.screen-title { font-size:17px; font-weight:650; letter-spacing:-.01em; }
+.screen-head .eyebrow { text-transform:none; letter-spacing:0; font-size:12px; font-weight:500; color:var(--txt-2); }
+
+/* Sidebar */
+.sidebar { padding:14px 12px; gap:1px; }
+.brand { padding:8px 8px 16px; }
+.brand-text { font-size:15px; display:flex; flex-direction:column; line-height:1.1; }
+.brand-sub { font-size:10.5px; font-weight:500; color:var(--txt-3); letter-spacing:.02em; }
+.app[data-collapsed] .brand-sub { display:none; }
+.nav-group { font-size:10px; letter-spacing:.1em; font-weight:600; padding:14px 10px 5px; }
+.nav-item { padding:8px 10px; border-radius:9px; gap:10px; }
+.nav-item[aria-current="true"] { box-shadow:inset 2px 0 0 var(--gold); border-radius:4px 9px 9px 4px; }
+.nav-glyph { width:24px; height:24px; font-size:9px; font-weight:650; border-radius:6px; background:var(--surface-2); }
+.nav-item[aria-current="true"] .nav-glyph { border-color:color-mix(in srgb, var(--gold) 45%, transparent); background:var(--gold-dim); }
+.nav-label { font-size:13px; }
+
+/* Top bar */
+.topbar { padding:10px 20px; gap:14px; }
+.topbar .search { border-radius:10px; padding:8px 12px; font-size:12.5px; }
+.topbar-right { gap:10px; }
+.tick { font-size:10.5px; }
+.iconbtn { border-radius:9px; padding:7px 10px; }
+.actions-btn { border-color:color-mix(in srgb, var(--gold) 55%, transparent); color:var(--gold); font-weight:600; font-size:12.5px;
+  padding:7px 13px; background:var(--gold-dim); }
+.actions-btn:hover { border-color:var(--gold); color:var(--gold-2); background:color-mix(in srgb, var(--gold) 18%, transparent); }
+
+/* Action menu (the palette) */
+.palette-box { border-radius:16px; width:min(620px,94vw); box-shadow:0 40px 90px -40px #000; }
+.palette-box input { font-size:15.5px; padding:16px 18px; }
+.palette-item { padding:10px 18px; justify-content:space-between; gap:14px; }
+.palette-label { font-weight:550; }
+.palette-hint { color:var(--txt-3); font-size:12px; text-align:right; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.palette-item[aria-selected="true"] .palette-hint { color:color-mix(in srgb, var(--gold) 70%, var(--txt-2)); }
+
+/* The cockpit: globe on the left, AXIS line + ask bar + quick chips on the right. The board starts
+   ~200px higher than the stacked layout and nothing is removed — same elements, new arrangement. */
+.axis-head { padding:14px 22px 10px; align-items:stretch; gap:0; }
+.axis-orbit { display:grid; grid-template-columns:auto minmax(0,1fr); grid-template-areas:"globe status" "globe bar" "globe chips";
+  column-gap:24px; row-gap:9px; align-items:center; justify-items:start; width:100%; max-width:1120px; margin:0 auto; }
+.axis-orbit .axis-globe { grid-area:globe; width:150px; height:150px; align-self:center; }
+.axis-orb-status { grid-area:status; text-align:left; font-size:14px; color:var(--txt); font-weight:500; }
+.axis-orbit .axis-bar { grid-area:bar; width:min(680px,100%); }
+.axis-bar input { flex:1; width:auto; min-width:0; font-size:13px; }
+.axis-orb-chips { grid-area:chips; justify-content:flex-start; }
+.axis-bar .chip, .axis-orb-chips .chip { font-size:12.5px; }
+:root[data-axis-open="1"] .axis-orbit .axis-globe { width:110px; height:110px; }
+/* Grant Radar, Director and the other screens inherit the same band — one head, every screen. */
+
+/* Cards, KPIs, rows */
+.card { border-radius:14px; padding:16px; box-shadow:inset 0 1px 0 rgba(255,255,255,.03); }
+.kpi { border-radius:14px; padding:16px 18px; }
+.kpi .label { font-size:10.5px; letter-spacing:.08em; font-weight:600; }
+.kpi .value { font-size:26px; letter-spacing:-.01em; margin-top:8px; }
+.kpi .delta { font-size:11px; margin-top:4px; }
+.row { padding:12px 16px; }
+.row:nth-child(even) { background:color-mix(in srgb, var(--surface-2) 45%, transparent); }
+.row:hover { background:var(--surface-2); }
+.chip { padding:6px 13px; font-size:12.5px; }
+.stage-tag { font-size:10px; letter-spacing:.04em; font-weight:600; border-radius:6px; padding:2px 7px; }
+.footnote { font-size:10.5px; padding:3px 10px; }
+.badge { font-size:10px; font-weight:650; }
+.empty { font-size:13px; }
+
+/* Console */
+.axis-dock-head { padding:16px 16px 14px; }
+.axis-hero-name { font-size:13px; letter-spacing:.22em; }
+.axis-hero-name .axis-state-word { font-size:10px; letter-spacing:.08em; }
+.axis-tab { font-size:10.5px; letter-spacing:.08em; font-weight:600; padding:8px 10px 9px; }
+.axis-brain { font-size:10.5px; letter-spacing:.06em; font-weight:600; }
+.axis-msg { font-size:13px; }
+.axis-input input { font-size:13px; }
+
+/* Phone: the cockpit stacks again, centred, like the original orbit. */
+@media (max-width:720px) {
+  /* minmax(0,1fr): the ask bar's min-content (the input's intrinsic width) must not widen the track past the phone. */
+  .axis-orbit { grid-template-columns:minmax(0,1fr); grid-template-areas:"globe" "status" "bar" "chips"; justify-items:center; row-gap:8px; }
+  .axis-orbit .axis-bar { width:100%; max-width:100%; }
+  .axis-orbit .axis-globe { width:120px; height:120px; }
+  .axis-orb-status { text-align:center; font-size:13px; }
+  .axis-orb-chips { justify-content:center; }
+  .actions-btn { padding:7px 10px; }
+}
+
+/* ── Theme firewall (AXIS PRO LOOK) ───────────────────────────────────────────
+   xo-elite-theme.css (batch 5221e01a) is a dark-only overlay for the public pages: it forces the body
+   background with !important, paints inputs #0b0d12, and sets b/strong/label to its own ivory. On the
+   command center that broke the ◐ light theme since 2026-10-09 (black pane, white-on-white numbers).
+   Only the two command-center shells load this file, so this scope touches nothing public. The tokens
+   stay the single source of colour in BOTH themes. */
+html[data-theme] body { background:var(--bg) !important; color:var(--txt); font-family:var(--sans); line-height:1.5; }
+.app b, .app strong, .app label, .login b, .login strong, .login label { color:inherit; }
+.app input, .app select, .app textarea, .login input, .login select, .login textarea {
+  background:var(--surface-2); color:var(--txt); border-color:var(--line); }
+.app a, .login a { color:var(--gold); }
+.app code { background:var(--gold-dim) !important; color:var(--gold-2) !important; }
+/* Light theme polish: the gold-on-light gradient title reads better as the solid dark-gold token. */
+:root[data-theme="light"] .topbar .cc-title { background:none; -webkit-text-fill-color:var(--gold-2); color:var(--gold-2) !important; }
+:root[data-theme="light"] .axis-bar { background:color-mix(in srgb, var(--surface) 80%, transparent); }
+:root[data-theme="light"] .card, :root[data-theme="light"] .kpi { box-shadow:0 1px 2px rgba(22,18,8,.04); }
+.app .axis-bar input { background:transparent; border:0; }
+.axis-head { padding-top:20px; }

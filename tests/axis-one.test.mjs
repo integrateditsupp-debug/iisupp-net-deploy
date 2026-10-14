@@ -108,5 +108,15 @@ t('queue allow-list has grant.prepare', /'grant\.prepare'\]/.test(queue));
 t('worker handles grant.prepare and stops at the portal', /kind === 'grant\.prepare'/.test(worker) && /NOT including sign-in or Submit/.test(worker));
 t('intent known types include the grant intents', /'grant_apply', 'grant_scan', 'grant_report'/.test(intent));
 
+// ── 10. AXIS PRO LOOK (2026-10-13): a skin, with one new door — the Actions menu ──
+t('top bar has the Actions button', /id="actionsBtn"/.test(shell));
+t('Actions opens the same ⌘K menu', /\$\('actionsBtn'\)\?\.addEventListener\('click', openPalette\)/.test(app));
+for (const label of ['Ask AXIS', 'Start a live call', 'Pull up a working doc', 'Add a to-do', 'Automate a task', 'Review approvals', 'Draft outreach', 'Apply for a grant', 'Send Claude a task', 'Give my PC a task', 'Today’s brief', 'Export reports'])
+  t(`action menu lists "${label}"`, app.includes(`label: '${label}'`));
+t('every nav screen is still reachable from the menu', /const nav = NAV\.flatMap\(g => g\.items\)\.map\(i => \(\{ label: 'Go to ' \+ i\.label/.test(app));
+t('cockpit head band (globe left, controls right) is CSS only', /\.axis-orbit \{ display:grid; grid-template-columns:auto minmax\(0,1fr\)/.test(css));
+t('theme firewall restores the light theme under the XO overlay', /html\[data-theme\] body \{ background:var\(--bg\) !important/.test(css));
+t('sidebar brand subtitle present', /class="brand-sub">Command Center/.test(shell));
+
 console.log(`[axis-one] ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

@@ -2974,18 +2974,37 @@ async function pubAsk(q) {
 // ── Command palette ──
 let palSel = 0;
 function paletteItems() {
-  const nav = NAV.flatMap(g => g.items).map(i => ({ label: 'Go to ' + i.label, run: () => go(i.id) }));
-  return nav.concat([
-    { label: 'Approve all pending', run: () => { go('approvals'); (data('approvals').rows || []).filter(r => r.status === 'pending').forEach(bulkApprove); } },
-    { label: 'Open Action Inbox', run: () => go('inbox') },
-    { label: 'Talk to AXIS', run: () => openDock() },
-  ]);
+  // AXIS PRO LOOK (2026-10-13): the palette is the one action menu — every job on the site, by name,
+  // before the screen list. Ahmad: "simple options to perform all the work on the site."
+  const act = [
+    { label: 'Ask AXIS', hint: 'type or talk — the director brain', run: () => axisOpenConsole('talk') },
+    { label: 'Start a live call', hint: 'two-way, Aria’s voice', run: () => axisLiveToggleFromUi() },
+    { label: 'Pull up a working doc', hint: 'leads list, email, proposal, plan', run: () => axisOpenConsole('work') },
+    { label: 'Add a to-do', hint: 'prioritised, flags what needs you', run: () => axisOpenConsole('todo') },
+    { label: 'Automate a task', hint: 'runs on its own, emails when it needs you', run: () => axisOpenConsole('auto') },
+    { label: 'Review approvals', hint: 'nothing sends until you say so', run: () => go('approvals') },
+    { label: 'Approve all pending', hint: 'bulk — agent-queued approvals', run: () => { go('approvals'); (data('approvals').rows || []).filter(r => r.status === 'pending').forEach(bulkApprove); } },
+    { label: 'Open Action Inbox', hint: 'client replies and new requests', run: () => go('inbox') },
+    { label: 'Draft outreach', hint: 'approved template only', run: () => go('outreach') },
+    { label: 'Apply for a grant', hint: 'AXIS builds the packet, you submit', run: () => go('grants') },
+    { label: 'Send Claude a task', hint: 'the worker on your PC', run: () => axisOpenConsole('claude') },
+    { label: 'Give my PC a task', hint: 'Axis Local', run: () => axisOpenConsole('pc') },
+    { label: 'Today’s brief', hint: 'done · waiting · next', run: () => axisOpenConsole('brief') },
+    { label: 'Export reports', hint: 'xlsx / csv / pdf from the worker', run: () => go('reports') },
+    { label: 'Hands-free wake word on / off', hint: 'say “AXIS” to start a turn', run: () => axisHandsFreeToggle() },
+    { label: 'Switch light / dark', hint: 'theme', run: () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark') },
+    { label: 'Talk to AXIS', hint: 'open the console', run: () => openDock() },
+  ];
+  const nav = NAV.flatMap(g => g.items).map(i => ({ label: 'Go to ' + i.label, hint: g2(i.id), run: () => go(i.id) }));
+  return act.concat(nav);
 }
+const g2 = (id) => (NAV.find(g => g.items.some(i => i.id === id)) || {}).group || '';
 function openPalette() { $('palette').hidden = false; $('paletteInput').value = ''; palSel = 0; renderPalette(); $('paletteInput').focus(); }
 function renderPalette() {
-  const q = $('paletteInput').value.toLowerCase(); const items = paletteItems().filter(i => i.label.toLowerCase().includes(q));
+  const q = $('paletteInput').value.toLowerCase(); const items = paletteItems().filter(i => (i.label + ' ' + (i.hint || '')).toLowerCase().includes(q));
   const list = $('paletteList'); list.innerHTML = ''; palSel = Math.min(palSel, items.length - 1);
-  items.forEach((it, i) => list.append(el('div', { class: 'palette-item', 'aria-selected': i === palSel, onclick: () => { it.run(); $('palette').hidden = true; } }, it.label)));
+  items.forEach((it, i) => list.append(el('div', { class: 'palette-item', 'aria-selected': i === palSel, onclick: () => { it.run(); $('palette').hidden = true; } },
+    [el('span', { class: 'palette-label' }, it.label), it.hint ? el('span', { class: 'palette-hint' }, it.hint) : ''])));
   list._items = items;
 }
 
@@ -3193,6 +3212,7 @@ axisSyncWakeBtn();  // hands-free defaults OFF (it holds the mic open) — refle
 try { if (localStorage.getItem('axis-hands-free') === '1') { const b = $('axisWake'); if (b) b.title = 'Hands-free was on — click to resume'; } } catch {}
 $('axisInput').addEventListener('keydown', (e) => e.key === 'Enter' && axisSend());
 $('search').addEventListener('click', openPalette);
+$('actionsBtn')?.addEventListener('click', openPalette);
 $('paletteInput')?.addEventListener('input', renderPalette);
 
 // Keyboard: ⌘K palette, Esc close, and Approvals J/K/A/X/S/E/R/N (ignored in inputs)
