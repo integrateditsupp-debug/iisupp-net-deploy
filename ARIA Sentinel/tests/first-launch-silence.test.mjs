@@ -92,6 +92,11 @@ assert.match(main, /canSend: telemetryAllowed/, "the crash flush waits for conse
 assert.match(main, /fetchImpl: outbound\.fetch, canSend: telemetryAllowed, headers:/, "the crash reporter sends through the one outbound wrapper with the device headers");
 assert.match(main, /logEvent\("SETUP", "Setup wizard completed\."\);[\s\S]{0,400}sendHeartbeat\(\)\.catch[\s\S]{0,200}crashReporter\.flush\(\)/, "consent runs the deferred telemetry once");
 assert.match(main, /const feed = buildFeedRequest\(lic\.key \|\| "", "https:\/\/iisupp\.net", `version=/, "the manifest GET uses the hashed credential");
+// REVIEW P2-9 (2026-10-14) — the two launch-time senders that did not wait: the licence check of a pre-seeded
+// license.json (behaviour: tests/license-verdict-trust.test.mjs group 10) and the self-updater's 30 s feed poll.
+assert.match(main, /async function refreshLicense\(\{ force = false \} = \{\}\) \{\n(?:  \/\/[^\n]*\n)*  if \(!telemetryAllowed\(\)\) \{ logEvent\("LICENSE", "Licence check deferred until Setup is completed/, "the launch licence check waits for consent");
+assert.match(main, /crashReporter\.flush\(\)\.catch\(\(\) => undefined\);\n    refreshLicense\(\)\.catch\(\(\) => undefined\);/, "…and runs once when Setup completes");
+assert.match(main, /const poll = \(\) => \{ if \(!telemetryAllowed\(\)\) return; autoUpdaterRef\.checkForUpdates\(\)/, "the self-updater's feed poll waits for consent");
 assert.doesNotMatch(main, /\?license=\$\{encodeURIComponent\(lic\.key/, "the raw key no longer travels in the manifest query");
 assert.match(main, /if \(keyHash\) headers\["x-sentinel-key"\] = keyHash;[\s\S]{0,120}outbound\.fetch\(HEARTBEAT_ENDPOINT/, "the heartbeat carries x-sentinel-key");
 assert.match(main, /const key = String\(payload\.key \|\| ""\)\.trim\(\)\.toLowerCase\(\);\n  if \(!\/\^\[a-f0-9\]\{64\}\$\/\.test\(key\)\)/, "a pasted key is lower-cased before the shape gate");

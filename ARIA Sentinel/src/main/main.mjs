@@ -2711,7 +2711,9 @@ async function initAutoUpdate() {
     autoUpdaterRef.on("update-downloaded", (info) => {
       writeUpdateHistory(recordInstall(readUpdateHistory(), { version: info?.version, installed: new Date().toISOString(), notes: String(info?.releaseNotes || "") }));
     });
-    const poll = () => autoUpdaterRef.checkForUpdates().catch(() => undefined);
+    // REVIEW P2-9 (2026-10-14) — the self-updater's feed check is an outbound request like any other: it waits for Setup
+    // consent too (the 4-hourly poll picks it up after Setup; setup:complete already runs the app's own update check).
+    const poll = () => { if (!telemetryAllowed()) return; autoUpdaterRef.checkForUpdates().catch(() => undefined); };
     setTimeout(poll, 30 * 1000); // 30s startup grace
     setInterval(poll, 4 * 60 * 60 * 1000).unref?.(); // every 4h
   } catch {

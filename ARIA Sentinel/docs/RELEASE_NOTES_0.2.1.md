@@ -61,8 +61,9 @@ deploy. It is still an **unsigned** Windows build (see "What is NOT in this rele
 - **Keyboard shortcuts that do not steal AltGr.** The everyday chords are configurable and AltGr-safe for
   non-US layouts; the kill switch stays Ctrl+Alt+K.
 - **Nothing leaves the device before Setup is finished** — including the check of a licence key an IT department
-  pre-seeded in `license.json`, which now runs when the person finishes Setup, not at the first launch — and the
-  licence key never travels in a URL (the update check sends a hash in a header).
+  pre-seeded in `license.json` (it now runs when the person finishes Setup, not at the first launch) and the
+  self-updater's feed check — and the licence key never travels in a URL (the update check sends a hash in a header).
+  Something the person does on purpose (pasting a key, Check for updates, Update knowledge) is its own consent.
 - **Your folders, your names.** The excluded-folder rule is a configurable list shown as a count; no internal
   rule ids or anyone's folder names appear in the Compliance tab or the PDF.
 - **An organisation policy file** (`%USERPROFILE%\.aria-sentinel\policy.json`: disabled recipes, business hours,
