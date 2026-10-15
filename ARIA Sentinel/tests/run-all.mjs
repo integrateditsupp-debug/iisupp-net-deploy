@@ -1038,6 +1038,8 @@ const TESTS = [
   // …and its surfaces, fed main's REAL notices: the globe card (Notice n of 3 + Fix now · Not now · Never for this),
   // the Home "What I need from you" rows, the ARIA chat line, Settings → Autonomy, the content-blind bridge slice.
   "./advisory-ui.test.mjs",
+  // ON-DEVICE 2026-10-15: the way out of Ctrl+Alt+K lives on the Dashboard hero too — never behind a locked Pro tab.
+  "./hero-start-aria.test.mjs",
   // …and the REAL-Windows lab an operator runs on a test machine (scripts/fault-lab.ps1 + scripts/fault-lab-run.mjs,
   // docs/FAULT-LAB.md): what can be proven without Windows — one catalogue, a script that cannot touch the network /
   // DNS / registry / clock / default apps / startup types, the guard read at run time, and the verdict logic.

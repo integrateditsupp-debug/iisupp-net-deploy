@@ -1195,6 +1195,8 @@ body.low-power .countdown-card { animation: none; }
 
 /* (§4) HOME — three plain lists + the watcher line + the can-fix line. */
 .home-watch { color: var(--aria-text-2); font-size: 12.5px; margin: 6px 0 0; }
+.hero-resume { margin: 10px 0 0; }
+.hero-resume .primary { min-width: 160px; }
 .home-lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin: 12px 0; }
 .home-block { background: var(--aria-grad-card); border: 1px solid var(--aria-border); border-radius: 12px; padding: 12px 14px; min-width: 0; }
 .home-block .eyebrow { margin: 0 0 8px; }

@@ -671,6 +671,10 @@ function renderHero(rs) {
   // UX 2026-07-03: no separate dot/globe — the WORD itself carries the status color (see .hero-label CSS).
   if (hero) { hero.dataset.level = status.level; hero.innerHTML = `<strong class="hero-label">${status.label}</strong>`; }
   setText("heroSubline", heroSubline({ ...(lastSubline || {}), runState: rs }));
+  // ON-DEVICE 2026-10-15: the kill switch's exit must never sit behind a locked (Pro) tab — show Start ARIA on the hero
+  // whenever ARIA is stopped or paused, wired to the same IPC as Control Center's button.
+  const resume = qs("#heroResume");
+  if (resume) resume.hidden = !(rs.running === false || rs.id === "paused");
 }
 let lastProcessHealthAt = 0;
 function processHealthAgeMs() { return lastProcessHealthAt ? Math.max(0, Date.now() - lastProcessHealthAt) : null; }
@@ -1975,6 +1979,7 @@ function wireLowPower() {
 // RUN 15 — Start/Stop ARIA · Self Check → self-heal · hotkey status + rebind · admin-build gating · focus-chat.
 function wireRun15() {
   bindClick("startAria", (b) => runAction(b, () => sentinel.startAria?.()));
+  bindClick("startAriaHero", (b) => runAction(b, () => sentinel.startAria?.())); // the hero's copy of Start ARIA (never plan-locked)
   bindClick("stopAria", (b) => runAction(b, () => sentinel.stopAria?.()));
   // Self Check now runs the full self-heal pass.
   bindClick("runSelfDiagnose", (b) => runAction(b, async () => {
@@ -2278,9 +2283,31 @@ function maybeShowWhatsNew(next) {
   if (!wn || !wn.show) return;
   whatsNewShown = true;
   setText("whatsNewTitle", `ARIA Sentinel ${wn.version || ""} — what's new`);
-  setText("whatsNewBody", wn.notes || "See the release notes for details.");
+  // ON-DEVICE 2026-10-15: the notes are Markdown; shown as raw text on the first real 0.2.1 launch ("# …", "**…**").
+  // Minimal, escaped rendering — headings, bold, bullets, paragraphs — nothing else, no HTML from the file passes through.
+  const body = qs("#whatsNewBody");
+  if (body) body.innerHTML = releaseNotesHtml(wn.notes || "See the release notes for details.");
   const modal = qs("#whatsNew");
   if (modal) modal.hidden = false;
+}
+
+/** Markdown → a few safe tags (escaped first; only #/##/### headings, **bold**, `code`, "- " bullets, paragraphs). */
+function releaseNotesHtml(md) {
+  const lines = String(md || "").replace(/\r/g, "").split("\n");
+  const out = []; let list = false; let para = [];
+  const inline = (t) => escapeHtml(t).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/`([^`]+)`/g, "<code>$1</code>");
+  const flush = () => { if (para.length) { out.push(`<p>${inline(para.join(" "))}</p>`); para = []; } };
+  const endList = () => { if (list) { out.push("</ul>"); list = false; } };
+  for (const raw of lines) {
+    const line = raw.trim();
+    const h = /^(#{1,3})\s+(.*)$/.exec(line);
+    if (h) { flush(); endList(); out.push(`<h${h[1].length + 2}>${inline(h[2])}</h${h[1].length + 2}>`); continue; }
+    if (/^[-*]\s+/.test(line)) { flush(); if (!list) { out.push("<ul>"); list = true; } out.push(`<li>${inline(line.replace(/^[-*]\s+/, ""))}</li>`); continue; }
+    if (line === "") { flush(); endList(); continue; }
+    para.push(line);
+  }
+  flush(); endList();
+  return out.join("");
 }
 
 function renderLog(log) {
@@ -2421,6 +2448,7 @@ function wireRun19() {
   });
   // A user Start re-arms the globe + the run state.
   qs("#startAria")?.addEventListener("click", () => { killDimmed = false; killedLocally = false; setGlobeState("active"); renderRunState(state || {}); });
+  qs("#startAriaHero")?.addEventListener("click", () => { killDimmed = false; killedLocally = false; setGlobeState("active"); renderRunState(state || {}); });
 }
 
 function renderDeletePrefs() {
