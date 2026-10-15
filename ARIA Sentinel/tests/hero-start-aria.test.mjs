@@ -4,11 +4,17 @@
 // button lived in Control Center — a Pro tab, locked on a free or trial-expired device. The hero now carries its own
 // Start ARIA (same IPC), shown only while ARIA is stopped or paused.
 import assert from "node:assert/strict";
-import { withPage, dashboardWithDataState } from "./lib/renderer-harness.mjs";
+import { available, withPage, dashboardWithDataState } from "./lib/renderer-harness.mjs";
 
 let pass = 0;
 const ok = (label, cond) => { assert.ok(cond, label); pass++; console.log("  ok  " + label); };
 
+// OPT-IN like every renderer-harness suite: without Playwright + Chromium (the operator's PC) it SKIPS with a clear
+// line — never a silent green, never a red for a missing tool (the first rebuild on Ahmad's PC went red on exactly this).
+const env = available();
+if (!env.ok) {
+  console.log(`hero-start-aria: SKIPPED — ${env.reason}. (The suite is opt-in; it needs Playwright + a Chromium binary.)`);
+} else {
 await withPage({ state: { ...dashboardWithDataState(), ariaStopped: true } }, async (page) => {
   ok("stopped: the hero shows STOPPED", (await page.evaluate(() => document.querySelector("#heroStatus").textContent.trim())) === "STOPPED");
   ok("stopped: the hero's Start ARIA is visible", (await page.evaluate(() => document.querySelector("#heroResume").hidden)) === false);
@@ -24,3 +30,4 @@ await withPage({ state: dashboardWithDataState() }, async (page) => {
   ok("watching: the hero's Start ARIA is hidden", (await page.evaluate(() => document.querySelector("#heroResume").hidden)) === true);
 });
 console.log(`hero-start-aria: ${pass} checks green — Start ARIA on the hero whenever ARIA is stopped, never plan-locked.`);
+}
