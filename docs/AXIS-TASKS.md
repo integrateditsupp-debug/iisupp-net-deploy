@@ -138,7 +138,17 @@ acknowledge, assign to <Agent>, draft a reply, rename, change the due date, add 
 Model: `AXIS_MODEL_TASKS` → `AXIS_MODEL_FAST` → `claude-haiku-4-5` (the whole turn must fit the function's
 ~10 s; the loop budgets 9 s from the handler's first line). No key → a list ask is answered from the list ($0)
 and an action ask says nothing changed. List unreadable → `degraded`, `reason:'tasks_unavailable'`, and the
-console falls back to its old local rails.
+console falls back to its old local rails. Model call refused → the body is classified like axis-director's
+`classifyBrainError` (same codes: `no_credit` · `auth` · `permission` · `bad_model` · `rate_limit` · `overloaded` ·
+`unreachable` · `error_<status>`), logged as `[axis-task-loop] Anthropic <status> <body>`, and the reply carries
+`degraded:true` + `reason` + `modelError` — a list ask is still answered from the list, an action ask says in one
+sentence why nothing changed (the console badge reads "brain: out of credit", "brain: key rejected", …).
+
+**Found live 2026-10-15 (first real turn on iisupp.net):** the list, the panel and the $0 list answers work; the
+metered tool loop itself was refused by the Anthropic account with HTTP 400, which the old reply reported only
+as "(400)". Until Ahmad funds that account (or the local Max-plan worker takes the turn), AXIS reads and ranks
+the live list but does not act on it by voice/chat — the panel's own buttons (Done · Snooze · Draft reply · Work
+it) are unaffected, they call `/api/axis/tasks` directly.
 
 **The receipt contract** — glyph + verb + the row's title:
 `✔ Done: …` · `↩ Reopened: …` · `🗄 Archived: …` · `⏰ Snoozed … to Fri Oct 16` · `🔁 Follow-up set for … — Mon Oct 19` ·
