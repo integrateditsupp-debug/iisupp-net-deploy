@@ -1006,6 +1006,10 @@ const TESTS = [
   "./publish-binary-host.test.mjs",
   // RUN-SN1 / F4 (repo root): /downloads + /plans Sentinel copy == pricing-tiers, the checkout states.
   "../../tests/sentinel-sell-pages.test.mjs",
+  // 2026-10-14 (site sweep, registered by the review housekeeping): the /downloads "Get ARIA Sentinel" block — banner,
+  // advisory scenarios == advisoryCopy, legend == ruleSentence(), recipes/ROI/prices from the app's own modules. Its
+  // register-pending census-ledger entry was removed in the same change.
+  "../../tests/sentinel-downloads-page.test.mjs",
   // RUN-SN1 / F2 round 2: the renderer/build requests wired in main — billing-aware checkout, watcher
   // status in state, kill switch stops, manual-mode globe clickable, window fits 1366×768, reports
   // folder IPC, signed-artifact names, live-fix counting only, device/key headers.
