@@ -88,6 +88,7 @@ const DEPRECATED_MODELS = /claude-sonnet-4-20250514|claude-sonnet-4-5-20250929|c
 const { bearerFromEvent } = require('./_verify-bearer.cjs');
 
 exports.handler = async (event) => {
+  const t0 = Date.now(); // RUN-AX3: the task tool loop budgets against the function's ~10 s from here
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: cors(), body: '' };
   if (event.httpMethod !== 'POST') return json(405, { error: 'POST required' });
 
@@ -142,6 +143,30 @@ exports.handler = async (event) => {
     ? [...body.messages].reverse().find((m) => m && m.role === 'user' && typeof m.content === 'string')
     : null;
   const askText = lastUser ? String(lastUser.content).slice(0, 4000) : '';
+  // RUN-AX3 (2026-10-15): AXIS works the list WITH Ahmad. "What's on my list", "let's work on the top urgent
+  // items", "mark the Whereby one done", "snooze the Apollo card to Friday", "draft a reply to Bay Street" go
+  // to the task tool loop (lib/axis-task-loop.cjs): the live list from every source + tools that change it
+  // through /api/axis/tasks, at most 8 tool calls, one receipt per action that actually ran. Checked BEFORE
+  // the Workspace route — that brain used to get "let's work on top urgent items" with nothing but the
+  // sentence and answer that it had no access to his tasks — and before the cascade, whose tiers cannot act.
+  // Nothing here sends, pays or publishes; a sending approval asked for by voice is staged for his click.
+  const taskLoop = require('./lib/axis-task-loop.cjs');
+  const taskKind = taskLoop.taskIntent(askText) || (askText && ['list', 'action'].includes(body.task) ? body.task : null);
+  if (taskKind) {
+    const hostT = (event.headers && (event.headers.host || event.headers.Host)) || '';
+    const authT = (event.headers && (event.headers.authorization || event.headers.Authorization)) || '';
+    const turn = await taskLoop.runTaskTurn({
+      askText, messages: body.messages, via: body.via === 'voice' ? 'voice' : 'chat', kind: taskKind,
+      origin: hostT ? `https://${hostT}` : '', auth: authT, startedAt: t0,
+      apiKey: String(process.env.ANTHROPIC_API_KEY || '').replace(/\\n|\s+$/g, '').trim(), model: taskLoop.taskModel(process.env),
+      persona: SYSTEM_PROMPT.split('Respond with ONLY JSON')[0].trim(),
+    });
+    return json(200, {
+      text: turn.text, receipts: turn.receipts, actions: turn.actions, staged: turn.staged || [], tasksChanged: !!turn.tasksChanged,
+      toolCalls: turn.toolCalls, routedAgent: null, intent: null, needsApproval: false, workspace: null, brainTier: turn.brainTier,
+      ...(turn.degraded ? { degraded: true, reason: turn.reason } : {}),
+    });
+  }
   // Explicit workspace work bypasses recall and offline-worker chat, not approvals.
   const { workspaceIntent } = require('./lib/axis-workspace-intent.cjs');
   const workspace = workspaceIntent(askText);

@@ -849,3 +849,42 @@ html[data-theme] body { background:var(--bg) !important; color:var(--txt); font-
   .sit-row .sit-main { flex-basis:100%; }
   .sit-row .sit-acts { width:100%; justify-content:flex-start; margin-left:0; padding-left:0; }
 }
+
+/* ── RUN-AX3 (2026-10-15): the Live task view (assets/axis-tasks.js). Additive. Same row grammar as "Today —
+   needs you": the text column owns the width; the controls sit right on desktop and drop to their own line on
+   a phone, so nothing ever scrolls sideways at 390 px. Every colour is a theme token — dark and light both. ── */
+.tk-row { align-items:flex-start; flex-wrap:wrap; }
+.tk-row .tk-main { flex:1 1 260px; min-width:0; }
+.tk-row .tk-title { font-weight:600; overflow-wrap:anywhere; }
+.tk-row .tk-why { color:var(--txt-3); font-size:12px; margin-top:2px; overflow-wrap:anywhere; }
+.tk-row .tk-next { color:var(--txt-2); font-size:12px; margin-top:3px; overflow-wrap:anywhere; }
+.tk-row .tk-audit { color:var(--txt-3); font-size:10.5px; margin-top:3px; overflow-wrap:anywhere; }
+.tk-badge { font-size:10px; margin-left:8px; font-weight:700; letter-spacing:.04em; white-space:nowrap; }
+.tk-status { color:var(--txt-3); text-transform:uppercase; }
+.tk-draft { color:var(--ok); }
+.tk-staged { color:var(--gold); }
+.tk-row[data-status="done"] .tk-title, .tk-row[data-status="archived"] .tk-title { color:var(--txt-2); text-decoration:line-through; text-decoration-color:var(--line-2); }
+.tk-pending { opacity:.55; }
+.tk-acts { display:flex; gap:6px; align-items:center; flex-wrap:wrap; justify-content:flex-end; margin-left:auto; max-width:100%; }
+.tk-full .tk-main > .tk-acts { justify-content:flex-start; margin:9px 0 0; }
+.tk-select { background:var(--surface); color:var(--txt-2); max-width:160px; }
+.tk-foot { justify-content:space-between; flex-wrap:wrap; }
+.tk-sources { display:flex; gap:12px; flex-wrap:wrap; align-items:center; font-size:12px; }
+.tk-src { display:inline-flex; align-items:center; gap:6px; color:var(--txt-2); font-size:12px; }
+.tk-filters { flex-wrap:wrap; position:static; }
+.tk-bar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:8px; }
+.tk-input { background:var(--surface-2); border:1px solid var(--line); border-radius:8px; padding:7px 10px; color:var(--txt); font:inherit; min-width:0; max-width:100%; }
+.tk-search { flex:1 1 220px; }
+.tk-editor { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+.tk-editor .tk-input { flex:1 1 200px; }
+.tk-editor .tk-date { flex:0 1 170px; }
+.tk-draft-body { margin-top:8px; border-left:2px solid var(--gold); padding:6px 10px; background:var(--surface-2); border-radius:6px; }
+.tk-draft-text { white-space:pre-wrap; font-size:12.5px; overflow-wrap:anywhere; }
+.tk-draft-acts { justify-content:flex-start; margin:6px 0 0; }
+.tk-entry { display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:14px; }
+.tk-entry-text { flex:1 1 240px; min-width:0; }
+@media (max-width:720px) {
+  .tk-row .tk-main { flex-basis:100%; }
+  .tk-row .tk-acts { width:100%; justify-content:flex-start; margin-left:0; }
+  .tk-select { max-width:100%; }
+}

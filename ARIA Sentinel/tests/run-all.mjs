@@ -957,6 +957,16 @@ const TESTS = [
   // function — the 3.2 GB-of-zips ENOSPC of 2026-10-13). Both are node:assert suites with no
   // process.exit, read on this extract: exit 0 standalone and clean under the one-process import.
   "../../tests/axis-situation.test.mjs",
+  // RUN-AX3 (2026-10-15): AXIS works the live list WITH Ahmad — the one task list over every source (stable ids,
+  // archive-never-deletes, audit, the overlay the situation honours), /api/axis/tasks (401/400/409/503 shapes,
+  // no-store), the director's bounded tool loop (fake model → the real endpoint; receipts are the audit; send /
+  // pay / publish never a tool; "I don't have access" never reaches him) and the Live task view headless — which
+  // skips with a clear line where Playwright/Chromium are absent. node:assert suites, no process.exit; each
+  // restores fetch, env and the store seam, so they are clean under the one-process import.
+  "../../tests/axis-tasks-model.test.mjs",
+  "../../tests/axis-tasks-endpoint.test.mjs",
+  "../../tests/axis-director-tools.test.mjs",
+  "../../tests/axis-tasks-console.test.mjs",
   // ON-DEVICE 2026-10-15: lived untracked on the operator PC since 2026-08-12 (the daily conversation note); the census
   // went red there for a file no clone had. Committed and registered; 21 checks.
   "../../tests/axis-conversation-log.test.mjs",

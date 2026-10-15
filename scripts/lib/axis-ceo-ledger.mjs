@@ -11,10 +11,27 @@
 //   | # | what | who is waiting | deadline | category | source file | one-click | found by · on | status |
 // Only the row text is shipped — never a secret, never a credential — and the result is behind the
 // same Aperture login as the rest of the board.
+//
+// RUN-AX3 (2026-10-15): the live task overlay. When Ahmad (or AXIS on his word) acknowledges, finishes,
+// archives or snoozes a ledger row in the live task view, the cloud records it in Blobs 'axis-task-overlay'
+// keyed by the row id ("ledger:#5") — this file is NEVER edited. Every consumer that ranks or recites the
+// open rows applies that overlay (applyLedgerOverlay / ceoLedgerBlock({ overlay })): the situation model in
+// the cloud does the same through the same ids and rules (netlify/functions/lib/axis-task-ids.cjs). The
+// producer, computeSnapshots(), still ships every row, so a row can always be found and reopened.
 import fs from 'node:fs';
 import path from 'node:path';
+import IDS from '../../netlify/functions/lib/axis-task-ids.cjs';
 
 export const LEDGER_RELPATH = path.join('senior-director-state', 'CEO-CRITICAL-ITEMS.md');
+
+/** The id the live task list and the situation give this row: "ledger:#5", or "ledger:watch-<hash>". */
+export function ledgerRowId(r) { return IDS.makeId('ledger', IDS.ledgerKey(r)); }
+
+/** Rows the overlay does NOT take out of the ranking right now (snoozes end; acknowledgements lapse on change). */
+export function applyLedgerOverlay(rows, overlay, now = new Date()) {
+  if (!overlay || typeof overlay !== 'object') return rows || [];
+  return (rows || []).filter((r) => !IDS.overlayHides(overlay[ledgerRowId(r)], { sig: IDS.SIG.ledger(r), now }));
+}
 
 const strip = (s) => String(s || '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
 const ISO_DATE = /\b(\d{4}-\d{2}-\d{2})(T\d{2}:\d{2}(?::\d{2})?(?:[+-]\d{2}:\d{2}|Z)?)?\b/;
@@ -122,8 +139,8 @@ export function readCeoLedger(repoRoot) {
 
 // A compact text block for prompts that run on Ahmad's machine (cowork.ask / plan): the open rows,
 // deadline first, one line each. Bounded so it rides inside the board slot.
-export function ceoLedgerBlock(rows, { max = 12 } = {}) {
-  const open = (rows || []).filter((r) => r.section === 'open' && !r.closed && !r.cleared);
+export function ceoLedgerBlock(rows, { max = 12, overlay = null, now = new Date() } = {}) {
+  const open = applyLedgerOverlay(rows, overlay, now).filter((r) => r.section === 'open' && !r.closed && !r.cleared);
   if (!open.length) return '';
   const sorted = [...open].sort((a, b) => (a.deadline || '9999').localeCompare(b.deadline || '9999') || a.n - b.n);
   const lines = sorted.slice(0, max).map((r) => `${r.ref} ${r.what}${r.deadline ? ` — deadline ${r.deadline.slice(0, 10)}` : r.soft_date ? ` — watch ${r.soft_date}` : ''}${r.overdue ? ' — OVERDUE' : ''}${r.one_click ? ` — one-click: ${r.one_click}` : ''}`);
