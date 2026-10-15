@@ -57,7 +57,8 @@ for (const [what, re] of [
   ["node version check", /process\.versions\.node/],
   ["refuses Node < 22", /LSS 22/],
   ["npm ci", /call npm ci/],
-  ["npm test gate", /call npm test/],
+  // ON-DEVICE 2026-10-15: the gate runs the desktop battery (--app-only); the site/flywheel suites run in the root guard.
+  ["desktop battery gate", /call node tests\\run-all\.mjs --app-only/],
   ["prints the suite census", /suites taken/],
   ["stops on a red suite", /not allowed to continue on a red suite/i],
   ["package:win (nsis + msi)", /call npm run package:win\s/],

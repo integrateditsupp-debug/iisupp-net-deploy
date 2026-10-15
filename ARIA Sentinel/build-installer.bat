@@ -62,10 +62,10 @@ echo   OK: dependencies installed.
 echo.
 
 rem ---- Step 3/5: tests ----
-echo Step 3/5: npm test (every suite must be green BEFORE packaging)...
+echo Step 3/5: desktop battery, node tests\run-all.mjs --app-only (every desktop suite must be green BEFORE packaging; site/flywheel suites run in the root guard)...
 if not exist "%~dp0dist" mkdir "%~dp0dist"
 set "TEST_LOG=%~dp0dist\build-test.log"
-call npm test > "%TEST_LOG%" 2>&1
+call node tests\run-all.mjs --app-only > "%TEST_LOG%" 2>&1
 set "TEST_RC=%errorlevel%"
 echo   --- test summary (full log: %TEST_LOG%) ---
 findstr /C:"suites taken" /C:"SUITE RED" /C:"SUITE INCOMPLETE" /C:"FAILED TO LOAD" /C:"NOT TAKEN" "%TEST_LOG%"

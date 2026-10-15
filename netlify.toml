@@ -1748,4 +1748,61 @@
   to = "/404.html"
   status = 404
   force = true
+# ON-DEVICE 2026-10-15: operator scripts present on Ahmad's disk (gitignored, never tracked) — the root-serving gate
+# asserts the SUPERSET on the operator machine, so their rules live here too (additive; a rule for an absent file is a harmless 404).
+[[redirects]]
+  from = "/AHMAD-MERGE-AXIS-ONE.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-MERGE-CV44.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-MERGE-CV46.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-MERGE-CV47.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-MERGE-CV48.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-MERGE-LATEST.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-MERGE-RUN-CU.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-MERGE-RUN-CV.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-REFRESH-SCHEDULED-AGENTS.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/AHMAD-RESTORE-POINT-2026-10-09.cmd"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_s2_vision_relevance_staging.mjs"
+  to = "/404.html"
+  status = 404
+  force = true
 # <<< END generated root-serving denies

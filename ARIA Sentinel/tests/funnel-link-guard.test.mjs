@@ -75,6 +75,12 @@ function walk(d, acc) {
     const rel = path.relative(ROOT, fp);
     if (SKIP.test(rel)) continue;
     if (e.isDirectory() && SKIP_DIR_ANY_DEPTH.has(e.name)) continue;
+    // ON-DEVICE 2026-10-15: on the operator's PC the walk reached `.sentinel-verify-scratch/` (an untracked verify
+    // scratch tree holding other suites' throwaway fixtures) and reported 24 "dead links" that no visitor can reach.
+    // Every dot- or underscore-directory in this repo is scratch, parked or internal (git-ignored or force-404'd in
+    // netlify.toml: _to_delete, _restore-points, _staged-cc-runs, .tmp-sentinel, .codex-observer …) — never a funnel
+    // surface — so the guard skips them at any depth and asserts only on what is served.
+    if (e.isDirectory() && (e.name.startsWith(".") || e.name.startsWith("_"))) continue;
     if (e.isDirectory()) walk(fp, acc);
     else if (e.name.endsWith(".html")) acc.push(rel);
   }
