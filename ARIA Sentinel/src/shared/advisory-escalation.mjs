@@ -125,6 +125,8 @@ function cleanRecord(r) {
     choice: ADVISORY_CHOICES.includes(r.choice) ? r.choice : null,
     decidedAt: num(r.decidedAt),
     resumedAfterRestart: r.resumedAfterRestart === true,
+    // REVIEW P2-6 — set by restoreState: the notice the person last saw is shown AGAIN at the next tick (never skipped).
+    reissue: r.reissue === true,
     waitReason: shortText(r.waitReason, 60) || null
   };
 }
@@ -154,7 +156,8 @@ export function msUntilAction(record, prefs = {}, now = Date.now()) {
   if (!record) return null;
   if (record.status === "ready" || record.status === "fixing") return 0;
   if (record.status !== "advising" || !record.nextAt) return null;
-  const rest = Math.max(0, ADVISORY_COUNT - record.advisory) * intervalMs(prefs);
+  // (review P2-6) a notice waiting to be RE-ISSUED after a restart adds one full interval: re-issue, then the next step.
+  const rest = (Math.max(0, ADVISORY_COUNT - record.advisory) + (record.reissue ? 1 : 0)) * intervalMs(prefs);
   return Math.max(0, record.nextAt - now) + rest;
 }
 
@@ -310,7 +313,12 @@ export function tickState(state, now = Date.now(), ctx = {}, prefs = {}) {
       r = s.records.find((x) => x.id === r.id);
     }
     if (r.status === "advising" && r.nextAt && now >= r.nextAt) {
-      if (r.advisory < ADVISORY_COUNT) {
+      if (r.reissue) {
+        // REVIEW P2-6 — after a restart: notice N AGAIN (a real desktop notification + card), and the next step only a
+        // full interval after it. Never straight to the countdown.
+        s = withRecord(s, r.id, (x) => ({ ...x, reissue: false, lastAdvisoryAt: now, nextAt: now + interval, updatedAt: now }));
+        effects.push({ type: "advise", id: r.id, n: r.advisory, of: ADVISORY_COUNT, cycle: r.cycle, reissued: true });
+      } else if (r.advisory < ADVISORY_COUNT) {
         const n = r.advisory + 1;
         s = withRecord(s, r.id, (x) => ({ ...x, advisory: n, lastAdvisoryAt: now, nextAt: now + interval, updatedAt: now, resumedAfterRestart: false }));
         effects.push({ type: "advise", id: r.id, n, of: ADVISORY_COUNT, cycle: r.cycle });
@@ -380,19 +388,22 @@ export function killAll(state, now = Date.now(), reason = "kill-switch") {
 }
 
 /**
- * After an app restart: resume CONSERVATIVELY. Every escalation keeps its notice number (never skips ahead) and the
- * next step waits at least one full interval from now. One that was ready / mid-fix when the app closed goes back to
- * "notice 3 of 3" — it is never re-run straight away.
+ * After an app restart: resume by RE-ISSUING the notice (REVIEW P2-6, 2026-10-14). It used to put a ready / mid-fix record
+ * back at "notice 3" and run the fix one interval later with NO new notice — the person never heard about it again.
+ * Now every escalation keeps its notice number (never skips ahead) and is marked `reissue`: at the next tick that is not
+ * frozen, notice N is shown AGAIN (a real desktop notification + the card), and the next step waits a full interval
+ * after it. One that was in the countdown / mid-fix when the app died also gets an `interrupted` effect — that attempt
+ * is cancelled (audited by the driver), never resumed; it is back at notice 3, re-issued. (A clean quit during the
+ * countdown never gets here: the driver cancels the countdown at quit, which closes the escalation as cancelled.)
  */
 export function restoreState(state, now = Date.now(), prefs = {}) {
   let s = normalizeAdvisoryState(state);
   const effects = [];
-  const interval = intervalMs(prefs);
   for (const r of s.records.filter(isActive)) {
     if (r.status === "snoozed") continue;
     const advisory = r.status === "advising" ? r.advisory : ADVISORY_COUNT;
-    const nextAt = r.status === "advising" ? Math.max(r.nextAt || 0, now + interval) : now + interval;
-    s = withRecord(s, r.id, (x) => ({ ...x, status: "advising", advisory, nextAt, notBefore: null, readySince: null, fixingSince: null, frozenSince: null, frozenReason: null, waitReason: null, resumedAfterRestart: true, updatedAt: now }));
+    if (r.status === "fixing") effects.push({ type: "interrupted", id: r.id, n: advisory, was: "fixing", fixingSince: r.fixingSince || null });
+    s = withRecord(s, r.id, (x) => ({ ...x, status: "advising", advisory, nextAt: now, reissue: true, notBefore: null, readySince: null, fixingSince: null, frozenSince: null, frozenReason: null, waitReason: null, resumedAfterRestart: true, updatedAt: now }));
     effects.push({ type: "resumed", id: r.id, n: advisory, was: r.status });
   }
   return { state: s, effects };

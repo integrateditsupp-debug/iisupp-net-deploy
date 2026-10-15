@@ -2,7 +2,7 @@
 // Proves, with an injected clock and no timers: the cadence (3 notices, one interval apart, then the last step one more
 // interval later), the 1–60 min clamp, idempotency per detection + one escalation per recipe, the three choices (Fix now ·
 // Not now · Never), the persisted Never list, the snooze and its fresh round, the kill switch (blocked, never resumed
-// silently), the freeze (remaining time kept), the conservative restart resume (same notice number, never skips ahead),
+// silently), the freeze (remaining time kept), the restart re-issue (the same notice shown again, never skipped ahead, never straight to the fix),
 // the cooldown deferral, settle, the stale-fix guard, the plain-words copy and the rule sentence built from the constants.
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -175,16 +175,36 @@ t();
   const m2 = createAdvisoryEscalation({ now: () => now.t, load: () => store.v, save: (v) => { store.v = JSON.parse(JSON.stringify(v)); } });
   const res = m2.restore(P3);
   const byRecipe = (id) => m2.findActiveByRecipe(id);
+  // 2026-10-14 (review P2-6) — EXPECTATIONS CHANGED ON PURPOSE: a restart used to put the record back at its notice and
+  // proceed one interval later with NO new notice (the person never heard about it again; a mid-fix one then fixed after
+  // one interval). Now the notice the person last saw is RE-ISSUED at the first tick (a real notification + card in the
+  // driver) and the next step waits a full interval after THAT; a mid-fix attempt is reported as interrupted (cancelled).
   assert.equal(byRecipe("dns-fail-v1").status, "advising", "a fix in flight at shutdown is NOT re-run on restart");
   assert.equal(byRecipe("dns-fail-v1").advisory, 3, "…it goes back to notice 3 of 3");
+  assert.equal(byRecipe("dns-fail-v1").reissue, true, "…to be shown again");
   assert.equal(byRecipe("svc-audiosrv-stopped-v1").advisory, 2, "the same notice number — never skipped ahead");
-  assert.equal(byRecipe("svc-audiosrv-stopped-v1").nextAt, now.t + 3 * MIN, "the next step waits a full interval from now");
+  assert.equal(byRecipe("svc-audiosrv-stopped-v1").reissue, true, "notice 2 is shown again");
+  assert.equal(byRecipe("svc-audiosrv-stopped-v1").nextAt, now.t, "…at the very next tick");
+  assert.equal(msUntilAction(byRecipe("dns-fail-v1"), P3, now.t), 3 * MIN, "the fix is a full interval AFTER the re-issued notice 3");
   assert.equal(byRecipe("svc-bits-stopped-v1").status, "snoozed", "a snooze is kept as is");
-  assert.deepEqual(res.effects.map((e) => `${e.type}:${e.n}:${e.was}`).sort(), ["resumed:2:advising", "resumed:3:fixing"]);
-  assert.deepEqual(m2.tick({}, P3).effects, [], "nothing happens immediately after the restart");
+  assert.deepEqual(res.effects.map((e) => `${e.type}:${e.n}:${e.was}`).sort(), ["interrupted:3:fixing", "resumed:2:advising", "resumed:3:fixing"]);
+  const first = m2.tick({}, P3);
+  assert.deepEqual(first.effects.map((e) => `${e.type}:${e.n}:${e.reissued === true}`).sort(), ["advise:2:true", "advise:3:true"], "the first tick after the restart RE-ISSUES each notice — never the fix");
+  assert.equal(m2.tick({}, P3).effects.length, 0, "…once");
   now.t += 3 * MIN; const next = m2.tick({}, P3);
-  assert.deepEqual(next.effects.map((e) => e.type + (e.n ? ":" + e.n : "")).sort(), ["advise:3", "auto-fix"].sort(), "then the clock runs on from the same place");
+  assert.deepEqual(next.effects.map((e) => e.type + (e.n ? ":" + e.n : "")).sort(), ["advise:3", "auto-fix"].sort(), "then the clock runs on from the same place, a full interval after the re-issue");
   assert.equal(m2.find(byRecipe("svc-audiosrv-stopped-v1").id).advisory, 3);
+  // A restart while frozen (paused / stopped / license): nothing is re-issued until the freeze lifts — then it is.
+  const store2 = { v: null };
+  const t2 = { t: T0 };
+  const m3 = createAdvisoryEscalation({ now: () => t2.t, load: () => store2.v, save: (v) => { store2.v = JSON.parse(JSON.stringify(v)); } });
+  m3.open(inp({ detectionId: "d-fz" }), P3);
+  t2.t = T0 + 60 * MIN;
+  const m4 = createAdvisoryEscalation({ now: () => t2.t, load: () => store2.v, save: (v) => { store2.v = JSON.parse(JSON.stringify(v)); } });
+  m4.restore(P3);
+  assert.deepEqual(m4.tick({ frozen: "aria-stopped" }, P3).effects.map((e) => e.type), ["frozen"], "frozen at launch: no notice");
+  t2.t += 30 * MIN;
+  assert.deepEqual(m4.tick({}, P3).effects.map((e) => e.type + (e.reissued ? ":reissued" : "")), ["unfrozen", "advise:reissued"], "unfrozen: the notice is re-issued then");
 }
 t();
 
@@ -267,4 +287,4 @@ t();
 t();
 
 assert.equal(n, 11);
-console.log(`advisory-escalation test passed (${n} groups · cadence 3×interval then act · clamp 1–60 · idempotent per detection · one per recipe · Fix now / Not now (snooze + fresh round) / Never (persisted) · kill = blocked forever · freeze keeps the remaining time · restart resumes at the same notice · cooldown defer · settle once · stale guard · plain copy · rule sentence from constants · pure).`);
+console.log(`advisory-escalation test passed (${n} groups · cadence 3×interval then act · clamp 1–60 · idempotent per detection · one per recipe · Fix now / Not now (snooze + fresh round) / Never (persisted) · kill = blocked forever · freeze keeps the remaining time · restart re-issues the same notice · cooldown defer · settle once · stale guard · plain copy · rule sentence from constants · pure).`);

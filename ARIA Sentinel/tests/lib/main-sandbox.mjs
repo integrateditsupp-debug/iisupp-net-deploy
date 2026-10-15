@@ -34,7 +34,9 @@ export const MAIN_INTERNALS = Object.freeze([
   "activateKillSwitch", "ensureTrialStarted", "approvals", "countdownManager", "cancelCountdown", "logEvent",
   "setLiveFixes", "recipeNeedsAdmin", "recipeColor",
   // KILL GATE 2026-10-14 (review P0-2) — the one gate, the launch-time watcher start, the bridge's /run-recipe and the poll.
-  "killGateReason", "startDetectionAtLaunch", "bridgeRunRecipe", "approvalTick"
+  "killGateReason", "startDetectionAtLaunch", "bridgeRunRecipe", "approvalTick",
+  // REVIEW P2-6 — the before-quit step that cancels a running countdown (a clean quit), so a suite can quit, then relaunch.
+  "cancelCountdownsForQuit"
 ]);
 // Platform globals main.mjs reads that the lab must own (shadowed as function parameters).
 const SHADOWED = ["process", "Date", "setTimeout", "setInterval", "clearTimeout", "clearInterval", "fetch"];

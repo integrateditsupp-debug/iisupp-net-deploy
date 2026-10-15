@@ -477,25 +477,34 @@ g();
 g();
 
 // ── 11 — restart mid-escalation: the same notice, never ahead; a fix in flight at shutdown is not re-run on restart ─────
+// 2026-10-14 (review P2-6) — EXPECTATIONS CHANGED ON PURPOSE: a restart RE-ISSUES the notice the person last saw (a real
+// desktop notification + the card) at the first tick, and the next step waits a full interval after it. It used to resume
+// silently ("no notice immediately after the restart") and a mid-fix escalation then fixed with 0 notices after it.
 {
   const s = await start("stale-dns");
   await runUntilNotice(s, 2);
   const lab2 = await s.lab.restart();
-  assert.ok(lab2.audit().some((r) => r.tag === "ADVISORY" && /^ADVISORY 2\/3 resumed after restart: /.test(r.text)), "resumed at notice 2");
+  assert.ok(lab2.audit().some((r) => r.tag === "ADVISORY" && /^Restarted at notice 2\/3: .* shows notice 2 again/.test(r.text)), "restarted at notice 2");
   await lab2.minutes(2);
-  assert.equal(numbered(lab2, "dns-fail-v1").length, 2, "no notice immediately after the restart");
+  assert.equal(numbered(lab2, "dns-fail-v1").length, 3, "notice 2 is shown AGAIN right after the restart (2 before + the re-issue)");
+  assert.deepEqual(lab2.notifications.map((n) => n.title), ["Notice 2 of 3: DNS lookup failed"], "…as a real desktop notification");
+  assert.ok(cards(lab2).some((c) => c.advisory === 2), "…and the globe card");
+  assert.equal(rows(lab2, "AUTO-FIX").length, 0, "never straight to the fix");
   await lab2.minutes(20);
-  assert.equal(numbered(lab2, "dns-fail-v1").length, 3, "the round completes");
+  assert.equal(numbered(lab2, "dns-fail-v1").length, 4, "the round completes (notice 3 a full interval after the re-issue)");
   assert.equal(rows(lab2, "AUTO-FIX").length, 1);
   keysOk(diff(s.before, lab2.machine.snapshot()), s.f, "restart");
-  // mid-countdown restart: the countdown dies with the process → back to notice 3 → a full interval → then the fix.
+  // mid-countdown restart (a crash: the countdown dies with the process) → that attempt is CANCELLED (audited) → notice 3
+  // shown AGAIN → a full interval → then (after the 30-minute gap the interrupted attempt counted toward) the fix.
   const t = await start("stale-dns");
   for (let i = 0; i < 60 && !rows(t.lab, "AUTO-FIX").length; i++) await t.lab.advance(TICK);
   await t.lab.advance(4000);
   const lab3 = await t.lab.restart();
-  assert.ok(lab3.audit().some((r) => /^ADVISORY 3\/3 resumed after restart: /.test(r.text)), "a fix in flight goes back to notice 3");
+  assert.ok(lab3.audit().some((r) => /^Restarted at notice 3\/3: /.test(r.text)), "a fix in flight goes back to notice 3");
+  assert.ok(rows(lab3, "CANCEL", /ARIA closed during the countdown — the fix was cancelled and nothing ran/).length === 1, "the interrupted attempt is audited as cancelled");
   await lab3.minutes(1);
   assert.equal(mutating(lab3).length, 0, "nothing re-runs straight away");
+  assert.deepEqual(lab3.notifications.map((n) => n.title), ["Notice 3 of 3: DNS lookup failed"], "notice 3 is shown again first (a real desktop notification)");
   await lab3.minutes(5);
   // The interrupted attempt already counted as an automatic fix, so the existing 30-minute gap between automatic fixes
   // (autonomous.mjs evaluateAutoFire) holds the retry — it waits, it is not dropped and not rushed.

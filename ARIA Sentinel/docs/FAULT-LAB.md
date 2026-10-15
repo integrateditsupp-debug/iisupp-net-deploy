@@ -27,7 +27,15 @@ node tests/fault-lab-modes.test.mjs          # every fault × manual/confirmed/a
 node tests/fault-lab-soak.test.mjs           # 200 seeded sequences of 1–6 faults (SOAK_SEED=<n> reruns one)
 node tests/advisory-ui.test.mjs              # the globe card, Home rows, chat line, Settings → Autonomy, bridge slice
 node tests/fault-lab-run.test.mjs            # the real-Windows lab's safety + verdict logic (it cannot run here)
+node tests/fault-lab-kill-gate.test.mjs      # Ctrl+Alt+K stops everything: every execution entry, approvals held, relaunch stays stopped
+node tests/fault-lab-confirmed-asks-once.test.mjs  # Confirmed asks once, every time; never unattended (review P1-1)
+node tests/fault-lab-advisory-restart.test.mjs     # after a restart the last notice is shown AGAIN; quitting mid-countdown cancels
 ```
+
+After a restart (review P2-6) an escalation never proceeds on its own: the notice the person last saw is re-issued at
+the first tick (a desktop notification + the card) and the next step waits a full interval after it. A crash during the
+countdown is recorded as a cancelled attempt (nothing ran) and the escalation is back at notice 3, re-issued; a clean
+quit during the countdown cancels the fix and closes the escalation — the relaunch never revives it.
 
 The simulated machine interprets exactly the commands the executor and the recipes send (an unknown command is a
 test failure, not a silent success), models administrator rights honestly (a standard token gets the real

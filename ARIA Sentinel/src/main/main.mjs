@@ -2859,10 +2859,11 @@ function advisoryNeverDetection(recipe) {
   logEvent("ADVISORY", `${advisoryRedact(recipeTitle(recipe.id))}: you chose "Never for this" — ${color === "red" ? "noted only; nothing runs" : "asking for a yes instead of fixing it on its own"}.`, { recipeId: recipe.id });
 }
 /** Notice n of 3: audit row + desktop notification (when that channel is on) + the globe card + the Home row (state). */
-function advisoryNotice(rec, n) {
+function advisoryNotice(rec, n, { reissued = false } = {}) {
   const prefs = advisoryPrefsNow();
   const view = advisoryView(rec, prefs, Date.now());
-  logEvent("ADVISORY", `ADVISORY ${n}/${rec.of}: ${rec.title} — ${view.copy.when}`, { recipeId: rec.recipeId, advisoryId: rec.id, advisory: n, of: rec.of, track: rec.track, kind: rec.kind, cycle: rec.cycle });
+  // (review P2-6) a notice re-issued after a restart is the SAME notice shown again — a real desktop notification + card.
+  logEvent("ADVISORY", `ADVISORY ${n}/${rec.of}: ${rec.title} — ${view.copy.when}`, { recipeId: rec.recipeId, advisoryId: rec.id, advisory: n, of: rec.of, track: rec.track, kind: rec.kind, cycle: rec.cycle, ...(reissued ? { reissued: true } : {}) });
   if ((setupPrefsNow().notifyChannels || {}).desktop !== false) desktopNotify({ title: `${view.copy.line}: ${rec.title}`, body: `${view.copy.willDo} ${view.copy.when}` });
   pushAdvisoryCard(view);
 }
@@ -3002,14 +3003,24 @@ function performAdvisoryEffects(effects = []) {
     if (!rec) continue;
     const meta = { recipeId: rec.recipeId, advisoryId: rec.id };
     try {
-      if (e.type === "advise") advisoryNotice(rec, e.n);
+      if (e.type === "advise") advisoryNotice(rec, e.n, { reissued: e.reissued === true });
       else if (e.type === "auto-fix") advisoryAutoFix(rec).catch(() => undefined);
       else if (e.type === "escalate") advisoryEscalate(rec, e.why);
       else if (e.type === "snoozed") logEvent("ADVISORY", `Not now: ${rec.title} — snoozed until ${new Date(e.until).toISOString()}; nothing runs before then.`, meta);
       else if (e.type === "never") { logEvent("ADVISORY", `Never for this: ${rec.title} — ARIA will not fix this on its own on this device again; it asks for a yes instead (approve-first).`, meta); if (rec.color !== "red") { approvals.request({ recipeId: rec.recipeId, title: rec.title, color: rec.color, tier: vettedTierOf(rec.recipeId, VENDOR_FLOOR_TRACK), requestedBy: "advisory", reason: "never-for-this", source: "advisory" }); ensureApprovalPolling(); } }
       else if (e.type === "frozen") logEvent("ADVISORY", `Paused at notice ${rec.advisory}/${rec.of}: ${rec.title} (${e.reason}) — nothing advances until this clears.`, { ...meta, frozen: e.reason });
       else if (e.type === "unfrozen") logEvent("ADVISORY", `Resumed at notice ${rec.advisory}/${rec.of}: ${rec.title} — the remaining time was kept.`, meta);
-      else if (e.type === "resumed") logEvent("ADVISORY", `ADVISORY ${e.n}/${rec.of} resumed after restart: ${rec.title} — the next step waits at least ${advisoryPrefsNow().intervalMinutes} min.`, { ...meta, resumed: true, was: e.was });
+      // REVIEW P2-6 — a restart never proceeds on its own: notice N is shown AGAIN at the next tick, the next step a full interval later.
+      else if (e.type === "resumed") logEvent("ADVISORY", `Restarted at notice ${e.n}/${rec.of}: ${rec.title} — ARIA shows notice ${e.n} again (a desktop notification and the card) before anything else happens; the next step waits ${advisoryPrefsNow().intervalMinutes} min after it.`, { ...meta, resumed: true, was: e.was });
+      // REVIEW P2-6 — the app died (crash / power / kill) while this fix was in its countdown or before it reported back:
+      // that attempt is CANCELLED, never resumed. Whether any step had started is read from the audit itself.
+      else if (e.type === "interrupted") {
+        const since = Number(e.fixingSince) || 0;
+        const started = since > 0 && (store.get("transparencyLog") || []).some((r) => r && r.recipeId === rec.recipeId && ["RUN", "FIX", "DONE", "ERROR", "WARN"].includes(r.tag) && Date.parse(r.ts) >= since);
+        logEvent("CANCEL", started
+          ? `${rec.title}: ARIA closed before this fix reported back (it had started — its rows are above). It is not resumed; notice ${e.n} of ${rec.of} is shown again first.`
+          : `${rec.title}: ARIA closed during the countdown — the fix was cancelled and nothing ran. Notice ${e.n} of ${rec.of} is shown again before anything else happens.`, { ...meta, interrupted: true, started });
+      }
       else if (e.type === "reopened") logEvent("ADVISORY", `Snooze over: ${rec.title} — telling you again (round ${e.cycle}).`, meta);
       else if (e.type === "closed") logEvent("ADVISORY", `Advisory closed: ${rec.title} (${e.reason}) — nothing runs on its own.`, meta);
     } catch { /* one effect never breaks the next */ }
@@ -6110,7 +6121,19 @@ app.on("child-process-gone", (_event, details) => {
   handleSelfError(new Error(`Child process gone: ${details.type}`), "child-process");
 });
 
+/**
+ * REVIEW P2-6 — quitting during a pre-execution countdown CANCELS that fix (audited): the countdown is aborted before the
+ * process goes (an advise-first auto-fix is then closed as "countdown-cancelled" by its own abort listener — it does not
+ * come back after the relaunch). Returns how many were cancelled.
+ */
+function cancelCountdownsForQuit() {
+  let n = 0;
+  try { n = countdownManager.abortAll(); } catch { n = 0; }
+  if (n) { try { closeActionIndicator(); } catch { /* window may be gone */ } logEvent("CANCEL", `ARIA is quitting during ${n} countdown(s) — ${n === 1 ? "that fix was" : "those fixes were"} cancelled; nothing ran.`, { quit: true, cancelled: n }); }
+  return n;
+}
 app.on("before-quit", () => {
+  cancelCountdownsForQuit();
   isQuitting = true;
   stopOverlayPhysics();
   try { globalShortcut.unregisterAll(); } catch { /* nothing registered */ }

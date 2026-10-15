@@ -1031,6 +1031,9 @@ const TESTS = [
   // trusted, is ONE approval; the card's click approves that ask (one run, one record); the vendor floor belongs to the
   // Autonomous advise-three-times track only (the control still acts after 3 notices).
   "./fault-lab-confirmed-asks-once.test.mjs",
+  // 2026-10-14 (review P2-6) — after a restart the advise-first escalation re-issues the notice the person last saw (a real
+  // desktop notification + card) and never proceeds straight to the countdown; a quit during the countdown cancels the fix.
+  "./fault-lab-advisory-restart.test.mjs",
   // The commercial surface, audited end to end and proven RED FIRST on fixtures: the response-time
   // promise (BE1), the price a stranger is quoted (BF1), the tier vocabulary (BF2), the amount a buyer
   // is actually charged (BI2), the document a conversation ends in (BL1), the intake nobody keeps
