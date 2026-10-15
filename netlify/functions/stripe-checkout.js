@@ -22,9 +22,31 @@
  *    'book-order' only for a catalogue book id; other client meta keys are allow-listed and capped.
  *  - successPath must be a single-slash relative path (`//evil.tld` and `/\evil` are rejected) and the
  *    origin comes from our own allow-list / process.env.URL, never a raw Origin header → no open redirect.
+ *
+ * SENTINEL REVIEW FIXES 2026-10-14 (P0-1 / P2-1):
+ *  - A one-time (priceData) session no longer copies the client's `body.tier` into metadata.tier. The review
+ *    minted an Enterprise Sentinel key from a $1 session that carried `tier: "sentinel_enterprise_y"`. One-time
+ *    metadata.tier is now the priced item id (what library-download reads), and an id that names a subscription
+ *    tier is recorded as "one-time" instead. The license paths (sentinel-stripe-webhook, stripe-confirm) also no
+ *    longer read the plan from metadata at all — they read the subscription's price.
+ *  - The AI Setup Walk-Through (`ai-setup-walkthrough`, priced here from ONE_TIME_CATALOGUE) is marked
+ *    server-side with metadata.product = "ai-setup-walkthrough": the key the Sentinel webhook recognises to grant
+ *    the 30-day trial the homepage promises. A client cannot set `product` (META_ALLOW does not list it).
  */
-const Stripe = require('stripe');
 const { allowedOrigins } = require('./lib/cors.cjs');
+
+// The Stripe client is loaded lazily (and is injectable in tests) — same seam as sentinel-stripe-webhook.
+let _stripeFactory = null;
+/** Test seam: fn(secretKey) → a Stripe-like client ({ checkout: { sessions: { create } } }). */
+function _setStripeFactory(fn) { _stripeFactory = typeof fn === 'function' ? fn : null; }
+function stripeClient(secretKey) {
+  if (_stripeFactory) return _stripeFactory(secretKey);
+  const Stripe = require('stripe');
+  return Stripe(secretKey);
+}
+
+/** The Concierge AI Setup Walk-Through product id (index.html / services.html data-stripe-id). */
+const WALKTHROUGH_PRODUCT_ID = 'ai-setup-walkthrough';
 
 const PRICE_MAP = {
   // Subscription tiers (env var OR baked default from 2026-06-18 Stripe API run)
@@ -98,6 +120,35 @@ const PRICE_MAP = {
   // the Stripe price + sets STRIPE_PRICE_ARIA_WEB_M, so checkout cleanly 400s ("never a broken checkout").
   aria_web_m:            process.env.STRIPE_PRICE_ARIA_WEB_M,
 };
+
+// Subscription tiers vs one-time catalog items
+const SUBSCRIPTION_TIERS = new Set([
+  'personal','personal_y','pro','pro_y',
+  'small_business','small_business_y',
+  'mid_size','mid_size_y','midsize','midsize_y',
+  'enterprise','enterprise_y',
+  // ARIA Sentinel desktop tiers ARE recurring (monthly/annual) — they must open a subscription session, not a
+  // one-time payment. Omitting them here meant that the moment Ahmad pastes the recurring price IDs, checkout
+  // would try mode:'payment' on a recurring price and Stripe would reject it (a broken go-live). The /plans +
+  // /downloads buttons POST exactly these tier keys.
+  'sentinel_personal_m','sentinel_personal_y','sentinel_pro_m',
+  'sentinel_business_y','sentinel_midsize_y','sentinel_enterprise_y',
+  'aria_web_m'   // Q-WEBTIER — $70/mo website subscription (separate from desktop tiers)
+]);
+
+/**
+ * REVIEW FIX P0-1 — the SERVER's own price table, read backwards: Stripe price id → the subscription tier key
+ * whose price it is (first match in PRICE_MAP order), or null. stripe-confirm uses this to name the plan of a
+ * paid subscription from the price Stripe actually charged — never from session metadata.
+ */
+function subscriptionTierForPriceId(priceId) {
+  const id = String(priceId || '');
+  if (!id) return null;
+  for (const [tier, price] of Object.entries(PRICE_MAP)) {
+    if (price && price === id && SUBSCRIPTION_TIERS.has(tier)) return tier;
+  }
+  return null;
+}
 
 // ---------------------------------------------------------------------------------------------
 // ONE-TIME PRICE CATALOGUE (server-side source of truth for inline priceData checkouts).
@@ -225,7 +276,7 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || '{}'); }
   catch { return j(400, { error: 'Invalid JSON' }); }
 
-  const stripe = Stripe(stripeKey);
+  const stripe = stripeClient(stripeKey);
   const origin = siteOrigin(event);
 
   let lineItems, mode, metadata, successUrl, cancelUrl;
@@ -256,12 +307,20 @@ exports.handler = async (event) => {
       quantity: 1,
     }];
     mode = 'payment';
+    // REVIEW FIX P0-1: never the client's body.tier. metadata.tier is the priced item id (library-download reads
+    // "<id>-<full|peek>"), and an id that names a subscription tier (e.g. "sentinel_enterprise_y", "pro") is
+    // recorded as plain "one-time" — a one-time session must never look like a plan purchase downstream.
+    const itemTier = pdId && !SUBSCRIPTION_TIERS.has(pdId.toLowerCase()) && !/^sentinel_/i.test(pdId) ? pdId : 'one-time';
+    if (body.tier != null && String(body.tier) !== itemTier) console.warn('[stripe-checkout] ignored client tier on a one-time session', JSON.stringify({ client_tier: String(body.tier).slice(0, 40), recorded: itemTier }));
     metadata = {
-      tier: String(body.tier || pd.id || 'one-time').slice(0, 40),
+      tier: itemTier.slice(0, 40),
       planName: productName,
       kind: priced.kind,          // server-decided — a client can no longer flip this to 'book-order'
       price_source: priced.source
     };
+    // REVIEW FIX P2-1: the Walk-Through is recognised by the Sentinel webhook from this SERVER-set marker (only
+    // when the server catalogue priced the session — the client cannot set `product`, see META_ALLOW).
+    if (pdId === WALKTHROUGH_PRODUCT_ID && priced.source === 'catalogue') metadata.product = WALKTHROUGH_PRODUCT_ID;
     // Callers may attach extra metadata (e.g. concierge book-order fee breakdown). Keys are allow-listed,
     // values are strings capped at 480 chars, and for book orders the fee breakdown is the SERVER's numbers.
     if (body.meta && typeof body.meta === 'object') {
@@ -294,26 +353,15 @@ exports.handler = async (event) => {
       return j(400, { error: 'Unknown tier: ' + tier });
     }
     lineItems = [{ price: priceId, quantity: 1 }];
-    // Subscription tiers vs one-time catalog items
-    const SUBSCRIPTION_TIERS = new Set([
-      'personal','personal_y','pro','pro_y',
-      'small_business','small_business_y',
-      'mid_size','mid_size_y','midsize','midsize_y',
-      'enterprise','enterprise_y',
-      // ARIA Sentinel desktop tiers ARE recurring (monthly/annual) — they must open a subscription session, not a
-      // one-time payment. Omitting them here meant that the moment Ahmad pastes the recurring price IDs, checkout
-      // would try mode:'payment' on a recurring price and Stripe would reject it (a broken go-live). The /plans +
-      // /downloads buttons POST exactly these tier keys.
-      'sentinel_personal_m','sentinel_personal_y','sentinel_pro_m',
-      'sentinel_business_y','sentinel_midsize_y','sentinel_enterprise_y',
-      'aria_web_m'   // Q-WEBTIER — $70/mo website subscription (separate from desktop tiers)
-    ]);
+    // SUBSCRIPTION_TIERS (module scope, above): subscription tiers vs one-time catalog items.
     mode = SUBSCRIPTION_TIERS.has(tier) ? 'subscription' : 'payment';
     metadata = {
       tier: tier,
       planName: body.planName || tier,
       kind: SUBSCRIPTION_TIERS.has(tier) ? 'aria-plan' : 'iis-catalog'
     };
+    // REVIEW FIX P2-1: the fixed-price Walk-Through (STRIPE_PRICE_WALKTHROUGH, staged) carries the same server-set marker.
+    if (tier === 'walkthrough') metadata.product = WALKTHROUGH_PRODUCT_ID;
     // SENTINEL-BACKEND 2026-10-14 (audit B11): an ARIA Sentinel desktop tier returns to /downloads/ — the page
     // that renders the "your key is on its way to <email>; download below" success state — not to /aria, where
     // nothing happened and nothing explained where the key was. The Sentinel webhook (sentinel-stripe-webhook)
@@ -370,3 +418,7 @@ function j(status, body) {
 
 // Exposed for tests (pure; no Stripe calls).
 exports._pricing = { resolveOneTimePrice, safeSuccessPath, bookTotals, ONE_TIME_CATALOGUE, CATALOGUE_FULL_PRICE, BOOKS, MAX_ONE_TIME_CENTS, MIN_ONE_TIME_CENTS };
+// REVIEW FIXES 2026-10-14: the server's own plan table (stripe-confirm names a paid subscription's plan from the price
+// Stripe charged) + the Walk-Through marker the Sentinel webhook recognises + the Stripe test seam.
+exports._plans = { PRICE_MAP, SUBSCRIPTION_TIERS, subscriptionTierForPriceId, WALKTHROUGH_PRODUCT_ID };
+exports._setStripeFactory = _setStripeFactory;

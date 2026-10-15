@@ -111,6 +111,27 @@ console.log('[heartbeat] device auth → fleet record keyed by sha256(credential
   blobsDown = false;
 }
 
+console.log('[heartbeat] REVIEW P1-3: server-anchored trial start (trialStartedAt), with or without a license key');
+{
+  const DEV = '0123456789abcdef0123456789abcdef';
+  const ping = (headers = {}) => heartbeat.handler({ httpMethod: 'POST', headers: { 'x-nf-client-connection-ip': '192.0.2.77', ...headers }, body: JSON.stringify({ version: '0.2.0' }) }).then(J);
+  const first = await ping({ 'x-sentinel-device': DEV });
+  ok('a keyless ping with X-Sentinel-Device → trialStartedAt (ISO), trialAnchor created', typeof first.trialStartedAt === 'string' && Number.isFinite(Date.parse(first.trialStartedAt)) && first.trialAnchor === 'created' && first.auth === 'none');
+  const second = await ping({ 'x-sentinel-device': DEV, 'x-sentinel-key': v1Cred });
+  ok('a later (keyed) ping from the same device → the SAME trialStartedAt, never overwritten', second.trialStartedAt === first.trialStartedAt && second.trialAnchor === 'existing');
+  const stored = JSON.parse(memStore('sentinel-trial-anchors')._m.get('trial-anchor/' + DEV));
+  ok('the anchor holds only {first_seen_at} under trial-anchor/<device hash>', JSON.stringify(Object.keys(stored)) === JSON.stringify(['first_seen_at']) && stored.first_seen_at === first.trialStartedAt);
+  ok('no device header → trialStartedAt null, the ping still answers', (await ping()).trialStartedAt === null);
+  let created = 0;
+  for (let i = 0; i < 35; i++) { const r = await ping({ 'x-sentinel-device': 'a' + String(i).padStart(31, '0') }); if (r.trialAnchor === 'created') created++; }
+  ok('new anchors are limited per IP per hour (30, the first one above included) — a flood of fake device ids cannot grow the store without bound', created === 29);
+  blobsDown = true;
+  const down = await ping({ 'x-sentinel-device': DEV });
+  ok('Blobs down → trialStartedAt null (never invented), the keepalive still 200 ok', down.ok === true && down.trialStartedAt === null);
+  blobsDown = false;
+  require_('../netlify/functions/_rate-limit.js').resetRateLimits();
+}
+
 console.log('[publish] url + mandatory kept, hosts validated, admin env aliases (B13)');
 {
   const post = (body, headers = {}) => publish.handler({ httpMethod: 'POST', headers, body: JSON.stringify(body) });
@@ -190,6 +211,15 @@ console.log('[register] credential required, record keyed by credential, no raw 
   const s3 = J(await post({ device_id: 'c' }, { 'x-sentinel-key': v2Cred }));
   ok('a v2 credential reports seats from the record and overSeats honestly (2 seats, 3 devices)', s1.seats === 2 && s2.overSeats === false && s3.devices === 3 && s3.overSeats === true);
   ok('GET → 405, OPTIONS → 204', (await register.handler({ httpMethod: 'GET', headers: {} })).statusCode === 405 && (await register.handler({ httpMethod: 'OPTIONS', headers: {} })).statusCode === 204);
+  // REVIEW FIXES 2026-10-14 (P1-2): a declared email is a PENDING contact unless the license already vouches for it
+  const stranger = J(await post({ device_id: 'd', email: 'Stranger@Elsewhere.example' }, { 'x-sentinel-key': v2Cred }));
+  ok('REVIEW P1-2: a stranger email at check-in → contact.status pending-admin-approval, stored only in pending_contacts', stranger.contact.status === 'pending-admin-approval' && JSON.parse(memStore('licenses')._m.get(v2Cred)).pending_contacts.some((p) => p.email === 'stranger@elsewhere.example'));
+  const again2 = J(await post({ device_id: 'd', email: 'stranger@elsewhere.example' }, { 'x-sentinel-key': v2Cred }));
+  ok('…re-declaring it does not duplicate the pending entry', again2.contact.status === 'pending-admin-approval' && JSON.parse(memStore('licenses')._m.get(v2Cred)).pending_contacts.filter((p) => p.email === 'stranger@elsewhere.example').length === 1);
+  const own = J(await post({ device_id: 'd', email: 'IT@fleet.example' }, { 'x-sentinel-key': v2Cred }));
+  ok('the license\'s own buyer email → contact.status approved (nothing pending)', own.contact.status === 'approved');
+  const sharedKey = J(await post({ device_id: 'dev-9', email: 'dev@example.com' }, { 'x-sentinel-key': v1Cred }));
+  ok('a shared v1 key declaring a customer email → pending (a shared key never vouches for an address)', sharedKey.contact.status === 'pending-admin-approval');
 }
 
 console.log('[search] admin-only, masked keys, rollback by credential (B19)');
@@ -229,4 +259,4 @@ console.log('[recipes / stop-codes] served at every path the desktop declares (B
   ok('every /.netlify/functions path in SERVICE_OUTBOUND_PATHS + UPDATE_OUTBOUND_PATHS has a deployed function (' + (missing.join(', ') || 'none missing') + ')', missing.length === 0);
 }
 
-console.log(`sentinel-fleet-endpoints: ${pass} checks green — heartbeat shape + killed/reason + tenant disabled + one-way record keys, publish url/mandatory/host validation, manifest header credential + server rollout + record url, register by credential, search masks keys, recipes/stop-codes at the declared paths.`);
+console.log(`sentinel-fleet-endpoints: ${pass} checks green — heartbeat shape + killed/reason + tenant disabled + one-way record keys + server-anchored trialStartedAt, publish url/mandatory/host validation, manifest header credential + server rollout + record url, register by credential with self-declared emails pending, search masks keys, recipes/stop-codes at the declared paths.`);

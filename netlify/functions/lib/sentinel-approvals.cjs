@@ -101,7 +101,7 @@ async function readJson(open, storeName, key, event) {
 
 /**
  * verifyDeviceKey(presentedHash, { env, openStore, event })
- *   → { ok:true, via:'sentinel-license-keys'|'plan-key'|'licenses-store', plan, tenant, record, device }
+ *   → { ok:true, via:'sentinel-license-keys'|'plan-key'|'licenses-store', plan, tenant, record, device, sharedKey }
  *   → { ok:false, reason:'missing'|'bad-format'|'revoked'|'unknown-key' }
  * `tenant` is a 16-hex hash of the presented key hash — safe to store and to key records by.
  * `record` is the per-customer key-index entry (null for a v1 shared plan key with no customer record);
@@ -137,23 +137,35 @@ async function verifyDeviceKey(presented, opts) {
   if (secret) {
     for (const p of PLAN_ORDER) if (constantTimeEqual(hash, planKeyHash(p, secret))) { plan = p === 'admin-lifetime' ? 'admin' : p; break; }
   }
+  // REVIEW FIX P1-2: a v1 plan key is SHARED by every customer on its plan, so whoever holds it must never be
+  // able to mail a customer's address — even when a legacy record happens to hold that same key. `sharedKey`
+  // tells the notify / session-report recipient rule to allow the admin inbox only.
+  const sharedKey = Boolean(plan);
 
-  if (record) return { ok: true, via: 'sentinel-license-keys', plan: record.tier || plan, tenant, record, device };
-  if (plan) return { ok: true, via: 'plan-key', plan, tenant, record: null, device };
-  if (device) return { ok: true, via: 'licenses-store', plan: device.plan || null, tenant, record: null, device };
+  if (record) return { ok: true, via: 'sentinel-license-keys', plan: recordPlan(record, plan), tenant, record, device, sharedKey };
+  if (plan) return { ok: true, via: 'plan-key', plan, tenant, record: null, device, sharedKey };
+  if (device) return { ok: true, via: 'licenses-store', plan: device.plan || null, tenant, record: null, device, sharedKey };
   return { ok: false, reason: 'unknown-key' };
+}
+
+/** The plan a key-index record grants now: a time-boxed trial key (tier 'trial') is Pro until expires_at, then free. */
+function recordPlan(record, fallback) {
+  const tier = record && record.tier ? String(record.tier) : '';
+  if (tier !== 'trial') return tier || fallback;
+  const ends = Date.parse(record.expires_at || record.trialEndsAt || '');
+  return Number.isFinite(ends) && Date.now() < ends ? 'pro' : 'free';
 }
 
 /**
  * authenticate(event, { env, openStore }) — device key first, then an internal/admin token.
- *   → { ok:true, kind:'device'|'internal', tenant, plan?, via, record, device }
+ *   → { ok:true, kind:'device'|'internal', tenant, plan?, via, record, device, sharedKey, credential }
  *   → { ok:false, status:401|503, error }
  */
 async function authenticate(event, opts) {
   const presented = headerOf(event, 'x-sentinel-key');
   if (presented) {
     const r = await verifyDeviceKey(presented, Object.assign({ event }, opts || {}));
-    if (r.ok) return { ok: true, kind: 'device', tenant: r.tenant, plan: r.plan, via: r.via, record: r.record || null, device: r.device || null };
+    if (r.ok) return { ok: true, kind: 'device', tenant: r.tenant, plan: r.plan, via: r.via, record: r.record || null, device: r.device || null, sharedKey: r.sharedKey === true, credential: String(presented).trim().toLowerCase() };
     return { ok: false, status: 401, error: r.reason === 'revoked' ? 'license-revoked' : 'unauthorized' };
   }
   const gate = requireAdminToken(event, { envNames: ADMIN_ENV_NAMES, allowBodyToken: false });

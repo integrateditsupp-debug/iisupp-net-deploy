@@ -6,7 +6,8 @@
 // everyone and one customer can never be revoked without revoking all of them. v2 binds the key to a customer.
 //
 //   v2 key  =  <code2> <cust16> <tag46>          (64 lowercase hex — same shape as a v1 key)
-//     code2  = the plan code (01 personal · 02 pro · 03 smb · 04 midsize · 05 enterprise · 06 admin)
+//     code2  = the plan code (01 personal · 02 pro · 03 smb · 04 midsize · 05 enterprise · 06 admin ·
+//              07 trial — server-only, its 16-hex customer field carries cust8 + an 8-hex expiry; see issueTrialKey)
 //     cust16 = sha256(stripe customer id | email | any stable customer seed).slice(0, 16)
 //     tag46  = HMAC_SHA256(secret, "sentinel-license:v2:<plan>:<cust16>").slice(0, 46)   (184-bit tag)
 //
@@ -24,12 +25,26 @@
 const crypto = require('node:crypto');
 
 // Plan codes are part of the key format: NEVER renumber (a renumber invalidates every issued key).
-const PLAN_CODES = Object.freeze({ personal: '01', pro: '02', smb: '03', midsize: '04', enterprise: '05', admin: '06' });
+// SENTINEL REVIEW FIXES 2026-10-14 (P2-1): `07 trial` is a SERVER-ONLY, time-boxed code — the key minted with an
+// AI Setup Walk-Through purchase. It is not a pricing tier (pricing-tiers.mjs never names it) and it never
+// reaches the desktop as a plan: sentinel-resolve answers it as `pro` until its expiry and `free` after.
+const PLAN_CODES = Object.freeze({ personal: '01', pro: '02', smb: '03', midsize: '04', enterprise: '05', admin: '06', trial: '07' });
 const CODE_PLANS = Object.freeze(Object.fromEntries(Object.entries(PLAN_CODES).map(([plan, code]) => [code, plan])));
 const PLAN_ORDER = Object.freeze(['personal', 'pro', 'smb', 'midsize', 'enterprise', 'admin']);
 const KEY_VERSION = 2;
 const HEX64 = /^[a-f0-9]{64}$/;
 const TAG_LEN = 46;
+
+// ---- the time-boxed trial key (plan code 07) ----------------------------------------------------------------
+// Layout: 07 | cust8 | exp8 | tag46 — the 16 hex the HMAC tag already covers ("cust16") carry 8 hex of the
+// customer id and the EXPIRY as 8 hex of Unix seconds. The expiry is therefore part of the authenticated key:
+// sentinel-resolve reads it from the key itself (no store round-trip, nothing to lose in a Blobs blip) and a
+// holder cannot extend it without the secret. verifyCustomerKey needs no change — it tags whatever 16 hex sit there.
+const TRIAL_PLAN = 'trial';
+const TRIAL_DAYS = 30;
+const TRIAL_EFFECTIVE_PLAN = 'pro'; // what a live trial key unlocks — lockstep with funnel WALKTHROUGH_TRIAL_PLAN
+const FREE_FLOOR_PLAN = 'free';     // what it falls to after expiry — lockstep with license-plan.mjs FREE_PLAN
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 // Mirrors ARIA Sentinel/src/shared/pricing-tiers.mjs normalizePlan (kept dependency-free so this file loads
 // from CJS and ESM alike; tests/sentinel-license-v2.test.mjs pins the two in lockstep).
@@ -90,10 +105,51 @@ function issueCustomerKey({ plan, customerId, email, seed, secret } = {}) {
   if (s.length < 16) throw new Error('license-secret-missing');
   const canonical = canonicalPlan(plan);
   if (!canonical) throw new Error('unknown-plan');
+  // A trial key carries its expiry inside the key — it is only ever minted by issueTrialKey.
+  if (canonical === TRIAL_PLAN) throw new Error('trial-key-needs-expiry');
   const src = String(customerId || seed || email || '').trim();
   if (!src) throw new Error('customer-seed-missing');
   const cust16 = customerId16(src);
   return `${PLAN_CODES[canonical]}${cust16}${tagFor(canonical, cust16, s)}`;
+}
+
+/**
+ * issueTrialKey({ seed, expiresAt, secret }) → 64-hex v2 key with plan code 07 and the expiry inside the key.
+ * `expiresAt` is an ISO string / ms epoch (required — a trial without an end is a permanent unlock).
+ */
+function issueTrialKey({ seed, customerId, email, expiresAt, secret } = {}) {
+  const s = typeof secret === 'string' ? secret.trim() : '';
+  if (s.length < 16) throw new Error('license-secret-missing');
+  const src = String(customerId || seed || email || '').trim();
+  if (!src) throw new Error('customer-seed-missing');
+  const expMs = typeof expiresAt === 'number' ? expiresAt : Date.parse(String(expiresAt || ''));
+  if (!Number.isFinite(expMs) || expMs <= 0) throw new Error('trial-expiry-missing');
+  const expSec = Math.floor(expMs / 1000);
+  if (expSec > 0xffffffff) throw new Error('trial-expiry-out-of-range');
+  const cust16 = customerId16(src).slice(0, 8) + expSec.toString(16).padStart(8, '0');
+  return `${PLAN_CODES[TRIAL_PLAN]}${cust16}${tagFor(TRIAL_PLAN, cust16, s)}`;
+}
+
+/** The expiry a trial key carries (ISO), from its parsed form or the key itself. null for any other key. */
+function trialExpiresAt(keyOrParsed) {
+  const p = keyOrParsed && typeof keyOrParsed === 'object' ? keyOrParsed : parseKeyV2(keyOrParsed);
+  if (!p || p.plan !== TRIAL_PLAN || !/^[a-f0-9]{16}$/.test(String(p.cust16 || ''))) return null;
+  const sec = parseInt(String(p.cust16).slice(8), 16);
+  return Number.isFinite(sec) && sec > 0 ? new Date(sec * 1000).toISOString() : null;
+}
+
+/**
+ * The plan a resolved key grants at `nowMs`: { plan, status, expires_at }.
+ *   trial key, before expiry → { plan:'pro',  status:'active',  expires_at }
+ *   trial key, after expiry  → { plan:'free', status:'expired', expires_at }   (the Walk-Through stays — see resolve)
+ *   any other key            → { plan, status:'active', expires_at:null }
+ */
+function effectivePlan(resolved, nowMs) {
+  if (!resolved) return null;
+  if (resolved.plan !== TRIAL_PLAN) return { plan: resolved.plan, status: 'active', expires_at: null };
+  const expires_at = resolved.expires_at || trialExpiresAt({ plan: TRIAL_PLAN, cust16: resolved.cust16 });
+  const live = Boolean(expires_at) && (Number(nowMs) || Date.now()) < Date.parse(expires_at);
+  return live ? { plan: TRIAL_EFFECTIVE_PLAN, status: 'active', expires_at } : { plan: FREE_FLOOR_PLAN, status: 'expired', expires_at };
 }
 
 /** Parse the FORMAT of a v2 key (no secret, no verification): { plan, code, cust16, tag } or null. */
@@ -106,7 +162,7 @@ function parseKeyV2(key) {
   return { version: KEY_VERSION, plan, code, cust16: k.slice(2, 18), tag: k.slice(18) };
 }
 
-/** Verify a v2 key: { version:2, plan, cust16 } or null. Constant-time; fail-closed. */
+/** Verify a v2 key: { version:2, plan, cust16 } (+ expires_at for a trial key) or null. Constant-time; fail-closed. */
 function verifyCustomerKey(key, secret) {
   const s = typeof secret === 'string' ? secret.trim() : '';
   if (!s) return null;
@@ -114,7 +170,9 @@ function verifyCustomerKey(key, secret) {
   if (!p) return null;
   const expected = tagFor(p.plan, p.cust16, s);
   if (!constantTimeEqual(p.tag, expected)) return null;
-  return { version: KEY_VERSION, plan: p.plan, cust16: p.cust16 };
+  const out = { version: KEY_VERSION, plan: p.plan, cust16: p.cust16 };
+  if (p.plan === TRIAL_PLAN) out.expires_at = trialExpiresAt(p);
+  return out;
 }
 
 /** The six v1 plan keys (HMAC "sentinel-license:v1:<plan>") — Rule 15: every v1 key the world holds stays valid. */
@@ -157,6 +215,7 @@ function maskKey(key) {
 
 module.exports = {
   KEY_VERSION, PLAN_CODES, CODE_PLANS, PLAN_ORDER, HEX64, TAG_LEN, ALIASES,
-  canonicalPlan, sha256, keyHash, customerId16, v2Message, issueCustomerKey, parseKeyV2, verifyCustomerKey,
-  v1Key, resolveV1Key, resolveAnyKey, constantTimeEqual, maskKey
+  TRIAL_PLAN, TRIAL_DAYS, TRIAL_EFFECTIVE_PLAN, FREE_FLOOR_PLAN, DAY_MS,
+  canonicalPlan, sha256, keyHash, customerId16, v2Message, issueCustomerKey, issueTrialKey, trialExpiresAt, effectivePlan,
+  parseKeyV2, verifyCustomerKey, v1Key, resolveV1Key, resolveAnyKey, constantTimeEqual, maskKey
 };

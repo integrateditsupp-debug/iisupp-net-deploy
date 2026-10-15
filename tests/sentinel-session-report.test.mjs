@@ -3,7 +3,10 @@
 // netlify/functions/sentinel-session-report.js must:
 //   - send NOTHING without a device credential (401) — the prior probe produced a real email with no auth;
 //   - send the user copy ONLY to an address the license record vouches for; a body-supplied stranger is
-//     skipped and the response says so (the company copy still goes to the company inbox);
+//     skipped and the response says so (the company copy still goes to the company inbox). REVIEW FIXES
+//     2026-10-14 (P1-2): "vouches for" = the Stripe buyer email, an admin-approved contact or the admin inbox —
+//     a device-registered email or a same-domain colleague no longer counts; a shared v1 key gets the admin inbox
+//     only; a durable Blobs ceiling per credential holds across instances and fails closed;
 //   - keep transcripts / backend actions OUT of every mail, and refuse (422) free text that fails the
 //     desktop's own content-blind guard — nothing is sent in that case;
 //   - carry no CORS wildcard; rate-limit 5 reports / 10 min per credential; answer `ok:true` only when a
@@ -104,7 +107,7 @@ console.log('[session-report] recipient binding (B2/B5): the license record deci
   ok('an admin-set contact → user copy sent', contact.json.sent.length === 2);
   mails.length = 0;
   const colleague = await post(body({ user: { email: 'cfo@acme-corp.example' } }), H);
-  ok('a colleague on the same private company domain → user copy sent', colleague.json.sent.length === 2);
+  ok('REVIEW P1-2: a same-domain colleague is NO LONGER vouched for → user copy skipped (company copy only)', colleague.json.sent.length === 1 && colleague.json.errors.some((e) => e.skipped === 'recipient-not-registered') && mails.length === 1);
   resetRateLimits();
   // a public-mailbox customer never vouches for the whole domain
   const gmailKey = V2.issueCustomerKey({ plan: 'personal', customerId: 'sub_gm', secret: process.env.SENTINEL_LICENSE_SECRET });
@@ -118,7 +121,7 @@ console.log('[session-report] recipient binding (B2/B5): the license record deci
   ok('…but their own address (any case) is fine', self.json.sent.length === 2);
 }
 
-console.log('[session-report] legacy v1 shared plan key: device-registered email or nothing');
+console.log('[session-report] REVIEW P1-2: a self-registered email or a shared v1 key gets no user copy (admin inbox only)');
 {
   resetRateLimits();
   const H = { 'x-sentinel-key': v1Device };
@@ -128,8 +131,24 @@ console.log('[session-report] legacy v1 shared plan key: device-registered email
   await memStore('licenses').setJSON(v1Device, { key_hash: v1Device, email: 'registered@example.com', devices: [] });
   mails.length = 0;
   const reg = await post(body({ user: { email: 'registered@example.com' } }), H);
-  ok('the email the device registered at check-in (licenses store) → user copy sent', reg.json.sent.length === 2 && mails[1].to[0] === 'registered@example.com');
+  ok('the email a device registered at check-in (self-declared, pending) → user copy SKIPPED', reg.json.sent.length === 1 && reg.json.errors.some((e) => e.skipped === 'recipient-not-registered') && !mails.some((m) => m.to[0] === 'registered@example.com'));
   memStore('licenses')._m.clear();
+  // the same, on a per-customer key: a device-registered stranger is not the buyer
+  await memStore('licenses').setJSON(v2Device, { key_hash: v2Device, email: 'victim@elsewhere.example', devices: [] });
+  mails.length = 0;
+  const v2reg = await post(body({ user: { email: 'victim@elsewhere.example' } }), { 'x-sentinel-key': v2Device });
+  ok('a per-customer key whose device registered a stranger → the stranger gets nothing', v2reg.json.sent.length === 1 && !mails.some((m) => m.to[0] === 'victim@elsewhere.example'));
+  memStore('licenses')._m.clear();
+  resetRateLimits();
+  mails.length = 0;
+  const admin = await post(body({ user: { email: 'integrateditsupp@gmail.com' } }), H);
+  ok('a shared v1 key may name the admin inbox → user copy to the admin inbox', admin.json.sent.length === 2 && mails[1].to[0] === 'integrateditsupp@gmail.com');
+  // an admin-approved contact on the per-customer record is allowed
+  await memStore('sentinel-license-keys').setJSON(v2Device, { v: 'sentinel-license-key-v1', subscription_id: 'sub_acme', tier: 'smb', status: 'active', seats: 25, key_version: 2, email: 'owner@acme-corp.example', contacts: ['helpdesk@partner.example', 'cfo@acme-corp.example'], disabled: false });
+  mails.length = 0;
+  const approved = await post(body({ user: { email: 'cfo@acme-corp.example' } }), { 'x-sentinel-key': v2Device });
+  ok('once an admin approves the colleague (contacts), the user copy goes to them', approved.json.sent.length === 2 && mails[1].to[0] === 'cfo@acme-corp.example');
+  await memStore('sentinel-license-keys').setJSON(v2Device, { v: 'sentinel-license-key-v1', subscription_id: 'sub_acme', tier: 'smb', status: 'active', seats: 25, key_version: 2, email: 'owner@acme-corp.example', contacts: ['helpdesk@partner.example'], disabled: false });
 }
 
 console.log('[session-report] content-blind: transcript dropped, guard enforced');
@@ -187,4 +206,26 @@ console.log('[session-report] rate limit per credential');
   resetRateLimits();
 }
 
-console.log(`sentinel-session-report: ${pass} checks green — 401 sends nothing, recipient bound to the license record (owner / contact / same private domain, never a public domain), transcript never mailed, guard 422, no CORS *, honest 207/503, per-credential rate limit.`);
+console.log('[session-report] REVIEW P1-2: a DURABLE per-credential ceiling survives a cold start / another instance');
+{
+  memStore('sentinel-rate-limits')._m.clear();
+  const k3 = V2.issueCustomerKey({ plan: 'pro', customerId: 'sub_durable', secret: process.env.SENTINEL_LICENSE_SECRET });
+  const d3 = V2.keyHash(k3);
+  await memStore('sentinel-license-keys').setJSON(d3, { v: 'sentinel-license-key-v1', subscription_id: 'sub_durable', tier: 'pro', status: 'active', key_version: 2, email: 'durable@corp.example', contacts: [] });
+  const H = { 'x-sentinel-key': d3 };
+  const statuses = [];
+  for (let i = 0; i < 11; i++) { if (i % 5 === 0) resetRateLimits(); statuses.push((await post(body({ user: { email: 'durable@corp.example' } }), H)).status); }
+  ok('10 reports an hour per credential even when the in-memory limiter is reset (a new instance) — the 11th → 429', statuses.slice(0, 10).every((x) => x === 200) && statuses[10] === 429);
+  resetRateLimits();
+  const blobsGone = S._setStoreFactory((name) => (name === 'sentinel-rate-limits' ? null : memStore(name)));
+  void blobsGone;
+  A._setStoreFactory((name) => (name === 'sentinel-rate-limits' ? null : memStore(name)));
+  mails.length = 0;
+  const closed = await post(body(), { 'x-sentinel-key': v2Device });
+  ok('limiter store unreachable → 503 rate-limiter-unavailable, NOTHING sent (fail closed)', closed.status === 503 && closed.json.error === 'rate-limiter-unavailable' && mails.length === 0);
+  S._setStoreFactory((name) => memStore(name));
+  A._setStoreFactory((name) => memStore(name));
+  resetRateLimits();
+}
+
+console.log(`sentinel-session-report: ${pass} checks green — 401 sends nothing, user copy only to the Stripe buyer email / an admin-approved contact / the admin inbox (never a self-registered or same-domain address, never via a shared v1 key), transcript never mailed, guard 422, no CORS *, honest 207/503, per-credential in-memory + durable fail-closed rate limits.`);

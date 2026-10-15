@@ -21,7 +21,7 @@ const require_ = createRequire(import.meta.url);
 let pass = 0;
 const ok = (label, cond) => { assert.ok(cond, label); pass++; console.log('  ✓ ' + label); };
 
-for (const k of ['RESEND_API_KEY', 'RESEND_FROM', 'SENTINEL_LICENSE_SECRET', 'SENTINEL_ADMIN_TOKEN', 'ARIA_ADMIN_TOKEN', 'INTERNAL_WEBHOOK_SECRET']) delete process.env[k];
+for (const k of ['RESEND_API_KEY', 'RESEND_FROM', 'SENTINEL_LICENSE_SECRET', 'SENTINEL_ADMIN_TOKEN', 'ARIA_ADMIN_TOKEN', 'INTERNAL_WEBHOOK_SECRET', 'SENTINEL_RESOLVE_SIGNING_KEY', 'SENTINEL_ADMIN_INBOX']) delete process.env[k];
 process.env.SENTINEL_LICENSE_SECRET = 'test-license-secret-0123456789';
 process.env.SENTINEL_ADMIN_TOKEN = 'admin-token-0123456789';
 const SECRET = process.env.SENTINEL_LICENSE_SECRET;
@@ -37,19 +37,21 @@ global.fetch = async (url, init) => {
   throw new Error('unexpected network call in test: ' + u);
 };
 
-// ---- in-memory Blobs (get without type returns the raw string; set/setJSON/list/delete)
+// ---- in-memory Blobs (get without type returns the raw string; set/setJSON/list/delete) + read/list counters
 const stores = new Map();
 let blobsDown = false;
+let downOnly = null; // a single store name that is unreachable
+const io = { reads: 0, lists: 0 };
 function memStore(name) {
-  if (blobsDown) return null;
+  if (blobsDown || name === downOnly) return null;
   if (!stores.has(name)) {
     const m = new Map();
     stores.set(name, {
-      async get(k, o) { const v = m.get(k); if (v === undefined) return null; return o && o.type === 'json' ? JSON.parse(v) : v; },
+      async get(k, o) { io.reads++; const v = m.get(k); if (v === undefined) return null; return o && o.type === 'json' ? JSON.parse(v) : v; },
       async setJSON(k, v) { m.set(k, JSON.stringify(v)); },
       async set(k, v) { m.set(k, String(v)); },
       async delete(k) { m.delete(k); },
-      async list() { return { blobs: [...m.keys()].map((key) => ({ key })) }; },
+      async list() { io.lists++; return { blobs: [...m.keys()].map((key) => ({ key })) }; },
       _m: m
     });
   }
@@ -64,7 +66,7 @@ const licenses = await import('../netlify/functions/sentinel-licenses.mjs');
 
 let ipSeq = 0;
 const post = async (key, email, extra = {}) => {
-  const r = await resolve.handler({ httpMethod: 'POST', headers: { 'content-type': 'application/json', 'x-nf-client-connection-ip': extra.ip || `203.0.113.${++ipSeq % 250}` }, body: JSON.stringify(email ? { key, email } : { key }) });
+  const r = await resolve.handler({ httpMethod: 'POST', headers: { 'content-type': 'application/json', 'x-nf-client-connection-ip': extra.ip || `203.0.113.${++ipSeq % 250}`, ...(extra.headers || {}) }, body: JSON.stringify(email ? { key, email } : { key }) });
   return { status: r.statusCode, json: JSON.parse(r.body), headers: r.headers };
 };
 const admin = async (action, { method = 'GET', body, query = {}, token = process.env.SENTINEL_ADMIN_TOKEN } = {}) => {
@@ -104,10 +106,24 @@ console.log('[resolve] the shared key scheme (B9) + v2 keys (B3)');
   ok('a v2 per-customer key → plan pro, active, keyVersion 2, response shape kept (verified_at, walkthroughEntitled, trialEndsAt)', v.status === 200 && v.json.plan === 'pro' && v.json.status === 'active' && v.json.keyVersion === 2 && typeof v.json.verified_at === 'string' && v.json.walkthroughEntitled === false && v.json.trialEndsAt === null);
   ok('CORS/cache headers unchanged', v.headers['cache-control'] === 'no-store' && v.headers['access-control-allow-origin'] === '*');
   ok('the raw key never appears in the response', !JSON.stringify(v.json).includes(v2));
-  // walkthrough entitlement by email (unchanged behaviour)
-  await memStore('sentinel-walkthrough-entitlements').setJSON('buyer@example.com', { walkthroughEntitled: true, trialEndsAt: new Date(Date.now() + 10 * 86400000).toISOString() });
-  const wt = await post(issuePlanKey('personal', SECRET), 'Buyer@Example.com');
-  ok('Concierge entitlement by email still lifts Personal → Pro during the trial', wt.json.plan === 'pro' && wt.json.walkthroughEntitled === true && wt.json.trialEndsAt);
+}
+
+console.log('[review P2-2] resolve never reads a caller-supplied email: no entitlement, no buyer oracle');
+{
+  // a real Concierge buyer's entitlement record, exactly as the webhook writes it (keyed by lowercased email)
+  await memStore('sentinel-walkthrough-entitlements').setJSON('ceo@victim-corp.example', { walkthroughEntitled: true, trialEndsAt: new Date(Date.now() + 20 * 86400000).toISOString(), email: 'ceo@victim-corp.example' });
+  const shared = issuePlanKey('personal', SECRET); // the v1 key every Personal customer holds
+  const norm = (j) => { const c = JSON.parse(JSON.stringify(j)); delete c.verified_at; if (c.verdict) delete c.verdict.verified_at; return JSON.stringify(c); };
+  const none = await post(shared, '');
+  const victim = await post(shared, 'CEO@Victim-Corp.example');
+  const nobody = await post(shared, 'nobody@nowhere.example');
+  ok('the shared Personal key + a Concierge buyer\'s email → still personal, walkthroughEntitled:false, trialEndsAt:null', victim.status === 200 && victim.json.plan === 'personal' && victim.json.walkthroughEntitled === false && victim.json.trialEndsAt === null);
+  ok('known email, unknown email and no email get byte-identical answers (timestamps aside) — the endpoint is not a buyer oracle', norm(none.json) === norm(victim.json) && norm(victim.json) === norm(nobody.json));
+  // the KEY's own record still carries a Walk-Through (legacy Concierge record on a v2 Personal key)
+  const own = V2.issueCustomerKey({ plan: 'personal', seed: 'cs_legacy_wt', secret: SECRET });
+  await memStore('sentinel-license-keys').setJSON(keyHash(own), { v: 'sentinel-license-key-v1', subscription_id: 'cs_legacy_wt', tier: 'personal', status: 'active', walkthroughEntitled: true, trialEndsAt: new Date(Date.now() + 5 * 86400000).toISOString() });
+  const mine = await post(own, 'someone-else@example.com');
+  ok('…entitlement comes only from the key\'s own record: its Walk-Through + Pro window, whatever email is sent', mine.json.walkthroughEntitled === true && mine.json.plan === 'pro' && mine.json.trialEndsAt);
 }
 
 console.log('[licenses] store unreachable → 503 JSON, never a stack (B1/B17)');
@@ -202,10 +218,10 @@ console.log('[B4] shared v1 plan keys: honest, not silent');
   const kh = await admin('revokeKeyHash', { method: 'POST', body: { key_hash: keyHash(planKey), reason: 'leaked on a forum' } });
   ok('revokeKeyHash cuts a credential off explicitly and marks every record holding it', kh.status === 200 && kh.json.enforced === true && kh.json.recordsMarked === 1 && (await post(planKey)).json.status === 'revoked');
   ok('revokeKeyHash with a bad hash → 400', (await admin('revokeKeyHash', { method: 'POST', body: { key_hash: 'zz' } })).status === 400);
-  // legacy is-revoked scan still answers for a record with no revocation entry
+  // no revocation entry, but the key's own index entry says revoked (what revokeKeyHash / revoke write) → still revoked
   memStore('sentinel-licenses-revocations')._m.clear();
-  const legacyScan = await admin('is-revoked', { query: { 'key-hash': keyHash(planKey) } });
-  ok('is-revoked legacy scan fallback still works (record-level status) — Rule 15', legacyScan.json.revoked === true);
+  const viaIndex = await admin('is-revoked', { query: { 'key-hash': keyHash(planKey) } });
+  ok('is-revoked also answers from the key index (O(1), no record scan) — a revoked index entry → {revoked:true}', viaIndex.json.revoked === true);
   ok('is-revoked with a bad hash → 400', (await admin('is-revoked', { query: { 'key-hash': 'nope' } })).status === 400);
 }
 
@@ -228,4 +244,119 @@ console.log('[resolve] rate limit (Blobs-backed, fail-open)');
   ok('11th POST from one IP in 5 minutes → 429 rate-limited', last.status === 429 && last.json.status === 'rate-limited');
 }
 
-console.log(`sentinel-resolve-and-licenses: ${pass} checks green — shared key scheme (admin + admin-lifetime), v2 keys, revoke→resolve revoked, honest shared-key enforcement, 503 JSON on store loss, addManual v2 + key index + honest email results.`);
+// ===================================================================== SENTINEL REVIEW FIXES 2026-10-14
+const { verifyResolveSignature, verdictPayload, VERDICT_KEYS } = await import('../ARIA Sentinel/src/shared/sentinel-resolve-pubkey.mjs');
+const R = require_('../netlify/functions/lib/sentinel-license-records.cjs');
+
+console.log('[review P1-3] every 200 carries the verdict; signed with SENTINEL_RESOLVE_SIGNING_KEY, unsigned (and says so) without');
+{
+  const key = V2.issueCustomerKey({ plan: 'pro', seed: 'sub_sig_1', secret: SECRET });
+  await memStore('sentinel-license-keys').setJSON(keyHash(key), { v: 'sentinel-license-key-v1', subscription_id: 'sub_sig_1', tier: 'pro', status: 'active', seats: 5 });
+  const DEV = 'abcdef0123456789abcdef0123456789';
+  const unsigned = await post(key, '', { headers: { 'X-Sentinel-Device': DEV } });
+  const v = unsigned.json.verdict;
+  ok('verdict = {key_sha256, plan, status, seats, expires_at, verified_at, device} in EXACTLY that order', JSON.stringify(Object.keys(v)) === JSON.stringify(VERDICT_KEYS) && JSON.stringify(v) === verdictPayload(v));
+  ok('…with the real values: sha256 of the key as sent, pro, active, seats 5, expires_at null, the device header', v.key_sha256 === keyHash(key) && v.plan === 'pro' && v.status === 'active' && v.seats === 5 && v.expires_at === null && v.verified_at === unsigned.json.verified_at && v.device === DEV);
+  ok('no SENTINEL_RESOLVE_SIGNING_KEY → no sig, signing:"unconfigured" (the desktop treats it as short-lived)', !('sig' in unsigned.json) && unsigned.json.signing === 'unconfigured');
+  ok('no device header → verdict.device ""', (await post(key)).json.verdict.device === '');
+  // A THROWAWAY pair — the real private key lives only in Netlify env and is never in this repo or this test.
+  const { publicKey, privateKey } = crypto.generateKeyPairSync('ed25519');
+  const pkcs8 = privateKey.export({ format: 'der', type: 'pkcs8' }).toString('base64');
+  const spki = publicKey.export({ format: 'der', type: 'spki' }).toString('base64');
+  process.env.SENTINEL_RESOLVE_SIGNING_KEY = pkcs8;
+  const logs = [];
+  const origLog = console.log, origErr = console.error;
+  console.log = (...a) => { logs.push(a.join(' ')); }; console.error = (...a) => { logs.push(a.join(' ')); };
+  let signed;
+  try { signed = await post(key, '', { headers: { 'x-sentinel-device': DEV } }); } finally { console.log = origLog; console.error = origErr; }
+  ok('with the signing key: sig present, no "signing" flag', typeof signed.json.sig === 'string' && signed.json.sig.length === 86 && !('signing' in signed.json));
+  ok('the sig verifies with the app verifier (sentinel-resolve-pubkey.mjs) under the matching public key', verifyResolveSignature(signed.json.verdict, signed.json.sig, spki) === true);
+  ok('…and is the Ed25519 signature of JSON.stringify(verdict) (crypto.verify directly)', crypto.verify(null, Buffer.from(JSON.stringify(signed.json.verdict)), crypto.createPublicKey({ key: Buffer.from(spki, 'base64'), format: 'der', type: 'spki' }), Buffer.from(signed.json.sig, 'base64url')));
+  ok('a verdict edited after signing (plan → admin) does not verify', verifyResolveSignature({ ...signed.json.verdict, plan: 'admin' }, signed.json.sig, spki) === false);
+  ok('the private key never appears in the response or the logs', !JSON.stringify(signed.json).includes(pkcs8) && !logs.join('\n').includes(pkcs8) && logs.some((l) => /signed\)/.test(l)));
+  const revokedKey = V2.issueCustomerKey({ plan: 'smb', seed: 'sub_sig_rev', secret: SECRET });
+  await memStore('sentinel-licenses-revocations').setJSON(keyHash(revokedKey), { revoked: true });
+  const rv = await post(revokedKey);
+  ok('a revoked key gets a signed verdict too (status revoked) — the desktop can trust the downgrade', rv.json.status === 'revoked' && rv.json.verdict.status === 'revoked' && verifyResolveSignature(rv.json.verdict, rv.json.sig, spki));
+  downOnly = 'sentinel-licenses-revocations';
+  const errs0 = [];
+  console.error = (...a) => { errs0.push(a.join(' ')); };
+  let withheld;
+  try { withheld = await post(key); } finally { console.error = origErr; }
+  ok('revocation store unreadable → still 200 but UNSIGNED, signing:"withheld" (never a 24 h signed "active" for an unchecked key)', withheld.status === 200 && !('sig' in withheld.json) && withheld.json.signing === 'withheld' && withheld.json.revocationChecked === false && errs0.some((l) => /left UNSIGNED/.test(l)));
+  downOnly = null;
+  process.env.SENTINEL_RESOLVE_SIGNING_KEY = 'bm90LWEta2V5'; // set but not a PKCS#8 Ed25519 key
+  const errs = [];
+  console.error = (...a) => { errs.push(a.join(' ')); };
+  let bad;
+  try { bad = await post(key); } finally { console.error = origErr; }
+  ok('a set-but-unparseable signing key → 500 server-misconfigured, signing:"misconfigured" (fail closed), the value never echoed', bad.status === 500 && bad.json.status === 'server-misconfigured' && bad.json.signing === 'misconfigured' && !JSON.stringify(bad.json).includes('bm90LWEta2V5') && !errs.join(' ').includes('bm90LWEta2V5'));
+  delete process.env.SENTINEL_RESOLVE_SIGNING_KEY;
+}
+
+console.log('[review P1-3] server-anchored trial: first sight of a device is recorded once and returned as trialStartedAt');
+{
+  const key = V2.issueCustomerKey({ plan: 'personal', seed: 'sub_anchor', secret: SECRET });
+  const DEV = '0123456789abcdef0123456789abcdef';
+  const first = await post(key, '', { headers: { 'x-sentinel-device': DEV } });
+  const anchors = memStore('sentinel-trial-anchors')._m;
+  ok('first resolve from a device → trialStartedAt (ISO) and one anchor trial-anchor/<device>', typeof first.json.trialStartedAt === 'string' && Number.isFinite(Date.parse(first.json.trialStartedAt)) && anchors.has('trial-anchor/' + DEV));
+  ok('the anchor stores ONLY first_seen_at (content-blind: the device hash is the only identifier)', JSON.stringify(Object.keys(JSON.parse(anchors.get('trial-anchor/' + DEV)))) === JSON.stringify(['first_seen_at']));
+  const again = await post(key, '', { headers: { 'x-sentinel-device': DEV } });
+  ok('a later resolve returns the SAME first-seen time', again.json.trialStartedAt === first.json.trialStartedAt);
+  anchors.set('trial-anchor/' + DEV, JSON.stringify({ first_seen_at: '2026-01-02T03:04:05.000Z' }));
+  ok('an existing anchor is never overwritten (an older anchor stays the answer)', (await post(key, '', { headers: { 'x-sentinel-device': DEV } })).json.trialStartedAt === '2026-01-02T03:04:05.000Z');
+  const nAnchors = anchors.size;
+  ok('no device header → trialStartedAt null, nothing stored', (await post(key)).json.trialStartedAt === null && anchors.size === nAnchors);
+  const fallback = await post(key, '', { headers: { 'x-sentinel-device': 'device' } });
+  ok('a non-hash device value ("device", the desktop\'s fallback) → echoed in the verdict but never anchored', fallback.json.trialStartedAt === null && fallback.json.verdict.device === 'device' && anchors.size === nAnchors);
+  downOnly = 'sentinel-trial-anchors';
+  const blip = await post(key, '', { headers: { 'x-sentinel-device': 'ffffffffffffffffffffffffffffffff' } });
+  ok('anchor store unreachable → trialStartedAt null (never an invented date), the license answer still 200', blip.status === 200 && blip.json.trialStartedAt === null && blip.json.status === 'active');
+  downOnly = null;
+}
+
+console.log('[review P2-3] is-revoked: O(1) by key hash, no scan on a miss, durable per-IP / per-key limit');
+{
+  const lic = memStore('sentinel-licenses');
+  for (let i = 0; i < 2000; i++) lic._m.set('sub_bulk_' + i, JSON.stringify({ subscription_id: 'sub_bulk_' + i, key: i.toString(16).padStart(64, '0'), status: 'active' }));
+  io.reads = 0; io.lists = 0;
+  const miss = await admin('is-revoked', { query: { 'key-hash': 'f'.repeat(64) }, token: null });
+  ok('a miss at 2,000 records → {revoked:false} with ≤ 4 Blobs reads and ZERO listings (was 2,002 reads)', miss.status === 200 && miss.json.revoked === false && io.reads <= 4 && io.lists === 0);
+  for (const k of [...lic._m.keys()].filter((k) => k.startsWith('sub_bulk_'))) lic._m.delete(k);
+  const kh = 'e'.repeat(64);
+  let last = null;
+  for (let i = 0; i < 61; i++) last = await admin('is-revoked', { query: { 'key-hash': kh }, token: null });
+  ok('the 61st check of one key-hash in an hour → 429 (durable Blobs counter, not per instance)', last.status === 429 && last.json.error === 'rate_limited');
+  downOnly = 'sentinel-rate-limits';
+  const closed = await admin('is-revoked', { query: { 'key-hash': 'd'.repeat(64) }, token: null });
+  ok('limiter store unreachable → 503 rate-limiter-unavailable (fail closed)', closed.status === 503 && closed.json.error === 'rate-limiter-unavailable');
+  downOnly = 'sentinel-license-keys';
+  ok('key index unreachable → 503, never a guessed {revoked:false}', (await admin('is-revoked', { query: { 'key-hash': 'c'.repeat(64) }, token: null })).status === 503);
+  downOnly = null;
+}
+
+console.log('[review P1-2] approve-contact: the only way a non-buyer address becomes a recipient');
+{
+  const a = await admin('addManual', { method: 'POST', body: { email: 'owner@acme.example', name: 'Acme', tier: 'pro' } });
+  const rec = await memStore('sentinel-licenses').get(a.json.subscription_id, { type: 'json' });
+  const cred = keyHash(rec.key);
+  await memStore('licenses').setJSON(cred, { key_hash: cred, email: 'helper@else.example', devices: [], pending_contacts: [{ email: 'helper@else.example', first_seen_at: '2026-10-14T00:00:00.000Z' }] });
+  const before = await memStore('sentinel-license-keys').get(cred, { type: 'json' });
+  ok('a pending (self-registered) address is not a recipient yet', R.isAllowedRecipient('helper@else.example', { keyRecord: before }).ok === false);
+  ok('approve-contact needs the admin token', (await admin('approve-contact', { method: 'POST', body: { key_hash: cred, email: 'helper@else.example' }, token: null })).status === 401);
+  const ap = await admin('approve-contact', { method: 'POST', body: { key_hash: cred, email: 'Helper@Else.example' } });
+  const after = await memStore('sentinel-license-keys').get(cred, { type: 'json' });
+  const recAfter = await memStore('sentinel-licenses').get(a.json.subscription_id, { type: 'json' });
+  ok('by key_hash → 200 {approved, contact_approved_at}, the record + key index carry the contact, the pending entry is cleared', ap.status === 200 && ap.json.approved.email === 'helper@else.example' && ap.json.contact_approved_at && recAfter.contact_approved_at === ap.json.contact_approved_at && recAfter.contact_approvals.length === 1 && after.contacts.includes('helper@else.example') && ap.json.pendingCleared === true && (await memStore('licenses').get(cred, { type: 'json' })).pending_contacts.length === 0);
+  ok('…and now it IS a recipient', R.isAllowedRecipient('helper@else.example', { keyRecord: after }).via === 'approved-contact');
+  const ph = await admin('approve-contact', { method: 'POST', body: { subscription_id: a.json.subscription_id, phone: '+1 (416) 555-0000' } });
+  ok('by subscription_id with a phone → contact_phones normalised and indexed', ph.status === 200 && (await memStore('sentinel-license-keys').get(cred, { type: 'json' })).contact_phones[0] === '+14165550000');
+  const v1cred = keyHash(issuePlanKey('pro', SECRET));
+  ok('a shared v1 plan credential → 409 shared-plan-key (admin inbox only, never contacts)', (await admin('approve-contact', { method: 'POST', body: { key_hash: v1cred, email: 'x@y.example' } })).json.error === 'shared-plan-key');
+  ok('a credential with no license record → 404 no-license-record', (await admin('approve-contact', { method: 'POST', body: { key_hash: 'b'.repeat(64), email: 'x@y.example' } })).json.error === 'no-license-record');
+  ok('a bad email → 400; neither email nor phone → 400', (await admin('approve-contact', { method: 'POST', body: { key_hash: cred, email: 'not-an-email' } })).status === 400 && (await admin('approve-contact', { method: 'POST', body: { key_hash: cred } })).status === 400);
+  ok('addManual refuses the server-only trial tier (trial keys come only from a Walk-Through purchase)', (await admin('addManual', { method: 'POST', body: { email: 't@example.com', tier: 'trial' } })).status === 400);
+}
+
+console.log(`sentinel-resolve-and-licenses: ${pass} checks green — shared key scheme (admin + admin-lifetime), v2 keys, revoke→resolve revoked, honest shared-key enforcement, 503 JSON on store loss, addManual v2 + key index + honest email results; email never read by resolve; signed verdicts (throwaway pair) + unsigned flag + fail-closed bad key; trial anchor written once; is-revoked O(1) + durable limit; approve-contact.`);

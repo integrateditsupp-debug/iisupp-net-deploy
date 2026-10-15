@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 // sentinel-notify-binding-and-contracts.test.mjs — SENTINEL-BACKEND 2026-10-14 (audit B5 / B14 / B1 / B6 / B11 / B15).
-//   - aria-sentinel-notify: when the device credential maps to a license record, email recipients must be ones
-//     the record vouches for (403 recipients-not-registered, notify() never called); a legacy v1 credential with
-//     no record keeps the caller-named behaviour; the rate bucket is per tenant AND device; device auth reads at
+//   - aria-sentinel-notify: recipients must be ones the license vouches for (403 recipients-not-registered,
+//     notify() never called). REVIEW FIXES 2026-10-14 (P1-2): that is the Stripe buyer email, an admin-approved
+//     contact/phone or the admin inbox — never a self-registered check-in email or a same-domain colleague; a v1
+//     shared credential gets the admin inbox only; the rate bucket is the CREDENTIAL (never the caller-chosen
+//     device) in memory AND in a durable Blobs counter (per credential + global, fail closed); device auth reads at
 //     most three blobs (revocation, key index, device registry) and never lists a store.
 //   - sentinel-crash: 503 {reason:store-unavailable} (not 500) when the store is down, stored otherwise, 413/429.
 //   - stripe-checkout: a sentinel_* tier returns to /downloads/?checkout=success (not /aria), carries
@@ -22,7 +24,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 let pass = 0;
 const ok = (label, cond) => { assert.ok(cond, label); pass++; console.log('  ✓ ' + label); };
 
-for (const k of ['RESEND_API_KEY', 'RESEND_FROM', 'SMTP_APP_PASSWORD', 'TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN', 'TWILIO_PHONE_NUMBER', 'SENTINEL_APPROVAL_SECRET', 'SENTINEL_LICENSE_SECRET', 'SENTINEL_ADMIN_TOKEN', 'ARIA_ADMIN_TOKEN', 'INTERNAL_WEBHOOK_SECRET']) delete process.env[k];
+for (const k of ['RESEND_API_KEY', 'RESEND_FROM', 'SMTP_APP_PASSWORD', 'TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN', 'TWILIO_PHONE_NUMBER', 'SENTINEL_APPROVAL_SECRET', 'SENTINEL_LICENSE_SECRET', 'SENTINEL_ADMIN_TOKEN', 'ARIA_ADMIN_TOKEN', 'INTERNAL_WEBHOOK_SECRET', 'SENTINEL_NOTIFY_PER_HOUR', 'SENTINEL_NOTIFY_GLOBAL_PER_HOUR', 'SENTINEL_ADMIN_INBOX']) delete process.env[k];
 process.env.SENTINEL_LICENSE_SECRET = 'test-license-secret-0123456789';
 process.env.SENTINEL_APPROVAL_SECRET = 'test-approval-secret-0123456789';
 process.env.RESEND_API_KEY = 're_test'; process.env.RESEND_FROM = 'ARIA <noreply@iisupp.net>';
@@ -38,8 +40,9 @@ const stores = new Map();
 const reads = [];
 let listed = 0;
 let blobsDown = false;
+let downOnly = null;
 function memStore(name) {
-  if (blobsDown) return null;
+  if (blobsDown || name === downOnly) return null;
   if (!stores.has(name)) {
     const m = new Map();
     stores.set(name, {
@@ -92,25 +95,38 @@ console.log('[notify] recipient binding (B5)');
   ok('the 403 does not echo the address', !JSON.stringify(stranger.json).includes('victim@gmail.com'));
   const contact = await post(payload({ recipients: [{ role: 'msp', email: 'msp@partner.example' }] }), H);
   ok('an admin-registered contact → allowed', contact.status === 200 && contact.json.email.sent === 1);
+  mails.length = 0;
   const colleague = await post(payload({ recipients: [{ role: 'approver', email: 'Manager@Bind-Corp.example' }] }), H);
-  ok('a colleague on the same private company domain (any case) → allowed', colleague.status === 200 && colleague.json.email.sent === 1);
+  ok('REVIEW P1-2: a colleague on the same company domain is NO LONGER vouched for → 403, nothing sent', colleague.status === 403 && colleague.json.error === 'recipients-not-registered' && mails.length === 0);
   await memStore('licenses').setJSON(v2Cred, { key_hash: v2Cred, email: 'registered-at-checkin@other.example', devices: [] });
   const devEmail = await post(payload({ recipients: [{ role: 'user', email: 'registered-at-checkin@other.example' }] }), H);
-  ok('the email the device registered at check-in → allowed', devEmail.status === 200 && devEmail.json.email.sent === 1);
+  ok('REVIEW P1-2: the email a device registered at check-in (self-declared) → 403 until an admin approves it', devEmail.status === 403 && mails.length === 0);
+  const adminInbox = await post(payload({ recipients: [{ role: 'admin', email: 'integrateditsupp@gmail.com' }] }), H);
+  ok('the IIS admin inbox is always allowed', adminInbox.status === 200 && adminInbox.json.email.sent === 1);
   mails.length = 0;
   const smsOnly = await post(payload({ channels: { email: false, sms: true }, sms: 'ARIA: approve?', recipients: [{ role: 'approver', email: 'victim@gmail.com', phone: '+14165551234' }] }), H);
-  ok('an unregistered email that will NOT be used (email channel off) is not a reason to refuse the SMS channel', smsOnly.status === 200 && smsOnly.json.sms.dormant === true && mails.length === 0);
+  ok('an unregistered email that will NOT be used (email channel off) is not checked — but an UNAPPROVED phone on the SMS channel is refused (403)', smsOnly.status === 403 && mails.length === 0);
+  await memStore('sentinel-license-keys').setJSON(v2Cred, { v: 'sentinel-license-key-v1', subscription_id: 'sub_bind', tier: 'smb', status: 'active', seats: 10, key_version: 2, email: 'owner@bind-corp.example', contacts: ['msp@partner.example'], contact_phones: ['+14165551234'], disabled: false });
+  const smsApproved = await post(payload({ channels: { email: false, sms: true }, sms: 'ARIA: approve?', recipients: [{ role: 'approver', email: 'victim@gmail.com', phone: '+1 416 555 1234' }] }), H);
+  ok('…an admin-approved phone (any formatting) is accepted (SMS dormant without Twilio, reported not sent)', smsApproved.status === 200 && smsApproved.json.sms.dormant === true && mails.length === 0);
   resetRateLimits();
 }
 
-console.log('[notify] legacy v1 credential: previous behaviour kept (Rule 15), still content-guarded');
+console.log('[notify] REVIEW P1-2: a shared v1 credential (no per-customer record) → the admin inbox only');
 {
   const H = { 'x-sentinel-key': v1Cred };
   mails.length = 0;
   const r = await post(payload({ recipients: [{ role: 'admin', email: 'anyone@example.com' }] }), H);
-  ok('no license record → recipientBinding:none, caller-named recipient still emailed', r.status === 200 && r.json.recipientBinding === 'none' && r.json.email.sent === 1 && mails[0].to[0] === 'anyone@example.com');
-  const guarded = await post(payload({ text: 'Error in C:\\Users\\sam\\Documents\\payroll.xlsx' }), H);
-  ok('…but the content guard still refuses raw paths (422)', guarded.status === 422);
+  ok('a caller-named customer address → 403 recipients-not-registered, recipientBinding admin-inbox-only, nothing sent', r.status === 403 && r.json.recipientBinding === 'admin-inbox-only' && mails.length === 0 && !JSON.stringify(r.json).includes('anyone@example.com'));
+  const inbox = await post(payload({ recipients: [{ role: 'admin', email: 'ahmad.wasee@iisupp.net' }] }), H);
+  ok('the admin inbox → 200, emailed', inbox.status === 200 && inbox.json.email.sent === 1 && mails[0].to[0] === 'ahmad.wasee@iisupp.net');
+  // even a legacy record holding the shared key does not unlock its email for every holder of that key
+  await memStore('sentinel-license-keys').setJSON(v1Cred, { v: 'sentinel-license-key-v1', subscription_id: 'sub_legacy', tier: 'pro', status: 'active', key_version: 1, email: 'one-customer@example.com', contacts: [] });
+  const legacyRec = await post(payload({ recipients: [{ role: 'admin', email: 'one-customer@example.com' }] }), H);
+  ok('a legacy record on the SHARED key does not make its customer address mailable by every holder → 403', legacyRec.status === 403 && legacyRec.json.recipientBinding === 'admin-inbox-only');
+  memStore('sentinel-license-keys')._m.delete(v1Cred);
+  const guarded = await post(payload({ text: 'Error in C:\\Users\\sam\\Documents\\payroll.xlsx', recipients: [{ role: 'admin', email: 'ahmad.wasee@iisupp.net' }] }), H);
+  ok('…and the content guard still refuses raw paths (422)', guarded.status === 422);
   resetRateLimits();
 }
 
@@ -123,9 +139,57 @@ console.log('[notify] O(1) device auth (B14) + per-device rate bucket');
   resetRateLimits();
   let last = null;
   for (let i = 0; i < 31; i++) last = await post(payload({ recipients: [], device: 'a'.repeat(32) }), { 'x-sentinel-key': v2Cred });
-  ok('31st post from one device → 429', last.status === 429);
+  ok('31st post from one credential → 429 (in-memory burst guard)', last.status === 429);
   const otherDevice = await post(payload({ recipients: [], device: 'b'.repeat(32) }), { 'x-sentinel-key': v2Cred });
-  ok('another device on the same tenant is NOT exhausted by the first (per-device bucket)', otherDevice.status === 200);
+  ok('REVIEW P1-2: a different caller-chosen `device` does NOT get a fresh bucket — the bucket is the credential', otherDevice.status === 429);
+  resetRateLimits();
+}
+
+console.log('[notify] REVIEW P1-2: the reviewer\'s p1-notify-relay.mjs scenario — 403 on the victim, 200 only for the buyer, durable limit');
+{
+  const register = await import('../netlify/functions/aria-sentinel-license-register.js');
+  const buyerKey = V2.issueCustomerKey({ plan: 'personal', seed: 'sub_relay', secret: process.env.SENTINEL_LICENSE_SECRET });
+  const cred = V2.keyHash(buyerKey);
+  await memStore('sentinel-license-keys').setJSON(cred, { v: 'sentinel-license-key-v1', subscription_id: 'sub_relay', tier: 'personal', status: 'active', seats: 1, key_version: 2, email: 'buyer@corp.example', contacts: [] });
+  const relay = (to, device) => post({ v: 'sentinel-notify-v1', event: 'issue-detected', title: 'Account notice', severity: 'red', text: 'Your account is suspended. Call 1 888 555 0100 now to restore it.', channels: { email: true }, recipients: [{ email: to }], device }, { 'x-sentinel-key': cred });
+  mails.length = 0;
+  const before = await relay('victim@elsewhere.example', 'dev1');
+  ok('before check-in: the victim address → 403', before.status === 403 && before.json.error === 'recipients-not-registered');
+  const reg = await register.handler({ httpMethod: 'POST', headers: { 'x-sentinel-key': cred }, body: JSON.stringify({ email: 'victim@elsewhere.example', device_id: 'x' }) });
+  const regJson = JSON.parse(reg.body);
+  ok('check-in with an arbitrary email → 200 but the address is PENDING admin approval', reg.statusCode === 200 && regJson.contact.status === 'pending-admin-approval' && JSON.parse(memStore('licenses')._m.get(cred)).pending_contacts[0].email === 'victim@elsewhere.example');
+  const after = await relay('victim@elsewhere.example', 'dev1');
+  ok('after check-in: the victim address is STILL 403 and nothing reached Resend', after.status === 403 && mails.length === 0);
+  const buyer = await relay('buyer@corp.example', 'dev1');
+  ok('the Stripe buyer email → 200, sent', buyer.status === 200 && buyer.json.email.sent === 1 && mails.length === 1 && mails[0].to[0] === 'buyer@corp.example');
+  memStore('sentinel-rate-limits')._m.clear();
+  let accepted = 0, limited = 0;
+  for (let i = 0; i < 100; i++) {
+    if (i % 25 === 0) resetRateLimits(); // a new warm instance every 25 posts — only the DURABLE limiter remains
+    const r = await relay('buyer@corp.example', 'rotating-' + i);
+    if (r.status === 200) accepted++; else if (r.status === 429) limited++;
+  }
+  ok('100 posts with rotating device ids (across "instances") → only 20 accepted, the rest 429 (durable per-credential hour)', accepted === 20 && limited === 80);
+  const rlKeys = [...memStore('sentinel-rate-limits')._m.keys()];
+  ok('the durable counters hold no key and no address — scope/window/hashed tenant only', rlKeys.length > 0 && rlKeys.every((k) => /^rl\/notify(-global)?\/\d+\/[a-z0-9]+$/.test(k)) && !rlKeys.join(' ').includes(cred) && !rlKeys.join(' ').includes('@'));
+  resetRateLimits();
+  downOnly = 'sentinel-rate-limits';
+  mails.length = 0;
+  const closed = await relay('buyer@corp.example', 'dev1');
+  ok('the limiter store unreachable → 503 rate-limiter-unavailable, nothing sent (fail closed)', closed.status === 503 && closed.json.error === 'rate-limiter-unavailable' && mails.length === 0);
+  downOnly = null;
+  // the global ceiling across every credential
+  memStore('sentinel-rate-limits')._m.clear();
+  process.env.SENTINEL_NOTIFY_GLOBAL_PER_HOUR = '3';
+  const results = [];
+  for (let i = 0; i < 4; i++) {
+    const k = V2.issueCustomerKey({ plan: 'pro', seed: 'sub_global_' + i, secret: process.env.SENTINEL_LICENSE_SECRET });
+    await memStore('sentinel-license-keys').setJSON(V2.keyHash(k), { v: 'sentinel-license-key-v1', subscription_id: 'sub_global_' + i, tier: 'pro', status: 'active', key_version: 2, email: `g${i}@corp.example`, contacts: [] });
+    results.push(await post(payload({ recipients: [{ email: `g${i}@corp.example` }] }), { 'x-sentinel-key': V2.keyHash(k) }));
+  }
+  ok('the global hourly ceiling (SENTINEL_NOTIFY_GLOBAL_PER_HOUR) caps all credentials together', results.slice(0, 3).every((r) => r.status === 200) && results[3].status === 429 && results[3].json.scope === 'notify-global');
+  delete process.env.SENTINEL_NOTIFY_GLOBAL_PER_HOUR;
+  memStore('sentinel-rate-limits')._m.clear();
   resetRateLimits();
 }
 
@@ -155,6 +219,8 @@ console.log('[contracts] stripe-checkout Sentinel success URL (B11)');
   ok('…and cancel to /plans/', /\/plans\/\?checkout=canceled/.test(src));
   ok('ARIA-web subscription tiers still return to /aria (untouched)', /\/aria\?checkout=success&session_id=\{CHECKOUT_SESSION_ID\}/.test(src));
   ok('a Sentinel subscription carries its tier in subscription_data.metadata (webhook can tell it apart)', /subscription_data = \{ metadata: \{ tier: metadata\.tier, kind: 'aria-plan', product: 'aria-sentinel' \} \}/.test(src));
+  ok('REVIEW P0-1: a one-time session never copies the client\'s body.tier into metadata.tier', !/^\s*tier:\s*String\(body\.tier/m.test(src) && /tier: itemTier\.slice/.test(src));
+  ok('REVIEW P2-1: the Walk-Through marker is server-set and `product` is not a client-settable meta key', /metadata\.product = WALKTHROUGH_PRODUCT_ID/.test(src) && !/META_ALLOW = \[[^\]]*'product'/.test(src));
 }
 
 console.log('[contracts] netlify.toml: HELD rules first, no dead rewrites (B6 / B15)');
@@ -178,4 +244,4 @@ console.log('[contracts] netlify.toml: HELD rules first, no dead rewrites (B6 / 
   ok('/plans/ and /downloads/ exist', fs.existsSync(path.join(ROOT, 'plans/index.html')) && fs.existsSync(path.join(ROOT, 'downloads/index.html')));
 }
 
-console.log(`sentinel-notify-binding-and-contracts: ${pass} checks green — recipients bound to the license record (403 otherwise), legacy v1 behaviour kept, O(1) auth with no listings, per-device rate bucket, crash 503-not-500, Sentinel checkout → /downloads/, HELD rules before the rewrite, no dead rewrites.`);
+console.log(`sentinel-notify-binding-and-contracts: ${pass} checks green — recipients = Stripe buyer email / admin-approved contacts+phones / admin inbox (403 otherwise; shared v1 keys admin inbox only; self-registered emails pending), O(1) auth with no listings, per-credential in-memory + durable fail-closed limits (per credential + global), crash 503-not-500, Sentinel checkout → /downloads/ and no client tier on one-time sessions, HELD rules before the rewrite, no dead rewrites.`);

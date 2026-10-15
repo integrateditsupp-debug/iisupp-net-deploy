@@ -18,16 +18,32 @@
 //     the O(1) key index ('sentinel-license-keys') in step. New admin actions: setFlags (disabled / contacts /
 //     seats), unrevoke, revokeKeyHash (explicitly cut off a credential, e.g. a leaked v1 plan key).
 //   All previous actions keep their routes and response fields (Rule 15); new fields are additive.
+//
+// SENTINEL REVIEW FIXES 2026-10-14:
+//   - P2-3: is-revoked is O(1) and nothing else — the revocation entry + the key's own index entry, read by
+//     sha256(key). The legacy "scan every record on a miss" fallback is gone (the review measured 2,002 Blobs reads
+//     for ONE unauthenticated request at 2,000 records). It is rate-limited per IP and per key-hash by the durable
+//     Blobs limiter (fail closed: limiter store down → 503).
+//   - P1-2: new admin action `approve-contact` { subscription_id | key_hash, email?, phone? } — the ONLY way a
+//     non-buyer address becomes a notify / session-report recipient. It records `contact_approved_at` (+ a
+//     contact_approvals audit list), refreshes the key index, and clears the address from the device's pending list.
+//     A shared v1 plan key cannot have contacts (admin inbox only).
+//   - P2-1: addManual refuses the server-only `trial` tier (trial keys come only from a Walk-Through purchase).
 import { keyHash } from "../../ARIA Sentinel/src/shared/license-features.mjs";
 import {
-  isAdminAuthorized, filterRecords, revokeRecord, findRevokedByKeyHash, recordsToCsv,
+  isAdminAuthorized, filterRecords, revokeRecord, recordsToCsv,
   mintLicense, customerEmail, adminEmail, ADMIN_EMAIL
 } from "../../ARIA Sentinel/src/shared/sentinel-license-funnel.mjs";
-import { openStore, unavailable } from "./lib/sentinel-store.cjs";
-import { issueCustomerKey, canonicalPlan, HEX64 } from "./lib/sentinel-license-v2.cjs";
+import { openStore, unavailable, getJson, putJson, durableLimits, limitResponse } from "./lib/sentinel-store.cjs";
+import { issueCustomerKey, canonicalPlan, HEX64, sha256 } from "./lib/sentinel-license-v2.cjs";
 import {
-  STORES, REVOCATION_EFFECT, normalizeContacts, writeKeyIndex, revocationFor, writeRevocation, clearRevocation
+  STORES, REVOCATION_EFFECT, EMAIL_RE, MAX_CONTACTS, normalizeContacts, normalizePhone, normalizePhones, writeKeyIndex,
+  loadKeyRecordStrict, revocationFor, writeRevocation, clearRevocation
 } from "./lib/sentinel-license-records.cjs";
+import { planKeyHash, PLAN_ORDER as V1_PLAN_MESSAGES, clientIp } from "./lib/sentinel-approvals.cjs";
+
+const IS_REVOKED_PER_IP_PER_HOUR = 120;
+const IS_REVOKED_PER_KEY_PER_HOUR = 60;
 
 export const handler = async (event) => {
   const params = event.queryStringParameters || {};
@@ -39,11 +55,13 @@ export const handler = async (event) => {
   if (action === "is-revoked") {
     const hash = String(params["key-hash"] || params.keyHash || "").toLowerCase();
     if (!HEX64.test(hash)) return json(400, { error: "bad key-hash" });
-    // O(1): the one revocation store (what revoke / Stripe cancellation write). Legacy fallback: the record scan.
+    const limited = await isRevokedLimit(event, hash);
+    if (limited) return limited;
+    // O(1), P2-3: the revocation entry + the key's own index entry — never a scan, a miss is {revoked:false}.
     const r = await revocationFor(hash, event);
-    if (r.revoked) return json(200, { revoked: true });
-    const all = await loadAll(store);
-    const { revoked } = findRevokedByKeyHash(all, hash, keyHash);
+    const idx = await loadKeyRecordStrict(hash, event);
+    if (r.unknown || !idx.ok) return unavailable({ error: "store-unavailable" });
+    const revoked = r.revoked || Boolean(idx.record && idx.record.status === "revoked");
     return json(200, { revoked });
   }
 
@@ -121,11 +139,15 @@ export const handler = async (event) => {
       const updated = { ...rec };
       if (typeof body.disabled === "boolean") updated.disabled = body.disabled;
       if (Array.isArray(body.contacts)) updated.contacts = normalizeContacts(body.contacts);
+      if (Array.isArray(body.contact_phones)) updated.contact_phones = normalizePhones(body.contact_phones);
       if (body.seats !== undefined) updated.seats = body.seats == null ? null : Math.max(1, Math.min(10000, Math.floor(Number(body.seats)) || 1));
       updated.updated_at = new Date().toISOString();
       await store.setJSON(id, updated);
       const indexed = await writeKeyIndex(updated, event);
       return json(200, { record: { ...updated, key: undefined }, indexed });
+    }
+    if (method === "POST" && action === "approve-contact") {
+      return await approveContact(store, body, params, event);
     }
     if (method === "POST" && action === "addManual") {
       const licenseSecret = process.env.SENTINEL_LICENSE_SECRET;
@@ -133,6 +155,7 @@ export const handler = async (event) => {
       if (!body.email || !body.tier) return json(400, { error: "email + tier required" });
       const plan = canonicalPlan(body.tier);
       if (!plan) return json(400, { error: "unknown tier" });
+      if (plan === "trial") return json(400, { error: "trial keys are minted only by an AI Setup Walk-Through purchase" });
       const subscription_id = `manual_${keyHash(`${body.email}:${body.tier}:${Date.now()}`).slice(0, 24)}`;
       const base = mintLicense({ email: body.email, name: body.name, plan, subscription_id, customer_id: "manual", secret: licenseSecret, issued_at: new Date().toISOString() });
       // Per-customer v2 key (audit B3): plan + customer + HMAC tag inside the same 64-hex shape the desktop accepts.
@@ -155,6 +178,70 @@ export const handler = async (event) => {
     return json(500, { error: "registry error" });
   }
 };
+
+/** P2-3 — the durable per-IP + per-key-hash ceiling on the public is-revoked check. null when allowed. */
+async function isRevokedLimit(event, hash) {
+  const rl = await openStore(STORES.RATE_LIMITS, event);
+  const dl = await durableLimits(rl, [
+    { scope: "is-revoked-ip", id: sha256(clientIp(event)).slice(0, 32), limit: IS_REVOKED_PER_IP_PER_HOUR },
+    { scope: "is-revoked-key", id: hash.slice(0, 32), limit: IS_REVOKED_PER_KEY_PER_HOUR }
+  ]);
+  if (dl.ok) return null;
+  if (dl.unavailable) console.error("[sentinel-licenses] is-revoked limiter unavailable — refusing (fail closed)");
+  return limitResponse(dl);
+}
+
+/** Is this credential (sha256 of a key) one of the v1 SHARED plan keys? (Needs SENTINEL_LICENSE_SECRET.) */
+function isSharedPlanCredential(hash) {
+  const secret = String(process.env.SENTINEL_LICENSE_SECRET || "").trim();
+  if (!secret) return false;
+  return V1_PLAN_MESSAGES.some((p) => planKeyHash(p, secret) === hash);
+}
+
+/**
+ * P1-2 — admin approval of a notify / session-report recipient. Body: { subscription_id | key_hash, email?, phone? }.
+ * The address joins the record's approved contacts (key index refreshed), `contact_approved_at` is recorded, and the
+ * address leaves the device registry's pending list. A shared v1 plan key never gets contacts.
+ */
+async function approveContact(store, body, params, event) {
+  const email = String(body.email || "").trim().toLowerCase();
+  const phone = normalizePhone(body.phone);
+  if (!email && !phone) return json(400, { error: "email or phone required" });
+  if (email && !EMAIL_RE.test(email)) return json(400, { error: "bad email" });
+  if (body.phone != null && String(body.phone) !== "" && !phone) return json(400, { error: "bad phone" });
+  let id = String(body.subscription_id || params.subscription_id || "");
+  const hash = String(body.key_hash || body.keyHash || "").toLowerCase();
+  if (!id && hash) {
+    if (!HEX64.test(hash)) return json(400, { error: "bad key-hash" });
+    if (isSharedPlanCredential(hash)) return json(409, { error: "shared-plan-key", detail: "A v1 plan key is shared by every customer on its plan — it can notify the admin inbox only. Issue the customer a per-customer key (addManual) first." });
+    const idx = await loadKeyRecordStrict(hash, event);
+    if (!idx.ok) return unavailable({ error: "store-unavailable" });
+    if (!idx.record || !idx.record.subscription_id) return json(404, { error: "no-license-record", detail: "This credential has no per-customer license record, so it can notify the admin inbox only." });
+    id = String(idx.record.subscription_id);
+  }
+  if (!id) return json(400, { error: "subscription_id or key_hash required" });
+  const rec = await getJson(store, id);
+  if (!rec) return json(404, { error: "not found" });
+  if (Number(rec.key_version) !== 2) return json(409, { error: "shared-plan-key", detail: "This record holds a shared v1 plan key — issue a per-customer key first." });
+  const at = new Date().toISOString();
+  const contacts = normalizeContacts([...(Array.isArray(rec.contacts) ? rec.contacts : []), ...(email ? [email] : [])]);
+  const contact_phones = normalizePhones([...(Array.isArray(rec.contact_phones) ? rec.contact_phones : []), ...(phone ? [phone] : [])]);
+  if ((email && !contacts.includes(email)) || (phone && !contact_phones.includes(phone))) return json(409, { error: "contacts-full", max: MAX_CONTACTS });
+  const contact_approvals = [...(Array.isArray(rec.contact_approvals) ? rec.contact_approvals : []), { email: email || null, phone: phone || null, approved_at: at, via: "approve-contact" }].slice(-50);
+  const updated = { ...rec, contacts, contact_phones, contact_approvals, contact_approved_at: at, updated_at: at };
+  if (!(await putJson(store, id, updated))) return unavailable({ error: "store-unavailable" });
+  const indexed = await writeKeyIndex(updated, event);
+  let pendingCleared = false;
+  if (email && rec.key) {
+    const devices = await openStore(STORES.DEVICES, event);
+    const cred = keyHash(rec.key);
+    const dev = await getJson(devices, cred);
+    if (dev && Array.isArray(dev.pending_contacts) && dev.pending_contacts.some((p) => p && p.email === email)) {
+      pendingCleared = await putJson(devices, cred, { ...dev, pending_contacts: dev.pending_contacts.filter((p) => p && p.email !== email) });
+    }
+  }
+  return json(200, { ok: true, subscription_id: id, approved: { email: email || null, phone: phone || null }, contact_approved_at: at, contacts, contact_phones, indexed, pendingCleared });
+}
 
 /** Seats a plan carries when the admin does not say (Personal is 1 user · 1 device; fleet tiers are unmetered). */
 function defaultSeats(plan) {

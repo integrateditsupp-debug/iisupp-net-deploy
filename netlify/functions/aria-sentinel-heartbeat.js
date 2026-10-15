@@ -15,10 +15,20 @@
 //   - Blobs through lib/sentinel-store.cjs (connectLambda before getStore); a down store never breaks the ping.
 // The shipped desktop (main.mjs sendHeartbeat) does not yet send x-sentinel-key — add
 // `"x-sentinel-key": licenseKeyHash()` to its headers and the fleet record starts flowing (lane F2/F3).
+//
+// SENTINEL REVIEW FIXES 2026-10-14 (P1-3, server half): the response carries `trialStartedAt` — the first time this
+// server saw the X-Sentinel-Device hash (lib/sentinel-trial-anchor.cjs; written once, never overwritten, nothing
+// but the timestamp stored). It works WITHOUT a license key (the local trial runs before one exists). Creating a
+// NEW anchor is limited to 30 per IP per hour per warm instance (an existing anchor is always read); a store blip
+// answers trialStartedAt:null — the ping itself never breaks.
 import { heartbeatResponse, sanitizeHeartbeatRecord, heartbeatStoreKey, latestLiveVersion } from "../../src/shared/heartbeat-server.mjs";
 import { openStore, getJson, putJson } from "./lib/sentinel-store.cjs";
 import { STORES } from "./lib/sentinel-license-records.cjs";
 import { authenticate, headerOf, sha256, hash16 } from "./lib/sentinel-approvals.cjs";
+import { readTrialAnchor } from "./lib/sentinel-trial-anchor.cjs";
+import rateLimit from "./_rate-limit.js";
+
+const ANCHOR_CREATES_PER_IP_PER_HOUR = 30;
 
 function json(status, body) {
   return { statusCode: status, headers: { "content-type": "application/json", "cache-control": "no-store" }, body: JSON.stringify(body) };
@@ -69,6 +79,15 @@ export async function handler(event) {
     } catch { recorded = false; }
   }
 
+  // P1-3 — server-anchored trial start for this device (keyless pings included).
+  let anchor = { trialStartedAt: null, state: "no-device" };
+  try {
+    anchor = await readTrialAnchor(event, headerOf(event, "x-sentinel-device"), {
+      now,
+      mayCreate: () => rateLimit.checkRateLimit(event, { scope: "trial-anchor-create", limit: ANCHOR_CREATES_PER_IP_PER_HOUR, windowMs: 60 * 60 * 1000 }).ok
+    });
+  } catch { anchor = { trialStartedAt: null, state: "unavailable" }; }
+
   const latest = latestLiveVersion(versions);
   const base = heartbeatResponse({ licenseRecord: auth ? { licenseId: tenantId } : null, versions, mandatory: Boolean(latest && latest.mandatory), now });
   const global = globalKillState();
@@ -84,7 +103,9 @@ export async function handler(event) {
     pinnedVersion: device && device.version_pin ? String(device.version_pin) : null,
     killed,
     reason,
-    tenantDisabled
+    tenantDisabled,
+    trialStartedAt: anchor.trialStartedAt || null,
+    trialAnchor: anchor.state
   });
 }
 

@@ -10,19 +10,32 @@
 // Now:
 //   - device auth: `x-sentinel-key` = sha256(licenseKey) (lib/sentinel-approvals.cjs — the same credential the
 //     notify endpoint uses) or an internal/admin token. No credential → 401 and NOTHING is sent.
-//   - the user copy goes ONLY to an address the license vouches for (the Stripe customer email, an admin-set
-//     contact, the email the device registered at check-in, or a same-company address — lib/sentinel-license-
-//     records.cjs). A body-supplied address that is not registered is skipped and SAID so. An internal caller
-//     (admin token) may name any valid address.
+//   - the user copy goes ONLY to an address the license vouches for (narrowed by the review fixes below — see
+//     lib/sentinel-license-records.cjs isAllowedRecipient). A body-supplied address that is not registered is
+//     skipped and SAID so. An internal caller (admin token) may name any valid address.
 //   - content-blind: transcript + backend actions are NOT mailed any more; issue / summary / names / ticket go
 //     through the desktop's own mustBeTelemetrySafe guard (fail-closed) → 422 content-not-allowed, nothing sent.
 //   - no CORS wildcard (the desktop is a Node client); 5 reports / 10 min per credential; 24 KB body cap.
 // The desktop (main.mjs sendResolutionEmail) reads only `res.ok` — response fields are a superset of before.
+//
+// SENTINEL REVIEW FIXES 2026-10-14 (P1-2): the user copy goes only to the Stripe buyer email on the license record,
+// an admin-APPROVED contact, or the IIS admin inbox. The email a device declared at check-in (self-registered) and
+// same-domain colleagues no longer count; a v1 SHARED plan key or a credential with no record gets no user copy
+// unless it names the admin inbox. Besides the in-memory 5 / 10 min guard, a DURABLE per-credential ceiling
+// (SENTINEL_SESSION_REPORTS_PER_HOUR, default 10) and a global one (SENTINEL_SESSION_REPORTS_GLOBAL_PER_HOUR,
+// default 100) hold across instances; the limiter store unreachable → 503, nothing sent (fail closed).
 'use strict';
 
 const { checkRateLimit, rateLimitResponse, hashKey } = require('./_rate-limit.js');
 const A = require('./lib/sentinel-approvals.cjs');
 const R = require('./lib/sentinel-license-records.cjs');
+const S = require('./lib/sentinel-store.cjs');
+
+function reportLimits(env) {
+  const e = env || process.env;
+  const n = (v, d) => { const x = Math.floor(Number(v)); return Number.isFinite(x) && x > 0 ? x : d; };
+  return { perCredential: n(e.SENTINEL_SESSION_REPORTS_PER_HOUR, 10), global: n(e.SENTINEL_SESSION_REPORTS_GLOBAL_PER_HOUR, 100) };
+}
 
 const COMPANY_EMAIL = 'integrateditsupp@gmail.com';
 const MAX_BODY = 24 * 1024;
@@ -96,13 +109,27 @@ exports.handler = async (event) => {
   } else if (auth.kind === 'internal') {
     userRecipient = userEmail;
   } else {
-    const allowed = R.isAllowedRecipient(userEmail, { keyRecord: auth.record, deviceRecord: auth.device });
+    const allowed = R.isAllowedRecipient(userEmail, { keyRecord: auth.record, sharedKey: auth.sharedKey === true });
     if (allowed.ok) userRecipient = userEmail; else userSkip = 'recipient-not-registered';
   }
 
   const key = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM || 'ARIA — Integrated IT Support <noreply@iisupp.net>';
   if (!key) return json(503, { ok: false, error: 'email not configured (RESEND_API_KEY)', wouldSend: previewSubjects(facts, userRecipient) });
+
+  // Durable hourly ceiling per credential, then global (REVIEW FIX P1-2) — fail closed when the store is down.
+  if (auth.kind === 'device') {
+    const lim = reportLimits();
+    const rlStore = await A.openStore(R.STORES.RATE_LIMITS, event);
+    const dl = await S.durableLimits(rlStore, [
+      { scope: 'session-report', id: auth.tenant, limit: lim.perCredential },
+      { scope: 'session-report-global', id: 'all', limit: lim.global }
+    ]);
+    if (!dl.ok) {
+      if (dl.unavailable) console.error('[sentinel-session-report] durable limiter unavailable — refusing (fail closed)');
+      return S.limitResponse(dl);
+    }
+  }
 
   const resolved = outcome === 'resolved';
   const escalated = outcome === 'escalated';

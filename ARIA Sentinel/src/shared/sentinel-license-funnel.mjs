@@ -136,8 +136,84 @@ export function maskKey(key) {
 
 const TIER_LABEL = (plan) => getTier(plan).label;
 
+// SENTINEL REVIEW FIXES 2026-10-14 (P2-1) — the AI Setup Walk-Through purchase now really mints a key: a
+// time-boxed TRIAL key (plan code 07 in netlify/functions/lib/sentinel-license-v2.cjs) whose end date is inside
+// the key itself. Its record carries tier "trial", walkthroughEntitled:true and expires_at (= purchase + 30 days).
+export const TRIAL_TIER = "trial";
+export const PLANS_URL = "https://iisupp.net/plans/";
+const dateOnly = (iso) => { const t = Date.parse(iso || ""); return Number.isFinite(t) ? new Date(t).toISOString().slice(0, 10) : "the end of your trial"; };
+
+/**
+ * The Walk-Through trial welcome — honest about exactly what the key does and when it stops: Pro features until
+ * expires_at, then the Walk-Through stays and the rest falls to the free tier (nothing renews, nothing is charged),
+ * mirroring the homepage line "Includes a 30-day ARIA Sentinel trial — keep the Walk-Through forever; continue
+ * Sentinel's monitoring & auto-fix on a separate plan."
+ */
+export function trialCustomerEmail(record) {
+  const ends = dateOnly(record.expires_at || record.trialEndsAt);
+  const subject = `Your AI Setup Walk-Through + ${WALKTHROUGH_TRIAL_DAYS}-day ARIA Sentinel trial key`;
+  const text = `Hi ${record.name},
+
+Thank you for booking the AI Setup Walk-Through. Your package includes a ${WALKTHROUGH_TRIAL_DAYS}-day ARIA Sentinel trial. Here is your trial key:
+
+    ${record.key}
+
+What this key does:
+- Until ${ends} (UTC) — ${WALKTHROUGH_TRIAL_DAYS} days from your purchase — ARIA Sentinel runs with the Pro features (monitoring + auto-fix).
+- After ${ends} the key keeps your Walk-Through; Sentinel's monitoring and auto-fix drop to the free tier. Continuing them is a separate plan you can start at ${PLANS_URL} — nothing renews and nothing is charged automatically.
+
+Getting started:
+1. Install ARIA Sentinel for Windows — we email the Windows pilot installer to this address within one business day (there is nothing to download from ${DOWNLOADS_URL} yet; that page explains the pilot). It is a per-user install, no admin rights needed. The pilot build is unsigned, so Windows SmartScreen will warn — "More info → Run anyway".
+2. Open it, choose "Start with safe defaults", and paste the key when prompted.
+3. We reply within one business day to confirm your Walk-Through scope and schedule (final scope + price are confirmed before work begins).
+
+Installer not here after one business day? Reply to this email and it is sent by hand.
+
+Questions: ${ADMIN_EMAIL} or (647) 581-3182.
+
+— Ahmad, Integrated IT Support`;
+  return { subject, text };
+}
+
+/**
+ * Plan-change mail (P2-5): the plan is part of the key, so a Stripe plan change mints a NEW key and the old one is
+ * revoked. Honest about what the customer must do and when the old key stops.
+ */
+export function planChangeEmail(record, { fromTier } = {}) {
+  const to = TIER_LABEL(record.tier);
+  const from = fromTier ? TIER_LABEL(fromTier) : "your previous plan";
+  const subject = `Your ARIA Sentinel plan changed to ${to} — here is your new key`;
+  const text = `Hi ${record.name},
+
+Your ARIA Sentinel subscription changed from ${from} to ${to}. Your plan is part of your license key, so here is your new key:
+
+    ${record.key}
+
+In ARIA Sentinel, open the License panel, paste the new key and press Activate. Your previous key has been retired: the desktop drops it at its next license check (within 24 hours), so paste the new key before then to keep your ${to} features without a gap.
+
+Questions: ${ADMIN_EMAIL} or (647) 581-3182.
+
+— Ahmad, Integrated IT Support`;
+  return { subject, text };
+}
+
+/** Admin notice for a plan change — masked keys only, no installer action (the customer already has the app). */
+export function adminPlanChangeEmail(record, { fromTier } = {}) {
+  const subject = `[SENTINEL] Plan change: ${record.name} (${fromTier || "?"} → ${record.tier})`;
+  const text = `Name: ${record.name}
+Email: ${record.email}
+Stripe customer: ${record.customer_id}
+Stripe subscription: ${record.subscription_id}
+Plan: ${fromTier || "?"} → ${record.tier}
+New key issued: ${maskKey(record.key)} (the previous key was revoked; the customer was emailed the new one)
+
+No action needed unless the customer replies. Full record in admin console → Licenses tab.`;
+  return { subject, text };
+}
+
 /** Customer welcome email — contains the key + the public /downloads link (no token). */
 export function customerEmail(record) {
+  if (record && record.tier === TRIAL_TIER) return trialCustomerEmail(record);
   const label = TIER_LABEL(record.tier);
   const subject = "Welcome to ARIA — your license is ready";
   const text = `Hi ${record.name},
@@ -254,6 +330,22 @@ export function resolveDecision({ key, plan, revoked, nowIso } = {}) {
 
 /** Admin notify — masked key only; full record lives in the admin console Licenses tab. */
 export function adminEmail(record) {
+  if (record && record.tier === TRIAL_TIER) {
+    const subject = `[SENTINEL] Walk-Through purchase: ${record.name} (${WALKTHROUGH_TRIAL_DAYS}-day trial key)`;
+    const text = `Name: ${record.name}
+Email: ${record.email}
+Product: AI Setup Walk-Through (Stripe checkout ${record.subscription_id})
+Stripe customer: ${record.customer_id || "(guest checkout)"}
+Trial key issued: ${maskKey(record.key)} — Pro features until ${dateOnly(record.expires_at || record.trialEndsAt)} (UTC), then the Walk-Through only
+Issued at: ${record.issued_at}
+
+ACTIONS (yours, within one business day — the welcome email promised both):
+1. Email the Windows pilot installer (dist\\ARIA-Sentinel-<version>-unsigned.exe + its SHA-256 from dist\\RELEASE-<version>.json) to ${record.email}.
+2. Reply to ${record.email} to confirm the Walk-Through scope and schedule.
+
+Full record in admin console → Licenses tab.`;
+    return { subject, text };
+  }
   const subject = `[SENTINEL] New customer: ${record.name} (${record.tier})`;
   const text = `Name: ${record.name}
 Email: ${record.email}
