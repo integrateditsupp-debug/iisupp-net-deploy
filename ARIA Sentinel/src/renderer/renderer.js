@@ -2295,7 +2295,7 @@ function maybeShowWhatsNew(next) {
 function releaseNotesHtml(md) {
   const lines = String(md || "").replace(/\r/g, "").split("\n");
   const out = []; let list = false; let para = [];
-  const inline = (t) => escapeHtml(t).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/`([^`]+)`/g, "<code>$1</code>");
+  const inline = (t) => escapeHtml(t).replace(/\*\*(.+?)\*\*/g, (_, b) => `<strong>${b}</strong>`).replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`); // function replacers: no "$1" literals in this file (pricing-surface-sync)
   const flush = () => { if (para.length) { out.push(`<p>${inline(para.join(" "))}</p>`); para = []; } };
   const endList = () => { if (list) { out.push("</ul>"); list = false; } };
   for (const raw of lines) {
