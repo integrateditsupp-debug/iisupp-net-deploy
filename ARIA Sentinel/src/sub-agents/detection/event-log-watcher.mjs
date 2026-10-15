@@ -53,14 +53,23 @@ export function mapEventLogSignals(raw) {
 
 /**
  * Pure cursor step. Given the rows of one tick and the cursor before it, decide what to emit and the new cursor.
- *   cursor 0 (no baseline) → baseline only: nothing emitted, cursor = highest RecordId seen.
- *   otherwise             → emit the mapped signals of rows with RecordId > cursor; cursor advances.
+ *   cursor 0 (no baseline)          → baseline only: nothing emitted, cursor = highest RecordId seen.
+ *   newest RecordId BELOW the cursor → the log was cleared (RecordIds restart at 1) or replaced: the cursor RESETS to the
+ *                                      newest RecordId (a re-baseline, `reset: true`) so the next new event is seen.
+ *   otherwise                       → emit the mapped signals of rows with RecordId > cursor; cursor advances.
+ * REVIEW P2-10 (2026-10-14) — the cursor never went backwards, so after `wevtutil cl System` (or any log clear) every new
+ * event had a RecordId below the old cursor and the watcher was blind until the new log out-grew the old one. The reset
+ * tick itself emits nothing — the same rule as a first launch (audit M6): when the watcher cannot tell which rows it has
+ * already seen (a cleared log, or a roaming profile whose cursor came from another PC), it baselines instead of raising
+ * old errors as new alarms. Every event after the reset is surfaced.
  */
 export function advanceEventLogCursor(raw, cursor) {
   const rows = toArray(raw);
   const prev = Number(cursor) || 0;
-  const maxId = rows.reduce((m, r) => Math.max(m, Number(r?.RecordId || 0)), prev);
+  const newest = rows.reduce((m, r) => Math.max(m, Number(r?.RecordId || 0)), 0);
+  const maxId = Math.max(prev, newest);
   if (prev <= 0) return { cursor: maxId, signals: [], baseline: true };
+  if (newest > 0 && newest < prev) return { cursor: newest, signals: [], baseline: true, reset: true };
   const fresh = rows.filter((r) => Number(r?.RecordId || 0) > prev);
   return { cursor: maxId, signals: fresh.length ? mapEventLogSignals(fresh) : [], baseline: false };
 }

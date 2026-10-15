@@ -968,6 +968,9 @@ const TESTS = [
   "./tray-art.test.mjs",
   "./version-sync.test.mjs",
   "./watcher-baselines.test.mjs",
+  // 2026-10-14 (review P2-10) — a cleared System log (RecordIds restart at 1) resets the event-log cursor instead of
+  // leaving the watcher blind until the new log out-grows the old one; the reset is a re-baseline (no old alarms).
+  "./event-log-cursor-reset.test.mjs",
   "./startup-first-run.test.mjs",
   "./spawn-budget.test.mjs",
   "./first-launch-silence.test.mjs",
