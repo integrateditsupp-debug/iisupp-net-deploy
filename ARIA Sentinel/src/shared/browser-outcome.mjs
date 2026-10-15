@@ -2,7 +2,7 @@
 // Stores only symbolic issue data, never URL, title, page text, credentials, or user content.
 //
 // REVIEW P2-7 (2026-10-14) — CONTENT-BLIND BY VOCABULARY, NOT BY CHARACTER CLASS. The old cleaners kept every
-// [A-Za-z0-9._-] character, so `https://mybank.example.com/acct?user=jane.doe` became the "signal"
+// [A-Za-z0-9._-] character, so a bank page's address with a user name in its query string became the "signal"
 // HTTPS.MYBANK.EXAMPLE.COM.ACCT.USER.JANE.DOE and a document path became the "action"
 // c-users-jane.doe-documents-payroll.xlsx — and isBrowserFleetPacketSafe passed both. Now:
 //   · signal / action / severity come from FIXED vocabularies (anything else → UNKNOWN.SIGNAL / "other" / "notice");
