@@ -51,6 +51,7 @@ const GUARD = [
   'tests/axis-one.test.mjs',
   'tests/axis-situation.test.mjs',
   'tests/netlify-function-externals.test.mjs',
+  'tests/netlify-function-config-static.test.mjs',
   'tests/axis-module-graph.test.mjs',
   'tests/axis-overview-panels.test.mjs',
   'tests/axis-voice-hearing.test.mjs',

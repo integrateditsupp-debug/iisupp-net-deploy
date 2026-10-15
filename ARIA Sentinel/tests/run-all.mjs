@@ -953,6 +953,7 @@ const TESTS = [
   // process.exit, read on this extract: exit 0 standalone and clean under the one-process import.
   "../../tests/axis-situation.test.mjs",
   "../../tests/netlify-function-externals.test.mjs",
+  "../../tests/netlify-function-config-static.test.mjs",
   // RUN-SN1 / F1 (2026-10-14): the DEPLOYED Sentinel handlers under in-memory Blobs + stubbed fetch —
   // store connection (connectLambda before getStore), v2 per-customer keys + v1 still resolving,
   // revocation unified, session-report gated, Stripe webhook scoped to sentinel_* tiers, fleet
