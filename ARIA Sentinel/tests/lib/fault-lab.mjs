@@ -408,8 +408,14 @@ export function createVirtualWindows({ profile = "standard", strictAdmin = false
     return { stdout: "", stderr: "", exitCode: 1 };
   };
 
-  /** child_process.spawn as main.mjs uses it → the interpreter. Completion is asynchronous (like a real child). */
+  /**
+   * child_process.spawn as main.mjs uses it → the interpreter. Completion is asynchronous (like a real child).
+   * `machine.beforeSpawn(file, args)` (optional, 2026-10-14 review P0-2) runs first — a suite uses it to land Ctrl+Alt+K
+   * while a fix step is in flight (the step that already started finishes; nothing after it may start).
+   */
+  machine.beforeSpawn = null;
   machine.spawn = (file, args = [], opts = {}) => {
+    if (typeof machine.beforeSpawn === "function") { try { machine.beforeSpawn(String(file || ""), (args || []).map(String)); } catch { /* a hook never breaks the spawn */ } }
     const child = new EventEmitter();
     child.stdout = new EventEmitter();
     child.stderr = new EventEmitter();
@@ -692,6 +698,7 @@ const DEFAULT_TECH = [{ name: "Jordan Lee", email: "jordan@example.com", phone: 
  *   techContacts    the configured IT contacts (default one admin contact)
  *   trial           "active" (default) | "expired"
  *   storeSeed/machine — for a restart: the previous store snapshot and the SAME machine
+ *   respond         (2026-10-14 review P0-2) (url, init) → JSON | undefined — answer an outbound call (the approval poll)
  */
 export async function bootLab(options = {}) {
   const startMs = options.startMs || Math.floor(Date.now() / MIN) * MIN;
@@ -721,7 +728,7 @@ export async function bootLab(options = {}) {
     };
     storeSeed = { mode, liveFixesEnabled: options.liveFixes !== false, dryRun: options.liveFixes === false, setupConfig: { onboarding: { completed: true, skipped: false, step: 3, version: 1 }, setup: { completed: true, step: 12, prefs } } };
   }
-  const booted = await bootMain({ clock, spawn: machine.spawn, storeSeed, root, env: {} });
+  const booted = await bootMain({ clock, spawn: machine.spawn, storeSeed, root, env: {}, respond: options.respond || null });
   const { main } = booted;
   // userData/recipe-history.json — the vetted-count ledger the execution policy reads (earned trust).
   if (options.vetted && !options.storeSeed) {

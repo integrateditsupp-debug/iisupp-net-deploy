@@ -38,7 +38,15 @@ deploy. It is still an **unsigned** Windows build (see "What is NOT in this rele
   network checks probe your own DNS server and gateway on a slower cadence; fewer processes, less battery, fewer
   antivirus alerts.
 - **Start ARIA starts again.** Stop → Start now really resumes the watchers (it used to log "monitoring" while
-  nothing ran). Ctrl+Alt+K still stops everything.
+  nothing ran).
+- **Ctrl+Alt+K stops everything — and it stays stopped.** The panic key ends every running ARIA process, cancels
+  every countdown, blocks every open advise-first escalation for good, puts every pending approval on hold (an emailed
+  approval link, a click or a voice "yes", and the "if nobody answers" timeout can no longer run anything), stops the
+  approval poll and the watchers, and refuses every later fix, preview and browser-extension request. Quitting and
+  relaunching does not undo it: only **Start ARIA** resumes (it is written to the audit log), and it asks again for
+  every held approval with new links — an old link can never run a fix. One honest limit: a step that needs
+  administrator rights and is already running under its UAC prompt when you press the key finishes its own command
+  (Windows does not let ARIA end an elevated process); nothing after that step runs.
 - **Keyboard shortcuts that do not steal AltGr.** The everyday chords are configurable and AltGr-safe for
   non-US layouts; the kill switch stays Ctrl+Alt+K.
 - **Nothing leaves the device before Setup is finished**, and the licence key never travels in a URL (the update

@@ -75,7 +75,12 @@ t();
   assert.match(bridge, /if \(!isAllowedBridgeOrigin\(req\)\)/, "the legacy origin check is kept as a second gate (Rule 15)");
   assert.match(bridge, /url\.pathname === "\/state"\) return sendJson\(res, 200, scrubPublicState\(getState\(\)\)\)/, "/state is scrubbed");
   assert.match(bridge, /sanitizeRunRecipeBody\(await readJson\(req\)\)/, "/run-recipe strips caller flags");
-  assert.match(bridge, /url\.pathname === "\/run-recipe"\) \{[\s\S]*?runSupervisedFix\(/, "/run-recipe goes through the supervised pipeline");
+  // 2026-10-14 (review P0-2) — EXPECTATION CHANGED ON PURPOSE: the route now goes through bridgeRunRecipe, which checks the
+  // kill gate FIRST (Ctrl+Alt+K / Stop ARIA / fleet kill / pause → "blocked") and only then calls runSupervisedFix.
+  assert.match(bridge, /url\.pathname === "\/run-recipe"\) \{[\s\S]*?bridgeRunRecipe\(sanitizeRunRecipeBody\(await readJson\(req\)\)\)/, "/run-recipe goes through bridgeRunRecipe");
+  const bridgeFn = main.slice(main.indexOf("async function bridgeRunRecipe("), main.indexOf("function startBridge()"));
+  assert.ok(bridgeFn.indexOf("if (!killGateOpen())") > -1 && bridgeFn.indexOf("if (!killGateOpen())") < bridgeFn.indexOf("runSupervisedFix("), "…which checks the kill gate before the supervised pipeline");
+  assert.match(bridgeFn, /return runSupervisedFix\(\{ \.\.\.body, mode: "confirmed"/, "/run-recipe goes through the supervised pipeline");
   assert.doesNotMatch(bridge, /runRecipe\(body\.recipeId, body\)/, "the raw runRecipe(body) bridge path is gone");
   assert.match(bridge, /url\.pathname === "\/detect"/); assert.match(bridge, /url\.pathname === "\/chat"/); assert.match(bridge, /url\.pathname === "\/dist-info"/);
 }

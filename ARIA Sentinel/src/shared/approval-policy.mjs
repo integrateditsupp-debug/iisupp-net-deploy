@@ -101,7 +101,8 @@ export function describeDecision(decision = {}) {
       return decision.reason === "restore-point-unavailable" ? "I need a yes before this one — I couldn't make a restore point first." : "I've asked for approval before touching anything.";
     case "notify-only": return decision.reason === "red-never-automated" ? "This one needs a person — I've flagged it, nothing was changed." : "Found it and flagged it — I'm in observe mode, so nothing was changed.";
     case "defer-window": return "Queued for your next maintenance window — nothing changes until then.";
-    case "blocked": return "Fixes are paused on this device right now, so nothing was changed.";
+    // KILL GATE 2026-10-14 (review P0-2) — Ctrl+Alt+K / Stop ARIA say what to press; every other block keeps its line.
+    case "blocked": return decision.reason === "aria-stopped" ? "ARIA is stopped on this device (Ctrl+Alt+K or Stop ARIA), so nothing was changed — press Start ARIA to let fixes run again." : "Fixes are paused on this device right now, so nothing was changed.";
     default: return "";
   }
 }

@@ -34,7 +34,7 @@ ARIA Sentinel replaces the wait. It already knows the fix.
 ## Why IT and security teams trust it
 
 - **Restore point before a medium-risk fix** where Windows allows one; otherwise the fix is held in preview and the app says why. Rollback is guided (System Restore), not silent.
-- **Ctrl+Alt+K panic kill-switch** — stops every running action, instantly.
+- **Ctrl+Alt+K panic kill-switch** — stops everything at once: running actions, countdowns, pending approvals (no emailed link can run one afterwards), the watchers — and it stays stopped across a restart until someone presses Start ARIA. (An administrator step already running under its UAC prompt finishes its own command; nothing after it runs.)
 - **Every action is audited** — a tamper-evident, hash-chained log of what ARIA did and why, exportable.
 - **Compliance evidence pack** — SOC 2 / PIPEDA / GDPR / CCPA **readiness self-assessment** (evidence export, not a certification), derived from measured state. An unsigned build reports CC8.1 as *not met* — it will not pretend.
 - **The website never runs a fix** — all execution happens on the user's own device, gated and audited.

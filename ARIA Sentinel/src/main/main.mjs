@@ -376,6 +376,9 @@ const approvals = createApprovalsFlow({
   uuid: randomUUID,
   onChange: () => { try { broadcastState(); } catch { /* window may be gone */ } },
   notify: (event, ctx) => notifyEvent(event, ctx),
+  // KILL GATE (review P0-2) — an approval (in-app click, voice "yes", emailed link merged by the poll) and the
+  // "proceed-green-only" timeout never run a fix while the gate is closed; the approval is not consumed either.
+  gate: () => killGateReason(),
   // An approved fix runs through the SAME supervised pipeline (R11 → supervisor → policy → execute); the
   // approval replaces the countdown, never the gates.
   runner: ({ recipeId, approvalId, decidedBy, channel }) => runSupervisedFix({ recipeId, mode: "confirmed", approved: true, approvalId, source: `approval:${channel || "desktop"}`, risk: (recipeById(recipeId) || {}).risk || "medium", decidedBy })
@@ -383,14 +386,21 @@ const approvals = createApprovalsFlow({
 let approvalPollTimer = null;
 function ensureApprovalPolling() {
   if (approvalPollTimer) return;
+  if (ariaStoppedNow()) return; // (review P0-2) a stopped ARIA polls nothing; Start ARIA restarts the poll
   approvalPollTimer = setInterval(() => { approvalTick().catch(() => undefined); }, 60 * 1000);
   approvalPollTimer.unref?.();
 }
+function stopApprovalPolling() {
+  if (approvalPollTimer) { clearInterval(approvalPollTimer); approvalPollTimer = null; }
+}
 /** Every 60s while anything is pending: expire overdue asks (per approver.onTimeout) + poll remote decisions. */
 async function approvalTick() {
+  // KILL GATE (review P0-2) — stopped: no expiry, no poll, no merge (and the timer goes away).
+  if (ariaStoppedNow()) { stopApprovalPolling(); return; }
   try { await approvals.expire(Date.now()); } catch { /* expiry is best-effort */ }
   const pending = approvals.pending();
-  if (!pending.length) { if (approvalPollTimer) { clearInterval(approvalPollTimer); approvalPollTimer = null; } return; }
+  if (!pending.length) { stopApprovalPolling(); return; }
+  if (!killGateOpen()) return; // paused / fleet kill: a remote "approved" waits on the server; nothing is merged into a run
   const keyHash = licenseKeyHash();
   if (!keyHash) return; // no license → no remote approvals (in-app only)
   for (const a of pending.filter((p) => p.remoteId)) {
@@ -1000,7 +1010,14 @@ function killAllChildren() {
 
 // RUN 19 §3 — the kill-switch handler. Single purpose: kill children, undo the last action, dim the
 // globe, toast the user. Does nothing else (no menu, no dialog, no second action).
+// KILL GATE 2026-10-14 (review P0-2) — the gate closes FIRST (ariaStopped + the kill record), so every continuation that
+// resumes after this function (a child's close, a countdown's tick, a poll response) already finds it closed; then the
+// pending approvals go on hold and the approval poll stops. An elevated step already running (a UAC child Windows owns)
+// finishes its own command — ARIA cannot end an elevated process — but nothing after it runs: every later step, spawn,
+// approval and notice is refused at the gate until Start ARIA.
 function activateKillSwitch() {
+  store.set("ariaStopped", true);
+  store.set("ariaKill", { at: new Date().toISOString(), by: "ctrl-alt-k" });
   const restorePoints = store.get("restorePoints") || [];
   const killed = killAllChildren();
   // PROD 2026-10-14 (audit M19) — rollbackRestorePoint records the request and offers the System Restore point; it
@@ -1031,6 +1048,12 @@ function activateKillSwitch() {
   try { const k = advisoryMachine.kill("kill-switch"); if (k.blocked) logEvent("KILL-SWITCH", `Ctrl+Alt+K: ${k.blocked} advisory escalation(s) blocked — they will not resume on their own.`, { advisoriesBlocked: k.blocked }); } catch { /* best-effort under panic */ }
   // RUN 23 — abort any pending pre-execution countdowns so an in-flight fix never lands after the kill.
   try { const aborted = countdownManager.abortAll(); if (aborted) { closeActionIndicator(); logEvent("KILL-SWITCH", `Aborted ${aborted} pending action countdown(s).`); } } catch { /* best-effort under panic */ }
+  // KILL GATE (review P0-2) — pending approvals go ON HOLD (no click, link or timeout can run them; Start ARIA asks again)
+  // and the approval poll stops, so a decision made on the server can never be merged into a run while ARIA is stopped.
+  try { const h = approvals.hold("kill-switch"); if (h.held.length) logEvent("KILL-SWITCH", `Ctrl+Alt+K: ${h.held.length} pending approval(s) put on hold — they cannot be approved or run until Start ARIA asks again.`, { approvalsHeld: h.held.length }); } catch { /* best-effort under panic */ }
+  stopApprovalPolling();
+  // The opt-in Office Safety Net (local backups) stops too — "stops everything" (it restarts on Start ARIA when it is on).
+  try { if (officeSafetyService && officeSafetyService.status().running) officeSafetyService.stop(); } catch { /* best-effort under panic */ }
   setAgentState("idle");
   logEvent("KILL-SWITCH", `Ctrl+Alt+K: ${killed} child process(es) terminated; ${result.undone ? "last action undone" : result.undoAvailable ? "undo available via System Restore (not applied automatically)" : "nothing to undo"}.`);
   if (mainWindow && !mainWindow.isDestroyed()) {
@@ -1347,7 +1370,7 @@ function updateTick() {
     writeUpdateState(st);
     if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send("update:notice", { phase: st.phase, strike: st.strike, version: st.version });
   }
-  if (st.phase === "AUTO") {
+  if (st.phase === "AUTO" && !ariaStoppedNow()) { // (review P0-2) no automatic update install while ARIA is stopped
     const ctx = { on: true, running: true, localHour: new Date().getHours(), fullscreen: isFullscreenBusy(), now: Date.now() };
     if (orchestrator.nextOpportunity(st, ctx).action === "install") performUpdateInstall(st);
   }
@@ -1649,23 +1672,40 @@ function maybeRunQuarterly() {
 }
 
 // RUN 15 §6 — Start/Stop ARIA. Stop hides the globe + stops watchers; Start re-shows + monitors.
+// KILL GATE 2026-10-14 (review P0-2) — Stop ARIA closes the same gate Ctrl+Alt+K does (nothing runs while stopped: no
+// fix, no approval, no timeout policy, no poll); its open escalations freeze in place (Ctrl+Alt+K blocks them for good).
 function stopAria() {
   const next = applyRunState({ running: true, watchers: true }, "stop");
   store.set("ariaStopped", true);
   store.set("pausedUntil", 0);
   try { if (detectionOrchestrator) detectionOrchestrator.stopAll(); } catch { /* ignore */ }
+  try { const aborted = countdownManager.abortAll(); if (aborted) closeActionIndicator(); } catch { /* best-effort */ }
+  stopApprovalPolling();
   hideOverlay();
   setAgentState("idle");
-  logEvent("WATCH", "ARIA stopped by user — globe hidden, monitoring paused.");
+  logEvent("WATCH", "ARIA stopped by user — globe hidden, monitoring paused, nothing runs until Start ARIA.");
   broadcastState();
   return { ok: true, state: next };
 }
+/**
+ * Start ARIA — the ONE deliberate way out of a stop (Stop ARIA or Ctrl+Alt+K), from the visible Start ARIA button
+ * (sentinel:start-aria). Audited: after a kill it says so, re-asks every held approval (fresh links) and restarts the
+ * watchers, the approval poll and an enabled Office Safety Net. Blocked escalations stay closed.
+ */
 function startAria() {
+  const wasStopped = ariaStoppedNow();
+  const kill = store.get("ariaKill") || null;
   store.set("ariaStopped", false);
+  store.delete("ariaKill");
   store.set("pausedUntil", 0);
   startDetection();
   if (store.get("showFloatingGlobe") !== false) showOverlay({ expanded: false });
   applyModeBehavior(store.get("mode"));
+  let reasked = 0;
+  if (kill) { try { reasked = approvals.reaskHeld().reasked.length; } catch { reasked = 0; } }
+  if (approvals.pending().length) ensureApprovalPolling();
+  try { if ((store.get("officeSafety") || {}).enabled === true && !(officeSafetyService && officeSafetyService.status().running)) startOfficeSafety(); } catch { /* the safety net never blocks a start */ }
+  if (wasStopped) logEvent("KILL-SWITCH", `Resumed by the person at this device (Start ARIA) after ${kill ? `Ctrl+Alt+K (${String(kill.at || "").slice(0, 19)})` : "Stop ARIA"} — fixes may run again through every gate${kill ? `; ${reasked} held approval(s) asked again with new links; escalations blocked by Ctrl+Alt+K stay closed` : ""}.`, { resumed: true, after: kill ? "kill-switch" : "stop", reasked });
   logEvent("WATCH", "ARIA started — now monitoring (screen errors → event log → KB → research → escalate).");
   broadcastState();
   return { ok: true, state: applyRunState({}, "start") };
@@ -2602,6 +2642,13 @@ function autonomousPaused() {
 }
 
 async function autoFireIfEligible(recipe, context = {}) {
+  // KILL GATE 2026-10-14 (review P0-2) — a detection that arrives while ARIA is stopped (Ctrl+Alt+K / Stop ARIA) — from
+  // the bridge's /detect, the 5-minute self-diagnosis or a chat — is recorded, and NOTHING acts on it: no fix, no
+  // approval request, no advisory notice. (A pause / fleet kill is handled below exactly as before.)
+  if (ariaStoppedNow()) {
+    logEvent("KILL-SWITCH", `${advisoryRedact(recipeTitle(recipe.id))}: detected while ARIA is stopped — nothing runs and nothing is asked until you press Start ARIA.`, { recipeId: recipe.id });
+    return;
+  }
   // RUN-CU / CU4 — the autonomy level from the Setup wizard governs unattended fixes alongside the legacy mode:
   // safe-auto / full-auto may act on their own (green only here; evaluateAutoFire keeps yellow out), observe and
   // approve-first never do (approve-first turns the detection into an approval request instead).
@@ -2821,6 +2868,16 @@ function pushAdvisoryCard(view) {
 }
 /** The last step of the auto-fix track: the autonomous guards, then the supervised pipeline (countdown first). */
 async function advisoryAutoFix(rec) {
+  // KILL GATE 2026-10-14 (review P0-2) — the final step checks the gate FIRST: no AUTO-FIX row, no auto-fire history, no
+  // countdown when it is closed. (A stop / pause freezes the escalation upstream; this is the line that holds if a tick
+  // and a kill ever race.) Ctrl+Alt+K / Stop ARIA end it as blocked; a pause / fleet kill holds it for the next tick.
+  if (!killGateOpen()) {
+    const reason = killGateReason();
+    if (ariaStoppedNow()) { advisoryMachine.settle(rec.id, "blocked", "kill-switch"); logEvent("KILL-SWITCH", `${rec.title}: the advise-first fix did not run — ${reason}. The escalation is closed (blocked).`, { recipeId: rec.recipeId, advisoryId: rec.id }); }
+    else { advisoryMachine.defer(rec.id, Date.now() + ADVISORY_TICK_MS, "the gate to open"); logEvent("ADVISORY", `${rec.title}: ready to fix, but ${reason} — nothing runs until that clears.`, { recipeId: rec.recipeId, advisoryId: rec.id }); }
+    broadcastState();
+    return { ok: false, reason: "kill-gate", gate: reason };
+  }
   const recipe = recipeById(rec.recipeId);
   if (!recipe) { advisoryMachine.settle(rec.id, "closed", "recipe-missing"); broadcastState(); return { ok: false, reason: "recipe-missing" }; }
   if (!advisoryApplies()) { advisoryMachine.settle(rec.id, "closed", "autonomous-off"); logEvent("ADVISORY", `${rec.title}: Autonomous mode or live fixes are off now — nothing runs on its own.`, { recipeId: rec.recipeId, advisoryId: rec.id }); broadcastState(); return { ok: false, reason: "autonomous-off" }; }
@@ -2976,6 +3033,9 @@ async function handleAdvisoryAck(payload) {
   const id = String(p.id || "").slice(0, 96);
   const choice = String(p.choice || "");
   if (!id || isBlockedPath(id) || !ADVISORY_CHOICES.includes(choice)) return { ok: false, error: "bad-request" };
+  // KILL GATE (review P0-2) — "Fix now" while the gate is closed is refused BEFORE the notice is consumed (Not now and
+  // Never never run anything, so they stay available).
+  if (choice === "fix-now" && !killGateOpen()) return { ok: false, error: "kill-gate", gate: killGateReason(), copy: describeDecision({ action: "blocked", reason: killGateDecisionReason() }) };
   const r = advisoryMachine.ack(id, choice, advisoryPrefsNow());
   if (!r.ok) return { ok: false, error: r.reason };
   const rec = r.record;
@@ -3060,11 +3120,32 @@ function remediationKilled() {
   }).killed;
 }
 
-function agentBlocked() {
-  // True when watchers + recipe execution must stand down: paused OR kill switch.
-  const pausedUntil = Number(store.get("pausedUntil") || 0);
-  return pausedUntil > Date.now() || remediationKilled();
+/**
+ * KILL GATE 2026-10-14 (review P0-2) — THE one gate between "a fix is wanted" and "a fix runs". "" = open; otherwise the
+ * plain reason nothing may run. Closed by:
+ *   · Ctrl+Alt+K / Stop ARIA (`ariaStopped`) — until the person presses Start ARIA (the ONLY way out: a relaunch, a mode
+ *     change, a remote approval or the timeout policy never reopens it);
+ *   · a fleet / customer kill (detect-only) — while it lasts;
+ *   · a pause — until it ends.
+ * It used to be that `ariaStopped` was set by the panic switch but read by no execution path, so a later detection, an
+ * emailed approval, the approval timeout and a relaunch's watchers all still acted. Every execution entry now checks this
+ * (runSupervisedFix · runRecipe · runTier0Fix · autoFireIfEligible · the approvals runner + its expiry · the advisory
+ * escalation's final step · the bridge's /run-recipe · every fix-step spawn), and agentBlocked() IS this gate.
+ */
+function ariaStoppedNow() { try { return store.get("ariaStopped") === true; } catch { return true; } }
+function killGateReason() {
+  if (ariaStoppedNow()) return store.get("ariaKill") ? "ARIA was stopped with Ctrl+Alt+K — nothing runs until you press Start ARIA" : "ARIA is stopped — nothing runs until you press Start ARIA";
+  if (remediationKilled()) return bridgeStatus.killReason || (customerConfig?.disabled === true ? "Customer policy disabled fixes." : "remediation disabled");
+  if (Number(store.get("pausedUntil") || 0) > Date.now()) return "ARIA is paused on this device";
+  return "";
 }
+function killGateOpen() { return killGateReason() === ""; }
+function agentBlocked() {
+  // True when watchers + recipe execution must stand down: stopped (Ctrl+Alt+K / Stop ARIA) · fleet/customer kill · paused.
+  return !killGateOpen();
+}
+/** The decision-copy reason for a closed gate (approval-policy describeDecision). */
+function killGateDecisionReason() { return ariaStoppedNow() ? "aria-stopped" : remediationKilled() ? "kill-switch" : "agent-blocked"; }
 
 // PROD 2026-10-14 (audit M6) — persisted watcher cursors: the event-log RecordId / WER report-time the watchers
 // last saw, so a relaunch continues from there instead of re-emitting a month of old errors as new detections.
@@ -3079,6 +3160,20 @@ function watchersStatus() {
     const st = detectionOrchestrator.status();
     return { running: Boolean(st.running) && !store.get("ariaStopped"), count: Number(st.count) || 0, lastTickAgeMs: st.lastTickAgeMs == null ? null : Number(st.lastTickAgeMs), names: Array.isArray(st.names) ? st.names : [], spawnsPerMinute: Number(st.spawnsPerMinute) || 0 };
   } catch { return { running: false, count: 0, lastTickAgeMs: null, names: [], spawnsPerMinute: 0 }; }
+}
+/**
+ * KILL GATE 2026-10-14 (review P0-2) — the launch-time watcher start. A relaunch used to call startDetection()
+ * unconditionally, so after Ctrl+Alt+K + a reboot the watchers ran (and acted) while the status line said "stopped".
+ * Returns true when the watchers were started; false (audited) when ARIA is still stopped.
+ */
+function startDetectionAtLaunch() {
+  if (ariaStoppedNow()) {
+    const kill = store.get("ariaKill") || null;
+    logEvent("KILL-SWITCH", `Launch: ARIA is still stopped (${kill ? `Ctrl+Alt+K at ${String(kill.at || "").slice(0, 19)}` : "Stop ARIA"}) — watchers, fixes, approvals and notices stay off until you press Start ARIA.`, { launch: true, stopped: true });
+    return false;
+  }
+  startDetection();
+  return true;
 }
 function startDetection() {
   // (audit M11) Stop ARIA → Start ARIA: the orchestrator survives a stop with its timers cleared; restart them.
@@ -3393,7 +3488,8 @@ function pushProcessHealth(snap) {
 function startProcessHealth() {
   try {
     processDetector = createProcessDetector();
-    const poll = () => { processDetector.tick().then((snap) => pushProcessHealth(snap)).catch(() => undefined); };
+    // (review P0-2) a stopped ARIA (Ctrl+Alt+K / Stop ARIA) takes no process snapshots either.
+    const poll = () => { if (ariaStoppedNow()) return; processDetector.tick().then((snap) => pushProcessHealth(snap)).catch(() => undefined); };
     poll();
     setInterval(poll, processDetector.cadenceMs).unref?.();
   } catch { /* the detector is best-effort and must never block startup */ }
@@ -3488,10 +3584,11 @@ function cancelCountdown(id) {
 async function runSupervisedFix(payload = {}) {
   // RUN-CU / CU4 (audit P0 #1) — LINE 1: a fleet/customer kill or a paused agent refuses to apply ANY change on
   // this path too (it used to be checked only by the autonomous path). Detection + guidance keep working.
+  // KILL GATE 2026-10-14 (review P0-2) — and Ctrl+Alt+K / Stop ARIA: agentBlocked() IS the one gate now (killGateReason).
   if (remediationKilled() || agentBlocked()) {
-    const reason = remediationKilled() ? (bridgeStatus.killReason || "remediation disabled") : "ARIA is paused on this device";
-    logEvent("KILL-SWITCH", `Supervised fix ${String(payload.recipeId || "(none)")} blocked: ${reason}.`, { recipeId: String(payload.recipeId || "") });
-    return { ...blockedRecipeResult(reason), verdict: "blocked", countdown: false, copy: describeDecision({ action: "blocked" }) };
+    const reason = killGateReason();
+    logEvent("KILL-SWITCH", `Supervised fix ${String(payload.recipeId || "(none)")} blocked: ${reason}.`, { recipeId: String(payload.recipeId || ""), source: String(payload.source || "app").slice(0, 40) });
+    return { ...blockedRecipeResult(reason), verdict: "blocked", countdown: false, copy: describeDecision({ action: "blocked", reason: killGateDecisionReason() }) };
   }
   const recipeId = String(payload.recipeId || "");
   const pname = String(payload.processName || "");
@@ -3653,6 +3750,8 @@ function recipeNeedsAdmin(recipeId) {
 function tier0Run(command) {
   return new Promise((resolve) => {
     if (process.platform !== "win32" || !command) return resolve({ stdout: "", stderr: "", exitCode: 0 });
+    // KILL GATE (review P0-2) — no fix step spawns after Ctrl+Alt+K / Stop ARIA.
+    if (ariaStoppedNow()) return resolve({ stdout: "", stderr: "stopped by the kill switch", exitCode: 1, reason: "kill-switch" });
     let out = "", err = "", child;
     try {
       child = spawn("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", String(command)], { windowsHide: true, timeout: 30000 });
@@ -3679,6 +3778,8 @@ function runElevated(command, { attended = false, timeoutMs = UAC_WAIT_MS } = {}
     const cmd = String(command || "");
     if (process.platform !== "win32" || !cmd) return resolve({ stdout: "", stderr: "", exitCode: 1, reason: "elevation-unavailable", elevated: false });
     if (attended !== true) return resolve({ stdout: "", stderr: "", exitCode: 1, reason: "unattended-elevation-refused", elevated: false });
+    // KILL GATE (review P0-2) — no UAC prompt (and no elevated step) after Ctrl+Alt+K / Stop ARIA.
+    if (ariaStoppedNow()) return resolve({ stdout: "", stderr: "", exitCode: 1, reason: "kill-switch", elevated: false });
     if (!(isAllowedCommand(cmd) || validateTier0Command(cmd))) return resolve({ stdout: "", stderr: "", exitCode: 1, reason: "command-not-allowlisted", elevated: false });
     const { file, args } = buildElevatedExecution(cmd);
     let child;
@@ -3702,6 +3803,7 @@ function runElevated(command, { attended = false, timeoutMs = UAC_WAIT_MS } = {}
 function runDarwinArgv(argv) {
   return new Promise((resolve) => {
     if (process.platform !== "darwin" || !Array.isArray(argv) || !argv.length) return resolve({ exitCode: 1, ran: false });
+    if (ariaStoppedNow()) return resolve({ exitCode: 1, ran: false, reason: "kill-switch" }); // KILL GATE (review P0-2)
     let child;
     try { child = spawn(argv[0], argv.slice(1), { stdio: ["ignore", "ignore", "ignore"], timeout: 20000 }); }
     catch { return resolve({ exitCode: 1, ran: false }); }
@@ -3730,10 +3832,11 @@ async function runDarwinTier0Fix(recipe, actualDryRun) {
 
 async function runTier0Fix(recipeId, options = {}) {
   // RUN-CU / CU4 (audit P0 #1) — line 1: the fleet/customer kill switch and a paused agent cover THIS executor too.
+  // KILL GATE 2026-10-14 (review P0-2) — and Ctrl+Alt+K / Stop ARIA: agentBlocked() IS the one gate now (killGateReason).
   if (remediationKilled() || agentBlocked()) {
-    const reason = remediationKilled() ? (bridgeStatus.killReason || "remediation disabled") : "ARIA is paused on this device";
+    const reason = killGateReason();
     logEvent("KILL-SWITCH", `Tier-0 fix ${recipeId} blocked: ${reason}.`, { recipeId });
-    return { ...blockedRecipeResult(reason), dryRun: true, recipe: { id: String(recipeId || ""), tier: "tier-0" }, outcome: "blocked", steps: [], message: "Fixes are paused on this device." };
+    return { ...blockedRecipeResult(reason), dryRun: true, recipe: { id: String(recipeId || ""), tier: "tier-0" }, outcome: "blocked", steps: [], message: ariaStoppedNow() ? "ARIA is stopped on this device — nothing runs until you press Start ARIA." : "Fixes are paused on this device." };
   }
   // Dry-run unless system fixes are enabled AND the global gate is off AND the caller didn't force dry-run.
   const actualDryRun = globalDryRun() || options.dryRun === true;
@@ -3751,6 +3854,12 @@ async function runTier0Fix(recipeId, options = {}) {
     logger: (event, text, extra) => logEvent(event, text, { ...extra })
   });
   try { refreshHealthScore(); } catch { /* health refresh best-effort */ }
+  // KILL GATE (review P0-2) — stopped mid-run: every spawn after the stop was refused (tier0Run / runElevated), so say
+  // that instead of the executor's generic failure line.
+  if (!actualDryRun && ariaStoppedNow() && result.outcome !== "success" && result.outcome !== "no-op-neutral") {
+    result.message = "Stopped by Ctrl+Alt+K — no step after the stop ran (a step already running when it was pressed finished its own command).";
+    logEvent("KILL-SWITCH", `Tier-0 fix ${recipeId} stopped mid-run — nothing after the stop ran.`, { recipeId });
+  }
   const ok = ["success", "no-op-neutral", "dry-run"].includes(result.outcome);
   // (R6a) one FIX row per completed LIVE execution — the only row the hours-saved / pilot-proof counters read.
   if (!actualDryRun) logEvent("FIX", `${recipeTitle(recipeId)}: ${result.message}`, { recipeId: result.recipeId || recipeId, outcome: result.outcome === "success" ? "done" : result.outcome === "no-op-neutral" ? "no-op" : "failed", tier: "tier-0" });
@@ -4285,6 +4394,14 @@ async function detectIssue(input = {}) {
 }
 
 async function runRecipe(recipeId, options = {}) {
+  // KILL GATE 2026-10-14 (review P0-2) — line 1, before anything else: a stopped ARIA (Ctrl+Alt+K / Stop ARIA), a
+  // fleet/customer kill or a pause refuses this executor outright — a preview included ("stops everything").
+  if (!killGateOpen()) {
+    const reason = killGateReason();
+    logEvent("KILL-SWITCH", `Recipe ${String(recipeId || "(none)")} blocked: ${reason}.`, { recipeId: String(recipeId || "") });
+    const known = recipeById(recipeId);
+    return { ...blockedRecipeResult(reason), dryRun: true, steps: [], ...(known ? { recipe: publicRecipe(known) } : {}), message: ariaStoppedNow() ? "ARIA is stopped on this device — nothing runs until you press Start ARIA." : "Fixes are paused on this device." };
+  }
   // RUN 23b — a Tier-0 id (direct or aliased) routes to the dedicated executor instead of the diagnostic
   // recipe registry. Still dry-run-gated by the same flags; the supervisor + countdown gate it upstream.
   if (resolveExecutorId(recipeId) || (process.platform === "darwin" && isDarwinTier0(recipeId))) return runTier0Fix(recipeId, options);
@@ -4325,7 +4442,16 @@ async function runRecipe(recipeId, options = {}) {
   logEvent("RUN", `${actualDryRun ? "Dry-run" : "Executing"} recipe ${recipe.signal}`, { recipeId });
   // PROD 2026-10-14 (audit M3) — elevation is allowed for this run only when the gate said a person is present.
   const elevation = options.elevation === "uac" && process.platform === "win32" && recipeColor(recipe.id) !== "red" ? "uac" : "none";
+  let stoppedMidRun = false;
   for (const action of recipe.actions || []) {
+    // KILL GATE (review P0-2) — Ctrl+Alt+K between two steps: the next step never starts (the running one was ended,
+    // or — an elevated step Windows owns — finished its own command). Recorded, never silent.
+    if (!actualDryRun && ariaStoppedNow()) {
+      stoppedMidRun = true;
+      steps.push({ actionId: action.id, label: action.label, ok: false, dryRun: false, stopped: true, reason: "kill-switch", message: "Stopped by Ctrl+Alt+K before this step — it did not run." });
+      logEvent("KILL-SWITCH", `${recipe.signal}: stopped by Ctrl+Alt+K before "${action.label}" — no step after the stop ran.`, { recipeId, actionId: action.id });
+      break;
+    }
     const result = await runAction(action, actualDryRun, recipe.id, { confirmed, restorePointTaken, elevation });
     // FAULT LAB 2026-10-14 (defect 3) — a NON-FATAL step (action.nonFatal, e.g. `ipconfig /registerdns`, which Windows may
     // refuse a standard user) that fails LIVE is a WARNING, not a failed fix: it is recorded, said in the audit, and the
@@ -4337,13 +4463,14 @@ async function runRecipe(recipeId, options = {}) {
     }
     steps.push({ actionId: action.id, label: action.label, ...result });
     logEvent(result.ok ? "DONE" : "ERROR", `${action.label}: ${result.message}`, { recipeId, actionId: action.id });
-    if (!result.ok) break;
+    // (review P0-2) a step ended by Ctrl+Alt+K (its child was terminated, or its spawn refused) stops the run as "stopped".
+    if (!result.ok) { if (!actualDryRun && ariaStoppedNow()) stoppedMidRun = true; break; }
   }
   // After a real (non-dry-run) execution of a cleared recipe, run a read-only verification probe.
   let verifiedFlag = null;
   const requiredSteps = steps.filter((s) => !s.nonFatal); // a failed non-fatal step never fails (or passes) the fix
-  const liveSteps = steps.filter((s) => s.dryRun === false && !(s.nonFatal && !s.ok)).length;
-  if (!actualDryRun && isExecutableRecipe(recipe.id) && requiredSteps.every((s) => s.ok) && liveSteps > 0) {
+  const liveSteps = steps.filter((s) => s.dryRun === false && !(s.nonFatal && !s.ok) && !s.stopped).length;
+  if (!actualDryRun && !stoppedMidRun && isExecutableRecipe(recipe.id) && requiredSteps.every((s) => s.ok) && liveSteps > 0) {
     const verified = await verifyRecipe(recipe.id);
     verifiedFlag = Boolean(verified.ok);
     // FAULT LAB 2026-10-14 (defect 3) — the verify probe's verdict IS the outcome: the steps ran but the check after them
@@ -4368,18 +4495,21 @@ async function runRecipe(recipeId, options = {}) {
   const heldForRestorePoint = !actualDryRun && liveSteps === 0 && isYellowRecipe(recipe.id) && !restorePointTaken;
   const warnings = steps.filter((s) => s.nonFatal && !s.ok).map((s) => s.actionId);
   // (R6a) one FIX row per completed LIVE execution: "done" only when every step ran and verification did not fail.
-  if (!effectiveDryRun) logEvent("FIX", `${recipe.title}: ${ok ? (warnings.length ? "applied (a non-fatal step did not complete)" : "applied") : notResolved ? "applied, NOT RESOLVED — the check after the fix says the problem is still there" : "failed"}`, { recipeId, outcome: ok && verifiedFlag !== false ? "done" : "failed", liveSteps, ...(notResolved ? { resolution: NOT_RESOLVED } : {}), ...(warnings.length ? { warnings } : {}) });
+  if (!effectiveDryRun) logEvent("FIX", `${recipe.title}: ${ok ? (warnings.length ? "applied (a non-fatal step did not complete)" : "applied") : notResolved ? "applied, NOT RESOLVED — the check after the fix says the problem is still there" : stoppedMidRun ? "stopped by Ctrl+Alt+K part-way — no step after the stop ran" : "failed"}`, { recipeId, outcome: ok && verifiedFlag !== false ? "done" : "failed", liveSteps, ...(notResolved ? { resolution: NOT_RESOLVED } : {}), ...(stoppedMidRun ? { stopped: true } : {}), ...(warnings.length ? { warnings } : {}) });
   return {
     ok,
     dryRun: effectiveDryRun,
     ...(notResolved ? { outcome: NOT_RESOLVED, reason: NOT_RESOLVED } : {}),
+    ...(stoppedMidRun ? { stopped: true, reason: "kill-switch" } : {}),
     recipe: publicRecipe(recipe),
     steps,
     restorePoint,
     restorePointTaken,
     verified: verifiedFlag,
     warnings,
-    message: heldForRestorePoint
+    message: stoppedMidRun
+      ? (liveSteps > 0 ? "Stopped by Ctrl+Alt+K part-way: the steps before the stop ran; nothing after it did." : "Stopped by Ctrl+Alt+K before the first step — nothing ran.")
+      : heldForRestorePoint
       ? "Held in preview: a restore point is unavailable on this platform/account, so this yellow-tier fix was not applied."
       : effectiveDryRun ? "Dry-run complete. No system changes were made."
         : notResolved ? "Not resolved: the fix ran, but the check afterwards says the problem is still there. Nothing further was changed — a person should take a look."
@@ -4434,11 +4564,14 @@ function runAction(action, dryRun, recipeId, gate = {}) {
       return Promise.resolve({ ok: false, dryRun: false, needsAdmin: true, reason: "needs-admin", message: "Needs administrator approval (UAC) — not attempted because no one is here to approve it. Nothing was changed.", output: "[needs-admin]" });
     }
     return runElevated(guardedRecipeCommand(action.command), { attended: true }).then((r) => {
+      if (r.reason === "kill-switch") return { ok: false, dryRun: false, needsAdmin: true, stopped: true, reason: "kill-switch", message: "Stopped by Ctrl+Alt+K — this step did not run.", output: "[stopped]" };
       if (r.exitCode === 0) return { ok: true, dryRun: false, needsAdmin: true, elevated: true, message: "Command completed (with administrator approval).", output: "[command-complete]" };
       if (r.reason === "uac-denied" || r.reason === "uac-timeout") return { ok: false, dryRun: false, needsAdmin: true, reason: r.reason, message: "Not applied — the administrator prompt was declined or timed out. Nothing was changed.", output: "[uac-denied]" };
       return { ok: false, dryRun: false, needsAdmin: true, reason: r.reason || "exit-code", message: "Command failed even with administrator rights. Review local admin console.", output: "[command-error]" };
     });
   }
+  // KILL GATE (review P0-2) — no fix step spawns after Ctrl+Alt+K / Stop ARIA.
+  if (ariaStoppedNow()) return Promise.resolve({ ok: false, dryRun: false, stopped: true, reason: "kill-switch", message: "Stopped by Ctrl+Alt+K — this step did not run.", output: "[stopped]" });
   // Real execution: spawn with positional argv (no shell string interpolation), Restricted policy.
   const { file, args } = buildExecution(action);
   return new Promise((resolve) => {
@@ -5192,6 +5325,22 @@ async function serviceNowDrain() {
   return result;
 }
 
+/**
+ * The bridge's POST /run-recipe (the browser extension asks for a fix). KILL GATE 2026-10-14 (review P0-2): the gate is
+ * checked here FIRST — a stopped / killed / paused ARIA answers "blocked" without parsing the ask any further. Otherwise
+ * routed through runSupervisedFix (R11 → supervisor → policy → approval/countdown); the caller's dryRun / confirmed flags
+ * are stripped by sanitizeRunRecipeBody — the bridge can ask, never force.
+ */
+async function bridgeRunRecipe(rawBody) {
+  if (!killGateOpen()) {
+    const reason = killGateReason();
+    logEvent("KILL-SWITCH", `Bridge /run-recipe refused: ${reason}.`, { source: "bridge" });
+    return { ...blockedRecipeResult(reason), verdict: "blocked", countdown: false, copy: describeDecision({ action: "blocked", reason: killGateDecisionReason() }) };
+  }
+  const body = sanitizeRunRecipeBody(rawBody); // idempotent: the route already sanitized; a direct caller is sanitized here
+  return runSupervisedFix({ ...body, mode: "confirmed", risk: (recipeById(body.recipeId) || {}).risk || "medium" });
+}
+
 function startBridge() {
   if (bridgeServer?.listening) return;
   bridgeServer = createServer(async (req, res) => {
@@ -5220,10 +5369,10 @@ function startBridge() {
       if (req.method === "POST" && url.pathname === "/browser-outcome") return sendJson(res, 200, recordBrowserOutcome(await readJson(req)));
       if (req.method === "GET" && url.pathname === "/browser-outcomes/fleet-packet") return sendJson(res, 200, browserOutcomeFleetPacketNow());
       if (req.method === "POST" && url.pathname === "/run-recipe") {
-        // Routed through runSupervisedFix (R11 → supervisor → policy → approval/countdown); the caller's
-        // dryRun / confirmed flags are stripped by sanitizeRunRecipeBody — the bridge can ask, never force.
-        const body = sanitizeRunRecipeBody(await readJson(req));
-        return sendJson(res, 200, await runSupervisedFix({ ...body, mode: "confirmed", risk: (recipeById(body.recipeId) || {}).risk || "medium" }));
+        // KILL GATE (review P0-2) — bridgeRunRecipe answers "blocked" while the gate is closed; otherwise the ask goes
+        // through the supervised pipeline (R11 → supervisor → policy → approval/countdown). The caller's dryRun /
+        // confirmed flags are stripped by sanitizeRunRecipeBody — the bridge can ask, never force.
+        return sendJson(res, 200, await bridgeRunRecipe(sanitizeRunRecipeBody(await readJson(req))));
       }
       if (req.method === "POST" && url.pathname === "/incident") {
         const body = await readJson(req);
@@ -5856,9 +6005,11 @@ if (hasSingleInstanceLock) {
     showOverlay({ expanded: false });
     applyModeBehavior(store.get("mode"));
     startBridge();
-    startDetection();
+    // KILL GATE 2026-10-14 (review P0-2) — a relaunch never re-arms a stopped ARIA: watchers + the Office Safety Net stay
+    // off (and every execution path stays refused) until the person presses Start ARIA.
+    const launchedWatching = startDetectionAtLaunch();
     startFileAssociationGuard(); // JULY PORT 2026-10-14 — read-only .txt association guard (Windows only)
-    startOfficeSafety(); // JULY PORT 2026-10-14 — Office Safety Net: runs ONLY when the person turned it on
+    if (launchedWatching) startOfficeSafety(); // JULY PORT 2026-10-14 — Office Safety Net: runs ONLY when the person turned it on
     startProcessHealth(); // RUN 23 — 30s content-blind process-health poll feeding the globe status panel
     serviceNowDrain().catch(() => undefined); // flush any incidents queued while offline
     selfDiagnose("startup").catch((error) => handleSelfError(error, "startup-diagnose"));

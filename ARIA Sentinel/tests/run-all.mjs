@@ -1022,6 +1022,11 @@ const TESTS = [
   // act" complete on a fresh install (green only; every other gate unchanged).
   "./fault-lab-defects.test.mjs",
   "./vendor-vetted-green.test.mjs",
+  // 2026-10-14 (review P0-2) — "Ctrl+Alt+K stops everything", on the simulated machine against the REAL main.mjs: one kill
+  // gate at every execution entry (a later detection, an emailed approval merged by the poll, a local / voice yes, the
+  // timeout policy, the bridge, a preview, a Tier-0 id), held approvals re-asked with new links only by Start ARIA, a
+  // relaunch that keeps the watchers off, a notice-3 escalation blocked for good, no step after the stop — each with a control.
+  "./fault-lab-kill-gate.test.mjs",
   // The commercial surface, audited end to end and proven RED FIRST on fixtures: the response-time
   // promise (BE1), the price a stranger is quoted (BF1), the tier vocabulary (BF2), the amount a buyer
   // is actually charged (BI2), the document a conversation ends in (BL1), the intake nobody keeps

@@ -32,7 +32,9 @@ export const MAIN_INTERNALS = Object.freeze([
   "store", "getState", "detectIssue", "addDetection", "autoFireIfEligible", "runSupervisedFix", "runRecipe",
   "advisoryMachine", "advisoryTick", "handleAdvisoryAck", "startAdvisoryEscalation", "advisoryTrackFor",
   "activateKillSwitch", "ensureTrialStarted", "approvals", "countdownManager", "cancelCountdown", "logEvent",
-  "setLiveFixes", "recipeNeedsAdmin", "recipeColor"
+  "setLiveFixes", "recipeNeedsAdmin", "recipeColor",
+  // KILL GATE 2026-10-14 (review P0-2) — the one gate, the launch-time watcher start, the bridge's /run-recipe and the poll.
+  "killGateReason", "startDetectionAtLaunch", "bridgeRunRecipe", "approvalTick"
 ]);
 // Platform globals main.mjs reads that the lab must own (shadowed as function parameters).
 const SHADOWED = ["process", "Date", "setTimeout", "setInterval", "clearTimeout", "clearInterval", "fetch"];
@@ -215,12 +217,17 @@ export function makeFakeProcess({ env = {} } = {}) {
   };
 }
 
-/** fetch recorder — NO network, ever. Only allow-listed hosts reach it (outbound.mjs refuses the rest first). */
-export function makeFakeFetch(outboundLog, clock) {
+/**
+ * fetch recorder — NO network, ever. Only allow-listed hosts reach it (outbound.mjs refuses the rest first).
+ * `respond(url, init)` (optional, 2026-10-14 review P0-2) lets a suite answer a call — e.g. the approval poll saying
+ * "approved" — with a JSON body of its own; undefined keeps the default answer.
+ */
+export function makeFakeFetch(outboundLog, clock, respond = null) {
   return async (url, init = {}) => {
     const u = String(url);
     outboundLog.push({ url: u, method: String(init.method || "GET"), body: typeof init.body === "string" ? init.body : init.body == null ? "" : String(init.body), at: clock.now() });
-    const json = /aria-sentinel-notify/.test(u) ? { ok: true, email: { sent: 1 }, sms: { sent: 0, dormant: true } } : { ok: true };
+    const custom = typeof respond === "function" ? respond(u, init) : undefined;
+    const json = custom !== undefined ? custom : /aria-sentinel-notify/.test(u) ? { ok: true, email: { sent: 1 }, sms: { sent: 0, dormant: true } } : { ok: true };
     return { ok: true, status: 200, json: async () => json, text: async () => JSON.stringify(json), headers: { get: () => null } };
   };
 }
@@ -272,7 +279,7 @@ export async function bootMain(platform = {}) {
   const storeSink = {};
   const FakeStore = makeFakeStoreClass(platform.storeSeed || null, storeSink);
   const outboundLog = [];
-  const fakeFetch = makeFakeFetch(outboundLog, clock);
+  const fakeFetch = makeFakeFetch(outboundLog, clock, platform.respond || null);
   const fakeOs = { ...os, default: undefined, homedir: () => home, hostname: () => "LAB-PC", platform: () => "win32", tmpdir: () => path.join(root, "tmp"), userInfo: () => ({ username: "labuser", homedir: home }) };
   delete fakeOs.default;
   fs.mkdirSync(path.join(root, "tmp"), { recursive: true });
