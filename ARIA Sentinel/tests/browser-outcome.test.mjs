@@ -7,8 +7,13 @@ import {
   browserOutcomeStats,
   browserOutcomeToResolutionPayload,
   isBrowserFleetPacketSafe,
-  normalizeBrowserOutcome
+  normalizeBrowserOutcome,
+  browserIdHandle,
+  BROWSER_SIGNAL_VOCABULARY,
+  BROWSER_ACTION_VOCABULARY,
+  BROWSER_FLEET_PACKET_VERSION
 } from "../src/shared/browser-outcome.mjs";
+import { RECIPES } from "../src/shared/recipes.mjs";
 
 let normalized = normalizeBrowserOutcome({
   issueId: "BROWSER.SECURITY.SUSPICIOUS-abc123",
@@ -22,7 +27,10 @@ let normalized = normalizeBrowserOutcome({
 }, { now: 1000 });
 
 assert.equal(normalized.ok, true, "valid browser outcome normalizes");
-assert.equal(normalized.record.issueId, "BROWSER.SECURITY.SUSPICIOUS-abc123");
+// 2026-10-14 (review P2-7) — EXPECTATION CHANGED ON PURPOSE: an id that is not a bare [a-z0-9-]{1,32} token (this one has
+// capitals and dots) is kept only as sha256(id).slice(0,16) — a stable handle, never the caller's text.
+assert.equal(normalized.record.issueId, browserIdHandle("BROWSER.SECURITY.SUSPICIOUS-abc123"));
+assert.match(normalized.record.issueId, /^[0-9a-f]{16}$/);
 assert.equal(normalized.record.signal, "BROWSER.SECURITY.SUSPICIOUS");
 assert.equal(normalized.record.action, "live-help");
 assert.equal(normalized.record.outcome, "live_help");
@@ -118,6 +126,40 @@ assert.equal(packetText.includes("owner@example.com"), false, "fleet packet neve
 assert.equal(packetText.includes("Private customer"), false, "fleet packet never leaks page titles");
 assert.equal(packetText.includes("4111111111111111"), false, "fleet packet never leaks raw long numeric IDs");
 assert.equal(/\b\d{13,19}\b/.test(packetText), false, "fleet packet never emits epoch-ms or card-length digit runs");
+
+// ── REVIEW P2-7 — the reviewer's inputs: a bank URL as the issue id AND the signal, a document path as the action ──────
+{
+  const evil = { issueId: "https://mybank.example.com/acct/123", signal: "https://mybank.example.com/acct?user=jane.doe", action: "C:\\Users\\jane.doe\\Documents\\payroll.xlsx", outcome: "resolved", severity: "jane_doe", originCategory: "mybank.example.com" };
+  const r = normalizeBrowserOutcome(evil, { now: 5000 });
+  assert.equal(r.ok, true);
+  assert.equal(r.record.signal, "UNKNOWN.SIGNAL", "a URL is not a signal — it is dropped to UNKNOWN.SIGNAL");
+  assert.equal(r.record.action, "other", "a path is not an action — it is dropped to 'other'");
+  assert.equal(r.record.severity, "notice", "free text is not a severity");
+  assert.match(r.record.issueId, /^[0-9a-f]{16}$/, "the URL id becomes a 16-hex handle");
+  assert.equal(r.record.issueId, browserIdHandle(evil.issueId), "…stable for the same id");
+  const txt = JSON.stringify(r.record).toLowerCase();
+  for (const leak of ["mybank", "example.com", "jane", "doe", "payroll", "users", "documents", "acct", "xlsx", "https"]) assert.ok(!txt.includes(leak), `the record never carries "${leak}"`);
+  const p = buildBrowserOutcomeFleetPacket([r.record], { now: 6000 });
+  assert.equal(isBrowserFleetPacketSafe(p), true, "the packet built from the cleaned record is safe");
+  assert.ok(!/mybank|jane|payroll/i.test(JSON.stringify(p)), "…and carries none of it");
+  // the boundary check refuses a packet that carries the reviewer's strings (built by hand, past the normalizer)
+  const forged = { v: BROWSER_FLEET_PACKET_VERSION, source: "browser-extension", endpoint: null, generatedAt: "2026-10-14T00:00:00.000Z", window: { from: "2026-10-14T00:00:00.000Z", to: "2026-10-14T00:00:00.000Z" }, counts: { total: 1 }, bySignal: [], byOriginCategory: [],
+    recent: [{ issueHandle: "ep-0uyug7k", signal: "HTTPS.MYBANK.EXAMPLE.COM.ACCT.USER.JANE.DOE", action: "c-users-jane.doe-documents-payroll.xlsx", outcome: "resolved", originCategory: "unknown", severity: "notice", ts: "2026-10-15T00:08:51.555Z" }] };
+  assert.equal(isBrowserFleetPacketSafe(forged), false, "a free-text signal + a path-shaped action are refused at the boundary");
+  assert.equal(isBrowserFleetPacketSafe({ ...forged, recent: [{ ...forged.recent[0], signal: "BROWSER.CACHE.STALE" }] }), false, "the path-shaped action alone is refused");
+  assert.equal(isBrowserFleetPacketSafe({ ...forged, recent: [{ ...forged.recent[0], action: "hard-reload" }] }), false, "the URL-shaped signal alone is refused");
+  assert.equal(isBrowserFleetPacketSafe({ ...forged, recent: [{ ...forged.recent[0], signal: "BROWSER.CACHE.STALE", action: "hard-reload" }] }), true, "control: vocabulary values pass");
+  assert.equal(isBrowserFleetPacketSafe({ ...forged, recent: [{ ...forged.recent[0], signal: "BROWSER.CACHE.STALE", action: "hard-reload", issueHandle: "jane.doe" }] }), false, "a raw id instead of a handle is refused");
+  assert.equal(isBrowserFleetPacketSafe({ ...forged, bySignal: [{ signal: "JANE.DOE", total: 1 }], recent: [] }), false, "a free-text bucket is refused");
+  // ids: a bare token stays; dots / slashes / '@' / capitals / long ones are hashed
+  assert.equal(browserIdHandle("issue-42"), "issue-42");
+  for (const bad of ["jane.doe", "a/b", "owner@example.com", "Issue42", "x".repeat(33), "c:\\users\\jane"]) assert.match(browserIdHandle(bad), /^[0-9a-f]{16}$/, `${bad} is hashed`);
+  // the vocabularies stay in step with the recipe registry
+  for (const r2 of RECIPES.filter((x) => /^BROWSER\./.test(x.signal))) {
+    assert.ok(BROWSER_SIGNAL_VOCABULARY.includes(r2.signal), `${r2.signal} is in the browser signal vocabulary`);
+    for (const a of r2.actions || []) assert.ok(BROWSER_ACTION_VOCABULARY.includes(a.id), `${r2.id}/${a.id} is in the browser action vocabulary`);
+  }
+}
 
 const missingId = normalizeBrowserOutcome({ outcome: "resolved" });
 assert.equal(missingId.ok, false);
