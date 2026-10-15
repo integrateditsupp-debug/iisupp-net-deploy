@@ -63,7 +63,8 @@ echo.
 
 rem ---- Step 3/5: tests ----
 echo Step 3/5: npm test (every suite must be green BEFORE packaging)...
-set "TEST_LOG=%TEMP%\aria-sentinel-build-test.log"
+if not exist "%~dp0dist" mkdir "%~dp0dist"
+set "TEST_LOG=%~dp0dist\build-test.log"
 call npm test > "%TEST_LOG%" 2>&1
 set "TEST_RC=%errorlevel%"
 echo   --- test summary (full log: %TEST_LOG%) ---

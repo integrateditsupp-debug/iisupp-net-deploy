@@ -1,6 +1,11 @@
 // ARIA Sentinel test runner — RESILIENT (Task 1b, 2026-06-24).
 // Every suite runs in its own try/catch; one missing file or throw can no longer hide the rest. A final
 // PASS/FAIL summary lists the reds. Pass --bail to opt back into fail-fast (stop on the first red).
+//
+// SPAWN GUARD (2026-10-15) — imported before any suite: for the life of this process no suite can start a real
+// powershell.exe / reg.exe / cmd.exe (they go to the fault lab's virtual machine, or fail like Linux). Found on the
+// operator's Windows PC, where the first run of this battery spawned real PowerShell and hung. See tests/lib/spawn-guard.mjs.
+import "./lib/spawn-guard.mjs";
 const TESTS = [
   // SECURITY LOCKDOWN 2026-07-01 — repo-level deploy-safety denylist (lives at repo root; runs first).
   "../../tests/deploy-safety-denylist.test.mjs",
@@ -1024,6 +1029,9 @@ const TESTS = [
   "./fault-lab-autonomous.test.mjs",
   "./fault-lab-modes.test.mjs",
   "./fault-lab-soak.test.mjs",
+  // …and the guard that keeps every one of those labs (and every other suite) off the host machine: Windows tools are
+  // answered by the virtual machine or fail like Linux, never spawned for real — proven with the real ESM bindings.
+  "./fault-lab-spawn-guard.test.mjs",
   // …and its surfaces, fed main's REAL notices: the globe card (Notice n of 3 + Fix now · Not now · Never for this),
   // the Home "What I need from you" rows, the ARIA chat line, Settings → Autonomy, the content-blind bridge slice.
   "./advisory-ui.test.mjs",
