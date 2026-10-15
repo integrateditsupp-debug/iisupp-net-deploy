@@ -19,9 +19,15 @@
 //   queue      Blobs 'axis-brain-jobs' (Claude worker heartbeat + jobs)
 //   state      _axis-state-full.json (agents, program approvals, health) · status _axis-status-full.json
 //   calendar / mailboxes — NOT connected on this side until the Google sign-in one-click; said plainly.
+//
+// RUN-AX3 (2026-10-15): every row now carries its stable id (`<source>:<key>`, lib/axis-task-ids.cjs) and
+// the situation honours the task overlay (Blobs 'axis-task-overlay'): a row Ahmad or AXIS acknowledged,
+// finished, archived or snoozed drops out of the ranking (a snooze only until it ends; an acknowledgement
+// only until the row itself changes). Nobody edits the ledger file or the worker's rows to do it.
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
+const IDS = require('./axis-task-ids.cjs');
 
 const TZ = 'America/Toronto';
 const DAY = 86400000;
@@ -66,14 +72,21 @@ function buildSituation(inp = {}) {
   const items = [];   // everything that needs Ahmad, ranked below
   const axisCanDo = []; // what AXIS can take off his plate right now
   const add = (it) => items.push(it);
+  // RUN-AX3: the overlay. `hides(id, sig)` is true while an overlay record takes the row out of the ranking.
+  const overlay = inp.overlay && typeof inp.overlay === 'object' ? inp.overlay : {};
+  const hides = (id, sig) => !!id && IDS.overlayHides(overlay[id], { sig, now });
+  const idOf = (source, rawId, parts) => IDS.makeId(source, IDS.keyOf(rawId, parts));
 
   // ── 1. CEO-critical ledger (his own list, highest authority) ──
   const ledger = Array.isArray(mod('overview').ceo_critical) ? mod('overview').ceo_critical : [];
   for (const r of ledger) {
     if (r.closed || r.cleared || (r.status && /^(closed|parked)/i.test(String(r.status)))) continue;
+    const id = IDS.makeId('ledger', IDS.ledgerKey(r));
+    if (hides(id, IDS.SIG.ledger(r))) continue;
     const due = r.deadline || null;
     const watch = r.section === 'watch';
     add({
+      id,
       title: `${r.ref && r.ref !== 'watch' ? r.ref + ' ' : ''}${clip(r.what, 160)}`,
       why: clip(watch ? `watch${r.soft_date ? ' — enters the 14-day window ' + r.soft_date : ''}` : (r.who || '') + (r.soft_date ? ` · ${r.soft_date}` : ''), 140),
       due, source: watch ? 'CEO ledger · watch' : 'CEO ledger', kind: r.category || 'decision',
@@ -84,37 +97,64 @@ function buildSituation(inp = {}) {
 
   // ── 2. The worker's board ──
   const fu = mod('followups');
-  for (const f of fu.overdue || []) add({ title: `Follow-up: ${f.company || 'prospect'}`, why: 'overdue follow-up (queued → Approvals)', due: f.due_at || null, source: 'Follow-ups', action: { type: 'screen', target: 'followups' }, score: 60 });
-  for (const f of fu.due_today || []) add({ title: `Follow-up: ${f.company || 'prospect'}`, why: 'due today (queued → Approvals)', due: f.due_at || null, source: 'Follow-ups', action: { type: 'screen', target: 'followups' }, score: 55 });
+  const fuId = (f) => idOf('board-followup', f.id, [f.business_id, f.company, f.due_at]);
+  for (const f of fu.overdue || []) { const id = fuId(f); if (!hides(id, IDS.SIG.boardFollowup(f))) add({ id, title: `Follow-up: ${f.company || 'prospect'}`, why: 'overdue follow-up (queued → Approvals)', due: f.due_at || null, source: 'Follow-ups', action: { type: 'screen', target: 'followups' }, score: 60 }); }
+  for (const f of fu.due_today || []) { const id = fuId(f); if (!hides(id, IDS.SIG.boardFollowup(f))) add({ id, title: `Follow-up: ${f.company || 'prospect'}`, why: 'due today (queued → Approvals)', due: f.due_at || null, source: 'Follow-ups', action: { type: 'screen', target: 'followups' }, score: 55 }); }
   for (const m of mod('inbox').rows || [])
-    if (['reply_to_outreach', 'new_inbound_request'].includes(m.classification) && !m.actioned && !m.snoozed_until)
-      add({ title: `Client: ${m.subject || '(no subject)'}`, why: `${m.from || 'client'} waiting${m.received_at ? ' since ' + String(m.received_at).slice(0, 10) : ''}`, due: null, source: 'Action Inbox', action: { type: 'screen', target: 'inbox' }, score: 62 });
+    if (['reply_to_outreach', 'new_inbound_request'].includes(m.classification) && !m.actioned && !m.snoozed_until) {
+      const id = idOf('inbox', m.id, [m.subject, m.from || m.from_email, m.received_at]);
+      if (!hides(id, IDS.SIG.inbox(m))) add({ id, title: `Client: ${m.subject || '(no subject)'}`, why: `${m.from || 'client'} waiting${m.received_at ? ' since ' + String(m.received_at).slice(0, 10) : ''}`, due: null, source: 'Action Inbox', action: { type: 'screen', target: 'inbox' }, score: 62 });
+    }
   for (const r of mod('approvals').rows || [])
-    if (r.status === 'pending') add({ title: `Approve: ${r.subject || '(no subject)'}`, why: 'drafted by an agent — nothing sends until you approve', due: null, source: 'Approvals', action: { type: 'screen', target: 'approvals' }, score: 58 });
+    if (r.status === 'pending') {
+      const id = idOf('board-approval', r.id, [r.subject, r.created_at]);
+      if (!hides(id, IDS.SIG.boardApproval(r))) add({ id, title: `Approve: ${r.subject || '(no subject)'}`, why: 'drafted by an agent — nothing sends until you approve', due: null, source: 'Approvals', action: { type: 'screen', target: 'approvals' }, score: 58 });
+    }
   const wr = mod('waiting_reply');
-  if (Number(wr.needs_delegation) > 0) add({ title: `${wr.needs_delegation} waiting-reply threads need a follow-up decision`, why: 'delegate to the follow-up agent or close', due: null, source: 'Waiting Reply', action: { type: 'screen', target: 'waiting_reply' }, score: 48 });
+  // Per-row delegate flags when the board carries them (an acknowledged thread stops counting); the
+  // aggregate count otherwise — exactly what the board said, never a guess.
+  const wrRows = Array.isArray(wr.rows) ? wr.rows.filter((w) => w && w.delegate) : null;
+  const wrOpen = wrRows ? wrRows.filter((w) => !hides(idOf('waiting', w.id, [w.business_id, w.subject]), IDS.SIG.waiting(w))).length : (Number(wr.needs_delegation) || 0);
+  if (wrOpen > 0 && !hides('waiting:needs-delegation', IDS.SIG.waitingAll(wrOpen))) add({ id: 'waiting:needs-delegation', title: `${wrOpen} waiting-reply threads need a follow-up decision`, why: 'delegate to the follow-up agent or close', due: null, source: 'Waiting Reply', action: { type: 'screen', target: 'waiting_reply' }, score: 48 });
   for (const d of mod('documents').rows || [])
-    if ((d.status || '').toLowerCase() === 'draft' && d.due_at) add({ title: `Document: ${d.title || d.type}`, why: 'draft — not sent', due: d.due_at, source: 'Documents', action: { type: 'screen', target: 'documents' }, score: 50 });
+    if ((d.status || '').toLowerCase() === 'draft' && d.due_at) {
+      const id = idOf('document', d.id, [d.title, d.type]);
+      if (!hides(id, IDS.SIG.document(d))) add({ id, title: `Document: ${d.title || d.type}`, why: 'draft — not sent', due: d.due_at, source: 'Documents', action: { type: 'screen', target: 'documents' }, score: 50 });
+    }
 
   // ── 3. Executive-assistant store ──
-  for (const t of exec.todos || []) if (!t.done && t.needsYou) add({ title: t.title, why: clip(t.note || 'on your to-do list — needs you', 120), due: t.due || null, source: 'To-do', action: { type: 'console', target: 'todo' }, score: t.priority === 'high' ? 57 : t.priority === 'low' ? 40 : 50 });
-  for (const a of exec.approvals || []) if (a.status === 'pending') add({ title: `Approve: ${a.title}`, why: clip(`${a.kind}${a.costUsd ? ' · $' + a.costUsd : ''} — ${a.detail || ''}`, 140), due: null, source: 'Assistant approvals', action: { type: 'console', target: 'apr' }, score: a.kind === 'spend' ? 56 : 54 });
+  // An archived to-do (RUN-AX3 "remove it") is history, not work: it stays readable in the live task view's
+  // Done/archived filter and never ranks again.
+  const liveTodo = (t) => t && !t.done && !t.archived;
+  const todoId = (t) => idOf('todo', t.id, [t.title]);
+  for (const t of exec.todos || []) if (liveTodo(t) && t.needsYou) { const id = todoId(t); if (!hides(id, IDS.SIG.todo(t))) add({ id, title: t.title, why: clip(t.note || 'on your to-do list — needs you', 120), due: t.due || null, source: 'To-do', action: { type: 'console', target: 'todo' }, score: t.priority === 'high' ? 57 : t.priority === 'low' ? 40 : 50 }); }
+  for (const a of exec.approvals || []) if (a.status === 'pending') { const id = idOf('approval', a.id, [a.title, a.created_at]); if (!hides(id, IDS.SIG.approval(a))) add({ id, title: `Approve: ${a.title}`, why: clip(`${a.kind}${a.costUsd ? ' · $' + a.costUsd : ''} — ${a.detail || ''}`, 140), due: null, source: 'Assistant approvals', action: { type: 'console', target: 'apr' }, score: a.kind === 'spend' ? 56 : 54 }); }
   for (const t of exec.tasks || []) {
-    if (t.status === 'active' && t.last_result && t.last_result.error) add({ title: `Automation failed: ${t.title}`, why: clip(t.last_result.error, 120), due: null, source: 'Automations', action: { type: 'console', target: 'auto' }, score: 42 });
-    if (t.status === 'active' && !(t.last_result && t.last_result.error)) axisCanDo.push({ title: t.title, how: `runs every ${t.every_minutes} min · ${t.runs || 0} runs`, source: 'Automations' });
+    const id = idOf('automation', t.id, [t.title]);
+    if (t.status === 'active' && t.last_result && t.last_result.error) { if (!hides(id, IDS.SIG.automation(t))) add({ id, title: `Automation failed: ${t.title}`, why: clip(t.last_result.error, 120), due: null, source: 'Automations', action: { type: 'console', target: 'auto' }, score: 42 }); }
+    if (t.status === 'active' && !(t.last_result && t.last_result.error)) axisCanDo.push({ id, title: t.title, how: `runs every ${t.every_minutes} min · ${t.runs || 0} runs`, source: 'Automations' });
   }
-  for (const t of exec.todos || []) if (!t.done && !t.needsYou) axisCanDo.push({ title: t.title, how: 'on the list — AXIS can draft or prepare it', source: 'To-do' });
+  for (const t of exec.todos || []) if (liveTodo(t) && !t.needsYou) { const id = todoId(t); if (!hides(id, IDS.SIG.todo(t))) axisCanDo.push({ id, title: t.title, how: 'on the list — AXIS can draft or prepare it', source: 'To-do' }); }
+  // Follow-ups AXIS created on a row (followUp(when, note)) — dated, linked to their parent. Ahmad's own rank
+  // with his list; one handed to an agent is AXIS's to carry.
+  for (const f of exec.followups || []) {
+    if (!f || f.status !== 'open') continue;
+    const id = idOf('followup', f.id, [f.title, f.due]);
+    if (hides(id, IDS.SIG.followup(f))) continue;
+    if (!f.owner || f.owner === 'ahmad') add({ id, title: f.title, why: clip(f.note || (f.parentTitle ? `follow-up on ${f.parentTitle}` : 'follow-up'), 120), due: f.due || null, source: 'Follow-up (AXIS)', action: { type: 'tasks', target: id }, score: 52 });
+    else axisCanDo.push({ id, title: f.title, how: `follow-up with ${String(f.owner).replace(/^agent:/, '')}${f.due ? ' · ' + dueText(f.due, now) : ''}`, source: 'Follow-up (AXIS)' });
+  }
 
   // ── 4. Claude worker queue ──
   const jobs = Array.isArray(queue.jobs) ? queue.jobs : [];
-  for (const j of jobs) if (j.state === 'failed') add({ title: `Claude job failed: ${clip(j.arg, 70)}`, why: clip(j.error || 'see the Claude tab', 120), due: null, source: 'Claude worker', action: { type: 'console', target: 'claude' }, score: 41 });
+  for (const j of jobs) if (j.state === 'failed') { const id = idOf('job', j.id, [j.arg, j.t]); if (!hides(id, IDS.SIG.job(j))) add({ id, title: `Claude job failed: ${clip(j.arg, 70)}`, why: clip(j.error || 'see the Claude tab', 120), due: null, source: 'Claude worker', action: { type: 'console', target: 'claude' }, score: 41 }); }
   const working = jobs.filter((j) => j.state === 'working' || j.state === 'queued');
-  for (const j of working) axisCanDo.push({ title: clip(j.arg, 80), how: `${j.state} on the Claude worker${queue.online ? '' : ' (worker offline — starts when it is back)'}`, source: 'Claude worker' });
+  for (const j of working) axisCanDo.push({ id: idOf('job', j.id, [j.arg, j.t]), title: clip(j.arg, 80), how: `${j.state} on the Claude worker${queue.online ? '' : ' (worker offline — starts when it is back)'}`, source: 'Claude worker' });
 
   // ── 5. Program state (agents, health) ──
   const agents = state && Array.isArray(state.agents) ? state.agents : [];
   const failedAgents = agents.filter((a) => /fail|error|stale|down/i.test(String(a.status || a.health || '')));
-  for (const a of failedAgents.slice(0, 5)) add({ title: `Agent ${a.name || a.id}: ${a.status || a.health}`, why: clip(a.note || a.last || 'needs a look on the Fleet screen', 120), due: null, source: 'Fleet', action: { type: 'screen', target: 'fleet' }, score: 38 });
+  for (const a of failedAgents.slice(0, 5)) { const id = idOf('agent', a.name || a.id, [a.status]); if (!hides(id, IDS.SIG.agent(a))) add({ id, title: `Agent ${a.name || a.id}: ${a.status || a.health}`, why: clip(a.note || a.last || 'needs a look on the Fleet screen', 120), due: null, source: 'Fleet', action: { type: 'screen', target: 'fleet' }, score: 38 }); }
 
   // ── Rank: overdue → due soon → score ──
   const scored = items.map((it) => {
@@ -139,6 +179,7 @@ function buildSituation(inp = {}) {
     status: !!status,
     calendar: false,
     mailboxes: false,
+    overlay: !!inp.overlay, // RUN-AX3: the task overlay answered (false = not read; nothing is hidden then)
   };
 
   // ── The block the brains read ──
@@ -154,7 +195,10 @@ function buildSituation(inp = {}) {
   if (axisCanDo.length) { lines.push(`AXIS IS HANDLING / CAN HANDLE (${axisCanDo.length}):`); axisCanDo.slice(0, 8).forEach((it) => lines.push(`- ${it.title} — ${it.how} [${it.source}]`)); }
   const text = lines.join('\n');
 
-  return { ok: true, generatedAt: now.toISOString(), local, sources, revenue, needsAhmad: scored.slice(0, 40), axisCanDo: axisCanDo.slice(0, 20), deadlines: deadlines.slice(0, 20), counts: { needsAhmad: scored.length, overdue: scored.filter((i) => daysUntil(i.due, now) !== null && daysUntil(i.due, now) < 0).length, today: scored.filter((i) => daysUntil(i.due, now) === 0).length }, text };
+  const out = { ok: true, generatedAt: now.toISOString(), local, sources, revenue, needsAhmad: scored.slice(0, 40), axisCanDo: axisCanDo.slice(0, 20), deadlines: deadlines.slice(0, 20), counts: { needsAhmad: scored.length, overdue: scored.filter((i) => daysUntil(i.due, now) !== null && daysUntil(i.due, now) < 0).length, today: scored.filter((i) => daysUntil(i.due, now) === 0).length }, text };
+  // RUN-AX3: the live task list marks EVERY ranked row (not just the top 40 the endpoint ships) as "needs you".
+  if (inp.keepAll) { out.ranked = scored; out.axisCanDoAll = axisCanDo; }
+  return out;
 }
 
 // ── Loader: gather the inputs from Blobs + bundled files. Every source is optional and reported. ──
@@ -197,7 +241,16 @@ async function loadSituation({ now = new Date(), fnDir = null, getStore: injecte
       tasks: (await safe(() => es.get('tasks', { type: 'json' }), null)) || [],
       approvals: (await safe(() => es.get('approvals', { type: 'json' }), null)) || [],
       attention: (await safe(() => es.get('attention-log', { type: 'json' }), null)) || [],
+      followups: (await safe(() => es.get('followups', { type: 'json' }), null)) || [], // RUN-AX3
     };
+  }
+
+  // RUN-AX3: the task overlay (acknowledged / done / archived / snoozed rows). null = the store did not
+  // answer — then nothing is hidden and sources.overlay says so; an empty store reads as {}.
+  let overlay = null;
+  if (getStore) {
+    const os = await safe(() => getStore({ name: IDS.OVERLAY_STORE, consistency: 'strong' }), null);
+    if (os) { const v = await safe(() => os.get(IDS.OVERLAY_KEY, { type: 'json' }), undefined); overlay = v === undefined ? null : (v && typeof v === 'object' ? v : {}); }
   }
 
   // Claude worker queue
@@ -219,7 +272,7 @@ async function loadSituation({ now = new Date(), fnDir = null, getStore: injecte
 
   const state = readFile('_axis-state-full.json');
   const status = readFile('_axis-status-full.json');
-  return buildSituation({ snapshots, source, exec, queue, state, status, now });
+  return buildSituation({ snapshots, source, exec, queue, state, status, now, overlay });
 }
 
 // The instruction every brain gets with the block — one voice, one rule set.

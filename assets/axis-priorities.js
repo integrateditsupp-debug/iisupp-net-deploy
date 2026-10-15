@@ -43,6 +43,17 @@ export function dueLabel(dueAt, now = new Date()) {
 // itself stamps OVERDUE with no parseable date ranks with the overdue.
 const rank = (it) => (it.dueAt ? daysUntil(it.dueAt) : it.overdue ? -1 : it.ceo ? 9998 : 9999);
 
+// RUN-AX3 (2026-10-15): the live task overlay. A row Ahmad acknowledged, finished, archived or snoozed in the
+// Live task view (or by telling AXIS) leaves this queue too — so the Talk rail, this screen and the board block
+// the brains read all agree with the list. The console sets it from /api/axis/tasks, whose statuses are
+// already resolved server-side (an ended snooze or an outgrown acknowledgement is simply absent). Unset →
+// nothing is hidden, which is every caller that never loaded the list (and every existing test).
+let TASK_OVERLAY = null;
+export function setTaskOverlay(map) { TASK_OVERLAY = map && typeof map === 'object' ? map : null; }
+const hiddenByOverlay = (id) => { const o = TASK_OVERLAY && id ? TASK_OVERLAY[id] : null; return !!(o && o.status && o.status !== 'open'); };
+// The same ids lib/axis-task-ids.cjs gives these rows (the store's own id; rows without one get no overlay).
+const rowId = (source, key) => (key === null || key === undefined || key === '' ? null : `${source}:${key}`);
+
 // Flatten the snapshot into one list. `dueAt: null` is meaningful and preserved, never defaulted.
 export function collectPriorities(snap, now = new Date()) {
   const mod = (m) => (snap && snap[m] && snap[m].data) || {};
@@ -50,38 +61,41 @@ export function collectPriorities(snap, now = new Date()) {
 
   const fu = mod('followups');
   for (const [bucket, rows] of [['overdue', fu.overdue], ['due_today', fu.due_today], ['upcoming', fu.upcoming]])
-    for (const f of rows || [])
+    for (const f of rows || []) {
+      const id = rowId('board-followup', f.id);
+      if (hiddenByOverlay(id)) continue;
       // fid/bid are the record ids, carried so a voice removal (board.remove) can name the real
       // follow_ups row instead of guessing from the title.
       items.push({ title: f.company || 'Prospect', source: 'Follow-up', dueAt: f.due_at || null,
         detail: 'queued → Approvals', bucket, screen: 'followups',
-        fid: f.id || null, bid: f.business_id || null });
+        fid: f.id || null, bid: f.business_id || null, id });
+    }
 
   for (const r of mod('approvals').rows || [])
-    if (r.status === 'pending')
+    if (r.status === 'pending' && !hiddenByOverlay(rowId('board-approval', r.id)))
       items.push({ title: r.subject || '(no subject)', source: 'Approval', dueAt: null,
-        detail: 'waiting on you' + aged(r.created_at), screen: 'approvals' });
+        detail: 'waiting on you' + aged(r.created_at), screen: 'approvals', id: rowId('board-approval', r.id) });
 
   const ACTIONABLE = ['reply_to_outreach', 'new_inbound_request'];
   for (const m of mod('inbox').rows || [])
-    if (ACTIONABLE.includes(m.classification) && !m.actioned && !m.snoozed_until)
+    if (ACTIONABLE.includes(m.classification) && !m.actioned && !m.snoozed_until && !hiddenByOverlay(rowId('inbox', m.id)))
       items.push({ title: m.subject || '(no subject)', source: 'Inbox', dueAt: null,
-        detail: 'client waiting' + (ago(m.received_at) ? ' · ' + ago(m.received_at) : ''), screen: 'inbox' });
+        detail: 'client waiting' + (ago(m.received_at) ? ' · ' + ago(m.received_at) : ''), screen: 'inbox', id: rowId('inbox', m.id) });
 
   for (const d of mod('documents').rows || [])
-    if ((d.status || '').toLowerCase() === 'draft')
+    if ((d.status || '').toLowerCase() === 'draft' && !hiddenByOverlay(rowId('document', d.id)))
       items.push({ title: d.title || d.type || 'Document', source: 'Document', dueAt: d.due_at || null,
-        detail: 'draft — not sent', screen: 'documents' });
+        detail: 'draft — not sent', screen: 'documents', id: rowId('document', d.id) });
 
   // RUN-AX2 (2026-10-13): Ahmad's own CEO-CRITICAL ledger, read off his machine by the worker and
   // shipped inside overview.ceo_critical. His list outranks everything the agents raised, so the
   // rows ride into the Talk rail, the Priorities screen and the board block the brains read. Open
   // rows only; Watch rows are not yet critical by the ledger's own rule and stay on the Overview.
   for (const r of mod('overview').ceo_critical || [])
-    if (r && r.section === 'open' && !r.closed && !r.cleared)
+    if (r && r.section === 'open' && !r.closed && !r.cleared && !hiddenByOverlay(rowId('ledger', r.ref && r.ref !== 'watch' ? r.ref : null)))
       items.push({ title: `${r.ref ? r.ref + ' ' : ''}${r.what || ''}`.trim(), source: 'CEO ledger', dueAt: r.deadline || null,
         detail: (r.one_click ? 'one-click: ' + r.one_click : (r.who || 'your call')) + (r.overdue && !r.deadline ? ' · OVERDUE' : ''),
-        screen: 'overview', ceo: true, overdue: !!r.overdue });
+        screen: 'overview', ceo: true, overdue: !!r.overdue, id: rowId('ledger', r.ref && r.ref !== 'watch' ? r.ref : null) });
 
   return items.sort((a, b) => rank(a) - rank(b));
 }
@@ -256,6 +270,13 @@ export function renderPriorities(c, { snap, go, head }) {
   const n = (t) => items.filter(i => dueLabel(i.dueAt).tone === t).length;
 
   c.append(head('Priorities', 'every open item, ordered by when it is due — nothing here is invented'));
+  // RUN-AX3 (2026-10-15): the way into the Live task view — every list in one place (to-dos, approvals,
+  // follow-ups, the ledger, the board, automations), with the controls this read-only queue does not carry.
+  c.append(el('div', { class: 'card tk-entry' }, [
+    el('div', { class: 'tk-entry-text' }, [el('div', { style: 'font-weight:600' }, 'Live task view'),
+      el('div', { style: 'font-size:12px;color:var(--txt-3)' }, 'Every list in one place — Done · Snooze · Follow up · Approve / Reject · Acknowledge · Archive · Draft reply. AXIS works the same list when you talk to it.')]),
+    el('button', { class: 'chip', 'data-act': 'open-tasks', onclick: () => go('tasks') }, 'Open the live task view →'),
+  ]));
 
   // Counters. A zero renders as a plain zero, never hidden and never dressed up.
   const counts = [['Overdue', n('over'), 'var(--crit)'], ['Due today', n('today'), 'var(--gold)'],

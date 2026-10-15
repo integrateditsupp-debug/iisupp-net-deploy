@@ -11,6 +11,7 @@ import {
 } from './lib/axis-exec-core.mjs';
 import { getStore as blobStore } from '@netlify/blobs';
 import { loadSituationSafe, situationInstruction } from './lib/axis-situation.cjs';
+import { listTasks, tasksBlock } from './lib/axis-tasks.cjs';
 
 const FN_DIR = path.dirname(fileURLToPath(import.meta.url)); // NOT "__dirname" — esbuild injects its own shim
 
@@ -24,15 +25,31 @@ You are working ON SCREEN with Ahmad. Produce or update a working document he ca
 Return ONLY JSON: {"title": string, "kind": "leads"|"email"|"invoice"|"campaign"|"client"|"plan"|"tax"|"calendar"|"report"|"other", "content": markdown string (the actual working document — tables, drafts, checklists), "say": one or two short warm sentences Axis says aloud, "next": [up to 3 short next-step choices]}.
 Never invent client data, prices or figures; mark unknowns as [needs info].
 
-YOU HAVE THE LIVE SITUATION. The block below this system prompt is the company's board, the CEO-critical ledger, the to-dos, the automations, the approvals and the Claude worker queue, with the local Toronto date and time. When Ahmad asks for the urgent items, what needs him, or "let's work on the top items", build the document FROM that list: ranked rows, each with the next concrete step and who does it (AXIS or Ahmad). Never write that you lack access to his tasks, board, approvals or to-dos — you have them. Only two sources are not connected: the calendar and the three mailboxes; if they matter, say so in one line and name the one-click (Google sign-in). Never guess the date — use the local date in the block. If the block is absent, say the board did not answer in time and work from what Ahmad typed.`;
+YOU HAVE THE LIVE SITUATION. The block below this system prompt is the company's board, the CEO-critical ledger, the to-dos, the automations, the approvals and the Claude worker queue, with the local Toronto date and time. When Ahmad asks for the urgent items, what needs him, or "let's work on the top items", build the document FROM that list: ranked rows, each with the next concrete step and who does it (AXIS or Ahmad). Never write that you lack access to his tasks, board, approvals or to-dos — you have them. Only two sources are not connected: the calendar and the three mailboxes; if they matter, say so in one line and name the one-click (Google sign-in). Never guess the date — use the local date in the block. If the block is absent, say the board did not answer in time and work from what Ahmad typed.
+THE LIVE TASK LIST block (when present) is every open item across the to-dos, approvals, follow-ups, the CEO ledger, the board, automations and worker failures, each with its [id]. Build from it; name items by title. Acting on an item (done, snooze, follow up, approve, archive, assign) happens in AXIS chat or the Live task view — say which one-line ask does it. Nothing here sends; drafts stay drafts.`;
 
 // RUN-AX2 (2026-10-13): the situation block for this request — bounded, never throws, null when a
 // store is slow. The Workspace brain used to receive Ahmad's sentence and nothing else; asked "let's
 // work on top urgent items" it truthfully answered that it had no access to tasks, calendar or
 // messages, and dated the page from UTC. Now every Workspace and brief call reads the same picture
 // the director reads (lib/axis-situation.cjs), with the Toronto clock.
-const situationFor = () => loadSituationSafe({ fnDir: FN_DIR, getStore: blobStore });
-const withSituation = (system, sit) => (sit ? `${system}\n\n${situationInstruction(sit)}` : system);
+// RUN-AX3 (2026-10-15): the live task list (every open row with its id and what it can do) rides with the
+// situation, so a "let's work on …" that reaches this brain directly (the Work tab, the live call) builds its
+// document from the same list the director's tool loop works — never "I don't have access to your tasks".
+// Bounded and never throws: a slow store means the block is absent and the situation alone is used.
+const tasksFor = async () => {
+  let timer = null;
+  try {
+    const timeout = new Promise((resolve) => { timer = setTimeout(() => resolve(null), 2500); });
+    return await Promise.race([listTasks({ getStore: blobStore, fnDir: FN_DIR }).catch(() => null), timeout]);
+  } catch { return null; } finally { if (timer) clearTimeout(timer); }
+};
+const situationFor = async () => {
+  const [sit, list] = await Promise.all([loadSituationSafe({ fnDir: FN_DIR, getStore: blobStore }), tasksFor()]);
+  if (sit && list && list.ok) sit.tasksText = tasksBlock(list);
+  return sit;
+};
+const withSituation = (system, sit) => (sit ? `${system}\n\n${situationInstruction(sit)}${sit.tasksText ? `\n\n${sit.tasksText}` : ''}` : system);
 
 export default async (request) => {
   if (request.method !== 'POST') return json(405, { error: 'POST required' });

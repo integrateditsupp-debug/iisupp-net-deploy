@@ -902,6 +902,12 @@
   for = "/assets/axis-grants.js"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+# RUN-AX3 (2026-10-15): axis-tasks.js (the Live task view) joins the graph as a bare import of axis-app.js —
+# without this rule a browser would keep its first copy for seven days.
+[[headers]]
+  for = "/assets/axis-tasks.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/*.html"
