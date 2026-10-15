@@ -1027,6 +1027,10 @@ const TESTS = [
   // timeout policy, the bridge, a preview, a Tier-0 id), held approvals re-asked with new links only by Start ARIA, a
   // relaunch that keeps the watchers off, a notice-3 escalation blocked for good, no step after the stop — each with a control.
   "./fault-lab-kill-gate.test.mjs",
+  // 2026-10-14 (review P1-1) — "Confirmed asks once, every time; it never executes unattended": every colour, fresh and
+  // trusted, is ONE approval; the card's click approves that ask (one run, one record); the vendor floor belongs to the
+  // Autonomous advise-three-times track only (the control still acts after 3 notices).
+  "./fault-lab-confirmed-asks-once.test.mjs",
   // The commercial surface, audited end to end and proven RED FIRST on fixtures: the response-time
   // promise (BE1), the price a stranger is quoted (BF1), the tier vocabulary (BF2), the amount a buyer
   // is actually charged (BI2), the document a conversation ends in (BL1), the intake nobody keeps

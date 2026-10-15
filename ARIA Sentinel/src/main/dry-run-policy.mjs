@@ -23,7 +23,8 @@
 //   · A GREEN recipe that SHIPS in the registry with a GATING verify probe and a declared rollback / inverse
 //     (recipe-runner.mjs isVendorVetted) is VENDOR-VETTED: vettedTier() treats the shipped catalogue as its floor,
 //     Tier 1 — the minimum this policy needs before anything runs unattended. The caller must say so explicitly
-//     (`vendorVetted: true` AND `color: "green"`); without both the answer is exactly the old one.
+//     (`vendorVetted: true` AND `color: "green"` AND — REVIEW P1-1 — `track: "autonomous-advisory"`); without all three
+//     the answer is exactly the old one.
 //   · YELLOW never takes the floor: it still needs 10 locally vetted runs (and recipe-runner still never lets a yellow
 //     fix fire on its own). RED never runs on its own at all (approval-policy red-never-automated).
 //   · The local counters are kept: they still raise trust (≥100 → Tier 0 = auto-fire eligible), still gate yellow, and
@@ -31,6 +32,13 @@
 //   · No other gate moves: the supervisor, the countdown, Ctrl+Alt+K, the restore point for yellow, needsAdmin (an
 //     admin-needing fix is still never run unattended) and red-never-automated are all enforced downstream, unchanged.
 //
+//
+// REVIEW P1-1 (2026-10-14) — THE FLOOR IS AUTONOMOUS-ADVISORY ONLY. The owner's decision: Confirmed asks once, every time,
+// and never executes unattended; unattended execution exists only in Autonomous mode through the advise-three-times rule.
+// The floor was taken by EVERY caller, so on a fresh install a vendor-vetted green fix ran on its own in Confirmed. Now
+// the floor applies only when the caller names the track: `track: VENDOR_FLOOR_TRACK` ("autonomous-advisory") — main
+// passes it from the advisory track (advisoryTrackFor) and that track's final step (source "detection:advisory") and
+// nowhere else. Without it the answer is the local count alone, exactly as before the floor existed.
 // 🔒 R11 — outcomes for an off-limits recipe id are never recorded.
 import { isBlockedPath } from "../shared/path-guard.mjs";
 
@@ -38,15 +46,18 @@ const MODE_RANK = { manual: 0, confirmed: 1, autonomous: 2 };
 
 /** The tier the shipped catalogue guarantees a vendor-vetted GREEN recipe (Tier 1: Confirmed minimum, may run unattended). */
 export const VENDOR_VETTED_TIER = 1;
+/** The ONE track the vendor floor applies to (REVIEW P1-1): Autonomous mode's advise-three-times rule. */
+export const VENDOR_FLOOR_TRACK = "autonomous-advisory";
 
 /**
- * Vetted tier from a success count. With `{ color: "green", vendorVetted: true }` the shipped catalogue is the floor
- * (never worse than VENDOR_VETTED_TIER); any other colour, or no flag, is the local count alone (unchanged).
+ * Vetted tier from a success count. With `{ color: "green", vendorVetted: true, track: VENDOR_FLOOR_TRACK }` the shipped
+ * catalogue is the floor (never worse than VENDOR_VETTED_TIER); any other colour, no flag, or any other track is the
+ * local count alone (unchanged).
  */
-export function vettedTier(count, { color, vendorVetted = false } = {}) {
+export function vettedTier(count, { color, vendorVetted = false, track } = {}) {
   const n = Number(count) || 0;
   const local = n >= 100 ? 0 : n >= 10 ? 1 : 2;
-  if (vendorVetted === true && color === "green") return Math.min(local, VENDOR_VETTED_TIER);
+  if (vendorVetted === true && color === "green" && track === VENDOR_FLOOR_TRACK) return Math.min(local, VENDOR_VETTED_TIER);
   return local;
 }
 
@@ -76,8 +87,8 @@ export function policyCopy({ allowed, dryRun, reason, humanInitiated } = {}) {
  * checkbox, the supervisor verdict and WHO asked (a person, an approval, or an unattended source).
  * Pure — returns the full gate, never executes.
  */
-export function executionPolicy({ vettedCount = 0, mode = "manual", dryRunCheckbox, supervisorVerdict, humanInitiated = false, approved = false, color, vendorVetted = false } = {}) {
-  const tier = vettedTier(vettedCount, { color, vendorVetted });
+export function executionPolicy({ vettedCount = 0, mode = "manual", dryRunCheckbox, supervisorVerdict, humanInitiated = false, approved = false, color, vendorVetted = false, track } = {}) {
+  const tier = vettedTier(vettedCount, { color, vendorVetted, track });
   // Where the tier came from (informational, for the audit + tests): the local ledger, or the vendor floor (defect 4).
   const trust = tier < vettedTier(vettedCount) ? "vendor-vetted" : (Number(vettedCount) || 0) >= 10 ? "locally-vetted" : "not-yet-vetted";
   const m = MODE_RANK[mode] ?? 0;

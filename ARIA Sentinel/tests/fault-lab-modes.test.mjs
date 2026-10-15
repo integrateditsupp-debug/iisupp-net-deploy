@@ -2,10 +2,10 @@
 // REAL main.mjs, and the MODE × LEVEL behaviour matrix WRITTEN FROM WHAT ACTUALLY HAPPENED (never hand-written):
 //   manual      — preview only: nothing changes on its own (every detection waits as an approval request), and the
 //                 preview channel (sentinel:run-recipe) logs a dry-run and changes nothing.
-//   confirmed   — unchanged by the rule: no notices. A vetted fix that needs a person asks ONCE (one approval); approve →
-//                 it runs through the same gates and changes EXACTLY its keys (or fails honestly); deny → identical.
-//                 (safe-auto: a vetted, user-space green fix runs on its own after the 10-s countdown — as before; a
-//                 not-yet-vetted one is held by the execution policy.)
+//   confirmed   — no notices. EVERY detection asks ONCE (one approval, one click on the globe card / Home row); approve →
+//                 it runs through the same gates and changes EXACTLY its keys (or fails honestly, or has nothing to apply);
+//                 deny → identical. (REVIEW P1-1, 2026-10-14 — the owner's decision: Confirmed asks once, every time, and
+//                 never executes unattended; it used to run a vetted green fix on its own and hold a not-yet-vetted one.)
 //   autonomous  — the advise-three-times rule (proven in depth by tests/fault-lab-autonomous.test.mjs).
 // Trust is a dimension of its own: every fault runs on a FRESH install (nothing vetted locally) and on a TRUSTED one (its
 // recipe has earned 12 vetted runs — Tier 1, the minimum the execution policy needs before anything runs unattended).
@@ -50,6 +50,7 @@ async function start(f, mode, opts = {}) {
 }
 
 /** What actually happened, in plain words — derived ONLY from the lab's observations of the real main process. */
+function matrixPhraseOf(lab, f, changed) { return describe(lab, f, changed); }
 function describe(lab, f, changed) {
   const notices = lab.audit().filter((r) => r.tag === "ADVISORY" && /^ADVISORY \d\/3: /.test(r.text) && r.recipeId === f.recipe).length;
   const autoFix = rows(lab, "AUTO-FIX").some((r) => r.recipeId === f.recipe);
@@ -100,20 +101,21 @@ for (const f of FAULTS) {
         assert.equal(notices, 0, `${label}: manual never escalates`);
       }
       // 2026-10-14 (defect 4) — EXPECTATIONS CHANGED ON PURPOSE for vendor-vetted recipes (dns-fail-v1, svc-dhcp-stopped-v1):
-      // a fresh install starts them at the Tier-1 floor, so they behave like the trusted column. Everything else is unchanged.
+      // a fresh install starts them at the Tier-1 floor, so they behave like the trusted column — in AUTONOMOUS only (review
+      // P1-1: the floor belongs to the advise-three-times track).
       const vendor = isVendorVetted(f.recipe);
       if (mode === "confirmed") {
-        assert.equal(notices, 0, `${label}: the rule is Autonomous-only — Confirmed is unchanged`);
+        // 2026-10-14 (review P1-1) — EXPECTATIONS CHANGED ON PURPOSE: Confirmed asks once, every time, and never executes
+        // unattended — for every fault, every colour, fresh or trusted, vendor-vetted or not. (It used to run a vetted green
+        // fix on its own after the countdown and silently hold a not-yet-vetted one.)
+        assert.equal(notices, 0, `${label}: the advise-three-times rule is Autonomous-only`);
         assert.equal(rows(s.lab, "AUTO-FIX").length, 0, `${label}: no advisory auto-fix in Confirmed`);
-        if (f.needsAdmin) {
-          const asks = s.lab.state().approvals.pending.filter((a) => a.recipeId === f.recipe).length;
-          if (trust === "trusted" || vendor) assert.equal(asks, 1, `${label}: a vetted fix that needs admin asks ONCE${vendor && trust === "fresh" ? " (vendor-vetted: the shipped catalogue is its floor)" : ""}`);
-          else assert.equal(asks, 0, `${label}: a not-yet-vetted one is held by the execution policy (no unattended path at all)`);
-          assert.deepEqual(changed, [], `${label}: and waits — nothing changed`);
-        }
-        // (defect 3) a not-resolved fault's DNS-symptom refresh is the only change an L3 fault may see — its root key never.
-        if (f.level === "L3" && f.path !== "auto-fix" && f.path !== "not-resolved") assert.deepEqual(changed, [], `${label}: L3 never changes anything on its own`);
-        if (trust === "fresh" && !vendor) assert.deepEqual(changed, [], `${label}: nothing unvetted ever runs unattended`);
+        const asks = s.lab.state().approvals.pending.filter((a) => a.recipeId === f.recipe);
+        assert.equal(asks.length, 1, `${label}: asked ONCE (one approval waits)`);
+        assert.equal(asks[0].reason, "confirmed-asks-once", `${label}: …because Confirmed asks once`);
+        assert.deepEqual(changed, [], `${label}: nothing changed without a yes`);
+        assert.equal(mutating(s.lab).length, 0, `${label}: nothing ran unattended`);
+        assert.equal(matrixPhraseOf(s.lab, f, changed), "asked once (an approval waits) — nothing changed", `${label}: the matrix row reads "asked once"`);
       }
       if (mode === "autonomous") {
         if (f.path === "escalate" || f.path === "guide-only") assert.deepEqual(changed, [], `${label}: identical`);
@@ -144,7 +146,9 @@ for (const f of FAULTS.filter((x) => x.path !== "guide-only")) {
 g();
 
 // ── 3 — confirmed: asks once; approve → exactly its keys (or an honest failure); deny → identical ─────────────────────
-for (const f of FAULTS.filter((x) => x.needsAdmin)) {
+// 2026-10-14 (review P1-1) — every fault asks once in Confirmed now, so EVERY fault's approve / deny is observed here (it
+// used to be the needs-admin ones only); the "When a person acts" table is therefore never "no approval asked".
+for (const f of FAULTS) {
   for (const decision of ["approve", "deny"]) {
     const s = await start(f, "confirmed", { vetted: TRUSTED });
     await s.lab.minutes(1);
@@ -160,16 +164,30 @@ for (const f of FAULTS.filter((x) => x.needsAdmin)) {
       assert.equal(mutating(s.lab).length, 0, `${label}: never executed`);
       (extra[f.id] ||= {}).deny = "deny → nothing changed";
     } else {
-      assert.ok(s.lab.machine.uacPrompts.length >= 1, `${label}: the approved run asked Windows (UAC) — the person's click`);
       keysWithin(changed, f, label);
-      if (f.resolved(s.lab.machine)) {
+      if (f.needsAdmin) assert.ok(s.lab.machine.uacPrompts.length >= 1, `${label}: the approved run asked Windows (UAC) — the person's click`);
+      else assert.equal(s.lab.machine.uacPrompts.length, 0, `${label}: a user-space fix never asks for elevation`);
+      const fixRows = rows(s.lab, "FIX").filter((x) => x.recipeId === f.recipe);
+      const notResolved = fixRows.some((x) => x.resolution === NOT_RESOLVED);
+      if (f.resolved(s.lab.machine) && changed.length) {
         const required = f.fixKeys.filter((k) => !(f.optionalKeys || []).includes(k));
         for (const k of required) assert.ok(changed.includes(k), `${label}: changed ${k}`);
         (extra[f.id] ||= {}).approve = `approve → fixed (${changed.join(", ")})`;
-      } else {
+      } else if (notResolved) {
+        assert.ok(!f.resolved(s.lab.machine), `${label}: not resolved is the truth`);
+        (extra[f.id] ||= {}).approve = `approve → ran; its check says the problem is still there → not resolved (${changed.length ? "changed: " + changed.join(", ") : "nothing changed"})`;
+      } else if (fixRows.some((x) => x.outcome === "failed")) {
         assert.deepEqual(changed, [], `${label}: an unfixable fault changes nothing`);
-        assert.ok(rows(s.lab, "FIX").some((x) => x.recipeId === f.recipe && x.outcome === "failed"), `${label}: reported as failed`);
-        (extra[f.id] ||= {}).approve = "approve → attempted with UAC, failed honestly (nothing changed)";
+        (extra[f.id] ||= {}).approve = `approve → attempted${f.needsAdmin ? " with UAC" : ""}, failed honestly (nothing changed)`;
+      } else if (rows(s.lab, "RESTORE PT", /restore point unavailable on this platform\/account — yellow-tier actions stay in preview/).some((x) => x.recipeId === f.recipe)) {
+        // a yellow fix on the standard token: no verified restore point → held in preview (never a change without one).
+        assert.deepEqual(changed, [], `${label}: a yellow fix without a restore point changes nothing`);
+        (extra[f.id] ||= {}).approve = "approve → held in preview: no restore point could be made on this account (nothing changed)";
+      } else {
+        // a guide or a red problem: nothing ARIA can apply — the approval previews it and changes nothing.
+        assert.deepEqual(changed, [], `${label}: a guide / red problem changes nothing`);
+        assert.equal(mutating(s.lab).length, 0, `${label}: nothing ran`);
+        (extra[f.id] ||= {}).approve = "approve → nothing ARIA can apply (a guide or a person's job) — nothing changed";
       }
     }
     clean(s.lab, label);
@@ -210,7 +228,7 @@ lines.push("# Mode × level behaviour matrix — ARIA Sentinel fault lab");
 lines.push("");
 lines.push(`Generated ${today} by \`tests/fault-lab-modes.test.mjs\` from ${scenarios} scenarios run on the simulated Windows machine (\`tests/lib/fault-lab.mjs\`) against the real \`src/main/main.mjs\` (booted by \`tests/lib/main-sandbox.mjs\`). Every cell is what the lab OBSERVED; the test run rewrites this file — it is never edited by hand.`);
 lines.push("");
-lines.push("Setup: live fixes ON · a business device with one IT contact · the advise-first interval at 3 minutes · nobody answering anything · 40 minutes of (virtual) time · Sentinel on the standard user token (administrator rights only through a UAC prompt a person answers). **fresh** = nothing vetted locally yet (a new install) — except that a **vendor-vetted** green recipe (it ships a gating verify probe and a declared inverse) starts at the Tier-1 floor; **trusted** = the fault's recipe has earned 12 vetted runs (Tier 1, the minimum the execution policy requires before anything runs unattended).");
+lines.push("Setup: live fixes ON · a business device with one IT contact · the advise-first interval at 3 minutes · nobody answering anything · 40 minutes of (virtual) time · Sentinel on the standard user token (administrator rights only through a UAC prompt a person answers). **fresh** = nothing vetted locally yet (a new install) — except that, on Autonomous mode's advise-three-times track, a **vendor-vetted** green recipe (it ships a gating verify probe and a declared inverse) starts at the Tier-1 floor; **trusted** = the fault's recipe has earned 12 vetted runs (Tier 1, the minimum the execution policy requires before anything runs unattended). **Confirmed asks once, every time, and never executes unattended** (review P1-1): every Confirmed cell is one approval waiting.");
 lines.push("");
 lines.push("## Mode × level");
 lines.push("");

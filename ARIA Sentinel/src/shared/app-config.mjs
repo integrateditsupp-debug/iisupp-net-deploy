@@ -21,7 +21,7 @@ export const SETUP_V1_STEPS = 6;     // the original six (kept so the v1 ids/ord
 export const AUTONOMY_LEVELS = Object.freeze(["observe", "safe-auto", "approve-first", "full-auto"]);
 export const AUTONOMY_LEVEL_COPY = Object.freeze({
   observe: { label: "Observe", consequence: "I find it, I tell you, I touch nothing." },
-  "safe-auto": { label: "Safe-auto", consequence: "I fix the safe things myself and tell you after." },
+  "safe-auto": { label: "Safe-auto", consequence: "I ask you once per fix, then fix it with you present." }, // REVIEW P1-1 — Confirmed asks once
   "approve-first": { label: "Approve-first", consequence: "I ask before every fix." },
   "full-auto": { label: "Full-auto", consequence: "I fix green and yellow inside your maintenance window and report." }
 });

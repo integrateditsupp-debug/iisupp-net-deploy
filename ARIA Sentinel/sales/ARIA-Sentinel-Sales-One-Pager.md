@@ -24,8 +24,8 @@ ARIA Sentinel replaces the wait. It already knows the fix.
 2. **Diagnoses** — answers from a **280-article knowledge base first, at $0**, instantly; falls through to the ARIA cloud brain only for novel questions, then to an offline brain if there is no connection. The user always gets an answer.
 3. **Fixes — under the person's control.** Applying fixes is off until the person turns it on. Then three modes:
    - **Manual** — ARIA explains the fix; the user runs it.
-   - **Confirmed** — ARIA proposes the fix as a one-click card; applies only on approval (10-second cancel window, Ctrl+Alt+K stops everything).
-   - **Autonomous** — ARIA applies low-risk fixes itself and tells you after; anything risky, and any step that needs administrator rights, asks first (a Windows UAC prompt — nothing runs unattended as administrator in 0.2.1).
+   - **Confirmed** — ARIA asks you once per fix: a one-click card, and it fixes it with you present after you say yes. It never fixes anything on its own (a fix you start yourself shows a 10-second cancel window; Ctrl+Alt+K stops everything).
+   - **Autonomous** — ARIA tells you three times, then fixes safe things itself (after a 10-second countdown you can cancel); anything risky, and any step that needs administrator rights, goes to your IT contact and waits for a yes (a Windows UAC prompt — nothing runs unattended as administrator in 0.2.1).
 4. **Hands off from the web** — a user on iisupp.net/aria clicks **"Resolve it for me" → "Open with ARIA Sentinel"** and the desktop app turns it into an approval request, then runs it through the same gates.
 5. **Approve from anywhere** — a fix that needs a yes shows up in the app, as a desktop notification and (when email is on) as an email with one-time Approve / Deny links.
 
@@ -79,7 +79,7 @@ ARIA Sentinel replaces the wait. It already knows the fix.
 
 ## Start
 
-- **30-day free trial** — full features, no card to start.
+- **30-day free trial** — every Pro feature, no card to start.
 - License unlocks instantly; no reinstall.
 - **Buy:** iisupp.net/plans · **Book a 15-minute demo:** ahmad.wasee@iisupp.net · (647) 581-3182
 

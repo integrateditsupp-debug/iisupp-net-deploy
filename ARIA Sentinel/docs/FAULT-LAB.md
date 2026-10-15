@@ -63,9 +63,17 @@ vetted runs** on this device. On a fresh install every recipe had 0, so the thir
    needsAdmin (a fix that needs administrator rights is still never run unattended — `svc-dhcp-stopped-v1` still goes to
    the IT contact in Autonomous) and red-never-automated.
 
+6. **Autonomous only** (review P1-1, 2026-10-14): the floor applies on ONE track — Autonomous mode's advise-three-times
+   rule (`track: "autonomous-advisory"`, passed by `advisoryTrackFor` and by that track's final step, source
+   `detection:advisory`). The owner's decision is that **Confirmed asks once, every time, and never executes
+   unattended**: in Confirmed every detection — every colour, vetted or not — is one approval request (one click on the
+   globe card / Home row), so the floor has nothing to unlock there. A person's click or approval runs a fresh (Tier-2)
+   fix in Confirmed exactly as before.
+
 So on a fresh install in Autonomous mode, `stale-dns` now gets 3 notices and then the fix (countdown first, then a
 verify that really resolves a name); a fix that needs administrator rights still gets 3 notices and then the IT contact;
 a green fix without a gating verify (`svc-dnscache-stopped-v1`) is still "not yet vetted" and goes to the IT contact.
+In Confirmed the same `stale-dns` waits as one approval — nothing runs until someone says yes.
 
 ### When the check after a fix fails: `not_resolved`
 

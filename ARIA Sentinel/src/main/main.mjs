@@ -139,7 +139,7 @@ import { sealAudit, verifyAudit } from "../shared/audit-integrity.mjs";
 import { createProcessDetector, IPC as PROC_HEALTH_IPC } from "./process-detectors.mjs";
 import { recommendAction } from "../shared/recommend-action.mjs";
 import { superviseProposal, supervisorAuditEntry, recipeSideEffects } from "./supervisor-agent.mjs";
-import { executionPolicy, recordOutcome, vettedCountOf, emptyHistory, vettedTier } from "./dry-run-policy.mjs";
+import { executionPolicy, recordOutcome, vettedCountOf, emptyHistory, vettedTier, VENDOR_FLOOR_TRACK } from "./dry-run-policy.mjs";
 import { createCountdown, createCountdownManager, shouldCountdown, countdownChatLine, countdownBannerText, COUNTDOWN_SECONDS } from "./action-countdown.mjs";
 // FAULT LAB 2026-10-14 — the vendor floor (defect 4) and the not_resolved outcome of a failed gating verify (defect 3).
 import { EXECUTABLE_RECIPES, YELLOW_RECIPES, isVendorVetted, NOT_RESOLVED } from "../shared/recipe-runner.mjs";
@@ -2649,9 +2649,11 @@ async function autoFireIfEligible(recipe, context = {}) {
     logEvent("KILL-SWITCH", `${advisoryRedact(recipeTitle(recipe.id))}: detected while ARIA is stopped — nothing runs and nothing is asked until you press Start ARIA.`, { recipeId: recipe.id });
     return;
   }
-  // RUN-CU / CU4 — the autonomy level from the Setup wizard governs unattended fixes alongside the legacy mode:
-  // safe-auto / full-auto may act on their own (green only here; evaluateAutoFire keeps yellow out), observe and
-  // approve-first never do (approve-first turns the detection into an approval request instead).
+  // RUN-CU / CU4 — the autonomy level from the Setup wizard governs unattended fixes alongside the legacy mode.
+  // REVIEW P1-1 (2026-10-14) — the owner's decision: Confirmed asks once, every time, and never executes unattended;
+  // unattended execution exists ONLY in Autonomous mode (the advise-three-times rule, and the guarded auto-fire below).
+  // So outside Autonomous: observe notes it, approve-first and Confirmed (safe-auto) turn the detection into ONE approval
+  // request (one click on the globe card / Home row) — whatever its colour and however vetted the recipe is.
   const auto = autonomyNow();
   // ADVISORY ESCALATION (2026-10-14) — "Never for this": the person opted this recipe out of fixing on its own, so on
   // this device it behaves as approve-first (an approval request, never an unattended run).
@@ -2660,10 +2662,11 @@ async function autoFireIfEligible(recipe, context = {}) {
   // first (a fix ARIA may make on its own → the auto-fix track; red / needs-admin / not-yet-vetted / needs-a-yes → the
   // IT-contact track). Everything the rule does not take falls through to the unchanged paths below.
   if (!autonomousPaused() && !agentBlocked() && considerAdvisory(recipe, context)) return;
-  const levelActs = auto.level === "safe-auto" || auto.level === "full-auto";
-  if (!(store.get("mode") === "autonomous" || levelActs) || autonomousPaused() || agentBlocked()) {
-    if (auto.level === "approve-first" && !agentBlocked() && !autonomousPaused()) {
-      approvals.request({ recipeId: recipe.id, title: recipe.title, color: recipeColor(recipe.id), tier: 2, requestedBy: "watcher", reason: "level-approve-first", source: "detection" });
+  const autonomous = store.get("mode") === "autonomous";
+  if (!autonomous || autonomousPaused() || agentBlocked()) {
+    if (!agentBlocked() && !autonomousPaused() && auto.level !== "observe") {
+      const reason = auto.level === "approve-first" ? "level-approve-first" : "confirmed-asks-once";
+      approvals.request({ recipeId: recipe.id, title: recipe.title, color: recipeColor(recipe.id), tier: vettedTierOf(recipe.id), requestedBy: "watcher", reason, source: "detection" });
       ensureApprovalPolling();
     }
     return;
@@ -2705,12 +2708,15 @@ async function autoFireIfEligible(recipe, context = {}) {
   void endpoint;
 }
 
-/** Vetted tier (0/1/2) of a recipe from the recipe-history ledger — with the vendor floor for a vendor-vetted GREEN fix. */
-function vettedTierOf(recipeId) {
+/**
+ * Vetted tier (0/1/2) of a recipe from the recipe-history ledger. The vendor floor for a vendor-vetted GREEN fix applies
+ * ONLY on the Autonomous advisory track (REVIEW P1-1): `track` is VENDOR_FLOOR_TRACK there and undefined everywhere else.
+ */
+function vettedTierOf(recipeId, track) {
   try {
     const id = String(recipeId || "");
     // FAULT LAB 2026-10-14 (defect 4) — the same rule executionPolicy() applies (dry-run-policy.mjs vettedTier).
-    return vettedTier(vettedCountOf(readRecipeHistory(), id), { color: recipeColor(id), vendorVetted: isVendorVetted(id) });
+    return vettedTier(vettedCountOf(readRecipeHistory(), id), { color: recipeColor(id), vendorVetted: isVendorVetted(id), track });
   } catch { return 2; }
 }
 
@@ -2800,7 +2806,7 @@ function advisoryTrackFor(recipe) {
   const color = recipeColor(id);
   const win = maintenanceWindowNow(id);
   // A yellow fix is only ever promised conditionally: a REAL restore point is made at the last step, never at notice time.
-  const decision = decideExecution({ level: auto.level, color, tier: vettedTierOf(id), approverMode: auto.approverMode, inWindow: win.within, hasRestorePoint: color === "yellow", killed: remediationKilled(), blocked: agentBlocked() });
+  const decision = decideExecution({ level: auto.level, color, tier: vettedTierOf(id, VENDOR_FLOOR_TRACK), approverMode: auto.approverMode, inWindow: win.within, hasRestorePoint: color === "yellow", killed: remediationKilled(), blocked: agentBlocked() });
   if (decision.action === "notify-only" && decision.reason === "red-never-automated") return { track: "tech-contact", kind: "red", color };
   if (decision.action !== "execute") return null;
   if (!recipeHasLiveSteps(id)) return null; // guide-only: nothing ARIA could apply on its own
@@ -2809,7 +2815,8 @@ function advisoryTrackFor(recipe) {
   if (color === "yellow" || !isGreenRecipe(id)) return { track: "tech-contact", kind: "needs-confirm", color };
   // FAULT LAB 2026-10-14 (defect 4) — a vendor-vetted green fix starts at the vendor floor (Tier 1), so on a fresh install
   // the third unanswered notice can end in the fix itself — still through every gate in runSupervisedFix.
-  const policy = executionPolicy({ vettedCount: vettedCountOf(readRecipeHistory(), id), vendorVetted: isVendorVetted(id), color, mode: "confirmed", dryRunCheckbox: store.get("keepSystemFixesDryRun"), supervisorVerdict: "approve", humanInitiated: false });
+  // (REVIEW P1-1: this track — and its final step, source "detection:advisory" — is the ONLY place the floor applies.)
+  const policy = executionPolicy({ vettedCount: vettedCountOf(readRecipeHistory(), id), vendorVetted: isVendorVetted(id), color, track: VENDOR_FLOOR_TRACK, mode: "confirmed", dryRunCheckbox: store.get("keepSystemFixesDryRun"), supervisorVerdict: "approve", humanInitiated: false });
   if (policy.dryRun) return null; // "keep every fix in preview" → the preview path, unchanged
   if (!policy.allowed) return { track: "tech-contact", kind: "not-yet-vetted", color };
   if (!isRecipeAllowedByPolicy(store.get("policyOverlay") || null, id)) return null;
@@ -2902,7 +2909,7 @@ async function advisoryAutoFix(rec) {
       return { ok: false, reason: "cooldown", until };
     }
     advisoryMachine.settle(rec.id, "held", `autofire-${guard.reason}`);
-    approvals.request({ recipeId: rec.recipeId, title: rec.title, color: rec.color, tier: vettedTierOf(rec.recipeId), requestedBy: "advisory", reason: `advisory-${guard.reason}`, source: "advisory" });
+    approvals.request({ recipeId: rec.recipeId, title: rec.title, color: rec.color, tier: vettedTierOf(rec.recipeId, VENDOR_FLOOR_TRACK), requestedBy: "advisory", reason: `advisory-${guard.reason}`, source: "advisory" });
     ensureApprovalPolling();
     logEvent("ADVISORY", `${rec.title}: not fixed on its own (${guard.reason}) — asked for a yes instead. Nothing was changed.`, { recipeId: rec.recipeId, advisoryId: rec.id });
     broadcastState();
@@ -2978,7 +2985,7 @@ function advisoryEscalate(rec, why = "unanswered") {
   // A fix a person CAN approve (needs admin · not yet vetted · needs a yes) also waits as an approval; red never runs.
   // A not-resolved fix already ran: asking to run the same fix again would only repeat it, so no approval is raised.
   if (rec.kind !== "red" && rec.color !== "red" && !notResolved) {
-    approvals.request({ recipeId: rec.recipeId, title: rec.title, color: rec.color, tier: vettedTierOf(rec.recipeId), requestedBy: "advisory", reason: `advisory-${rec.kind}`, source: "advisory" });
+    approvals.request({ recipeId: rec.recipeId, title: rec.title, color: rec.color, tier: vettedTierOf(rec.recipeId, VENDOR_FLOOR_TRACK), requestedBy: "advisory", reason: `advisory-${rec.kind}`, source: "advisory" });
     ensureApprovalPolling();
   }
   logEvent("ESCALATE", `ESCALATED to ${contacts ? "your IT contact" : "the device user (no IT contact configured)"} — ${reason}: ${rec.title}. ${notResolved ? "Nothing further was changed." : "Nothing was changed."}`, { recipeId: rec.recipeId, advisoryId: rec.id, kind: rec.kind, why });
@@ -2999,7 +3006,7 @@ function performAdvisoryEffects(effects = []) {
       else if (e.type === "auto-fix") advisoryAutoFix(rec).catch(() => undefined);
       else if (e.type === "escalate") advisoryEscalate(rec, e.why);
       else if (e.type === "snoozed") logEvent("ADVISORY", `Not now: ${rec.title} — snoozed until ${new Date(e.until).toISOString()}; nothing runs before then.`, meta);
-      else if (e.type === "never") { logEvent("ADVISORY", `Never for this: ${rec.title} — ARIA will not fix this on its own on this device again; it asks for a yes instead (approve-first).`, meta); if (rec.color !== "red") { approvals.request({ recipeId: rec.recipeId, title: rec.title, color: rec.color, tier: vettedTierOf(rec.recipeId), requestedBy: "advisory", reason: "never-for-this", source: "advisory" }); ensureApprovalPolling(); } }
+      else if (e.type === "never") { logEvent("ADVISORY", `Never for this: ${rec.title} — ARIA will not fix this on its own on this device again; it asks for a yes instead (approve-first).`, meta); if (rec.color !== "red") { approvals.request({ recipeId: rec.recipeId, title: rec.title, color: rec.color, tier: vettedTierOf(rec.recipeId, VENDOR_FLOOR_TRACK), requestedBy: "advisory", reason: "never-for-this", source: "advisory" }); ensureApprovalPolling(); } }
       else if (e.type === "frozen") logEvent("ADVISORY", `Paused at notice ${rec.advisory}/${rec.of}: ${rec.title} (${e.reason}) — nothing advances until this clears.`, { ...meta, frozen: e.reason });
       else if (e.type === "unfrozen") logEvent("ADVISORY", `Resumed at notice ${rec.advisory}/${rec.of}: ${rec.title} — the remaining time was kept.`, meta);
       else if (e.type === "resumed") logEvent("ADVISORY", `ADVISORY ${e.n}/${rec.of} resumed after restart: ${rec.title} — the next step waits at least ${advisoryPrefsNow().intervalMinutes} min.`, { ...meta, resumed: true, was: e.was });
@@ -3623,7 +3630,10 @@ async function runSupervisedFix(payload = {}) {
   // FAULT LAB 2026-10-14 (defect 4) — the vendor floor applies to a GREEN fix only; a fix the supervisor flagged high-risk
   // (needsConfirm → treated as yellow below) never takes it.
   const policyColor = verdict.supervisorEvidence && verdict.supervisorEvidence.needsConfirm ? "yellow" : recipeColor(recipeId);
-  const policy = executionPolicy({ vettedCount: vettedCountOf(history, recipeId), vendorVetted: isVendorVetted(recipeId), color: policyColor, mode, dryRunCheckbox: store.get("keepSystemFixesDryRun"), supervisorVerdict: verdict.verdict, humanInitiated, approved });
+  // REVIEW P1-1 — the vendor floor is the Autonomous advisory track's alone: only its final step (source
+  // "detection:advisory") names VENDOR_FLOOR_TRACK; every other caller is judged on the local count (Confirmed never
+  // executes unattended — it asks once, so a person's click or approval is what allows a fresh Tier-2 fix here).
+  const policy = executionPolicy({ vettedCount: vettedCountOf(history, recipeId), vendorVetted: isVendorVetted(recipeId), color: policyColor, track: source === "detection:advisory" ? VENDOR_FLOOR_TRACK : undefined, mode, dryRunCheckbox: store.get("keepSystemFixesDryRun"), supervisorVerdict: verdict.verdict, humanInitiated, approved });
   // The consent gate folds into the policy's dry-run so the renderer sees ONE truth: policy.dryRun === false
   // means "this will change the device". Without live fixes on, a human run is an honest preview.
   if (!policy.dryRun && globalDryRun()) { policy.dryRun = true; policy.execute = false; policy.heldBy = "live-fixes-off"; policy.copy = liveFixesStatus().enabled ? "Preview only — the global dry-run safety is on for this device." : "Preview only — live fixes are off. Turn them on in Settings → Fixes to apply this for real."; }
@@ -3669,7 +3679,21 @@ async function runSupervisedFix(payload = {}) {
     // A person who clicked "Resolve it for me" on their OWN device (approver = self) IS the approver: the visible,
     // abortable 10s countdown is that approval — exactly today's consent model. Admin/either approver modes
     // still route to an approval request so the named approver decides.
-    if (decision.action === "request-approval" && humanInitiated && auto.approverMode === "self" && decision.reason !== "restore-point-unavailable") {
+    // REVIEW P1-1 — in Confirmed that click IS the "once" in "asks once": the fix runs with the person present. A red
+    // problem is never self-approved: it needs a person — said plainly, nothing changed (as in every other mode).
+    if (decision.action === "request-approval" && decision.reason === "confirmed-asks-once" && color === "red" && humanInitiated) {
+      decision = { ...decision, action: "notify-only", reason: "red-never-automated" };
+    }
+    if (decision.action === "request-approval" && humanInitiated && auto.approverMode === "self" && decision.reason !== "restore-point-unavailable" && color !== "red") {
+      // REVIEW P1-1 — when Confirmed already asked about this fix (one pending approval for this recipe), this click IS
+      // the yes to THAT ask: it is approved (audited, the approval replaces the countdown) — one record, one run, never
+      // a second run later from the same ask. With no ask open, the visible countdown is the yes (as before).
+      const open = approvals.pending().find((a) => a && a.recipeId === recipeId);
+      if (open) {
+        const r = await approvals.approve(open.id, { decidedBy: "self", channel: String(source || "app").slice(0, 20) });
+        if (!r.ok) return { ok: false, verdict: r.reason === "kill-gate" ? "blocked" : "approval-failed", reason: r.gate || r.reason, approvalId: open.id, countdown: false, copy: r.reason === "kill-gate" ? describeDecision({ action: "blocked", reason: killGateDecisionReason() }) : "That approval could not be applied — nothing was changed." };
+        return { ...(r.result || {}), approvedPending: true, approvalId: open.id };
+      }
       decision = { ...decision, action: "execute", reason: `${decision.reason}:self-approved-by-countdown`, notifyAfter: true, forceCountdown: true };
     }
   }

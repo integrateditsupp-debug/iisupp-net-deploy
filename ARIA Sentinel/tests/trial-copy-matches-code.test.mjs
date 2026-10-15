@@ -52,11 +52,13 @@ assert.ok(Math.abs(trialFractionLeft(active) - 9.5 / 30) < 1e-9); assert.equal(t
 t();
 
 // 3 — the sentences: never "undefined", always the real number / date, and the free floor named plainly.
+// 2026-10-14 (review P2-9) — EXPECTATIONS CHANGED ON PURPOSE: the trial unlocks the Pro plan (TRIAL_PLAN = "pro"), so the
+// copy says "every Pro feature", never "every feature" (business-tier features are not part of the trial).
 for (const [gate, re] of [
-  [active, /^Trial active · 10 days left \(ends .*\) — every feature is unlocked\.$/],
+  [active, /^Trial active · 10 days left \(ends .*\) — every Pro feature is unlocked\.$/],
   [{ licensed: true, plan: "pro" }, /^Licensed · pro\.$/],
   [{ trial: { state: "expired", endsAt: new Date(NOW - DAY_MS).toISOString(), days: 30 } }, /^Your 30-day trial ended .*\. Dashboard, ARIA chat, Manual mode and Settings keep working\. Subscribe to unlock/],
-  [{}, /^Manual mode \(free\)\. Start a 30-day trial of every feature/]
+  [{}, /^Manual mode \(free\)\. Start a 30-day trial of every Pro feature/]
 ]) {
   const line = licenseStatusLine({}, gate, NOW);
   assert.match(line, re); assert.doesNotMatch(line, /undefined|NaN/);
@@ -64,7 +66,9 @@ for (const [gate, re] of [
 assert.equal(trialBadgeText(active), "Trial · 9d 12h left"); assert.equal(trialBadgeText({ trial: { state: "expired" } }), "Trial ended"); assert.equal(trialBadgeText({ licensed: true }), "Licensed"); assert.equal(trialBadgeText({}), "Free");
 assert.equal(trialBadgeText({ trial: { state: "active", endsAt } }, NOW), "Trial · 10d left", "no badge from main → a real count, never undefined");
 assert.match(accountStatusLine({ trial: { state: "expired" } }), /Trial ended — choose a plan to unlock the rest\. Manual mode and ARIA chat keep working\./);
-assert.match(wizardTrialLine(active, NOW), /already running — 10 days left/); assert.match(wizardTrialLine({}), /free 30-day trial of every feature starts the first time ARIA runs/);
+assert.match(wizardTrialLine(active, NOW), /already running — 10 days left/); assert.match(wizardTrialLine({}), /free 30-day trial of every Pro feature starts the first time ARIA runs/);
+assert.match(wizardTrialLine(active, NOW), /Every Pro feature is unlocked while it runs/);
+for (const g of [active, {}]) for (const line of [licenseStatusLine({}, g, NOW), wizardTrialLine(g, NOW)]) assert.doesNotMatch(line, /\bevery feature\b/i, "never 'every feature' for a Pro trial");
 assert.match(freeFloorLine({ walkthroughEntitled: true }), /Walk-Through is yours to keep/); assert.doesNotMatch(freeFloorLine({}), /Walk-Through/);
 t();
 

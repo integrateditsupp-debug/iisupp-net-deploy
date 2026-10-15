@@ -143,35 +143,49 @@ await group("fresh install, Confirmed: a vendor-vetted admin fix waits as ONE ap
 });
 
 // ── 5 — the pure rule ───────────────────────────────────────────────────────────────────────────────────────────────────
-await group("pure policy: the vendor floor is green-only, explicit, and the old truth table is unchanged without it", async () => {
-  const { vettedTier, executionPolicy } = policyMod;
+// 2026-10-14 (review P1-1) — EXPECTATIONS CHANGED ON PURPOSE: the floor applies ONLY on the Autonomous advisory track
+// (track: VENDOR_FLOOR_TRACK). The owner's decision — "Confirmed asks once, every time; it never executes unattended" —
+// means the floor can no longer let a fresh install's green fix run on its own in Confirmed; without the track every
+// answer is the local count alone (exactly the pre-floor truth table).
+await group("pure policy: the vendor floor is green-only, explicit, Autonomous-advisory-only, and the old truth table is unchanged without it", async () => {
+  const { vettedTier, executionPolicy, VENDOR_FLOOR_TRACK } = policyMod;
+  const track = VENDOR_FLOOR_TRACK;
+  assert.equal(track, "autonomous-advisory", "the one track the floor applies to");
   assert.equal(policyMod.VENDOR_VETTED_TIER, 1, "the floor is Tier 1");
   // unchanged without the flag (dry-run-policy.test.mjs / fresh-install-resolve.test.mjs pin the same)
   assert.equal(vettedTier(0), 2); assert.equal(vettedTier(10), 1); assert.equal(vettedTier(100), 0);
-  assert.equal(vettedTier(0, { color: "green" }), 2, "colour alone is not vetting");
-  assert.equal(vettedTier(0, { vendorVetted: true }), 2, "the flag alone (no colour) is not enough");
-  // the floor — green only
-  assert.equal(vettedTier(0, { color: "green", vendorVetted: true }), 1, "vendor-vetted green → Tier 1 from run 0");
-  assert.equal(vettedTier(0, { color: "yellow", vendorVetted: true }), 2, "yellow never takes the floor");
-  assert.equal(vettedTier(0, { color: "red", vendorVetted: true }), 2, "red never takes the floor");
+  assert.equal(vettedTier(0, { color: "green", track }), 2, "colour alone is not vetting");
+  assert.equal(vettedTier(0, { vendorVetted: true, track }), 2, "the flag alone (no colour) is not enough");
+  assert.equal(vettedTier(0, { color: "green", vendorVetted: true }), 2, "no track (Confirmed, an approval, a person's click) → no floor");
+  assert.equal(vettedTier(0, { color: "green", vendorVetted: true, track: "confirmed" }), 2, "any other track → no floor");
+  // the floor — green only, on the advisory track only
+  assert.equal(vettedTier(0, { color: "green", vendorVetted: true, track }), 1, "vendor-vetted green on the advisory track → Tier 1 from run 0");
+  assert.equal(vettedTier(0, { color: "yellow", vendorVetted: true, track }), 2, "yellow never takes the floor");
+  assert.equal(vettedTier(0, { color: "red", vendorVetted: true, track }), 2, "red never takes the floor");
   // local counters still raise trust and still gate yellow
-  assert.equal(vettedTier(150, { color: "green", vendorVetted: true }), 0, "100+ local runs still reach Tier 0");
-  assert.equal(vettedTier(12, { color: "yellow", vendorVetted: true }), 1, "yellow earns Tier 1 only locally");
-  // executionPolicy: a fresh, unattended, vendor-vetted green fix is ALLOWED in Confirmed — countdown + supervisor still required
-  let p = executionPolicy({ vettedCount: 0, color: "green", vendorVetted: true, mode: "confirmed", supervisorVerdict: "approve", humanInitiated: false });
+  assert.equal(vettedTier(150, { color: "green", vendorVetted: true, track }), 0, "100+ local runs still reach Tier 0");
+  assert.equal(vettedTier(12, { color: "yellow", vendorVetted: true, track }), 1, "yellow earns Tier 1 only locally");
+  // executionPolicy on the advisory track: a fresh, unattended, vendor-vetted green fix is ALLOWED — countdown + supervisor still required
+  let p = executionPolicy({ vettedCount: 0, color: "green", vendorVetted: true, track, mode: "confirmed", supervisorVerdict: "approve", humanInitiated: false });
   assert.equal(p.tier, 1); assert.equal(p.allowed, true); assert.equal(p.execute, true); assert.equal(p.trust, "vendor-vetted");
   assert.equal(p.requiresCountdown, true, "the countdown still applies"); assert.equal(p.canAutoFire, false, "Tier 1 never auto-fires");
   assert.equal(p.requiresSupervisor, true);
+  // …the same fix OFF the advisory track (Confirmed's unattended path) is the old refusal: Confirmed asks once instead.
+  p = executionPolicy({ vettedCount: 0, color: "green", vendorVetted: true, mode: "confirmed", supervisorVerdict: "approve", humanInitiated: false });
+  assert.equal(p.tier, 2); assert.equal(p.allowed, false, "no track → no unattended run on a fresh install"); assert.equal(p.trust, "not-yet-vetted");
+  // …and a person's click / an approval still runs it in Confirmed (Tier 2 + a person), floor or not.
+  assert.equal(executionPolicy({ vettedCount: 0, color: "green", vendorVetted: true, mode: "confirmed", supervisorVerdict: "approve", approved: true }).allowed, true);
   // …but not with a veto, not in preview, not for yellow, and not without the flag (the old answer)
-  assert.equal(executionPolicy({ vettedCount: 0, color: "green", vendorVetted: true, mode: "confirmed", supervisorVerdict: "veto" }).execute, false, "a supervisor veto still blocks");
-  assert.equal(executionPolicy({ vettedCount: 0, color: "green", vendorVetted: true, mode: "confirmed", dryRunCheckbox: true, supervisorVerdict: "approve" }).execute, false, "the preview switch still wins");
-  assert.equal(executionPolicy({ vettedCount: 0, color: "yellow", vendorVetted: true, mode: "confirmed", supervisorVerdict: "approve" }).allowed, false, "yellow: still refused unattended");
+  assert.equal(executionPolicy({ vettedCount: 0, color: "green", vendorVetted: true, track, mode: "confirmed", supervisorVerdict: "veto" }).execute, false, "a supervisor veto still blocks");
+  assert.equal(executionPolicy({ vettedCount: 0, color: "green", vendorVetted: true, track, mode: "confirmed", dryRunCheckbox: true, supervisorVerdict: "approve" }).execute, false, "the preview switch still wins");
+  assert.equal(executionPolicy({ vettedCount: 0, color: "yellow", vendorVetted: true, track, mode: "confirmed", supervisorVerdict: "approve" }).allowed, false, "yellow: still refused unattended");
   p = executionPolicy({ vettedCount: 0, mode: "confirmed", supervisorVerdict: "approve" });
   assert.equal(p.allowed, false, "no flag → the pre-existing refusal (unchanged)"); assert.equal(p.trust, "not-yet-vetted");
   assert.equal(executionPolicy({ vettedCount: 12, mode: "confirmed", supervisorVerdict: "approve" }).trust, "locally-vetted");
   // the approval policy is untouched by the floor: red is never automated, admin is decided downstream (needsAdmin)
   assert.equal(decideExecution({ level: "full-auto", color: "red", tier: 1 }).action, "notify-only");
   assert.equal(decideExecution({ level: "observe", color: "green", tier: 1 }).action, "notify-only");
+  assert.equal(decideExecution({ level: "safe-auto", color: "green", tier: 0 }).action, "request-approval", "Confirmed asks once even at Tier 0 (review P1-1)");
   assert.equal(decideExecution({ level: "full-auto", color: "green", tier: 1, killed: true }).action, "blocked", "the kill switch still blocks");
 });
 
@@ -202,8 +216,12 @@ await group("wiring + docs: main passes vendorVetted + colour everywhere; FAULT-
   const main = fs.readFileSync(path.join(root, "src", "main", "main.mjs"), "utf8");
   const calls = main.match(/executionPolicy\(\{[^}]*\}\)/g) || [];
   assert.ok(calls.length >= 2, "executionPolicy is called from the advisory track and the supervised pipeline");
-  for (const c of calls) assert.match(c, /vendorVetted: isVendorVetted\([^)]*\), color(?:: \w+)?,/, `every executionPolicy call passes the floor inputs: ${c.slice(0, 120)}`);
-  assert.match(main, /function vettedTierOf\(recipeId\) \{[\s\S]{0,400}vettedTier\(vettedCountOf\(readRecipeHistory\(\), id\), \{ color: recipeColor\(id\), vendorVetted: isVendorVetted\(id\) \}\)/, "vettedTierOf applies the same floor");
+  // 2026-10-14 (review P1-1) — EXPECTATION CHANGED ON PURPOSE: every call passes the floor inputs AND the track; the track
+  // is VENDOR_FLOOR_TRACK only on the advisory track (advisoryTrackFor) and its final step (source "detection:advisory").
+  for (const c of calls) assert.match(c, /vendorVetted: isVendorVetted\([^)]*\), color(?:: \w+)?, track: /, `every executionPolicy call passes the floor inputs + the track: ${c.slice(0, 140)}`);
+  assert.ok(calls.some((c) => /track: VENDOR_FLOOR_TRACK, mode: "confirmed"/.test(c)), "the advisory track names the floor's track");
+  assert.ok(calls.some((c) => /track: source === "detection:advisory" \? VENDOR_FLOOR_TRACK : undefined/.test(c)), "the supervised pipeline names it ONLY for the advisory final step");
+  assert.match(main, /function vettedTierOf\(recipeId, track\) \{[\s\S]{0,400}vettedTier\(vettedCountOf\(readRecipeHistory\(\), id\), \{ color: recipeColor\(id\), vendorVetted: isVendorVetted\(id\), track \}\)/, "vettedTierOf applies the same floor, track-scoped");
   const doc = fs.readFileSync(path.join(root, "docs", "FAULT-LAB.md"), "utf8");
   for (const re of [/vendor-vetted/i, /floor for green only/i, /gating verify probe/i, /rollback \/ inverse/i, /Yellow\*\* never takes the floor/, /Red\*\* never runs on its own/, /local counters stay/i, /No other gate moves/]) assert.match(doc, re, `FAULT-LAB.md: ${re}`);
 });

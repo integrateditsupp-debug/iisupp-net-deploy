@@ -1095,7 +1095,7 @@ function renderApprovals(next) {
 }
 const AUTONOMY_CARDS = [
   { id: "observe", label: "Observe", consequence: "I find it, I tell you, I touch nothing." },
-  { id: "safe-auto", label: "Safe-auto", consequence: "I fix the safe things myself and tell you after." },
+  { id: "safe-auto", label: "Safe-auto", consequence: "I ask you once per fix, then fix it with you present." }, // REVIEW P1-1 — Confirmed asks once, every time
   { id: "approve-first", label: "Approve-first", consequence: "I ask before every fix." },
   { id: "full-auto", label: "Full-auto", consequence: "I fix green and yellow inside your maintenance window and report." }
 ];
@@ -1103,7 +1103,7 @@ const AUTONOMY_CARDS = [
 function autonomyCardsHtml(selected, idPrefix = "autonomy") {
   const live = Boolean(liveFixesCache && liveFixesCache.enabled);
   const fixNote = live ? "" : " (previews only until Live fixes are on)";
-  return AUTONOMY_CARDS.map((c) => `<button type="button" class="autonomy-card${c.id === selected ? " selected" : ""}" data-${idPrefix}-level="${c.id}"><b>${escapeHtml(c.label)}</b><span>${escapeHtml(c.consequence)}${c.id === "safe-auto" || c.id === "full-auto" ? escapeHtml(fixNote) : ""}</span><em>${c.id === "full-auto" ? "needs opt-in + restore point" : c.id === "observe" ? "nothing ever changes" : c.id === "safe-auto" ? "green only · tells you after" : "every fix waits for a yes"}</em></button>`).join("");
+  return AUTONOMY_CARDS.map((c) => `<button type="button" class="autonomy-card${c.id === selected ? " selected" : ""}" data-${idPrefix}-level="${c.id}"><b>${escapeHtml(c.label)}</b><span>${escapeHtml(c.consequence)}${c.id === "safe-auto" || c.id === "full-auto" ? escapeHtml(fixNote) : ""}</span><em>${c.id === "full-auto" ? "needs opt-in + restore point" : c.id === "observe" ? "nothing ever changes" : c.id === "safe-auto" ? "asks once per fix · one-click approve" : "every fix waits for a yes"}</em></button>`).join("");
 }
 function renderAutonomyBadge(next) {
   const cur = qs("#autonomyCurrent");
@@ -1487,7 +1487,7 @@ const ONBOARD_STEPS = [
   // (audit R11) honest about the globe: it moves to the top of your screen when it needs you; Manual mode keeps it click-through.
   { kicker: "Welcome", title: "Meet the globe", body: "A calm gold globe sits on your desktop. It is ARIA Sentinel — resident IT support that keeps watching while you work. When it needs you it moves to the top of your screen; click it, or press Ctrl+Alt+G to bring it forward.", state: "idle" },
   { kicker: "Always on", title: "It watches quietly", body: "ARIA watches for disk, service, network, crash, performance and event-log problems on this device. It stays calm until something needs attention.", state: "diagnosing" },
-  { kicker: "Your call", title: "You're in control", body: "Manual mode walks you through fixes in chat. Nothing is applied automatically unless you choose Confirmed or Autonomous — and nothing changes at all until Live fixes are on (Settings → Autonomy).", state: "fixing" },
+  { kicker: "Your call", title: "You're in control", body: "Manual mode walks you through fixes in chat. Confirmed asks you once per fix; only Autonomous ever fixes on its own (after telling you three times) — and nothing changes at all until Live fixes are on (Settings → Autonomy).", state: "fixing" },
   { kicker: "Even on a blue screen", title: "Even on a blue screen", body: "BSOD recovery stays live even when ARIA is paused. Press F8 → Recovery menu → ARIA.", state: "escalation" },
   {
     kicker: "First run", title: "Windows protected your PC", body: "Windows may show 'Windows protected your PC' because ARIA is newly published. Click More info → Run anyway. This is expected until code signing reputation builds — it's not a problem with the app.", state: "idle",
@@ -2134,7 +2134,7 @@ function openPlanModal() {
   const st = trialState(gate);
   setText("planModalKicker", st === "expired" ? "Trial ended" : "Plans");
   setText("planModalTitle", st === "expired" ? "Your ARIA trial has ended" : "Choose an ARIA Sentinel plan");
-  setText("planModalSub", st === "expired" ? "Choose your tier to keep every feature running on this machine. Manual mode and ARIA chat keep working either way." : st === "active" ? `Every feature is unlocked during your ${trialDays(gate)}-day trial. Subscribe now to keep it that way.` : "Choose the tier that fits — your key unlocks the matching features on this machine.");
+  setText("planModalSub", st === "expired" ? "Choose your tier to keep every feature running on this machine. Manual mode and ARIA chat keep working either way." : st === "active" ? `Every Pro feature is unlocked during your ${trialDays(gate)}-day trial. Subscribe now to keep it that way.` : "Choose the tier that fits — your key unlocks the matching features on this machine.");
   renderPlanModalPrices();
   const pm = qs("#planModal");
   if (pm) { pm.hidden = false; planModalShown = true; setTimeout(() => qs("#planModal .plan-subscribe")?.focus(), 30); }
@@ -3437,7 +3437,7 @@ const SETUP_STEPS = [
   { kicker: "License", title: "Activate or start a trial", id: "setup-license", body: () => `<p class="setup-lead">${escapeHtml(wizardTrialLine((state && state.gate) || {}))}</p><input id="setupLicense" placeholder="Paste license key (optional)" aria-label="License key (optional)" autocomplete="off" value="${escapeHtml(setupLocal.licenseKey)}" /><div class="button-row"><button type="button" class="ghost" id="setupVerifyLicense">Verify key now</button></div><p class="setup-inline-status" id="setupLicenseStatus">${escapeHtml(setupLocal.licenseVerified || "")}</p>` },
   { kicker: "Mode", title: "Choose your default mode", body: () => `<p class="setup-lead">Manual is recommended — ARIA previews fixes before doing anything. You can change this anytime.</p>
     <label class="setup-radio"><input type="radio" name="setupMode" value="manual" ${setupPrefs.mode === "manual" ? "checked" : ""}/> <b>Manual</b> — preview only (recommended)</label>
-    <label class="setup-radio"><input type="radio" name="setupMode" value="confirmed" ${setupPrefs.mode === "confirmed" ? "checked" : ""}/> <b>Confirmed</b> — execute after a 10s countdown (needs Live fixes on)</label>` },
+    <label class="setup-radio"><input type="radio" name="setupMode" value="confirmed" ${setupPrefs.mode === "confirmed" ? "checked" : ""}/> <b>Confirmed</b> — asks you once per fix, then fixes it with you present (needs Live fixes on)</label>` },
   { kicker: "ARIA Chat", title: "ARIA Chat", body: () => `<p class="setup-lead">ARIA Chat lives in the ARIA tab (left panel) — or press Ctrl+Alt+A anytime.</p><label class="setup-check"><input type="checkbox" id="setupLand" ${setupPrefs.landOnAria ? "checked" : ""}/> Open the ARIA tab when Sentinel starts</label>` },
   { kicker: "Notifications", title: "Notifications", body: () => `<label class="setup-check"><input type="checkbox" id="setupKbNotif" ${setupPrefs.kbNotifications ? "checked" : ""}/> Tell me when ARIA learns new fixes</label><label class="setup-check"><input type="checkbox" id="setupTray" ${setupPrefs.trayIcon ? "checked" : ""}/> Show the system-tray icon</label>` },
   // (audit R8) this mid-way checkpoint no longer says "all set" — only the LAST screen does.

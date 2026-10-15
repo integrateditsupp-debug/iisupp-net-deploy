@@ -20,6 +20,10 @@ deploy. It is still an **unsigned** Windows build (see "What is NOT in this rele
   through the normal Windows UAC prompt, each time; nothing runs unattended as administrator. The "Resolve it for
   me" buttons, voice "yes", approval links and Control Center → Approve all go through the same gated pipeline on a
   fresh install (no more "Couldn't start this fix").
+- **Confirmed asks once — every time.** In Confirmed mode every problem ARIA finds waits as one approval (one click
+  on the globe card or the Home row) and is fixed with you present after you say yes — never on its own, whatever its
+  colour or however proven the fix is. Only Autonomous mode fixes anything unattended, and only after telling you three
+  times (Settings already said "applies the fix only after you approve"; the code now does exactly that).
 - **Honest results.** A fix that Windows refused is reported as *failed — needs administrator*, never as "already
   healthy". The Dashboard's fix count and the quarterly PDF count only fixes that actually ran and verified — a
   preview is a preview, and a chat answer is not a resolved incident. The SLA tab, uptime bars and health score

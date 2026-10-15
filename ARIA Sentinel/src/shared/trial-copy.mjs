@@ -72,13 +72,14 @@ export function licenseStatusLine(license = {}, gate = {}, now = Date.now()) {
     const left = trialDaysLeft(gate, now);
     const ends = trialEndsAt(gate);
     const when = ends ? ` (ends ${fmtDate(ends)})` : "";
-    return left == null ? `Trial active — every feature is unlocked${when}.` : `Trial active · ${plural(left, "day")} left${when} — every feature is unlocked.`;
+    // REVIEW P2-9 (2026-10-14) — the trial unlocks the PRO plan (license-plan TRIAL_PLAN), not every tier's features.
+    return left == null ? `Trial active — every Pro feature is unlocked${when}.` : `Trial active · ${plural(left, "day")} left${when} — every Pro feature is unlocked.`;
   }
   if (state === "expired") {
     const ends = trialEndsAt(gate);
     return `Your ${days}-day trial ended${ends ? " " + fmtDate(ends) : ""}. ${freeFloorLine(gate)} Subscribe to unlock Confirmed + Autonomous fixes, recipes, reports and the rest.`;
   }
-  return `Manual mode (free). Start a ${days}-day trial of every feature — Confirmed + Autonomous fixes, recipes and reports.`;
+  return `Manual mode (free). Start a ${days}-day trial of every Pro feature — Confirmed + Autonomous fixes, recipes and reports.`;
 }
 
 /** The top-bar / account chip text. */
@@ -130,10 +131,10 @@ export function wizardTrialLine(gate = {}, now = Date.now()) {
   if (state === "active") {
     const left = trialDaysLeft(gate, now);
     const ends = trialEndsAt(gate);
-    return `Your free ${days}-day trial is already running${left != null ? ` — ${plural(left, "day")} left` : ""}${ends ? ` (ends ${fmtDate(ends)})` : ""}. Every feature is unlocked while it runs. Paste a license key if you have one, or skip this — you can add it later in Settings.`;
+    return `Your free ${days}-day trial is already running${left != null ? ` — ${plural(left, "day")} left` : ""}${ends ? ` (ends ${fmtDate(ends)})` : ""}. Every Pro feature is unlocked while it runs. Paste a license key if you have one, or skip this — you can add it later in Settings.`;
   }
   if (state === "expired") return `Your ${days}-day trial has ended. Paste a license key to unlock everything, or skip this — Manual mode and ARIA chat keep working.`;
-  return `A free ${days}-day trial of every feature starts the first time ARIA runs. Paste a license key if you have one, or skip this — you can add it later in Settings.`;
+  return `A free ${days}-day trial of every Pro feature starts the first time ARIA runs. Paste a license key if you have one, or skip this — you can add it later in Settings.`;
 }
 
 /** Fraction of the trial remaining (0..1), from the gate's own numbers — never a hard-coded duration. */
