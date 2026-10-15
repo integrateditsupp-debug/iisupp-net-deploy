@@ -106,6 +106,10 @@ deploy. It is still an **unsigned** Windows build (see "What is NOT in this rele
   re-registers instead.
 - Restore points need an account that can create them; where Windows refuses, the fix is held in preview and the
   app says why.
+- **Who can say yes:** the approver-email setting records who should say yes but does not yet block the device user
+  from approving locally. Choosing "a tech contact / approver email" sends that person the approval request, yet the
+  person at the device can still approve the same fix in the app (Approve on the Home row or in Control Center →
+  Approvals, or a voice "yes").
 - The trial starts on first launch; the licence key makes it irrelevant. The server's record of a device is keyed by
   a hash of its computer name, so two computers with the same name share one trial start (the earlier one), and a
   device kept fully offline whose every local record is deleted can still start a second trial.
