@@ -1202,13 +1202,13 @@ body.low-power .countdown-card { animation: none; }
 .home-row:first-of-type { border-top: 0; }
 .home-row .home-time { color: var(--aria-text-muted); font-family: var(--aria-font-mono); font-size: 11px; padding-top: 2px; }
 .home-row .home-icon { font-size: 14px; }
-.home-row.did-applied, .home-row.did-verified, .home-row.did-previewed, .home-row.did-unverified, .home-row.did-failed, .home-row.did-stopped, .home-row.did-cancelled, .home-row.did-ticket { grid-template-columns: 52px 18px minmax(0, 1fr) auto; align-items: center; }
+.home-row.did-applied, .home-row.did-verified, .home-row.did-previewed, .home-row.did-unverified, .home-row.did-not-resolved, .home-row.did-failed, .home-row.did-stopped, .home-row.did-cancelled, .home-row.did-ticket { grid-template-columns: 52px 18px minmax(0, 1fr) auto; align-items: center; }
 .home-text { min-width: 0; display: grid; gap: 2px; }
 .home-text strong { font-weight: 600; overflow-wrap: anywhere; }
 .home-text small { color: var(--aria-text-muted); font-size: 11.5px; }
 .home-status { color: var(--aria-text-muted); font-style: normal; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; }
 .did-verified .home-status { color: var(--aria-status-green); }
-.did-failed .home-status, .did-stopped .home-status { color: var(--aria-error); }
+.did-failed .home-status, .did-stopped .home-status, .did-not-resolved .home-status { color: var(--aria-error); }
 .did-previewed .home-status { color: var(--aria-text-2); }
 /* actions sit on their own line under the sentence, so the sentence never squashes into a single-word column */
 .home-actions { grid-column: 2; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-start; }

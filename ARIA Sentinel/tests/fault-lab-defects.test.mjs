@@ -19,6 +19,7 @@ import { evaluateServices, IDLE_NORMAL_SERVICES } from "../src/sub-agents/detect
 import { createPerfWatcher } from "../src/sub-agents/detection/perf-watcher.mjs";
 import { createDetectionOrchestrator, spawnBudgetPerMinute } from "../src/sub-agents/detection/index.mjs";
 import { PRIVATE_FOLDER_NAME, PRIVATE_FOLDER_RE } from "../src/shared/path-guard.mjs";
+import { didItemOf } from "../src/renderer/tabs/home.mjs";
 
 const MIN = 60 * 1000;
 const results = [];
@@ -132,6 +133,9 @@ await group("defect 3 — a DNS refresh with the internet still down ends not_re
   const verify = rows(s.lab, "REVIEW", /^Verification for NET\.DNS\.FAIL: /);
   assert.equal(verify.length, 1, "one verification row");
   assert.match(verify[0].text, /failed — not resolved/, "the verification row says NOT RESOLVED");
+  // REVIEW P2-9 — Home "What I did" shows that REAL row as not resolved (it used to read "Could not verify: …").
+  assert.equal(didItemOf(verify[0]).kind, "not-resolved");
+  assert.equal(didItemOf(verify[0]).text, "Ran, but the problem is still there — not resolved; a person has been told.");
   assert.equal(rows(s.lab, "DONE", /^Verification for .*: passed\.$/).length, 0, "never \"verification passed\"");
   const fix = rows(s.lab, "FIX").filter((r) => r.recipeId === "dns-fail-v1");
   assert.equal(fix.length, 1);

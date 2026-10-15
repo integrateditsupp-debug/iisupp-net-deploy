@@ -52,6 +52,13 @@ export function didItemOf(entry = {}) {
   if (tag === "RUN" && /^Executing/.test(text)) return { kind: "applied", icon: "🔧", text: text.replace(/^Executing\s+(recipe\s+|macOS Tier-0\s+)?/, "Applied: "), status: "applied" };
   if (tag === "RUN" && /^Dry-run/.test(text)) return { kind: "previewed", icon: "👁", text: text.replace(/^Dry-run\s+(recipe\s+|macOS Tier-0\s+)?/, "Previewed (nothing changed): "), status: "preview" };
   if (tag === "DONE" && /^Verification for .*: passed\.$/.test(text)) return { kind: "verified", icon: "✅", text: text.replace(/^Verification for\s+/, "Verified: ").replace(/: passed\.$/, " — fix confirmed working"), status: "verified" };
+  // REVIEW P2-9 (2026-10-14) — a fix whose check afterwards says the problem is still there is NOT "could not verify": the
+  // steps ran and the answer is known. Main audits it as `REVIEW Verification for X: failed — not resolved (…)` with
+  // outcome "not_resolved" and tells a person (the fix-failed notification, or the IT contact on the advisory track).
+  if (tag === "REVIEW" && /^Verification for/.test(text) && (entry.outcome === "not_resolved" || /: failed — not resolved\b/.test(text))) {
+    const what = (text.match(/^Verification for\s+(.+?): failed — not resolved\b/) || [])[1] || "";
+    return { kind: "not-resolved", icon: "⚠", text: "Ran, but the problem is still there — not resolved; a person has been told.", sub: what, status: "not resolved" };
+  }
   if (tag === "REVIEW" && /^Verification for/.test(text)) return { kind: "unverified", icon: "❔", text: text.replace(/^Verification for\s+/, "Could not verify: ").replace(/: inconclusive\.$/, ""), status: "unverified" };
   if (tag === "ERROR" && /exit \d+|failed/i.test(text)) return { kind: "failed", icon: "⚠", text: `Failed: ${text}`, status: "failed" };
   if (tag === "KILL-SWITCH") return { kind: "stopped", icon: "🛑", text, status: "stopped" };
@@ -68,7 +75,7 @@ export function didRowsHtml(log = [], { limit = 6, now = Date.now() } = {}) {
     if (d) items.push({ ...d, ts: e.ts });
     if (items.length >= limit) break;
   }
-  const rows = items.map((d) => `<div class="home-row did-${esc(d.kind)}"><span class="home-time">${esc(when(d.ts, now))}</span><span class="home-icon" aria-hidden="true">${esc(d.icon)}</span><div class="home-text"><strong>${esc(d.text)}</strong></div><em class="home-status">${esc(d.status)}</em></div>`).join("");
+  const rows = items.map((d) => `<div class="home-row did-${esc(d.kind)}"><span class="home-time">${esc(when(d.ts, now))}</span><span class="home-icon" aria-hidden="true">${esc(d.icon)}</span><div class="home-text"><strong>${esc(d.text)}</strong>${d.sub ? `<small>${esc(d.sub)}</small>` : ""}</div><em class="home-status">${esc(d.status)}</em></div>`).join("");
   return rows || `<p class="home-empty">Nothing applied yet. When ARIA previews or applies a fix, it is listed here with its verified outcome — never before it ran.</p>`;
 }
 

@@ -35,6 +35,13 @@ assert.deepEqual(didItemOf({ tag: "RUN", text: "Executing recipe PRINT.SPOOLER.S
 assert.equal(didItemOf({ tag: "RUN", text: "Dry-run recipe NET.DNS.FAIL" }).kind, "previewed");
 assert.equal(didItemOf({ tag: "DONE", text: "Verification for PRINT.SPOOLER.STUCK: passed." }).kind, "verified");
 assert.equal(didItemOf({ tag: "REVIEW", text: "Verification for NET.DNS.FAIL: inconclusive." }).kind, "unverified");
+// REVIEW P2-9 — a check that ran and says the problem is still there is "not resolved", never "Could not verify".
+const notResolvedRow = { tag: "REVIEW", text: "Verification for NET.DNS.FAIL: failed — not resolved (the steps ran, but the check after them says the problem is still there).", outcome: "not_resolved" };
+assert.equal(didItemOf(notResolvedRow).kind, "not-resolved");
+assert.equal(didItemOf(notResolvedRow).text, "Ran, but the problem is still there — not resolved; a person has been told.");
+assert.equal(didItemOf({ ...notResolvedRow, outcome: undefined }).kind, "not-resolved", "the audit text alone is enough");
+const nrHtml = didRowsHtml([{ ...notResolvedRow, ts: new Date(NOW - 60000).toISOString() }], { now: NOW });
+assert.match(nrHtml, /did-not-resolved/); assert.match(nrHtml, /<small>NET\.DNS\.FAIL<\/small>/); assert.doesNotMatch(nrHtml, /Could not verify/);
 assert.equal(didItemOf({ tag: "ERROR", text: "Restart-Service: exit 5" }).kind, "failed");
 assert.equal(didItemOf({ tag: "CANCEL", text: "Action countdown aborted: wifi-no-internet-v1." }).kind, "cancelled");
 assert.equal(didItemOf({ tag: "KILL-SWITCH", text: "Ctrl+Alt+K: 0 child process(es) terminated; nothing to undo." }).kind, "stopped");
