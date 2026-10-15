@@ -47,7 +47,11 @@ export function runPowerShellJson(command, options = {}) {
     } catch {
       return done(null);
     }
-    const untrack = trackChild(child);
+    // ON-DEVICE 2026-10-15: a spawn that fails emits "error" AND "close" (Node does that for ENOENT too), so untrack
+    // exactly once — a tracker counting registrations saw 1 tracked / 2 untracked on Windows.
+    const untrackRaw = trackChild(child);
+    let untrackedOnce = false;
+    const untrack = () => { if (untrackedOnce) return; untrackedOnce = true; try { untrackRaw(); } catch { /* tracker gone */ } };
     const timer = setTimeout(() => {
       try {
         child.kill();
