@@ -242,7 +242,11 @@ async function main() {
   } catch (e) {
     if (e instanceof ExportFailed) {
       console.error(`ERROR: ${e.message.replace(/^ERROR:\s*/, '')} (offset ${e.offset}, limit ${e.limit}, ${e.attempts} attempt(s))`);
-      process.exit(1);
+      // ON-DEVICE 2026-10-15: on Windows (Node 24) process.exit(1) here crashed the process with
+      // STATUS_STACK_BUFFER_OVERRUN (0xC0000409) while the last aborted fetch was still winding down —
+      // the exit code came out as 3221226505, not 1. Set the code and let the loop drain instead.
+      process.exitCode = 1;
+      return;
     }
     throw e;
   }
@@ -266,5 +270,5 @@ const isMain = Boolean(process.argv[1]) && (() => {
 })();
 
 if (isMain) {
-  main().catch((e) => { console.error(e); process.exit(1); });
+  main().catch((e) => { console.error(e); process.exitCode = 1; });
 }

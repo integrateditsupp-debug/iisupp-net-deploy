@@ -22,6 +22,10 @@ import os from "node:os";
 import { EventEmitter } from "node:events";
 import { pathToFileURL } from "node:url";
 
+import { setActiveLabSpawn, activeLabSpawn as _activeLabSpawn } from "./spawn-guard.mjs";
+/** Test seam: which spawn the guard currently routes Windows tools to (null = ENOENT like Linux). */
+export function activeLabSpawn() { return _activeLabSpawn(); }
+
 export const APP_ROOT = path.resolve(import.meta.dirname, "..", "..");
 export const MAIN_FILE = path.join(APP_ROOT, "src", "main", "main.mjs");
 const MAIN_URL = pathToFileURL(MAIN_FILE).href;
@@ -301,6 +305,8 @@ export async function bootMain(platform = {}) {
     "node:os": { ...fakeOs, default: fakeOs }
   };
   // Factories that keep their own clock / timers / network get the lab's (through their documented options).
+  // The process-wide guard (top of this file) routes every Windows-tool spawn in ANY module to this boot's machine.
+  if (typeof platform.spawn === "function") setActiveLabSpawn(platform.spawn);
   const shims = {
     createCountdown: (real) => (opts = {}) => real({ setIntervalFn: timers.setInterval, clearIntervalFn: timers.clearInterval, ...opts }),
     createOutbound: (real) => (opts = {}) => real({ ...opts, fetchImpl: fakeFetch, now: clock.now }),
@@ -343,6 +349,6 @@ export async function bootMain(platform = {}) {
     }
   };
   /** The process exits: every timer it owns is cleared (its countdowns die with it, like a real quit). */
-  const shutdown = () => { for (const id of bootTimers) clock.clearTimeout(id); bootTimers.clear(); };
+  const shutdown = () => { for (const id of bootTimers) clock.clearTimeout(id); bootTimers.clear(); if (_activeLabSpawn() === platform.spawn) setActiveLabSpawn(null); };
   return { main, ipc, windows: fakeE.windows, FakeWindow: fakeE.FakeWindow, notifications: fakeE.notifications, outbound: outboundLog, store: storeSink.store, electronCalls: fakeE.calls, root, shutdown };
 }
