@@ -88,8 +88,34 @@ async function callAnthropic({ apiKey, model, system, messages, tools = T.TOOLS,
   // A runtime that does not know tool_choice "none" answers 400 — ask again without it; any tool_use in that
   // answer is ignored by the loop (the budget is spent), so the turn still ends in words.
   if (!r.ok && r.status === 400 && toolChoice && toolChoice.type === 'none') r = await send(false);
-  if (!r.ok) { const err = new Error(`anthropic ${r.status}`); err.status = r.status; try { err.body = (await r.text()).slice(0, 300); } catch { err.body = ''; } throw err; }
+  if (!r.ok) {
+    const err = new Error(`anthropic ${r.status}`); err.status = r.status;
+    try { err.body = (await r.text()).slice(0, 300); } catch { err.body = ''; }
+    // The body is the diagnosis (a 400 is "credit balance is too low" as often as it is a bad request) — it goes
+    // to the function log, never to the reply verbatim (classifyModelError turns it into one honest sentence).
+    console.error('[axis-task-loop] Anthropic', r.status, String(err.body || '').replace(/\s+/g, ' ').slice(0, 200));
+    throw err;
+  }
   return r.json();
+}
+
+/**
+ * Why the model call failed, in one honest sentence with a reason code the console can act on — the same
+ * codes as axis-director's classifyBrainError, so the two brains never disagree about the same account.
+ * Found live 2026-10-15: the loop answered "I could not reach my reasoning brain (400)" while the body said
+ * the metered account has no credit left — a decision for Ahmad, not a retry.
+ */
+function classifyModelError(status, body) {
+  const msg = String(body || '');
+  if (/credit balance is too low/i.test(msg)) return { reason: 'no_credit', text: 'My metered reasoning brain is out of credit (the Anthropic account says the balance is too low), so I did not change anything. The list still answers; actions wait until the account is topped up or the local worker takes the turn.' };
+  if (status === 401 || /authentication_error|invalid x-api-key/i.test(msg)) return { reason: 'auth', text: 'My API key is being rejected (check ANTHROPIC_API_KEY in Netlify), so I did not change anything.' };
+  if (status === 403 || /permission_error/i.test(msg)) return { reason: 'permission', text: 'My API key lacks permission for the task model, so I did not change anything.' };
+  if (status === 404 || /not_found_error/i.test(msg)) return { reason: 'bad_model', text: 'The task model is not found (check AXIS_MODEL_TASKS in Netlify), so I did not change anything.' };
+  if (status === 429) return { reason: 'rate_limit', text: 'My reasoning brain is rate-limited right now, so I did not change anything — ask again in a minute.' };
+  if (status === 529 || (status >= 500 && status < 600)) return { reason: 'overloaded', text: `I could not reach my reasoning brain (${status}), so I did not change anything.` };
+  if (!status) return { reason: 'unreachable', text: 'I could not reach my reasoning brain, so I did not change anything.' };
+  const head = msg.replace(/\s+/g, ' ').match(/"message"\s*:\s*"([^"]{1,120})/);
+  return { reason: 'error_' + status, text: `My reasoning brain refused the request (${status}${head ? ': ' + head[1] : ''}), so I did not change anything.` };
 }
 
 /** What the model is shown of a tool result: short, ids first, no store internals. */
@@ -257,9 +283,12 @@ async function runTaskTurn({ askText, messages = [], via = 'chat', origin = '', 
   const out = composeReply({ loop, pre, kind: k });
   if (loop.stop === 'model_error' && !out.tasksChanged) {
     const status = loop.error && loop.error.status;
-    return { ...out, text: k === 'list' ? T.renderListAnswer(pre) : `I could not reach my reasoning brain${status ? ' (' + status + ')' : ''}, so I did not change anything.\n${T.renderListAnswer(pre, { limit: 3 })}`, brainTier: 'tasks-local', degraded: k !== 'list', reason: status === 401 ? 'auth' : 'unreachable' };
+    const why = classifyModelError(status, loop.error && loop.error.body);
+    // A list ask is still answered from the list for $0, and the reply carries the reason either way (a
+    // silent "tasks-local" hid an out-of-credit account behind a healthy-looking list on 2026-10-15).
+    return { ...out, text: k === 'list' ? T.renderListAnswer(pre) : `${why.text}\n${T.renderListAnswer(pre, { limit: 3 })}`, brainTier: 'tasks-local', degraded: true, reason: why.reason, modelError: { status: status || 0, reason: why.reason } };
   }
   return { ...out, brainTier: 'anthropic-tools', model };
 }
 
-module.exports = { MAX_TOOL_CALLS, TASK_RULES, NO_ACCESS, taskModel, taskIntent: T.taskIntent, shapeMessages, callAnthropic, runToolLoop, httpExecutor, guardClaims, stripReceiptLines, composeReply, taskSystem, runTaskTurn };
+module.exports = { MAX_TOOL_CALLS, TASK_RULES, NO_ACCESS, taskModel, taskIntent: T.taskIntent, shapeMessages, callAnthropic, classifyModelError, runToolLoop, httpExecutor, guardClaims, stripReceiptLines, composeReply, taskSystem, runTaskTurn };

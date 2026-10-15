@@ -66,13 +66,14 @@ const modelCalls = [];      // every request body the "model" received
 const taskHttp = [];        // every request the director made to /api/axis/tasks
 let tasksDown = false;
 let modelStatus = 200;
+let modelBody = null; // the error body the fake API returns for a non-200 (null → a generic api_error)
 globalThis.fetch = async (url, opts = {}) => {
   const u = String(url);
   if (u === 'https://api.anthropic.com/v1/messages') {
     const body = JSON.parse(opts.body);
     modelCalls.push(body);
     assert.equal(opts.headers['x-api-key'], 'sk-test-not-a-real-key');
-    if (modelStatus !== 200) return new Response(JSON.stringify({ type: 'error', error: { type: 'api_error' } }), { status: modelStatus });
+    if (modelStatus !== 200) return new Response(modelBody || JSON.stringify({ type: 'error', error: { type: 'api_error' } }), { status: modelStatus });
     const next = script.shift();
     if (!next) throw new Error('fake model: no scripted reply left');
     return new Response(JSON.stringify(next(body)), { status: 200, headers: { 'content-type': 'application/json' } });
@@ -286,9 +287,32 @@ try {
     tasksDown = false;
     modelStatus = 529;
     const d = await turn('snooze the HEC row to monday');
-    assert.equal(d.degraded, true);
+    assert.equal(d.degraded, true); assert.equal(d.reason, 'overloaded');
     assert.match(d.text, /I could not reach my reasoning brain \(529\), so I did not change anything\./);
-    modelStatus = 200;
+    // Found live 2026-10-15: the metered account answered 400 "credit balance is too low" and the loop said only
+    // "(400)". The body is classified like axis-director's classifyBrainError — same codes, one honest sentence,
+    // nothing changed — and a LIST ask still answers from the list while carrying the reason.
+    modelStatus = 400; modelBody = JSON.stringify({ type: 'error', error: { type: 'invalid_request_error', message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.' } });
+    const e = await turn('snooze the HEC row to monday');
+    assert.equal(e.degraded, true); assert.equal(e.reason, 'no_credit'); assert.equal(e.tasksChanged, false); assert.deepEqual(e.receipts, []);
+    assert.match(e.text, /^My metered reasoning brain is out of credit \(the Anthropic account says the balance is too low\), so I did not change anything\./);
+    assert.doesNotMatch(e.text, /Plans & Billing|invalid_request_error/, 'the API body is classified, never pasted');
+    const f = await turn('what needs me');
+    assert.match(f.text, /^Live list: \d+ open · \d+ need you/, 'a list ask still answers from the list for $0…');
+    assert.equal(f.degraded, true); assert.equal(f.reason, 'no_credit'); assert.equal(f.brainTier, 'tasks-local');
+    modelStatus = 401; modelBody = JSON.stringify({ type: 'error', error: { type: 'authentication_error', message: 'invalid x-api-key' } });
+    const g = await turn('mark the whereby one done');
+    assert.equal(g.reason, 'auth'); assert.match(g.text, /^My API key is being rejected \(check ANTHROPIC_API_KEY in Netlify\), so I did not change anything\./);
+    modelStatus = 404; modelBody = JSON.stringify({ type: 'error', error: { type: 'not_found_error', message: 'model: nope' } });
+    const h = await turn('mark the whereby one done');
+    assert.equal(h.reason, 'bad_model'); assert.match(h.text, /^The task model is not found \(check AXIS_MODEL_TASKS in Netlify\)/);
+    modelStatus = 400; modelBody = JSON.stringify({ type: 'error', error: { type: 'invalid_request_error', message: 'tools.3.input_schema: extra fields not permitted' } });
+    const i = await turn('mark the whereby one done');
+    assert.equal(i.reason, 'error_400'); assert.match(i.text, /^My reasoning brain refused the request \(400: tools\.3\.input_schema: extra fields not permitted\), so I did not change anything\./);
+    // pure: the classifier itself
+    assert.equal(LOOP.classifyModelError(429, '').reason, 'rate_limit'); assert.equal(LOOP.classifyModelError(0, '').reason, 'unreachable'); assert.equal(LOOP.classifyModelError(503, '').reason, 'overloaded');
+    assert.equal(LOOP.classifyModelError(403, '{"error":{"type":"permission_error"}}').reason, 'permission');
+    modelStatus = 200; modelBody = null;
     ok();
   }
 
