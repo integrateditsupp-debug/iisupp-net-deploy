@@ -148,8 +148,19 @@ for (const q of ['do we have anything overdue', 'what needs me today', 'open the
 const app = read('assets/axis-app.js');
 assert.ok(/unsupportedBoardCommand\(text\)/.test(app), 'the console consults the detector in axisSend');
 assert.ok(app.indexOf('unsupportedBoardCommand(text)') < app.indexOf("fetch('/.netlify/functions/axis-director'"),
-  'the honest decline sits BEFORE the director fetch — these must never reach the model');
-ok('unrailed board commands answer honestly in 0ms instead of buying a model round trip');
+  'the honest decline sits BEFORE the generic director fetch — it never buys a model round trip of talk');
+// RUN-AX3 (2026-10-15) — these four GRADUATED, the way "open up the prioritized items" did on 2026-08-12:
+// approve / snooze / mark done / move now have a real rail — the director's task tool loop, which acts on the
+// live list and prints one receipt per action that ran (tests/axis-director-tools.test.mjs proves it). The
+// console routes them there FIRST; the honest decline above is kept as the fallback when that rail does not
+// answer (Rule 15 — nothing removed).
+const { isTaskAsk } = await import('../assets/axis-tasks.js');
+for (const s of ['mark that one done', 'snooze this for a week', 'approve the first one']) assert.ok(isTaskAsk(s), `now a task ask with a rail: "${s}"`);
+assert.ok(app.indexOf('const taskKind = isTaskAsk(text);') > 0 && app.indexOf('const taskKind = isTaskAsk(text);') < app.indexOf('unsupportedBoardCommand(text)'),
+  'the task rail is tried before the decline');
+assert.ok(/if \(!j \|\| !j\.text \|\| j\.reason === 'tasks_unavailable'\) \{ renderDock\(\); setAxisState\('idle'\); return false; \}/.test(app),
+  'when the task rail cannot read the list, the turn falls back to the local rails (and this decline)');
+ok('unrailed board commands answer honestly in 0ms — and the ones that graduated go to the task rail first');
 
 // ---- 6. The escalation ladder can actually finish, and the console waits for it ----
 assert.ok(TIERS.every((t) => typeof t.timeoutMs === 'number' && t.timeoutMs > 0), 'every tier carries its own clock');

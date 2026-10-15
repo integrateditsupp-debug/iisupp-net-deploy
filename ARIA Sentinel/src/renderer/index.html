@@ -202,6 +202,10 @@
             <p id="heroSubline" class="hero-subline">ARIA is watching.</p>
             <!-- PROD 2026-10-14 (audit §4.2) — proof it is watching: the detectors this version runs + the real last-check age. -->
             <p id="homeWatch" class="home-watch">Watching: checking…</p>
+            <!-- ON-DEVICE 2026-10-15: after Ctrl+Alt+K the hero said "Press Start ARIA" while the only Start ARIA button sat in
+                 Control Center — a Pro tab, locked on a free/expired device. The way out of the kill switch can never be
+                 behind a plan, so it lives here too; hidden unless ARIA is stopped or paused. -->
+            <p id="heroResume" class="hero-resume" hidden><button id="startAriaHero" class="primary" type="button">Start ARIA</button></p>
           </section>
           <!-- PROD 2026-10-14 (audit §4.1) — the plain-language home: three honest lists from real state (tabs/home.mjs). -->
           <div id="homeLists" class="home-lists"></div>

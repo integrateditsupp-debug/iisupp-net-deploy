@@ -68,14 +68,15 @@ set "TEST_LOG=%~dp0dist\build-test.log"
 call node tests\run-all.mjs --app-only > "%TEST_LOG%" 2>&1
 set "TEST_RC=%errorlevel%"
 echo   --- test summary (full log: %TEST_LOG%) ---
-findstr /C:"suites taken" /C:"SUITE RED" /C:"SUITE INCOMPLETE" /C:"FAILED TO LOAD" /C:"NOT TAKEN" "%TEST_LOG%"
-findstr /R /C:"^# tests [0-9]" "%TEST_LOG%" | find /C "# tests" > "%TEMP%\aria-sentinel-suitecount.txt"
+rem (type | findstr: findstr cannot open a path holding the em dash in this repo's folder name; cmd's type can)
+type "%TEST_LOG%" | findstr /C:"suites taken" /C:"SUITE RED" /C:"SUITE INCOMPLETE" /C:"FAILED TO LOAD" /C:"NOT TAKEN"
+type "%TEST_LOG%" | findstr /R /C:"^# tests [0-9]" | find /C "# tests" > "%TEMP%\aria-sentinel-suitecount.txt"
 set /p SUITES_WITH_COUNTS=<"%TEMP%\aria-sentinel-suitecount.txt"
 echo   node:test suites reporting counts: %SUITES_WITH_COUNTS%
-findstr /R /C:"^# fail [1-9]" "%TEST_LOG%" >nul 2>nul
+type "%TEST_LOG%" | findstr /R /C:"^# fail [1-9]" >nul 2>nul
 if not errorlevel 1 (
   echo   node:test suites with failures:
-  findstr /R /C:"^# fail [1-9]" "%TEST_LOG%"
+  type "%TEST_LOG%" | findstr /R /C:"^# fail [1-9]"
 )
 if not "%TEST_RC%"=="0" (
   echo   FAILED: npm test exited %TEST_RC%. The build is NOT allowed to continue on a red suite.

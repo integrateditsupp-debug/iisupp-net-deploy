@@ -33,7 +33,11 @@ function enoentChild(file) {
 }
 cp.spawn = function guardedSpawn(file, args, opts) {
   if (!WINDOWS_TOOLS.has(toolOf(file))) return realCp.spawn.call(cp, file, args, opts);
-  if (activeMachineSpawn) return activeMachineSpawn(file, Array.isArray(args) ? args : [], (Array.isArray(args) ? opts : args) || {});
+  // ON-DEVICE 2026-10-15 (second Windows run): main.mjs's OWN spawns never reach this guard — the sandbox hands main
+  // the virtual machine's spawn directly. What reaches here are the transitive modules (watcher probes, the executor's
+  // default runner) — and on Linux those have always ended in ENOENT, which is the behaviour every lab suite was
+  // written against. Routing them to the machine instead fed it probe commands it does not model ("every command was
+  // one the lab knows" went red on Windows). So: always Linux semantics here, never a real process, never the machine.
   return enoentChild(file);
 };
 const refuseSync = (file) => { const e = new Error(`spawnSync ${file} ENOENT (fault-lab guard)`); e.code = "ENOENT"; return { error: e, status: null, stdout: "", stderr: "" }; };

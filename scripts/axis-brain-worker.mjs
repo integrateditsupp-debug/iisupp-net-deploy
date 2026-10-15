@@ -95,6 +95,15 @@ if (!token) {
 }
 const jobs = getStore({ name: JOBS, siteID, token, consistency: 'strong' });
 const kbLive = getStore({ name: KB_LIVE, siteID, token, consistency: 'strong' });
+// RUN-AX3 (2026-10-15): the live task overlay — ledger rows Ahmad acknowledged, finished, archived or
+// snoozed in the live task view (the ledger FILE is never edited). Read once a minute, best-effort: a slow
+// store only means a model job here sees a row he already dealt with; it never blocks or fails a job.
+const taskOverlay = getStore({ name: 'axis-task-overlay', siteID, token, consistency: 'strong' });
+let ledgerOverlay = null;
+async function refreshLedgerOverlay() {
+  try { const v = await taskOverlay.get('rows', { type: 'json' }); ledgerOverlay = v && typeof v === 'object' ? v : {}; }
+  catch { /* keep the last copy */ }
+}
 
 // THE WHOLE REASON THE PLAN WENT UNUSED (measured 2026-08-11):
 // Claude's credential precedence is ANTHROPIC_API_KEY → ANTHROPIC_AUTH_TOKEN → the claude.ai OAuth
@@ -186,7 +195,7 @@ function conversationBlock(turns, board) {
   // side answers "I don't have your tasks" while the list sits one directory away.
   const boardText = String(board || '');
   if (!/CEO-CRITICAL LEDGER|LIVE SITUATION/.test(boardText)) {
-    try { const blk = ceoLedgerBlock(readCeoLedger(REPO)); if (blk) parts.push(blk); } catch { /* no ledger here */ }
+    try { const blk = ceoLedgerBlock(readCeoLedger(REPO), { overlay: ledgerOverlay }); if (blk) parts.push(blk); } catch { /* no ledger here */ }
   }
   return parts.join('\n\n');
 }
@@ -831,6 +840,8 @@ setInterval(() => {
 await beat();
 setInterval(beat, HEARTBEAT_MS);
 setInterval(sweep, 120000);
+refreshLedgerOverlay();                      // RUN-AX3: the task overlay the ledger block honours
+setInterval(refreshLedgerOverlay, 60000);
 
 // Queue steward. Runs here rather than as its own scheduled task because it is read-only, costs
 // milliseconds, and needs to be in the same process that answers Ahmad's questions — the whole

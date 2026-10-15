@@ -13,6 +13,10 @@ import { renderFleet } from './axis-fleet.js';
 import { renderReports } from './axis-reports.js';
 import { renderDirector } from './axis-director-screen.js';
 import { renderPriorities, collectPriorities, dueLabel, localAnswer, resolveRemovalTargets, unsupportedBoardCommand } from './axis-priorities.js';
+import { setTaskOverlay } from './axis-priorities.js';
+// RUN-AX3 (2026-10-15): the Live task view — one list over every source, the same list the director's tool loop
+// reads and changes when Ahmad talks. Overview panel + a full screen reached from Priorities.
+import { initTasks, startTasks, stopTasks, tasksPanel, renderTasksScreen, isTaskAsk } from './axis-tasks.js';
 import { mountGlobes } from './axis-globe.js';
 import { toggleHologram } from './axis-hologram.js';
 // AXIS ONE (2026-10-13): Grant Radar — non-repayable grants as a native screen with one-click Apply.
@@ -37,6 +41,15 @@ const data = (mod) => (state.snap[mod] && state.snap[mod].data) || {};
 // Hand axis-dom.js the two things it cannot reach from a module of its own: how to sign a request,
 // and what to do when the session has expired. Everything downstream of here shares one write path.
 initDom({ authHeaders, onUnauthorized: () => logout() });
+// RUN-AX3: the Live task view signs requests the same way and hands rows to AXIS through the one composer.
+initTasks({
+  authHeaders, onUnauthorized: () => logout(), go: (m) => go(m),
+  sendToAxis: (text) => { axisOpenConsole('talk'); const input = $('axisInput'); if (!input) return; input.value = text; axisSend('axisInput'); },
+  openReply: (it, body) => axisOpenReplyDraft(it, body),
+  // The overlay the list carries (acknowledged / done / archived / snoozed rows) also clears the Priorities
+  // queue, the Talk rail and the board block the brains read — one truth on every surface.
+  onChange: (d) => { setTaskOverlay(d && d.overlay); try { renderAxisPri(); } catch {} if (state.module === 'priorities' && !overlayOpen()) renderModule(); },
+});
 
 // ── Nav ──
 const NAV = [
@@ -810,6 +823,7 @@ function sitAct(it) {
   if (a.type === 'screen') return el('button', { class: 'chip', onclick: () => go(a.target) }, 'Open');
   if (a.type === 'console') return el('button', { class: 'chip', onclick: () => axisOpenConsole(a.target) }, 'Open');
   if (a.type === 'url') return el('a', { class: 'chip', href: a.target, target: '_blank', rel: 'noopener' }, 'Open');
+  if (a.type === 'tasks') return el('button', { class: 'chip', onclick: () => go('tasks') }, 'Open'); // RUN-AX3: a follow-up AXIS created
   return null; // a 'text' one-click renders under the title (sitOneClick), not as a control
 }
 function sitOneClick(it) {
@@ -891,6 +905,7 @@ SCREENS.overview = (c) => {
     ['Meetings this week', k.meetings_week ?? 0], ['MRR', fmtMoney(k.mrr)]];
   c.append(el('div', { class: 'kpi-grid' }, kpis.map(([l, v]) => el('div', { class: 'kpi' }, [el('div', { class: 'label' }, l), el('div', { class: 'value' }, v)]))));
   c.append(situationSection());   // RUN-AX2: "Today — needs you" — the same ranked picture the brains read
+  c.append(tasksPanel({ go }));   // RUN-AX3: "Live task view — N open · M need you · K AXIS handling", with controls
   c.append(procurementSection()); // live bid/contract + whitelisting status (2026-08-05)
   c.append(globalSection());      // global bids, worldwide whitelisting + free-channel queue (2026-08-06)
   c.append(head('Needs You Now', 'top by revenue impact', 'margin-top:22px'));
@@ -1538,6 +1553,9 @@ SCREENS.settings = SCREENS.reports; // Reports & Settings share the screen (spec
 // S15 Priorities — one queue of everything open, ordered by due date. Reads only existing snapshot
 // modules; no new endpoint, no new field, nothing invented (see assets/axis-priorities.js).
 SCREENS.priorities = (c) => renderPriorities(c, { snap: state.snap, go, head });
+// RUN-AX3: the full Live task view. Not a nav tab (the 18-tab nav is pinned) — reached from Priorities, the
+// Overview panel, the Actions menu and any "Open" on a row AXIS created.
+SCREENS.tasks = (c) => renderTasksScreen(c, { go });
 
 SCREENS.fleet = (c) => {
   renderFleet(c, { data: data('fleet'), onIntent: (type, payload) => postIntent(type, payload) });
@@ -2109,6 +2127,14 @@ async function axisSend(inputId = 'axisInput') {
     // you ask for something different.
   }
 
+  // RUN-AX3 (2026-10-15): the live list has a real rail now. "What's on my list", "let's work on the top items",
+  // "mark that one done", "snooze the Apollo card to Friday", "approve the first one" go to the director's task
+  // tool loop — it sees every list and acts on it, one receipt per action that actually ran. Everything that
+  // used to catch these (board.remove's spoken confirm, the board's count answers, the honest "can't do that by
+  // voice yet") is still below, untouched: it is the fallback whenever that path does not answer.
+  const taskKind = isTaskAsk(text);
+  if (taskKind && await axisTaskTurn(text, taskKind)) return;
+
   // Does this ask AXIS to DO something? Read it back and wait, except for read-only checks.
   const op = detectOp(text);
   if (op) {
@@ -2263,6 +2289,50 @@ async function axisSend(inputId = 'axisInput') {
   } catch { dropPending(); dockLog.push({ role: 'axis', text: 'Brain unreachable.' }); renderDock(); if (!axisSpeak('Brain unreachable.')) setAxisState('idle'); axisSpokenTurn = false; }
 }
 
+// RUN-AX3: one task turn through the director's tool loop. Returns false when the live list could not be read
+// (or the request failed outright) so axisSend's local rails take the turn exactly as before.
+const keepLines = (t) => String(t || '').split('\n').map((l) => l.trim()).filter(Boolean)
+  .map((l) => { const s = stripMetaNarration(l); return s === 'Standing by.' && l !== 'Standing by.' ? '' : s; }).filter(Boolean).join('\n');
+async function axisTaskTurn(text, kind) {
+  const spoken = axisSpokenTurn;
+  const pending = { role: 'axis', text: '…' };
+  const dropPending = () => { const i = dockLog.indexOf(pending); if (i >= 0) dockLog.splice(i, 1); };
+  dockLog.push(pending); renderDock();
+  setAxisState('thinking');
+  if (spoken || axisHandsFree) axisSpeak(ackLine());
+  let j = null;
+  try {
+    const r = await fetch('/.netlify/functions/axis-director', { method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ action: 'chat', messages: axisHistory(pending), board: axisBoardContext(), task: kind, via: spoken ? 'voice' : 'chat' }) });
+    if (r.status === 401) { dropPending(); renderDock(); logout(); return true; }
+    j = await r.json();
+  } catch { j = null; }
+  dropPending();
+  if (!j || !j.text || j.reason === 'tasks_unavailable') { renderDock(); setAxisState('idle'); return false; }
+  axisBrainDown(j.degraded ? (j.reason || 'degraded') : null);
+  // Line by line: one receipt per line must survive the meta-narration filter (it joins sentences).
+  const reply = { role: 'axis', text: markRepeat(keepLines(j.text) || j.text, axisLastAnswer) };
+  axisLastAnswer = reply.text;
+  const changedList = !!(j.tasksChanged || (j.receipts && j.receipts.length) || (j.staged && j.staged.length));
+  if (changedList) reply.chips = [{ label: 'Open the live task view', onclick: () => go('tasks') }];
+  dockLog.push(reply); renderDock();
+  axisSpeakTurn(reply.text);          // the receipts are spoken too (their glyphs are not)
+  if (changedList) window.dispatchEvent(new CustomEvent('axis:tasks-changed', { detail: { receipts: j.receipts || [], via: spoken ? 'voice' : 'chat' } }));
+  return true;
+}
+// RUN-AX3: "Review & send" on a reply AXIS drafted for a client message — the existing composer, prefilled
+// with the draft. Sending stays Ahmad's click there, behind the composer's own rails.
+function axisOpenReplyDraft(it, body) {
+  const key = String(it && it.id || '').replace(/^inbox:/, '');
+  const m = ((data('inbox').rows) || []).find((x) => String(x.id) === key);
+  if (!m) { toast('That message is not on the board any more — the draft is in the Work tab'); return; }
+  openComposer({
+    mode: 'reply', to: m.from_email, subject: /^re:/i.test(m.subject || '') ? m.subject : 'Re: ' + (m.subject || ''), body: String(body || ''),
+    messageId: m.id, businessId: m.business_id, contactName: m.from_email, companyName: businessName(m.business_id), rails: data('settings'),
+    onSent: () => { m.actioned = true; renderNav(); renderModule(); },
+  });
+}
+
 // ── AXIS voice (restored from the v1 console, full behavior) — mic push-to-talk + spoken replies,
 // free browser Web Speech API; no paid API, no LLM. Ported from assets/aperture-learning.js
 // (4ee1b883 push-to-talk, 0e17c2ca humanized voice — Ahmad: "sounds robotic" fix). Voice defaults ON
@@ -2350,6 +2420,9 @@ window.axisClearVoice = function () {
 // Make text sound like a person, not a screen reader: strip glyphs/markdown, speak symbols naturally.
 function axisHumanizeForSpeech(text) {
   let t = String(text || '');
+  // RUN-AX3: the Live task view's receipt glyphs (axis-tasks.js TASK_GLYPHS) are not words — the line after them is.
+  // Inlined, not imported: this function is also lifted out and run on its own (tests/axis-voice-dock.test.mjs).
+  t = t.replace(/✔|✓|↩|🗄|⏰|🔁|🖐|✖|👁|⊘|👤|📝|✎|➕/gu, ' ');
   t = t.replace(/[•·▪◦●⚠🔊🔇🎙✅❌→]/g, ' ')
        .replace(/[*_`#>\[\]]/g, ' ')
        .replace(/https?:\/\/([^\s\/]+)[^\s]*/gi, '$1')
@@ -3089,6 +3162,7 @@ function paletteItems() {
   // before the screen list. Ahmad: "simple options to perform all the work on the site."
   const act = [
     { label: 'Ask AXIS', hint: 'type or talk — the director brain', run: () => axisOpenConsole('talk') },
+    { label: 'Live task view', hint: 'every list in one place — work it with AXIS', run: () => go('tasks') },
     { label: 'Start a live call', hint: 'two-way, Aria’s voice', run: () => axisLiveToggleFromUi() },
     { label: 'Pull up a working doc', hint: 'leads list, email, proposal, plan', run: () => axisOpenConsole('work') },
     { label: 'Add a to-do', hint: 'prioritised, flags what needs you', run: () => axisOpenConsole('todo') },
@@ -3121,6 +3195,7 @@ function renderPalette() {
 
 // ── Auth ──
 function showApp() { $('login').style.display = 'none'; $('app').style.display = 'grid'; renderNav(); renderModule(); fetchSnapshots();
+  startTasks(); // RUN-AX3: the live task list — every 30 s, and at once after a chat or voice action
   clearInterval(window.__axisPoll); window.__axisPoll = setInterval(() => { if (!document.hidden) pollVersion(); }, 15000);
   // The situation re-ranks itself every two minutes (deadlines roll over; the worker queue moves) —
   // plus on every snapshot change via fetchSnapshots().
@@ -3160,7 +3235,7 @@ function axisResetTranscripts() {
   try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch {}
   setAxisState('idle');
 }
-function logout() { localStorage.removeItem(TOKEN_KEY); state.token = ''; $('app').style.display = 'none'; $('login').style.display = 'grid'; clearInterval(window.__axisPoll); axisResetTranscripts(); }
+function logout() { localStorage.removeItem(TOKEN_KEY); state.token = ''; $('app').style.display = 'none'; $('login').style.display = 'grid'; clearInterval(window.__axisPoll); axisResetTranscripts(); stopTasks(); }
 async function doLogin() {
   $('loginErr').textContent = '';
   try {
@@ -3210,6 +3285,9 @@ window.addEventListener('axis:open', (e) => {
   if (d.say) axisConsoleSay(d.say, false);
 });
 window.addEventListener('axis:say', (e) => { const t = e.detail && e.detail.text; if (t && state.token) axisConsoleSay(t, true); });
+// RUN-AX3: a row changed (a click in the Live task view, or a chat/voice receipt) → "Today — needs you" re-ranks.
+window.addEventListener('axis:tasks-acted', () => { if (state.token) fetchSituation(); });
+window.addEventListener('axis:tasks-changed', () => { if (state.token) fetchSituation(); });
 // The live call's transcript (both voices) is mirrored into the same transcript as typed turns.
 window.addEventListener('axis:transcript', (e) => {
   const d = e.detail || {}; if (!d.text) return;

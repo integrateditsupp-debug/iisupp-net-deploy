@@ -47,6 +47,9 @@ const ENV = { ...process.env, TMPDIR: SCRATCH, TEMP: SCRATCH, TMP: SCRATCH, AXIS
 // SITE SWEEP 2026-10-14: the /downloads/ sell page joins the guard set. Its simulation quotes the app's own notice
 // copy (advisoryCopy / ruleSentence), its savings estimate quotes roi.mjs + pricing-tiers.mjs and its release block
 // reads downloads/sentinel-release.json — the suite fails the moment any of those drifts from the app (<1 s).
+// RUN-AX3 2026-10-15: "AXIS works the list with you" — the one live task list (model), /api/axis/tasks (endpoint),
+// the director's bounded tool loop (fake model → real endpoint, receipts = audit) and the Live task view headless
+// (skips with a clear line where Playwright/Chromium are absent). The first three run in <2 s; the console ~12 s.
 const GUARD = [
   'tests/axis-one.test.mjs',
   'tests/axis-situation.test.mjs',
@@ -64,6 +67,10 @@ const GUARD = [
   'tests/sentinel-fleet-endpoints.test.mjs',
   'tests/sentinel-notify-binding-and-contracts.test.mjs',
   'tests/sentinel-downloads-page.test.mjs',
+  'tests/axis-tasks-model.test.mjs',
+  'tests/axis-tasks-endpoint.test.mjs',
+  'tests/axis-director-tools.test.mjs',
+  'tests/axis-tasks-console.test.mjs',
 ];
 
 const files = all

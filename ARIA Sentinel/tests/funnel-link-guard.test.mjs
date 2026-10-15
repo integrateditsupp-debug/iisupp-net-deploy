@@ -37,7 +37,9 @@ function resolveTarget(raw, dir) {
   const hi = href.indexOf("#"); if (hi >= 0) href = href.slice(0, hi);
   const qi = href.indexOf("?"); if (qi >= 0) href = href.slice(0, qi);
   if (href === "") return { ok: true };
-  let rp = href.startsWith("/") ? href : "/" + path.normalize(path.join(dir, href)).replace(/^\/+/, "");
+  // ON-DEVICE 2026-10-15: POSIX joins — on Windows path.join/normalize produce backslashes and every relative link
+  // failed to resolve (the guard had never run on Windows before the installer build).
+  let rp = href.startsWith("/") ? href : "/" + path.posix.normalize(path.posix.join(dir, href)).replace(/^\/+/, "");
   rp = decode(rp);
   const rel = rp.replace(/^\/+/, "");
   if (rel === "" || rp === "/") return fileExists("index.html") ? { ok: true } : { ok: false, reason: "no index.html" };
@@ -72,7 +74,7 @@ const SKIP_DIR_ANY_DEPTH = new Set([
 function walk(d, acc) {
   for (const e of fs.readdirSync(d, { withFileTypes: true })) {
     const fp = path.join(d, e.name);
-    const rel = path.relative(ROOT, fp);
+    const rel = path.relative(ROOT, fp).split(path.sep).join("/"); // forward slashes on every platform (SKIP is written with "/")
     if (SKIP.test(rel)) continue;
     if (e.isDirectory() && SKIP_DIR_ANY_DEPTH.has(e.name)) continue;
     // ON-DEVICE 2026-10-15: on the operator's PC the walk reached `.sentinel-verify-scratch/` (an untracked verify
@@ -105,7 +107,7 @@ assert.ok(pages.length > 50, `expected to scan the public site (>50 pages), saw 
 const dead = [];
 for (const f of pages) {
   const html = read(f);
-  const dir = path.dirname("/" + f).replace(/^\//, "");
+  const dir = path.posix.dirname("/" + f).replace(/^\//, "");
   for (const h of extract(html)) {
     const res = resolveTarget(h, dir);
     if (!res.ok) dead.push(`${f}: "${h}" — ${res.reason}`);

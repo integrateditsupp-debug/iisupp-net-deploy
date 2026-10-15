@@ -37,19 +37,21 @@ ok("no machine active", activeLabSpawn() === null);
   ok("node still runs for real (exit code observed)", r.err === null && r.code === 7);
 }
 
-// 3 — with a lab booted, the SAME module-level `spawn` binding reaches the virtual machine, and is recorded there.
+// 3 — with a lab booted, a transitive importer's module-level `spawn` binding STILL gets Linux semantics (ENOENT) and
+// never touches the machine's ledger: main.mjs's own spawns go to the machine through the sandbox, nothing else does.
 {
   const lab = await bootLab({ mode: "manual" });
   ok("a booted lab is the active machine", activeLabSpawn() !== null);
   const ledger = () => lab.machine.commands.length + lab.machine.unknownCommands.length;
   const before = ledger();
   const r = await settle(spawn("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", "Get-Service Spooler"]));
-  ok("powershell.exe from a transitive importer is answered by the virtual machine (no error)", r.err === null);
-  ok("…and the command lands on the machine's ledger (known or unknown — never on the host)", ledger() === before + 1);
+  ok("powershell.exe from a transitive importer is ENOENT even while a lab is booted", r.err && r.err.code === "ENOENT");
+  ok("…and nothing landed on the machine's ledger (probes the lab does not model never reach it)", ledger() === before);
+  ok("…while main's own path to the machine is intact", typeof lab.machine.spawn === "function" && activeLabSpawn() === lab.machine.spawn);
   lab.booted.shutdown();
   ok("shutdown releases the machine", activeLabSpawn() === null);
   const after = await settle(spawn("powershell.exe", ["-Command", "1"]));
-  ok("after shutdown a Windows tool is ENOENT again", after.err && after.err.code === "ENOENT");
+  ok("after shutdown a Windows tool is ENOENT, as before", after.err && after.err.code === "ENOENT");
 }
 
 console.log(`fault-lab-spawn-guard: ${pass} checks green — Windows tools never run for real inside the battery; node does.`);
