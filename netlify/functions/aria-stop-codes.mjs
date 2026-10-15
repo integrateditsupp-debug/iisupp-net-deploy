@@ -49,4 +49,7 @@ export default async function handler(request) {
   });
 }
 
-export const config = { path: [...STOP_CODES_PATHS] };
+// Netlify's bundler reads this export STATICALLY (an object literal of literals) — a spread of STOP_CODES_PATHS broke the
+// 2026-10-15 production build ("configuration error on 'path': Must be a string or array of strings"). Keep the
+// two literals in lockstep with STOP_CODES_PATHS; tests/netlify-function-config-static.test.mjs pins both.
+export const config = { path: ["/aria-stop-codes", "/.netlify/functions/aria-stop-codes"] };

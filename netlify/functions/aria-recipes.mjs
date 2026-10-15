@@ -55,4 +55,7 @@ export default async function handler() {
   });
 }
 
-export const config = { path: [...RECIPES_PATHS] };
+// Netlify's bundler reads this export STATICALLY (an object literal of literals) — a spread of RECIPES_PATHS broke the
+// 2026-10-15 production build ("configuration error on 'path': Must be a string or array of strings"). Keep the
+// two literals in lockstep with RECIPES_PATHS; tests/netlify-function-config-static.test.mjs pins both.
+export const config = { path: ["/aria-recipes", "/.netlify/functions/aria-recipes"] };
