@@ -53,9 +53,11 @@ deploy. It is still an **unsigned** Windows build (see "What is NOT in this rele
 - **Ctrl+Alt+K stops everything — and it stays stopped.** The panic key ends every running ARIA process, cancels
   every countdown, blocks every open advise-first escalation for good, puts every pending approval on hold (an emailed
   approval link, a click or a voice "yes", and the "if nobody answers" timeout can no longer run anything), stops the
-  approval poll and the watchers, and refuses every later fix, preview and browser-extension request. Quitting and
-  relaunching does not undo it: only **Start ARIA** resumes (it is written to the audit log), and it asks again for
-  every held approval with new links — an old link can never run a fix. One honest limit: a step that needs
+  approval poll and the watchers, and refuses every later fix and preview — including one the browser extension asks
+  for. A problem the extension or a person reports while ARIA is stopped is still recorded and you are still told
+  about it; nothing runs and nothing is asked until Start ARIA. Quitting and relaunching does not undo it: only
+  **Start ARIA** resumes (it is written to the audit log), and it asks again for every held approval with new links —
+  an old link can never run a fix. One honest limit: a step that needs
   administrator rights and is already running under its UAC prompt when you press the key finishes its own command
   (Windows does not let ARIA end an elevated process); nothing after that step runs.
 - **Keyboard shortcuts that do not steal AltGr.** The everyday chords are configurable and AltGr-safe for
