@@ -10,7 +10,8 @@
 // overlay page with their scripts/styles/images, the detection sub-agents, the Tier-0 recipe catalog, the bundled
 // PowerShell mirrors) and emits the reachable file list. `build.files` in package.json is the explicit allow-list
 // derived from it plus the fixed non-code extras (package.json, README-MVP.md, .env.example, aria-kb-pack, the two
-// browser extensions, build/icon-256.png). Nothing is inferred from a wildcard any more.
+// browser extensions, build/icon-256.png, and — review P2-11 — this version's docs/RELEASE_NOTES_<v>.md for "What's
+// new"). Nothing is inferred from a wildcard any more.
 //
 //   node scripts/customer-build-manifest.mjs            → prints the manifest (JSON) to stdout
 //   node scripts/customer-build-manifest.mjs --check    → exit 1 when package.json build.files drifts from the graph
@@ -23,8 +24,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { releaseNotesPath } from "./version-bump.mjs";
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+/** The version the fixed list is computed for (package.json — the same number the app reports). */
+export const PACKAGE_VERSION = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8")).version;
 
 /** Code entry points: the main process and its preload. */
 export const ENTRY_FILES = Object.freeze(["src/main/main.mjs", "src/main/preload.cjs"]);
@@ -38,16 +42,24 @@ export const ENTRY_DIRS = Object.freeze(["src/sub-agents", "src/main/recipes", "
 /**
  * Non-code extras the customer build always carries, in the order they appear in build.files. Globs are kept for
  * data folders (the KB pack and the two browser extensions are content, not code); everything under src/ is explicit.
+ * REVIEW P2-11 (2026-10-14) — plus THIS version's release notes (docs/RELEASE_NOTES_<version>.md): the in-app "What's
+ * new" reads them from the package, and docs/ was not shipped, so an upgraded customer saw "See the release notes for
+ * details" pointing at nothing. Only that one file of docs/ ships; scripts/version-bump.mjs moves the entry with the
+ * version, and --check / package-win refuse a build whose list names another version's notes.
  */
-export const FIXED_BUILD_FILES = Object.freeze([
-  "package.json",
-  "README-MVP.md",
-  ".env.example",
-  "aria-kb-pack/**/*",
-  "chrome-extension/**/*",
-  "edge-extension/**/*",
-  "build/icon-256.png"
-]);
+export function fixedBuildFiles(version = PACKAGE_VERSION) {
+  return Object.freeze([
+    "package.json",
+    "README-MVP.md",
+    ".env.example",
+    "aria-kb-pack/**/*",
+    "chrome-extension/**/*",
+    "edge-extension/**/*",
+    "build/icon-256.png",
+    releaseNotesPath(version)
+  ]);
+}
+export const FIXED_BUILD_FILES = fixedBuildFiles(PACKAGE_VERSION);
 
 /**
  * Business-ops / sales / server-only modules under src/shared that must NEVER reach a customer build (audit-main §4,
@@ -180,8 +192,8 @@ export function computeReachable(root = ROOT) {
 }
 
 /** The build.files allow-list the graph implies: fixed extras first (stable order), then every reachable src file. */
-export function expectedBuildFiles(reachable) {
-  return [...FIXED_BUILD_FILES, ...reachable];
+export function expectedBuildFiles(reachable, version = PACKAGE_VERSION) {
+  return [...fixedBuildFiles(version), ...reachable];
 }
 
 /** Minimal glob → RegExp for electron-builder style patterns (`**`, `*`, `?`). Exact paths match themselves. */
@@ -215,14 +227,23 @@ export function diffBuildFiles(pkg, graph) {
   const wildcardSrc = srcEntries.filter((g) => /[*?]/.test(String(g)));
   const extra = srcEntries.filter((g) => !graph.reachable.some((f) => globToRegExp(String(g)).test(f)));
   const admitsExcluded = srcEntries.filter((g) => graph.unreachable.some((f) => globToRegExp(String(g)).test(f)));
-  return { missing, extra, wildcardSrc, admitsExcluded };
+  // REVIEW P2-11 — the fixed extras for THIS package version (its release notes included), and no other docs/ file.
+  const version = (pkg && pkg.version) || PACKAGE_VERSION;
+  const fixedMissing = fixedBuildFiles(version).filter((f) => !files.includes(f));
+  const docsExtra = files.filter((g) => String(g).startsWith("docs/") && g !== releaseNotesPath(version));
+  return { missing, extra, wildcardSrc, admitsExcluded, fixedMissing, docsExtra };
+}
+
+/** Total drift (every kind diffBuildFiles reports) — 0 means the list matches the graph and the version. */
+export function driftCount(d) {
+  return d.missing.length + d.extra.length + d.wildcardSrc.length + d.admitsExcluded.length + (d.fixedMissing || []).length + (d.docsExtra || []).length;
 }
 
 /** Rewrite build.files in a package.json TEXT (pure; preserves every other key + 2-space formatting + trailing newline). */
 export function rewritePackageBuildFiles(pkgText, graph) {
   const pkg = JSON.parse(pkgText);
   pkg.build = pkg.build || {};
-  pkg.build.files = expectedBuildFiles(graph.reachable);
+  pkg.build.files = expectedBuildFiles(graph.reachable, pkg.version || PACKAGE_VERSION);
   return JSON.stringify(pkg, null, 2) + "\n";
 }
 
@@ -246,18 +267,20 @@ function main(argv) {
   const pkgPath = path.join(ROOT, "package.json");
   if (argv.includes("--write")) {
     fs.writeFileSync(pkgPath, rewritePackageBuildFiles(fs.readFileSync(pkgPath, "utf8"), g));
-    console.error(`[customer-build-manifest] package.json build.files rewritten: ${FIXED_BUILD_FILES.length} fixed + ${g.reachable.length} reachable src files (${g.unreachable.length} src files stay out of the build).`);
+    console.error(`[customer-build-manifest] package.json build.files rewritten: ${FIXED_BUILD_FILES.length} fixed (incl. ${releaseNotesPath(PACKAGE_VERSION)}) + ${g.reachable.length} reachable src files (${g.unreachable.length} src files stay out of the build).`);
     return 0;
   }
   if (argv.includes("--check")) {
     const d = diffBuildFiles(JSON.parse(fs.readFileSync(pkgPath, "utf8")), g);
-    const bad = d.missing.length || d.extra.length || d.wildcardSrc.length || d.admitsExcluded.length;
+    const bad = driftCount(d);
     if (bad) {
       console.error("[customer-build-manifest] DRIFT between the import graph and package.json build.files:");
       for (const f of d.missing) console.error(`  missing (reachable, not shipped): ${f}`);
       for (const f of d.extra) console.error(`  stale   (listed, reaches nothing): ${f}`);
       for (const f of d.wildcardSrc) console.error(`  wildcard under src/ (must be explicit): ${f}`);
       for (const f of d.admitsExcluded) console.error(`  admits an unreachable module: ${f}`);
+      for (const f of d.fixedMissing) console.error(`  missing fixed extra (this version): ${f}`);
+      for (const f of d.docsExtra) console.error(`  docs/ file that is not this version's release notes: ${f}`);
       console.error("  fix: node scripts/customer-build-manifest.mjs --write");
       return 1;
     }

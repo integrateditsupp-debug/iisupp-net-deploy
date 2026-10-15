@@ -998,6 +998,9 @@ const TESTS = [
   // version lockstep, sales copy == pricing-tiers, the binary host declared.
   "./customer-build-allowlist.test.mjs",
   "./package-win.test.mjs",
+  // 2026-10-14 (review P2-11) — this version's release notes ship (and move with the bump; the loader finds them in
+  // app.asar or resources); --print-config downloads and writes nothing; the voice model download is SHA-256 pinned.
+  "./package-release-integrity.test.mjs",
   "./version-lockstep.test.mjs",
   "./sales-copy-prices.test.mjs",
   "./publish-binary-host.test.mjs",

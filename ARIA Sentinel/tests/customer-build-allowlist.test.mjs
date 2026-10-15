@@ -68,7 +68,12 @@ assert.deepEqual(files, expectedBuildFiles(graph.reachable), "build.files is exa
 // Every src entry in build.files points at a file that exists (an explicit path that is gone is a packaging error).
 for (const f of files.filter((x) => x.startsWith("src/"))) assert.ok(fs.existsSync(path.join(ROOT, f)), `listed file exists: ${f}`);
 // The RUN 23e exclusions still hold (admin console via extraResources, never tests/docs/design-review/axis).
-for (const bad of ["tests", "docs/", "design-review", "axis/", "admin-console", "fixtures", "cowork-tools", "dev-docs", "qa/"]) {
+// REVIEW P2-11 (2026-10-14) — expectation changed on purpose: docs/ ships exactly ONE file, this version's release
+// notes (the in-app "What's new" reads them from the package); every other doc stays out.
+const NOTES = `docs/RELEASE_NOTES_${pkg.version}.md`;
+assert.deepEqual(files.filter((f) => f.includes("docs/")), [NOTES], "docs/ ships only this version's release notes");
+assert.ok(fs.existsSync(path.join(ROOT, NOTES)), `the shipped notes exist: ${NOTES}`);
+for (const bad of ["tests", "design-review", "axis/", "admin-console", "fixtures", "cowork-tools", "dev-docs", "qa/"]) {
   assert.ok(!files.some((f) => f.includes(bad)), `build.files never ships ${bad}`);
 }
 assert.ok((pkg.build.extraResources || []).some((e) => String(e).includes("admin-console")), "admin console still ships via extraResources (RUN 23e)");

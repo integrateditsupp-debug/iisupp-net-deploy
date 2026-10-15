@@ -37,12 +37,17 @@ export function nextRecipesFallback(recipesText, to) {
   return recipesText.replace(FALLBACK_RE, `$1${to}$3`);
 }
 
-/** Parse package.json text, bump the patch, return {from, to, text}. Throws on a bad version (fail-closed). */
+/**
+ * Parse package.json text, bump the patch, return {from, to, text}. Throws on a bad version (fail-closed).
+ * REVIEW P2-11 (2026-10-14) — the customer build ships THIS version's release notes (build.files lists
+ * docs/RELEASE_NOTES_<v>.md); the bump moves that entry to the new version, so the list never names stale notes.
+ */
 export function nextPackageJson(pkgText, bump = bumpPatch) {
   const pkg = JSON.parse(pkgText);
   const from = pkg.version;
   const to = bump(from);
   pkg.version = to;
+  if (pkg.build && Array.isArray(pkg.build.files)) pkg.build.files = pkg.build.files.map((f) => (f === releaseNotesPath(from) ? releaseNotesPath(to) : f));
   return { from, to, text: JSON.stringify(pkg, null, 2) + "\n" };
 }
 

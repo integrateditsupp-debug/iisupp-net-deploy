@@ -38,7 +38,9 @@ export const MAIN_INTERNALS = Object.freeze([
   // REVIEW P2-6 — the before-quit step that cancels a running countdown (a clean quit), so a suite can quit, then relaunch.
   "cancelCountdownsForQuit",
   // REVIEW P1-3 / P2-9 — the licence + trial surface (what the cache is worth, the trial clock, the consent gate).
-  "refreshLicense", "enterLicense", "licenseStatus", "gateStatus", "trialState", "sendHeartbeat", "touchClockHighWater", "currentIsAdmin"
+  "refreshLicense", "enterLicense", "licenseStatus", "gateStatus", "trialState", "sendHeartbeat", "touchClockHighWater", "currentIsAdmin",
+  // REVIEW P2-11 — the "What's new" loader (finds the shipped notes inside the package or in process.resourcesPath).
+  "readReleaseNotes"
 ]);
 // Platform globals main.mjs reads that the lab must own (shadowed as function parameters).
 const SHADOWED = ["process", "Date", "setTimeout", "setInterval", "clearTimeout", "clearInterval", "fetch"];
@@ -208,12 +210,12 @@ export function makeFakeElectron({ userData, home, recorder }) {
 }
 
 /** The fake process main.mjs sees: Windows, packaged, no developer override of the live-fix consent. */
-export function makeFakeProcess({ env = {} } = {}) {
+export function makeFakeProcess({ env = {}, resourcesPath = "C:\\Program Files\\ARIA Sentinel\\resources" } = {}) {
   const ev = new EventEmitter();
   return {
     platform: "win32", arch: "x64", type: "browser", pid: 4242,
     env: { ...env }, argv: ["C:\\Program Files\\ARIA Sentinel\\ARIA Sentinel.exe"],
-    execPath: "C:\\Program Files\\ARIA Sentinel\\ARIA Sentinel.exe", resourcesPath: "C:\\Program Files\\ARIA Sentinel\\resources",
+    execPath: "C:\\Program Files\\ARIA Sentinel\\ARIA Sentinel.exe", resourcesPath,
     defaultApp: false, versions: process.versions, exitCode: undefined,
     on: (...a) => { ev.on(...a); }, once: (...a) => { ev.once(...a); }, off: (...a) => { ev.off(...a); }, removeListener: (...a) => { ev.removeListener(...a); },
     nextTick: process.nextTick.bind(process), hrtime: process.hrtime, memoryUsage: process.memoryUsage.bind(process),
@@ -260,6 +262,7 @@ function wrapWithLabDate(fn, LabDate) {
  *   respond      — (url, init) → JSON | undefined: answer an outbound call (default: { ok: true })
  *   licenseVerify — (verdict, sig) → boolean: the licence-verdict check main's cache decisions use (default: the
  *                  embedded production public key) — REVIEW P1-3, for verdicts signed with a throwaway test pair
+ *   resourcesPath — process.resourcesPath main sees (REVIEW P2-11: where a packaged build keeps app.asar / resources)
  * @returns {{ main, ipc, windows, notifications, outbound, store, electronCalls }}
  */
 export async function bootMain(platform = {}) {
@@ -327,7 +330,7 @@ export async function bootMain(platform = {}) {
       values.push(v);
     }
   }
-  const fakeProcess = makeFakeProcess({ env: platform.env || {} });
+  const fakeProcess = makeFakeProcess({ env: platform.env || {}, ...(platform.resourcesPath ? { resourcesPath: platform.resourcesPath } : {}) });
   const shadow = { process: fakeProcess, Date: LabDate, setTimeout: timers.setTimeout, setInterval: timers.setInterval, clearTimeout: timers.clearTimeout, clearInterval: timers.clearInterval, fetch: fakeFetch };
   for (const name of SHADOWED) values.push(shadow[name]);
   const main = c.fn(...values);

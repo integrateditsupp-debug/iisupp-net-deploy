@@ -135,3 +135,12 @@ deploy. It is still an **unsigned** Windows build (see "What is NOT in this rele
 `npm run package:win` (allow-list check → voice model → electron-builder NSIS + MSI → verification) → SHA-256 +
 signed/unsigned verdict → next step. `ota-build.bat` adds the version bump and publishes the installer to a
 GitHub Release plus the update manifest. Installers are **not** committed to git.
+
+- **The voice model is downloaded only against a pinned SHA-256.** Before the first build on a machine without the
+  model, set `VOSK_MODEL_SHA256` (or write the hash to `scripts/vosk-model.sha256`), taken from a copy of
+  `vosk-model-small-en-us-0.15.zip` you trust. Without a pin the download is refused and `package:win` stops (or
+  build with `--no-voice`); a download with a different hash is deleted. The hash is not in the repository — it
+  could not be obtained offline when this release was prepared.
+- `package:win --print-config` only prints: it downloads nothing and writes nothing to `dist/`.
+- The installer carries this version's release notes (the in-app "What's new" reads them); the version bump moves
+  that entry, and the allow-list check refuses a build that names another version's notes.

@@ -47,6 +47,7 @@
       "chrome-extension/**/*",
       "edge-extension/**/*",
       "build/icon-256.png",
+      "docs/RELEASE_NOTES_0.2.1.md",
       "src/main/action-countdown.mjs",
       "src/main/approvals.mjs",
       "src/main/crash-reporter.mjs",

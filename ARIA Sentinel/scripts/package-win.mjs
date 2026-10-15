@@ -4,6 +4,7 @@
 //                                                → verify dist (paths, SHA-256, signed/unsigned verdict) → dist/RELEASE-<v>.json
 //   node scripts/package-win.mjs --verify-only   only inspect dist/ and print the verdict (what build-installer.bat shows)
 //   node scripts/package-win.mjs --print-config  print the generated electron-builder config + command, build nothing
+//                                                (REVIEW P2-11: no voice-model download, nothing written to dist/)
 //   flags: --nsis-only (skip the MSI target) · --no-voice (skip the Vosk model fetch) · --skip-allowlist-check
 //
 // Signing is decided by the ENVIRONMENT, never by editing package.json:
@@ -24,7 +25,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { computeReachable, diffBuildFiles } from "./customer-build-manifest.mjs";
+import { computeReachable, diffBuildFiles, driftCount } from "./customer-build-manifest.mjs";
+import { VOSK_EXIT } from "./fetch-vosk-model.mjs";
 import {
   detectSigning, isSigned, artifactNameTemplate, artifactNames, findDistArtifacts, sha256Hex, sha512Base64
 } from "./release-artifacts.mjs";
@@ -180,63 +182,83 @@ export function reportLines(report, { base = "https://iisupp.net" } = {}) {
   return L;
 }
 
-export function main(argv = process.argv.slice(2)) {
+const voskModelPresent = () => fs.existsSync(VOSK_MODEL_DIR) && fs.readdirSync(VOSK_MODEL_DIR).length > 0;
+
+/**
+ * The build. `io` exists for tests (REVIEW P2-11): run / writeFile / mkdir / log / error / voskPresent replace the real
+ * process spawn, file writes, console and the model probe — so a suite can prove --print-config downloads and writes
+ * nothing, and that an unpinned voice model stops the build, without ever touching the network.
+ */
+export function main(argv = process.argv.slice(2), io = {}) {
+  const runImpl = io.run || run;
+  const writeFile = io.writeFile || ((p, t) => fs.writeFileSync(p, t));
+  const mkdir = io.mkdir || ((p) => fs.mkdirSync(p, { recursive: true }));
+  const log = io.log || ((...a) => console.log(...a));
+  const error = io.error || ((...a) => console.error(...a));
+  const voskPresentNow = typeof io.voskPresent === "function" ? io.voskPresent : voskModelPresent;
   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
   const version = pkg.version;
-  const signing = detectSigning(process.env);
+  const signing = detectSigning(io.env || process.env);
   const targets = argv.includes("--nsis-only") ? ["nsis"] : [...DEFAULT_TARGETS];
-  const voskPresent = fs.existsSync(VOSK_MODEL_DIR) && fs.readdirSync(VOSK_MODEL_DIR).length > 0;
+  const voskPresent = voskPresentNow();
 
   if (argv.includes("--verify-only")) {
     const report = verifyDist({ version, signing });
-    fs.mkdirSync(DIST, { recursive: true });
-    fs.writeFileSync(path.join(DIST, `RELEASE-${version}.json`), JSON.stringify(report, null, 2) + "\n");
-    console.log(reportLines(report).join("\n"));
+    mkdir(DIST);
+    writeFile(path.join(DIST, `RELEASE-${version}.json`), JSON.stringify(report, null, 2) + "\n");
+    log(reportLines(report).join("\n"));
     return report.ok ? 0 : 1;
   }
 
-  console.log(`[package-win] ARIA Sentinel ${version} · ${signingSummary(signing)}`);
+  log(`[package-win] ARIA Sentinel ${version} · ${signingSummary(signing)}`);
 
   if (!argv.includes("--skip-allowlist-check")) {
     const graph = computeReachable(ROOT);
     const d = diffBuildFiles(pkg, graph);
-    const drift = d.missing.length + d.extra.length + d.wildcardSrc.length + d.admitsExcluded.length;
-    if (drift) {
-      console.error("[package-win] REFUSED: package.json build.files does not match the customer import graph.");
-      console.error("  run: node scripts/customer-build-manifest.mjs --check   (then --write to repair)");
+    if (driftCount(d)) {
+      error("[package-win] REFUSED: package.json build.files does not match the customer import graph (or names another version's release notes).");
+      error("  run: node scripts/customer-build-manifest.mjs --check   (then --write to repair)");
       return 2;
     }
-    console.log(`[package-win] allow-list OK: ${graph.reachable.length} reachable src files ship, ${graph.unreachable.length} stay out.`);
+    log(`[package-win] allow-list OK: ${graph.reachable.length} reachable src files ship, ${graph.unreachable.length} stay out.`);
   }
 
-  if (!argv.includes("--no-voice") && !voskPresent) {
-    console.log("[package-win] fetching the on-device voice model (one-time, ~40 MB) …");
-    run(process.execPath, [path.join(ROOT, "scripts", "fetch-vosk-model.mjs")]);
-  }
-  const voskNow = fs.existsSync(VOSK_MODEL_DIR) && fs.readdirSync(VOSK_MODEL_DIR).length > 0;
-  if (!voskNow) console.log("[package-win] voice model absent — building WITHOUT on-device voice (the microphone hides; typing works).");
-
-  const config = buildConfig({ pkg, signing, voskPresent: voskNow, targets });
-  fs.mkdirSync(DIST, { recursive: true });
   const configPath = path.join(DIST, GENERATED_CONFIG);
-  fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n");
-  const args = electronBuilderArgs({ configPath });
-
   if (argv.includes("--print-config")) {
-    console.log(JSON.stringify(config, null, 2));
-    console.log(`command: ${process.execPath} ${args.join(" ")}`);
+    // REVIEW P2-11 — print only: the config for the model state as it is now (no download), nothing written to dist/.
+    const config = buildConfig({ pkg, signing, voskPresent, targets });
+    log(JSON.stringify(config, null, 2));
+    log(`command: ${process.execPath} ${electronBuilderArgs({ configPath }).join(" ")}`);
+    log(`(print only — a build writes this config to ${path.relative(ROOT, configPath)}${voskPresent || argv.includes("--no-voice") ? "" : " and first fetches the voice model, which needs a pinned SHA-256"}; nothing was downloaded or written)`);
     return 0;
   }
 
-  console.log(`[package-win] electron-builder --win ${targets.join(" ")} (config: ${path.relative(ROOT, configPath)})`);
-  const status = run(process.execPath, args);
+  if (!argv.includes("--no-voice") && !voskPresent) {
+    log("[package-win] fetching the on-device voice model (one-time, ~40 MB; checked against its pinned SHA-256) …");
+    const fetched = runImpl(process.execPath, [path.join(ROOT, "scripts", "fetch-vosk-model.mjs")]);
+    if (fetched === VOSK_EXIT.NO_PIN || fetched === VOSK_EXIT.MISMATCH) {
+      error(`[package-win] REFUSED: the voice model ${fetched === VOSK_EXIT.NO_PIN ? "has no pinned SHA-256" : "did not match its pinned SHA-256"} (see above) — nothing unverified goes into the installer.`);
+      error("  pin it (VOSK_MODEL_SHA256=<64 hex> or scripts/vosk-model.sha256), or build without on-device voice: --no-voice");
+      return 3;
+    }
+  }
+  const voskNow = voskPresentNow();
+  if (!voskNow) log("[package-win] voice model absent — building WITHOUT on-device voice (the microphone hides; typing works).");
+
+  const config = buildConfig({ pkg, signing, voskPresent: voskNow, targets });
+  mkdir(DIST);
+  writeFile(configPath, JSON.stringify(config, null, 2) + "\n");
+  const args = electronBuilderArgs({ configPath });
+
+  log(`[package-win] electron-builder --win ${targets.join(" ")} (config: ${path.relative(ROOT, configPath)})`);
+  const status = runImpl(process.execPath, args);
   if (status !== 0) {
-    console.error(`[package-win] electron-builder exited ${status}. Nothing was verified; nothing is publishable.`);
+    error(`[package-win] electron-builder exited ${status}. Nothing was verified; nothing is publishable.`);
     return status;
   }
   const report = verifyDist({ version, signing });
-  fs.writeFileSync(path.join(DIST, `RELEASE-${version}.json`), JSON.stringify(report, null, 2) + "\n");
-  console.log(reportLines(report).join("\n"));
+  writeFile(path.join(DIST, `RELEASE-${version}.json`), JSON.stringify(report, null, 2) + "\n");
+  log(reportLines(report).join("\n"));
   return report.ok ? 0 : 1;
 }
 
