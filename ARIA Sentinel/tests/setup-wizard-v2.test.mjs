@@ -120,7 +120,10 @@ const preload = rd("src", "main", "preload.cjs");
   for (const kicker of ["Welcome", "License", "Mode", "ARIA Chat", "Notifications", "Done"]) assert.match(rjs, new RegExp(`kicker: "${kicker}"`), `original step ${kicker} intact`);
   const stepsBlock = rjs.slice(rjs.indexOf("const SETUP_STEPS = ["), rjs.indexOf("let setupStep = 0;"));
   assert.ok(stepsBlock.indexOf('kicker: "Done"') < stepsBlock.indexOf('id: "setup-identity"'), "v2 steps come AFTER the original six (appended, not inserted)");
-  for (const c of ["I find it, I tell you, I touch nothing.", "I fix the safe things myself and tell you after.", "I ask before every fix.", "I fix green and yellow inside your maintenance window and report."]) assert.ok(rjs.includes(c), `card consequence copy present: ${c}`);
+  // 2026-10-14 (review P1-1) — EXPECTATION CHANGED ON PURPOSE: the owner's decision is "Confirmed asks once, every time; it
+  // never executes unattended", so the Safe-auto (Confirmed) card no longer says "I fix the safe things myself and tell you after".
+  for (const c of ["I find it, I tell you, I touch nothing.", "I ask you once per fix, then fix it with you present.", "I ask before every fix.", "I fix green and yellow inside your maintenance window and report."]) assert.ok(rjs.includes(c), `card consequence copy present: ${c}`);
+  assert.ok(!rjs.includes("I fix the safe things myself and tell you after."), "the old Safe-auto promise (unattended green fixes) is gone");
   assert.match(rjs, /setupFullAutoUnderstood/, "full-auto card reveals an explicit understanding checkbox");
   assert.match(rjs, /parseContactLines/, "tech contacts parsed from one-per-line input");
   assert.match(idx, /id="autonomy"/, "Settings hosts the Autonomy & contacts section");

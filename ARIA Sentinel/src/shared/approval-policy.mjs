@@ -21,14 +21,20 @@
 // Truth table (Rule 14 — the copy on the wizard cards is exactly what this table does):
 //   killed/blocked              → blocked
 //   level observe               → notify-only            ("I find it, I tell you, I touch nothing")
-//   red (any level)             → notify-only            ('red-never-automated')
+//   safe-auto (Confirmed) · ANY colour → request-approval ('confirmed-asks-once' — "I ask you once per fix, then fix it
+//                                  with you present"; one click on the globe card / Home row; never unattended)
+//   red (every other level)     → notify-only            ('red-never-automated')
 //   approve-first               → request-approval       ("I ask before every fix")
-//   safe-auto · green           → execute, notifyAfter   ("I fix the safe things myself and tell you after")
-//   safe-auto · yellow          → request-approval
 //   full-auto · green           → execute
 //   full-auto · yellow · in window     → execute, requiresRestorePoint
 //   full-auto · yellow · outside       → defer-window
 //   any yellow execute WITHOUT a real restore point → request-approval ('restore-point-unavailable')
+//
+// REVIEW P1-1 (2026-10-14) — the owner's decision: CONFIRMED ASKS ONCE, EVERY TIME; IT NEVER EXECUTES UNATTENDED.
+// Unattended execution exists only in Autonomous mode, through the advise-three-times rule. safe-auto used to EXECUTE a
+// green fix on its own ("I fix the safe things myself and tell you after") while Settings said "applies the fix only
+// after you approve" — the code now does what Settings says. Red at safe-auto is asked too (a person decides; a red
+// recipe has no step ARIA can execute, and no approval ever elevates it).
 
 export const LEVELS = Object.freeze(["observe", "safe-auto", "approve-first", "full-auto"]);
 export const COLORS = Object.freeze(["green", "yellow", "red"]);
@@ -67,14 +73,11 @@ export function decideExecution(input = {}) {
   if (input.blocked === true) return result("blocked", "agent-blocked", meta);
 
   if (level === "observe") return result("notify-only", "level-observe", { ...meta, notifyBefore: true });
+  // REVIEW P1-1 — Confirmed (safe-auto) asks once for EVERY colour; it never executes on its own.
+  if (level === "safe-auto") return result("request-approval", "confirmed-asks-once", { ...meta, notifyBefore: true, requiresRestorePoint: color === "yellow" });
   if (color === "red") return result("notify-only", "red-never-automated", { ...meta, notifyBefore: true });
 
   if (level === "approve-first") return result("request-approval", "level-approve-first", { ...meta, notifyBefore: true });
-
-  if (level === "safe-auto") {
-    if (color === "green") return result("execute", "safe-auto-green", { ...meta, notifyAfter: true });
-    return result("request-approval", "safe-auto-yellow-needs-approval", { ...meta, notifyBefore: true });
-  }
 
   // full-auto
   if (color === "green") return result("execute", "full-auto-green", { ...meta, notifyAfter: true });
@@ -83,14 +86,27 @@ export function decideExecution(input = {}) {
   return result("execute", "full-auto-yellow-in-window", { ...meta, requiresRestorePoint: true, notifyAfter: true });
 }
 
-/** Human copy for an action (Rule 17 — plain, benefit first). Used by chat/voice + the approvals list. */
+/**
+ * Human copy for an action (Rule 17 — plain, benefit first). Used by chat/voice + the approvals list.
+ * PROD 2026-10-14 (audit M3) — a decision that carries `needsAdmin:true` says so: an attended execute names the
+ * UAC prompt the person will see; an unattended one explains why it became an approval request instead of
+ * pretending the step could run silently. (Rule 14: nothing here claims a change that cannot happen.)
+ */
 export function describeDecision(decision = {}) {
+  const needsAdmin = decision.needsAdmin === true;
   switch (decision.action) {
-    case "execute": return decision.requiresRestorePoint ? "Fixing it now — a restore point is in place so it can be undone." : "Fixing it now — I'll tell you when it's done.";
-    case "request-approval": return decision.reason === "restore-point-unavailable" ? "I need a yes before this one — I couldn't make a restore point first." : "I've asked for approval before touching anything.";
+    case "execute":
+      if (needsAdmin) return decision.requiresRestorePoint ? "Fixing it now — this step needs administrator approval (UAC), so Windows will ask you first; a restore point is in place so it can be undone." : "Fixing it now — this step needs administrator approval (UAC), so Windows will ask you first.";
+      return decision.requiresRestorePoint ? "Fixing it now — a restore point is in place so it can be undone." : "Fixing it now — I'll tell you when it's done.";
+    case "request-approval":
+      if (decision.reason === "needs-admin-unattended") return "This fix needs administrator approval (UAC), and unattended fixes need the admin runner (not registered) — so I've asked for your approval instead of running it on my own.";
+      if (decision.reason === "needs-admin-unavailable") return "This fix needs administrator rights, which ARIA cannot request on this platform — I've asked for your approval so a person can run it.";
+      if (decision.reason === "confirmed-asks-once") return "Confirmed mode asks once per fix: approve it on the card (one click) and I'll fix it with you here — nothing changes before then.";
+      return decision.reason === "restore-point-unavailable" ? "I need a yes before this one — I couldn't make a restore point first." : "I've asked for approval before touching anything.";
     case "notify-only": return decision.reason === "red-never-automated" ? "This one needs a person — I've flagged it, nothing was changed." : "Found it and flagged it — I'm in observe mode, so nothing was changed.";
     case "defer-window": return "Queued for your next maintenance window — nothing changes until then.";
-    case "blocked": return "Fixes are paused on this device right now, so nothing was changed.";
+    // KILL GATE 2026-10-14 (review P0-2) — Ctrl+Alt+K / Stop ARIA say what to press; every other block keeps its line.
+    case "blocked": return decision.reason === "aria-stopped" ? "ARIA is stopped on this device (Ctrl+Alt+K or Stop ARIA), so nothing was changed — press Start ARIA to let fixes run again." : "Fixes are paused on this device right now, so nothing was changed.";
     default: return "";
   }
 }

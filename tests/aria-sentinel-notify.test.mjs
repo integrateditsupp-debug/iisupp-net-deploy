@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // aria-sentinel-notify.test.mjs — RUN-CU / CU4 contract for netlify/functions/aria-sentinel-notify.js.
 // Device auth by sha256(licenseKey) (plan-key derivation, constant-time) or an internal token; rate limit;
+// (SENTINEL REVIEW FIXES 2026-10-14: recipients must be on the license — a shared v1 key notifies the admin inbox
+// only, so delivery runs as a per-customer key whose record names the recipient; see the sentinel-notify-binding suite)
 // size + event validation; the Sentinel's own content-blind guard (fail-closed); templated email/SMS via
 // lib/notify.mjs with HONEST per-channel results (Twilio unset → dormant, never "sent"); approval-requested
 // stores a record in 'sentinel-approvals' and returns HMAC-signed approve/deny links that expire with it.
@@ -58,6 +60,12 @@ const fn = require_('../netlify/functions/aria-sentinel-notify.js');
 // A real plan key, exactly as sentinel-resolve / the funnel mint it; the device sends its sha256.
 const planKey = (plan) => crypto.createHmac('sha256', process.env.SENTINEL_LICENSE_SECRET).update(`sentinel-license:v1:${plan}`).digest('hex');
 const deviceKey = crypto.createHash('sha256').update(planKey('pro')).digest('hex');
+// SENTINEL REVIEW FIXES 2026-10-14 (P1-2): a shared v1 plan key may notify the admin inbox only, so the delivery
+// sections below run as a PER-CUSTOMER (v2) license whose record names Sam as the buyer and his phone as approved.
+const V2 = require_('../netlify/functions/lib/sentinel-license-v2.cjs');
+const custKey = V2.issueCustomerKey({ plan: 'pro', seed: 'sub_sam', secret: process.env.SENTINEL_LICENSE_SECRET });
+const custDevice = V2.keyHash(custKey);
+const seedCustomer = () => memStore('sentinel-license-keys').setJSON(custDevice, { v: 'sentinel-license-key-v1', subscription_id: 'sub_sam', tier: 'pro', status: 'active', key_version: 2, email: 'sam@example.com', contacts: [], contact_phones: ['+14165551234'], disabled: false });
 const DEVICE = 'a'.repeat(32);
 const basePayload = (over = {}) => ({
   v: 'sentinel-notify-v1', event: 'issue-detected', title: 'Print spooler stopped', recipeId: 'restart-print-spooler', severity: 'yellow', platform: 'win32',
@@ -80,16 +88,30 @@ console.log('[notify-fn] auth');
   ok('unknown key hash → 401 (no store record, no plan match)', bad.status === 401);
   const short = await post(basePayload(), { 'x-sentinel-key': 'abc' });
   ok('malformed key hash → 401', short.status === 401);
-  const good = await post(basePayload(), { 'x-sentinel-key': deviceKey });
+  const good = await post(basePayload({ recipients: [] }), { 'x-sentinel-key': deviceKey });
   ok('sha256(plan key) → 200 via plan-key derivation', good.status === 200 && good.json.ok === true && good.json.auth === 'device');
+  const sharedToCustomer = await post(basePayload(), { 'x-sentinel-key': deviceKey });
+  ok('REVIEW P1-2: a shared v1 plan key naming a customer address → 403 recipients-not-registered (admin inbox only)', sharedToCustomer.status === 403 && sharedToCustomer.json.recipientBinding === 'admin-inbox-only');
   ok('no raw key ever reaches the server: the header is a hash and nothing hashed it back', !calls.some((c) => String(c.body || '').includes(planKey('pro'))));
-  // revoked: a sentinel-licenses record with this key and status revoked (and no active sibling) denies
+  // revoked: SENTINEL-BACKEND 2026-10-14 (audit B4/B14) — the ONE revocation store ('sentinel-licenses-revocations',
+  // keyed by sha256(key)) that sentinel-licenses?action=revoke and the Stripe subscription.deleted path write.
+  // No more 2,000-blob scan of sentinel-licenses on every notify; a record there with status revoked no longer
+  // denies by itself — the revoke action decides (shared v1 plan keys are cut off only when no active sibling
+  // record still holds the same key; see tests/sentinel-licenses-api.test.mjs).
   memStore('sentinel-licenses')._m.set('sub_1', JSON.stringify({ key: planKey('pro'), status: 'revoked', email: 'x@example.com' }));
+  const scanFree = await post(basePayload({ recipients: [] }), { 'x-sentinel-key': deviceKey });
+  ok('a revoked record alone (no revocation entry) does not deny — nothing scans the registry any more', scanFree.status === 200);
+  await memStore('sentinel-licenses-revocations').setJSON(deviceKey, { revoked: true, at: '2026-10-14T00:00:00.000Z', reason: 'admin-revoke' });
   const rev = await post(basePayload(), { 'x-sentinel-key': deviceKey });
   ok('revoked license → 401 license-revoked', rev.status === 401 && rev.json.error === 'license-revoked');
-  memStore('sentinel-licenses')._m.set('sub_2', JSON.stringify({ key: planKey('pro'), status: 'active', email: 'y@example.com' }));
-  const again = await post(basePayload(), { 'x-sentinel-key': deviceKey });
-  ok('an active sibling record on the same plan key keeps it valid', again.status === 200);
+  memStore('sentinel-licenses-revocations')._m.clear();
+  const again = await post(basePayload({ recipients: [] }), { 'x-sentinel-key': deviceKey });
+  ok('clearing the revocation entry (admin unrevoke) restores access', again.status === 200);
+  // a per-customer key-index record with status revoked denies too (written by revoke / cancellation)
+  await memStore('sentinel-license-keys').setJSON(deviceKey, { v: 'sentinel-license-key-v1', status: 'revoked', tier: 'pro', email: 'x@example.com' });
+  const idxRev = await post(basePayload(), { 'x-sentinel-key': deviceKey });
+  ok('key-index record status:revoked → 401 license-revoked', idxRev.status === 401 && idxRev.json.error === 'license-revoked');
+  memStore('sentinel-license-keys')._m.clear();
   memStore('sentinel-licenses')._m.clear();
   // internal token path (fail-closed gate)
   const noTok = await post(basePayload(), { 'x-internal-token': 'whatever-long-token' });
@@ -105,7 +127,7 @@ console.log('[notify-fn] auth');
   const noSecret = await post(basePayload(), { 'x-sentinel-key': deviceKey });
   ok('no license secret + no store record → 401', noSecret.status === 401);
   memStore('licenses')._m.set(deviceKey, JSON.stringify({ status: 'active', plan: 'pro' }));
-  const viaStore = await post(basePayload(), { 'x-sentinel-key': deviceKey });
+  const viaStore = await post(basePayload({ recipients: [] }), { 'x-sentinel-key': deviceKey });
   ok('no license secret + licenses store record → 200', viaStore.status === 200);
   memStore('licenses')._m.clear();
   process.env.SENTINEL_LICENSE_SECRET = savedSecret;
@@ -113,7 +135,8 @@ console.log('[notify-fn] auth');
 
 console.log('[notify-fn] validation + content-blind guard (fail-closed, the Sentinel\'s own definition)');
 {
-  const H = { 'x-sentinel-key': deviceKey };
+  await seedCustomer();
+  const H = { 'x-sentinel-key': custDevice };
   ok('GET → 405', (await fn.handler({ httpMethod: 'GET', headers: H })).statusCode === 405);
   ok('oversized body → 413', (await post('{"v":"' + 'x'.repeat(25 * 1024) + '"}', H)).status === 413);
   ok('bad JSON → 400', (await post('{nope', H)).status === 400);
@@ -134,7 +157,7 @@ console.log('[notify-fn] validation + content-blind guard (fail-closed, the Sent
 
 console.log('[notify-fn] honest channel results');
 {
-  const H = { 'x-sentinel-key': deviceKey };
+  const H = { 'x-sentinel-key': custDevice };
   calls.length = 0;
   const dormant = await post(basePayload(), H);
   ok('no providers → ok:true (accepted) but email.sent 0 + dormant:true', dormant.json.ok === true && dormant.json.email.sent === 0 && dormant.json.email.dormant === true && dormant.json.email.error === 'no-email-provider-configured');
@@ -163,7 +186,7 @@ console.log('[notify-fn] honest channel results');
 
 console.log('[notify-fn] approval-requested → stored record + signed links');
 {
-  const H = { 'x-sentinel-key': deviceKey };
+  const H = { 'x-sentinel-key': custDevice };
   const exp = new Date(Date.now() + 20 * 60 * 1000).toISOString();
   const r = await post(basePayload({ event: 'approval-requested', approvalId: 'local-approval-1', expiresAt: exp, subject: 'Approve a fix', text: 'ARIA Sentinel wants to run "Print spooler stopped" (medium severity, restart-print-spooler). It will not run until someone approves it.', sms: 'ARIA: approve "Print spooler stopped"? Reply in the app or use the link in your email.' }), H);
   ok('200 with approval {id, approveUrl, denyUrl, expiresAt}', r.status === 200 && r.json.approval && /^[a-f0-9]{16}$/.test(r.json.approval.id) && r.json.approval.linksSigned === true);
@@ -173,7 +196,7 @@ console.log('[notify-fn] approval-requested → stored record + signed links');
   ok('the link token verifies under the approval secret and names the record', v.ok === true && v.id === r.json.approval.id);
   ok('token expiry equals the record expiry (links expire with the record)', Math.abs(v.expiresAt - Date.parse(r.json.approval.expiresAt)) < 1000);
   const rec = await memStore('sentinel-approvals').get(r.json.approval.id, { type: 'json' });
-  ok('record stored {id, tenant, device, recipe, title, expiresAt, status:pending}', rec && rec.status === 'pending' && rec.recipe === 'restart-print-spooler' && rec.title === 'Print spooler stopped' && rec.device === DEVICE && rec.tenant === A.hash16(deviceKey) && rec.clientApprovalId === 'local-approval-1');
+  ok('record stored {id, tenant, device, recipe, title, expiresAt, status:pending}', rec && rec.status === 'pending' && rec.recipe === 'restart-print-spooler' && rec.title === 'Print spooler stopped' && rec.device === DEVICE && rec.tenant === A.hash16(custDevice) && rec.clientApprovalId === 'local-approval-1');
   ok('record carries catalog facts only (no address, no message text)', !JSON.stringify(rec).includes('sam@') && !JSON.stringify(rec).includes('wants to run'));
   const sentBody = JSON.parse(calls.filter((c) => c.url.startsWith('https://api.resend.com')).pop().body);
   ok('approval email carries both signed links', sentBody.html.includes(r.json.approval.approveUrl.replace(/&/g, '&amp;')) && sentBody.text.includes(r.json.approval.denyUrl));
@@ -187,7 +210,6 @@ console.log('[notify-fn] approval-requested → stored record + signed links');
   // no approval secret → record stored, no links, email says "approve in the app"
   const saved = process.env.SENTINEL_APPROVAL_SECRET; delete process.env.SENTINEL_APPROVAL_SECRET;
   const savedL = process.env.SENTINEL_LICENSE_SECRET; delete process.env.SENTINEL_LICENSE_SECRET;
-  memStore('licenses')._m.set(deviceKey, JSON.stringify({ status: 'active' }));
   const noSecret = await post(basePayload({ event: 'approval-requested' }), H);
   ok('no signing secret → record stored but linksSigned:false + approvalError named (no unsigned link ever ships)', noSecret.status === 200 && noSecret.json.approval.approveUrl === null && noSecret.json.approval.linksSigned === false && noSecret.json.approvalError === 'approval-secret-not-configured');
   const lastMail = JSON.parse(calls.filter((c) => c.url.startsWith('https://api.resend.com')).pop().body);

@@ -26,6 +26,7 @@ assert.deepEqual([...EXECUTABLE_RECIPES].sort(), [
   "printer-spooler-v1",
   "svc-audiosrv-stopped-v1",
   "svc-bits-stopped-v1",
+  "svc-dhcp-stopped-v1",
   "svc-dnscache-stopped-v1",
   "svc-rasman-stopped-v1",
   "svc-spooler-stopped-v1",
@@ -36,7 +37,9 @@ assert.deepEqual([...EXECUTABLE_RECIPES].sort(), [
   "wifi-no-internet-v1",
   "windows-update-stuck-v1"
 ]);
-assert.equal(EXECUTABLE_RECIPES.size, 15, "7 original + 8 RUN 7 service-restart greens");
+// FAULT LAB 2026-10-14 (defect 1) — +1: svc-dhcp-stopped-v1, the same reversible Restart-Service shape as the RUN 7 eight
+// (SYSTEM.SERVICE.STOPPED.DHCP used to fall through to the clock-drift guide). The list above stays exact.
+assert.equal(EXECUTABLE_RECIPES.size, 16, "7 original + 8 RUN 7 service-restart greens + the DHCP Client restart");
 assert.equal(isExecutableRecipe("dns-fail-v1"), true);
 assert.equal(isExecutableRecipe("teams-cache-v1"), true, "yellow recipes are still 'executable' (verify path runs)");
 assert.equal(isExecutableRecipe("bsod-critical-process-v1"), false, "red BSOD recipe is never executable");

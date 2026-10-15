@@ -14,7 +14,7 @@ assert.equal(confirmed.autoFix, false, "confirmed still asks");
 
 const manual = modeOverlayBehavior("manual");
 assert.equal(manual.alwaysOnTop, false, "manual free-roams (not pinned)");
-assert.equal(manual.ignoreMouse, true, "manual is click-through");
+assert.equal(manual.ignoreMouse, false, "manual is interactive (PROD 2026-10-14 R11: the globe is clickable; hover-forward keeps transparent parts click-through)");
 assert.equal(manual.autoFix, false);
 
 // Unknown mode falls back to the safe manual behaviour.

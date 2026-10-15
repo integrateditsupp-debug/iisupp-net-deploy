@@ -1,6 +1,7 @@
 // auto-update — parse a GitHub-Releases-style update manifest and decide whether a newer build is
 // available. Pure; reuses the version comparator. The desktop "Check for updates" button and the
 // /aria-binary-update endpoint both call this.
+import { createHash } from "node:crypto";
 import { compareVersions } from "./whats-new.mjs";
 
 /**
@@ -31,9 +32,26 @@ export function updateAvailable(currentVersion, latest) {
 export const UPDATE_MANIFEST_PATH = "/.netlify/functions/aria-sentinel-update-manifest";
 
 // electron-updater "generic" feed URL, scoped to the license so the server can pin/rollout per device.
+// (Legacy shape, kept for compatibility — the raw key in a GET query. New code uses buildFeedRequest.)
 export function buildFeedUrl(licenseKey, base = "https://iisupp.net") {
   const key = encodeURIComponent(String(licenseKey || ""));
   return `${base}${UPDATE_MANIFEST_PATH}?license=${key}`;
+}
+
+// PROD 2026-10-14 (audit M9/M17) — the device credential is sha256(licenseKey) in the `x-sentinel-key` header (the
+// same credential every other Sentinel endpoint uses); the raw key never travels in a GET query string that
+// proxies and access logs keep. The `?license=` query survives ONLY as the fallback when no 64-hex key exists.
+export function licenseKeyHashOf(licenseKey) {
+  const key = String(licenseKey || "").trim().toLowerCase();
+  if (!/^[a-f0-9]{64}$/.test(key)) return "";
+  return createHash("sha256").update(key).digest("hex");
+}
+/** { url, requestHeaders } for electron-updater's generic provider / a manual manifest GET. Pure. */
+export function buildFeedRequest(licenseKey, base = "https://iisupp.net", extraQuery = "") {
+  const hash = licenseKeyHashOf(licenseKey);
+  const q = extraQuery ? String(extraQuery).replace(/^[?&]/, "") : "";
+  if (hash) return { url: `${base}${UPDATE_MANIFEST_PATH}${q ? `?${q}` : ""}`, requestHeaders: { "x-sentinel-key": hash }, credential: "header" };
+  return { url: `${buildFeedUrl(licenseKey, base)}${q ? `&${q}` : ""}`, requestHeaders: {}, credential: licenseKey ? "query-fallback" : "none" };
 }
 
 // Append an installed version to the update history (newest first, deduped by version). Pure.

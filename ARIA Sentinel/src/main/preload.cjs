@@ -29,10 +29,20 @@ contextBridge.exposeInMainWorld("sentinel", {
   ariaMemory: () => ipcRenderer.invoke("aria:memory"),
   ariaAgents: () => ipcRenderer.invoke("aria:agents"),
   scan: () => ipcRenderer.invoke("sentinel:scan"),
+  // JULY PORT 2026-10-14 (ddfcac5b) — the read-only .txt association guard: manual re-check + the one guide action
+  // (open Windows Default Apps for the person to pick Notepad; ARIA writes nothing).
+  fileAssociationScan: () => ipcRenderer.invoke("sentinel:file-association-scan"),
+  fileAssociationFix: (recipeId) => ipcRenderer.invoke("sentinel:file-association-fix", recipeId),
   updateKnowledge: () => ipcRenderer.invoke("sentinel:update-knowledge"),
+  // JULY PORT 2026-10-14 (af5e03ab) — Office File Safety Net (opt-in; local vault; renamed-copy validation).
+  officeSafetyStatus: () => ipcRenderer.invoke("sentinel:office-safety-status"),
+  setOfficeSafetyEnabled: (on) => ipcRenderer.invoke("sentinel:office-safety-set-enabled", on),
+  scanOfficeSafety: () => ipcRenderer.invoke("sentinel:office-safety-scan"),
+  registerOfficeFile: (filePath) => ipcRenderer.invoke("sentinel:office-safety-register-file", filePath),
   selfDiagnose: (reason) => ipcRenderer.invoke("sentinel:self-diagnose", reason),
   selfRepair: (reason) => ipcRenderer.invoke("sentinel:self-repair", reason),
   showGlobe: () => ipcRenderer.invoke("sentinel:show-globe"),
+  setOverlayHover: (over) => ipcRenderer.invoke("sentinel:overlay-hover", { over: Boolean(over) }), // (F3 round 2) hover-forward pattern
   dismissOverlay: () => ipcRenderer.invoke("sentinel:dismiss-overlay"),
   openAdminConsole: () => ipcRenderer.invoke("sentinel:open-admin-console"),
   setPaused: (milliseconds) => ipcRenderer.invoke("sentinel:set-paused", milliseconds),
@@ -55,6 +65,12 @@ contextBridge.exposeInMainWorld("sentinel", {
   approveFix: (id) => ipcRenderer.invoke("sentinel:approve-fix", { id }),
   denyFix: (id) => ipcRenderer.invoke("sentinel:deny-fix", { id }),
   listApprovals: () => ipcRenderer.invoke("sentinel:list-approvals"),
+  // ADVISORY ESCALATION (2026-10-14) — "advise three times, then act": the three choices on a notice (Fix now · Not now ·
+  // Never for this), the advise-first prefs (interval · snooze · Allow again) and the notice push for the globe card.
+  advisoryAck: (id, choice) => ipcRenderer.invoke("sentinel:advisory-ack", { id, choice }),
+  getAdvisoryPrefs: () => ipcRenderer.invoke("sentinel:get-advisory-prefs"),
+  setAdvisoryPrefs: (prefs) => ipcRenderer.invoke("sentinel:set-advisory-prefs", prefs),
+  onAdvisory: (cb) => { const l = (_e, view) => cb(view); ipcRenderer.on("sentinel:advisory", l); return () => ipcRenderer.removeListener("sentinel:advisory", l); },
   setKeepDryRun: (on) => ipcRenderer.invoke("sentinel:set-keep-dry-run", on),
   testNotification: () => ipcRenderer.invoke("sentinel:test-notification"),
   voiceApprove: (recipeId) => ipcRenderer.invoke("sentinel:voice-approve", { recipeId }),
@@ -67,7 +83,7 @@ contextBridge.exposeInMainWorld("sentinel", {
   setShowFloatingGlobe: (on) => ipcRenderer.invoke("sentinel:set-show-floating-globe", on),
   enterLicense: (payload) => ipcRenderer.invoke("sentinel:enter-license", payload),
   logout: () => ipcRenderer.invoke("sentinel:logout"),
-  choosePlan: (tier) => ipcRenderer.invoke("sentinel:choose-plan", tier),
+  choosePlan: (tier, opts) => ipcRenderer.invoke("sentinel:choose-plan", tier, opts || {}), // (F3 round 2) { billing:"monthly"|"yearly" }
   openPlanPicker: () => ipcRenderer.invoke("sentinel:open-plan-picker"),
   installUpdate: () => ipcRenderer.invoke("sentinel:install-update"),
   rollbackUpdate: (version) => ipcRenderer.invoke("sentinel:rollback-update", version),
@@ -84,6 +100,8 @@ contextBridge.exposeInMainWorld("sentinel", {
   selfHeal: () => ipcRenderer.invoke("sentinel:self-heal"),
   hotkeyStatus: () => ipcRenderer.invoke("sentinel:hotkey-status"),
   rebindHotkey: (id, combo) => ipcRenderer.invoke("sentinel:rebind-hotkey", id, combo),
+  getHotkeyPrefs: () => ipcRenderer.invoke("sentinel:get-hotkey-prefs"),           // PROD 2026-10-14 (audit M20)
+  setHotkeyPrefs: (prefs) => ipcRenderer.invoke("sentinel:set-hotkey-prefs", prefs), // { enabled, altGrSafe, killSwitch }
   onFocusChat: (cb) => { const l = () => cb(); ipcRenderer.on("focus-chat", l); return () => ipcRenderer.removeListener("focus-chat", l); },
   ingestKb: (file) => ipcRenderer.invoke("sentinel:ingest-kb", file),
   openExternal: (url) => ipcRenderer.invoke("sentinel:open-external", url),
@@ -108,6 +126,8 @@ contextBridge.exposeInMainWorld("sentinel", {
   // present on this install (then the renderer hides the mic; NEVER a cloud recognizer). Local file path only.
   voskModelUrl: () => ipcRenderer.invoke("sentinel:vosk-model-url"),
   // RUN 19 — triple-confirm delete prefs + panic kill-switch.
+  getExcludedFolders: () => ipcRenderer.invoke("sentinel:get-excluded-folders"),            // PROD 2026-10-14 (audit M15)
+  setExcludedFolders: (names) => ipcRenderer.invoke("sentinel:set-excluded-folders", names),
   getDeletePrefs: () => ipcRenderer.invoke("sentinel:get-delete-prefs"),
   setDeletePref: (ext) => ipcRenderer.invoke("sentinel:set-delete-pref", ext),
   clearDeletePref: (ext) => ipcRenderer.invoke("sentinel:clear-delete-pref", ext),
@@ -137,6 +157,7 @@ contextBridge.exposeInMainWorld("sentinel", {
   getSla: () => ipcRenderer.invoke("sentinel:get-sla"),
   getCompliance: () => ipcRenderer.invoke("sentinel:get-compliance"),
   listReports: () => ipcRenderer.invoke("sentinel:list-reports"),
+  openReportsFolder: () => ipcRenderer.invoke("sentinel:open-reports-folder"), // (F3 round 2) → { ok, path:null }
   generateReport: (opts) => ipcRenderer.invoke("sentinel:generate-report", opts),
   setReportPrefs: (prefs) => ipcRenderer.invoke("sentinel:set-report-prefs", prefs),
   // RUN 23 — process health · supervised fix pipeline · 10s countdown gate.
@@ -145,7 +166,12 @@ contextBridge.exposeInMainWorld("sentinel", {
   onProcessHealth: (cb) => { const l = (_e, snap) => cb(snap); ipcRenderer.on("sentinel:processHealth", l); return () => ipcRenderer.removeListener("sentinel:processHealth", l); },
   supervisedFix: (payload) => ipcRenderer.invoke("sentinel:supervised-fix", payload),
   abortCountdown: () => ipcRenderer.invoke("sentinel:abort-countdown"),
+  // PROD 2026-10-14 — cancel ONE countdown by id (the tick payload carries { id, secondsLeft, recipeId, title, canCancel }).
+  cancelCountdown: (id) => ipcRenderer.invoke("sentinel:cancel-countdown", { id }),
   onCountdownTick: (cb) => { const l = (_e, info) => cb(info); ipcRenderer.on("sentinel:countdown-tick", l); return () => ipcRenderer.removeListener("sentinel:countdown-tick", l); },
+  // PROD 2026-10-14 (audit M1) — the persisted live-fix consent: { enabled, source:'store'|'env', elevation:'uac'|'none', note }.
+  getLiveFixes: () => ipcRenderer.invoke("sentinel:get-live-fixes"),
+  setLiveFixes: (enabled) => ipcRenderer.invoke("sentinel:set-live-fixes", { enabled: Boolean(enabled && typeof enabled === "object" ? enabled.enabled : enabled) }),
   onState: (callback) => {
     const listener = (_event, state) => callback(state);
     ipcRenderer.on("sentinel:state", listener);
@@ -194,6 +220,7 @@ contextBridge.exposeInMainWorld("sentinel", {
 contextBridge.exposeInMainWorld("sentinelBridge", {
   runRecipe: (payload) => ipcRenderer.invoke("sentinel:supervised-fix", payload),
   abortCountdown: () => ipcRenderer.invoke("sentinel:abort-countdown"),
+  cancelCountdown: (id) => ipcRenderer.invoke("sentinel:cancel-countdown", { id }),
   getProcessHealth: () => ipcRenderer.invoke("sentinel:processHealth:get"),
   onProcessHealth: (cb) => { const l = (_e, snap) => cb(snap); ipcRenderer.on("sentinel:processHealth", l); return () => ipcRenderer.removeListener("sentinel:processHealth", l); },
   onCountdownTick: (cb) => { const l = (_e, info) => cb(info); ipcRenderer.on("sentinel:countdown-tick", l); return () => ipcRenderer.removeListener("sentinel:countdown-tick", l); }

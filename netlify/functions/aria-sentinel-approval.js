@@ -101,8 +101,9 @@ exports.handler = async (event) => {
     if (!rl.ok) return rateLimitResponse(rl, { 'cache-control': 'no-store' });
     const id = String(q.id || '');
     if (!A.TOKEN_RE.test(id)) return A.json(400, { ok: false, error: 'bad-id' });
-    const store = await A.openStore(A.APPROVALS_STORE);
-    if (!store) return A.json(503, { ok: false, error: 'approval-store-unavailable' });
+    // SENTINEL-BACKEND 2026-10-14 (audit B1): the event carries the Blobs credentials in Lambda-compat mode.
+    const store = await A.openStore(A.APPROVALS_STORE, event);
+    if (!store) return A.json(503, { ok: false, error: 'approval-store-unavailable', reason: 'store-unavailable' });
     const rec = await store.get(id, { type: 'json' }).catch(() => null);
     if (!rec || rec.v !== 'sentinel-approval-v1') return A.json(404, { ok: false, error: 'not-found' });
     // The ask belongs to the tenant that raised it; when it was bound to a device, the same device must ask.
@@ -134,8 +135,8 @@ exports.handler = async (event) => {
   }
   if (action !== 'approve' && action !== 'deny') return page(400, { heading: 'This link is not valid', body: '<p>The requested action is not recognised. Nothing was changed.</p>' });
 
-  const store = await A.openStore(A.APPROVALS_STORE);
-  if (!store) return isPost && wantsJson(event) ? A.json(503, { ok: false, error: 'approval-store-unavailable' }) : page(503, { heading: 'Temporarily unavailable', body: '<p>The approval record could not be read right now. Nothing was changed — please try again in a minute.</p>' });
+  const store = await A.openStore(A.APPROVALS_STORE, event);
+  if (!store) return isPost && wantsJson(event) ? A.json(503, { ok: false, error: 'approval-store-unavailable', reason: 'store-unavailable' }) : page(503, { heading: 'Temporarily unavailable', body: '<p>The approval record could not be read right now. Nothing was changed — please try again in a minute.</p>' });
   const rec = await store.get(v.id, { type: 'json' }).catch(() => null);
   const status = A.effectiveStatus(rec && rec.v === 'sentinel-approval-v1' ? rec : null, now);
   if (status !== 'pending') {

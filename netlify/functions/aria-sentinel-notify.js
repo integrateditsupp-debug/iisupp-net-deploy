@@ -14,6 +14,27 @@
  * The guard is the desktop's mustBeTelemetrySafe, imported from the Sentinel tree so both ends share one
  * definition; if it cannot load the endpoint fails CLOSED (503), it never falls back to "probably fine".
  *
+ * SENTINEL-BACKEND 2026-10-14 (audit B5 — SUPERSEDED by the review fixes below): when the device credential maps to a per-customer license record
+ * (lib/sentinel-license-records.cjs key index), every email recipient must be one the RECORD vouches for —
+ * the Stripe customer email, an admin-set contact, the email the device registered at check-in, or a
+ * colleague on the same private company domain. Anything else → 403 recipients-not-registered and nothing
+ * is sent. A v1 shared plan key with no customer record keeps the previous caller-named behaviour (Rule 15),
+ * still behind the content guard. The rate bucket is per tenant AND per device (`device` field), so one
+ * device cannot exhaust a whole plan's quota.
+ *
+ * SENTINEL REVIEW FIXES 2026-10-14 (P1-2) — the binding above was bypassable (register any email at check-in,
+ * then mail it; a same-domain address also passed) and the limiter was per warm instance AND keyed by the body's
+ * caller-chosen `device`, so rotating it gave a fresh bucket every post. Now:
+ *   - recipients (email AND phone) must be on the license: the Stripe buyer email on the record, an
+ *     admin-APPROVED contact, or the IIS admin inbox (lib/sentinel-license-records.cjs isAllowedRecipient /
+ *     isAllowedPhone). A self-registered check-in email is pending until approved. A v1 SHARED plan key or a
+ *     credential with no record may name the admin inbox only. Anything else → 403 recipients-not-registered,
+ *     nothing sent, and the rejected address is never echoed.
+ *   - rate limit per CREDENTIAL (never per device): the in-memory 30 / 10 min burst guard, then a DURABLE Blobs
+ *     limiter (lib/sentinel-store.cjs durableLimit) — SENTINEL_NOTIFY_PER_HOUR (default 20) per credential and
+ *     SENTINEL_NOTIFY_GLOBAL_PER_HOUR (default 200) across every device — counted for posts that would send or store
+ *     something. The limiter store unreachable → 503 rate-limiter-unavailable (fail closed), nothing sent.
+ *
  * Rule 14: email/SMS counts come from lib/notify.mjs, which reports ok only on a provider-confirmed id.
  * Twilio unset → sms.dormant:true and sent:0 — the desktop shows "not sent", never "sent".
  * For approval-requested the ask is stored in the 'sentinel-approvals' Blobs store and the email carries
@@ -24,6 +45,15 @@
 
 const { checkRateLimit, rateLimitResponse, hashKey } = require('./_rate-limit.js');
 const A = require('./lib/sentinel-approvals.cjs');
+const R = require('./lib/sentinel-license-records.cjs');
+const S = require('./lib/sentinel-store.cjs');
+
+/** Durable hourly ceilings (REVIEW FIX P1-2). Env-tunable; a non-positive / junk value falls back to the default. */
+function notifyLimits(env) {
+  const e = env || process.env;
+  const n = (v, d) => { const x = Math.floor(Number(v)); return Number.isFinite(x) && x > 0 ? x : d; };
+  return { perCredential: n(e.SENTINEL_NOTIFY_PER_HOUR, 20), global: n(e.SENTINEL_NOTIFY_GLOBAL_PER_HOUR, 200) };
+}
 
 const MAX_BODY = 24 * 1024;
 const MAX_RECIPIENTS = 8;
@@ -86,14 +116,16 @@ exports.handler = async (event) => {
   const auth = await A.authenticate(event);
   if (!auth.ok) return A.json(auth.status || 401, { ok: false, error: auth.error });
 
-  // Rate limit per device (tenant + device hash) — per IP for internal callers.
+  let body = {};
+  try { body = JSON.parse(event.body || '{}'); } catch { return A.json(400, { ok: false, error: 'bad-json' }); }
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return A.json(400, { ok: false, error: 'bad-json' });
+
+  // In-memory burst guard per CREDENTIAL (REVIEW FIX P1-2: never per the caller-chosen `device`) — per IP for
+  // internal callers. The durable hourly ceiling is applied below, once the post is known to send something.
   const rlKey = hashKey(`sentinel-notify:${auth.kind === 'device' ? auth.tenant : A.clientIp(event)}`);
   const rl = checkRateLimit(event, { scope: 'sentinel-notify', key: rlKey, limit: 30, windowMs: 10 * 60 * 1000 });
   if (!rl.ok) return rateLimitResponse(rl, { 'cache-control': 'no-store' });
 
-  let body = {};
-  try { body = JSON.parse(event.body || '{}'); } catch { return A.json(400, { ok: false, error: 'bad-json' }); }
-  if (!body || typeof body !== 'object' || Array.isArray(body)) return A.json(400, { ok: false, error: 'bad-json' });
   if (body.v !== 'sentinel-notify-v1') return A.json(400, { ok: false, error: 'unsupported-version' });
   const ev = String(body.event || '');
   if (!A.NOTIFY_EVENTS.includes(ev)) return A.json(400, { ok: false, error: 'unknown-event' });
@@ -110,17 +142,53 @@ exports.handler = async (event) => {
   const rcp = normalizeRecipients(body.recipients || []);
   if (!rcp.ok) return A.json(400, { ok: false, error: rcp.reason });
 
+  // Recipient binding (REVIEW FIX P1-2): for EVERY device credential, each address that would be used must be on
+  // the license — the record's Stripe buyer email, an admin-approved contact/phone, or the admin inbox. A shared
+  // v1 plan key / a credential with no record: admin inbox only. Internal (admin-token) callers are trusted.
+  let recipientBinding = 'internal';
+  if (auth.kind === 'device') {
+    const ctxR = { keyRecord: auth.record, sharedKey: auth.sharedKey === true };
+    recipientBinding = auth.record && !ctxR.sharedKey ? 'license-record' : 'admin-inbox-only';
+    const rejected = [];
+    rcp.recipients.forEach((r, i) => {
+      const emailBad = channels.email && r.email && !R.isAllowedRecipient(r.email, ctxR).ok;
+      const phoneBad = channels.sms && sms && r.phone && !R.isAllowedPhone(r.phone, ctxR).ok;
+      if (emailBad || phoneBad) rejected.push(i);
+    });
+    if (rejected.length) {
+      return A.json(403, { ok: false, error: 'recipients-not-registered', rejected, recipientBinding, hint: recipientBinding === 'license-record'
+        ? 'Recipients must be the licensed customer email or a contact Integrated IT Support has approved for this license (an address given at device check-in stays pending until approved).'
+        : 'This license key is not tied to one customer record, so it may notify the Integrated IT Support admin inbox only.' });
+    }
+  }
+
   // Content-blind guard — the Sentinel's own definition, fail-closed.
   const guard = await A.contentGuard();
   if (!guard || typeof guard.mustBeTelemetrySafe !== 'function') return A.json(503, { ok: false, error: 'content-guard-unavailable' });
   const safe = guard.mustBeTelemetrySafe({ payload: { title, recipeId, severity, platform, outcome: str(body.outcome, 40) || null, summary: body.summary && typeof body.summary === 'object' ? { period: str(body.summary.period, 40) } : null }, subject, text, sms });
   if (!safe.ok) return A.json(422, { ok: false, error: 'content-not-allowed', reason: safe.reason });
 
+  // Durable hourly ceiling (REVIEW FIX P1-2) — per credential, then global; fail CLOSED when the store is down.
+  // Counted only for a post that will send or store something (a refused / empty post costs nothing).
+  const willAct = ev === 'approval-requested' || (rcp.recipients.some((r) => (channels.email && r.email) || (channels.sms && sms && r.phone)));
+  if (auth.kind === 'device' && willAct) {
+    const lim = notifyLimits();
+    const rlStore = await A.openStore(R.STORES.RATE_LIMITS, event);
+    const dl = await S.durableLimits(rlStore, [
+      { scope: 'notify', id: auth.tenant, limit: lim.perCredential },
+      { scope: 'notify-global', id: 'all', limit: lim.global }
+    ]);
+    if (!dl.ok) {
+      if (dl.unavailable) console.error('[sentinel-notify] durable limiter unavailable — refusing (fail closed)');
+      return S.limitResponse(dl);
+    }
+  }
+
   // Approval-requested: store the ask, mint signed links (only with a secret).
   let approval = null;
   let approvalError = null;
   if (ev === 'approval-requested') {
-    const store = await A.openStore(A.APPROVALS_STORE);
+    const store = await A.openStore(A.APPROVALS_STORE, event);
     if (!store) {
       approvalError = 'approval-store-unavailable';
     } else {
@@ -164,6 +232,7 @@ exports.handler = async (event) => {
     ok: true,
     event: ev,
     auth: auth.kind,
+    recipientBinding,
     email: emailOut,
     sms: smsOut,
     approval,

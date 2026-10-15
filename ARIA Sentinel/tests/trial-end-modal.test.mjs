@@ -54,7 +54,7 @@ for (const env of [
 ]) {
   assert.match(main, new RegExp(env), `${env} mapped`);
 }
-assert.match(main, /function openPlanCheckout\(tier\)/, "checkout opener exists");
+assert.match(main, /function openPlanCheckout\(tier(, opts = \{\})?\)/, "checkout opener exists (PROD 2026-10-14: billing-aware)");
 
 // CSS: shimmer on hover + gold glow on focus.
 assert.match(css, /\.trial-end-card \.plan-card:hover/, "card shimmer/lift on hover");

@@ -11,10 +11,15 @@ const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"))
 const files = (pkg.build && pkg.build.files) || [];
 
 // The asar allow-list never pulls in tests / fixtures / design-review / docs.
+// REVIEW P2-11 (2026-10-14) — expectation changed on purpose: the ONE docs/ file that ships is this version's release
+// notes (docs/RELEASE_NOTES_<version>.md, read by the in-app "What's new"); every other doc stays out.
+const SHIPPED_NOTES = `docs/RELEASE_NOTES_${pkg.version}.md`;
 const FORBIDDEN = ["tests", "fixtures", "design-review", "docs"];
 for (const entry of files) {
+  if (entry === SHIPPED_NOTES) continue;
   for (const f of FORBIDDEN) assert.ok(!entry.includes(f), `app allow-list excludes ${f} (offending: ${entry})`);
 }
+assert.ok(files.includes(SHIPPED_NOTES), `the customer build carries ${SHIPPED_NOTES}`);
 // admin-console is NOT inside the asar files list (it ships as an extraResource, not app code).
 for (const entry of files) assert.ok(!entry.includes("admin-console"), `admin-console is not in the asar files list (offending: ${entry})`);
 

@@ -87,6 +87,62 @@ export function slaCompliance(detections = [], downtime = [], tier = "personal",
   return { composite, uptime: up, response: resp, resolution: reso, met: composite >= floor, floor };
 }
 
+// PROD 2026-10-14 (audit M12) — REAL-OR-EMPTY at the surface. The pure functions above answer "what % met" for a
+// measured window (no downtime in a measured month IS 100%); but a device that has never recorded a single
+// detection or downtime row has not MEASURED anything, and its SLA tab / quarterly PDF must say "not measured
+// yet", never "100% met". This returns the tile/report shape with nulls when there is nothing to measure.
+export function slaSurface(state = {}, tier = "personal", now = Date.now()) {
+  const detections = Array.isArray(state.detections) ? state.detections : [];
+  const downtime = Array.isArray(state.downtime) ? state.downtime : [];
+  const measured = detections.length > 0 || downtime.length > 0 || Boolean(state.measuredSince);
+  const t = tierSla(tier);
+  const nullBySev = { P1: null, P2: null, P3: null, P4: null };
+  if (!measured) {
+    return {
+      measured: false,
+      note: "not measured yet",
+      uptime: { h24: null, d7: null, d30: null, d90: null },
+      compliance: { composite: null, uptime: null, response: nullBySev, resolution: nullBySev, met: null, floor: t.uptimeTarget },
+      breaches: [],
+      credits: serviceCredits([], tier, 0)
+    };
+  }
+  const since = Number.isFinite(Date.parse(state.measuredSince || "")) ? Date.parse(state.measuredSince) : null;
+  const win = (ms) => (since == null ? ms : Math.max(1, Math.min(ms, now - since))); // never claim more window than was measured
+  const compliance = slaCompliance(detections, downtime, tier, win(30 * 86400000));
+  // Per-severity figures stay null for severities with no detections (the pure fn says 100 for "nothing to miss").
+  for (const sev of ["P1", "P2", "P3", "P4"]) {
+    if (!detections.some((d) => d.severity === sev)) compliance.response[sev] = null;
+    if (!detections.some((d) => d.severity === sev && d.resolved)) compliance.resolution[sev] = null;
+  }
+  const b = breaches(detections, tier);
+  return {
+    measured: true,
+    note: since ? `measured since ${new Date(since).toISOString().slice(0, 10)}` : "",
+    uptime: { h24: uptimePct(downtime, win(86400000)), d7: uptimePct(downtime, win(7 * 86400000)), d30: uptimePct(downtime, win(30 * 86400000)), d90: uptimePct(downtime, win(90 * 86400000)) },
+    compliance,
+    breaches: b,
+    credits: serviceCredits(b, tier, 0)
+  };
+}
+
+/** Append a downtime row (startMs, durationMs, reason) to an SLA state. Pure; returns a new state. */
+export function recordDowntime(state = {}, { startMs, durationMs, reason = "offline" } = {}) {
+  const downtime = Array.isArray(state.downtime) ? state.downtime.slice() : [];
+  const d = Number(durationMs);
+  if (!Number.isFinite(d) || d <= 0) return { ...state, downtime, detections: Array.isArray(state.detections) ? state.detections : [] };
+  downtime.push({ startMs: Number(startMs) || 0, durationMs: Math.round(d), reason: String(reason).slice(0, 40) });
+  return { ...state, downtime: downtime.slice(-500), detections: Array.isArray(state.detections) ? state.detections : [], measuredSince: state.measuredSince || new Date(Number(startMs) || Date.now()).toISOString(), updatedAt: new Date().toISOString() };
+}
+
+/** Append a detection row ({ severity, responseMs, resolved, resolveMs, ts }) to an SLA state. Pure; returns a new state. */
+export function recordSlaDetection(state = {}, row = {}) {
+  const detections = Array.isArray(state.detections) ? state.detections.slice() : [];
+  const sev = ["P1", "P2", "P3", "P4"].includes(row.severity) ? row.severity : "P4";
+  detections.push({ severity: sev, responseMs: Number(row.responseMs) || 0, resolved: Boolean(row.resolved), resolveMs: Number(row.resolveMs) || 0, ts: row.ts || new Date().toISOString(), breachReason: row.breachReason });
+  return { ...state, detections: detections.slice(-2000), downtime: Array.isArray(state.downtime) ? state.downtime : [], measuredSince: state.measuredSince || (row.ts || new Date().toISOString()), updatedAt: new Date().toISOString() };
+}
+
 // HMAC-signed sla-state.json (same tamper-resistance as the update-state machine).
 export function sealSlaState(state, key = "aria-sla") {
   const sig = crypto.createHmac("sha256", String(key)).update(JSON.stringify(state)).digest("hex");

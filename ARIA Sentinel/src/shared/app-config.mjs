@@ -2,6 +2,7 @@
 // The renderer (src/renderer/onboarding/*) draws the splash + 3-step walkthrough; THIS module owns the
 // state machine + the one invariant that matters: once the user completes OR skips onboarding, it NEVER
 // replays. 🔒 R11 — pure JSON state, no filesystem paths, no PII.
+import { clampAdvisoryInterval, clampSnoozeHours } from "./advisory-escalation.mjs";
 
 export const ONBOARDING_VERSION = 1;     // bump to re-introduce the walkthrough after a major UX change
 export const ONBOARDING_TOTAL_STEPS = 3; // (1) tray pointer · (2) mode picker · (3) first-scan countdown
@@ -20,7 +21,7 @@ export const SETUP_V1_STEPS = 6;     // the original six (kept so the v1 ids/ord
 export const AUTONOMY_LEVELS = Object.freeze(["observe", "safe-auto", "approve-first", "full-auto"]);
 export const AUTONOMY_LEVEL_COPY = Object.freeze({
   observe: { label: "Observe", consequence: "I find it, I tell you, I touch nothing." },
-  "safe-auto": { label: "Safe-auto", consequence: "I fix the safe things myself and tell you after." },
+  "safe-auto": { label: "Safe-auto", consequence: "I ask you once per fix, then fix it with you present." }, // REVIEW P1-1 — Confirmed asks once
   "approve-first": { label: "Approve-first", consequence: "I ask before every fix." },
   "full-auto": { label: "Full-auto", consequence: "I fix green and yellow inside your maintenance window and report." }
 });
@@ -221,6 +222,23 @@ export function sanitizePrefs(p) {
   if ("maintenanceWindow" in p) out.maintenanceWindow = sanitizeMaintenanceWindow(p.maintenanceWindow);
   if ("notifyChannels" in p) out.notifyChannels = sanitizeNotifyChannels(p.notifyChannels);
   if (typeof p.fullAutoUnderstood === "boolean") out.fullAutoUnderstood = p.fullAutoUnderstood;
+  // PROD 2026-10-14 (audit M8) — optional network-watcher probe targets (host/IP shapes only; blank = the device's own
+  // gateway / DNS server + the NCSI name Windows already resolves). Never user content, never a URL.
+  if ("networkProbe" in p) out.networkProbe = sanitizeNetworkProbe(p.networkProbe);
+  // ADVISORY ESCALATION (2026-10-14) — the advise-first rule's interval (1–60 min, default 3) and "Not now" snooze (1–72 h,
+  // default 4). Optional keys (absent = the defaults in advisory-escalation.mjs); never part of defaultV2Prefs (Rule 15).
+  if ("advisoryIntervalMinutes" in p) out.advisoryIntervalMinutes = clampAdvisoryInterval(p.advisoryIntervalMinutes);
+  if ("advisorySnoozeHours" in p) out.advisorySnoozeHours = clampSnoozeHours(p.advisorySnoozeHours);
+  return out;
+}
+const PROBE_HOST_RE = /^[A-Za-z0-9.:-]{1,253}$/;
+function sanitizeNetworkProbe(v) {
+  const o = v && typeof v === "object" ? v : {};
+  const out = {};
+  const host = String(o.probeHost == null ? "" : o.probeHost).trim();
+  const name = String(o.dnsProbeName == null ? "" : o.dnsProbeName).trim();
+  if (host && PROBE_HOST_RE.test(host)) out.probeHost = host;
+  if (name && PROBE_HOST_RE.test(name)) out.dnsProbeName = name;
   return out;
 }
 

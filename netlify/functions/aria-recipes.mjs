@@ -9,8 +9,17 @@
 // reads `killed` from this response and, when true, forces DETECT-ONLY mode fleet-wide (watchers keep
 // running; no recipe may APPLY a change). Ops can flip the global kill without a code change by setting
 // ARIA_RECIPES_KILLED=1 (optional ARIA_RECIPES_KILL_REASON). Default killed:false keeps remediation enabled.
+//
+// SENTINEL-BACKEND 2026-10-14 (audit B8): a v2 function with `config.path` is served ONLY at that path, and the
+// desktop pulls /.netlify/functions/aria-recipes (ARIA Sentinel/src/shared/recipes.mjs RECIPE_ENDPOINT) — live
+// that answered 404, so "Update knowledge" showed every endpoint red and the kill switch above never reached a
+// single device. Both paths are declared now; /aria-recipes keeps working.
+// (audit B18) x-aria-recipes-sha256 is an INTEGRITY CHECKSUM of the body computed by this server — it lets a
+// client detect in-transit corruption, it is not a signature (anyone who can alter the body can recompute it).
 import crypto from "node:crypto";
 import { RECIPES, RECIPE_COUNT } from "./aria-recipes-data.mjs";
+
+export const RECIPES_PATHS = Object.freeze(["/aria-recipes", "/.netlify/functions/aria-recipes"]);
 
 function killState() {
   const killed = process.env.ARIA_RECIPES_KILLED === "1";
@@ -46,4 +55,4 @@ export default async function handler() {
   });
 }
 
-export const config = { path: "/aria-recipes" };
+export const config = { path: [...RECIPES_PATHS] };

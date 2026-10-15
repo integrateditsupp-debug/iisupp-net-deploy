@@ -30,7 +30,9 @@ assert.match(admin, /confirm\(/, "revoke is confirmed");
 // 3 — the API gates every mutation on the admin token (Bearer OR X-Admin-Token), is-revoked stays public.
 assert.match(handler, /isAdminAuthorized\(authHeader, token\) \|\| isAdminAuthorized\(`Bearer \$\{xToken/, "accepts Bearer or X-Admin-Token");
 assert.match(handler, /x-admin-token/i, "reads the admin console's X-Admin-Token header");
-assert.match(handler, /action === "is-revoked"[\s\S]{0,400}?return json\(200, \{ revoked \}\)/, "is-revoked answers before the admin-token gate (public, content-blind)");
+// RUN-SN1 (2026-10-14): the public branch now answers from the O(1) revocation store first and the
+// legacy record scan second — two returns, ~900 chars — and the admin gate still comes AFTER both.
+assert.match(handler, /action === "is-revoked"[\s\S]{0,1200}?return json\(200, \{ revoked \}\)[\s\S]*?if \(!authed\) return json\(401/, "is-revoked answers before the admin-token gate (public, content-blind)");
 // is-revoked block appears BEFORE the admin-token gate (the env read, not the doc comment).
 assert.ok(handler.indexOf('action === "is-revoked"') < handler.indexOf("process.env.SENTINEL_ADMIN_TOKEN"), "public revocation check precedes the admin gate");
 

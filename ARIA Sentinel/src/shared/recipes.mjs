@@ -1,6 +1,17 @@
-// Keep in sync with package.json "version" (the version-bump process bumps both). 2026-07-02: was stale at
-// "0.1.0" while package.json shipped 0.1.16 — the UI showed the wrong version and OTA compared the wrong current.
-export const SENTINEL_VERSION = "0.1.16";
+// PROD 2026-10-14 (audit M4) — the version is DERIVED from package.json (the one place the bump process edits), with
+// the literal below only as a fallback when the manifest cannot be read. 2026-07-02 this constant went stale at
+// "0.1.0" while package.json shipped 0.1.16, and again at "0.1.16" while 0.2.0 shipped — the About tab, /health,
+// the heartbeat, the user-agent, the update check and the evidence pack all reported the wrong build.
+// tests/version-sync.test.mjs asserts the export equals package.json.version.
+import { createRequire } from "node:module";
+const SENTINEL_VERSION_FALLBACK = "0.2.1";
+function readPackageVersion() {
+  try {
+    const v = createRequire(import.meta.url)("../../package.json").version;
+    return typeof v === "string" && /^\d+\.\d+/.test(v) ? v : SENTINEL_VERSION_FALLBACK;
+  } catch { return SENTINEL_VERSION_FALLBACK; }
+}
+export const SENTINEL_VERSION = readPackageVersion();
 export const BRIDGE_PORT = 37841;
 export const CONTROL_PLANE_MVP_RECIPE_COUNT = 25;
 export const CONTROL_PLANE_MVP_STOP_CODE_COUNT = 25;
@@ -8,6 +19,13 @@ export const RECIPE_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-recip
 export const STOP_CODES_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-stop-codes";
 export const KB_BUNDLE_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-kb-bundle";
 export const RECIPE_FEEDBACK_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-recipe-feedback";
+
+/** PROD 2026-10-14 (audit M9) — is a declared outbound path actually served today? (Unknown ids → false.) */
+export function isEndpointDeployed(id) {
+  const p = ALLOWED_OUTBOUND_PATHS.find((x) => x.id === String(id || ""));
+  return Boolean(p) && p.deployed !== false;
+}
+export const ENDPOINT_NOT_AVAILABLE_NOTE = "not available in this version";
 
 export const ALLOWED_OUTBOUND_PATHS = [
   {
@@ -32,7 +50,11 @@ export const ALLOWED_OUTBOUND_PATHS = [
     host: "iisupp.net",
     path: "/.netlify/functions/aria-kb-bundle",
     direction: "inbound-data",
-    purpose: "Pull content-blind KB metadata bundle."
+    purpose: "Pull content-blind KB metadata bundle.",
+    // PROD 2026-10-14 (audit M9) — declared, allow-listed, NOT deployed server-side. The desktop skips it honestly
+    // ("not available in this version") instead of logging a failed knowledge check at every launch.
+    deployed: false,
+    status: "not-deployed"
   },
   {
     id: "recipe-feedback",
@@ -40,7 +62,9 @@ export const ALLOWED_OUTBOUND_PATHS = [
     host: "iisupp.net",
     path: "/.netlify/functions/aria-recipe-feedback",
     direction: "opt-in-outcome-only",
-    purpose: "Send { recipe_id, outcome, ts } only after opt-in. ts MUST be an ISO-8601 string, not epoch-ms — a 13-digit epoch number trips the content-blind payment-card-length check in assertContentSafePayload."
+    purpose: "Send { recipe_id, outcome, ts } only after opt-in. ts MUST be an ISO-8601 string, not epoch-ms — a 13-digit epoch number trips the content-blind payment-card-length check in assertContentSafePayload.",
+    deployed: false,
+    status: "not-deployed"
   },
   {
     id: "servicenow",
@@ -310,6 +334,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "yellow",
         requiresConfirm: true,
+        needsAdmin: true,
         command: "Checkpoint-Computer -Description 'ARIA pre-fix' -RestorePointType 'MODIFY_SETTINGS'",
         dryRunResult: "Restore point request queued. Dry-run did not modify the machine."
       },
@@ -357,17 +382,25 @@ export const RECIPES = [
         shell: "powershell",
         risk: "green",
         requiresConfirm: false,
+        // FAULT LAB 2026-10-14 (defect 3) — NON-FATAL: Windows may refuse `ipconfig /registerdns` to a standard user
+        // (the strict-administrator lab model). Re-registration only re-sends this device's own records; the flush and
+        // the cache clear are what fix a lookup, so a refused re-registration is logged as a warning and the fix goes on
+        // (main.mjs runRecipe). The verify probe still decides whether the problem is really gone.
+        nonFatal: true,
         command: "ipconfig /registerdns",
         dryRunResult: "Would re-register the client's DNS records."
       },
       {
-        id: "restart-dnscache",
-        label: "Restart DNS Client service",
+        // PROD 2026-10-14 (audit M3) — `Restart-Service Dnscache` is gone: the DNS Client service cannot be stopped or
+        // restarted by anyone on Windows 10 1809+ (it always failed, so the recipe always ended in ERROR). The
+        // user-space cache clear does the same job without administrator rights.
+        id: "clear-dns-client-cache",
+        label: "Clear DNS client cache",
         shell: "powershell",
         risk: "green",
         requiresConfirm: false,
-        command: "Restart-Service Dnscache -Force",
-        dryRunResult: "Would restart the DNS Client (Dnscache) service; it rebuilds on next lookup."
+        command: "Clear-DnsClientCache",
+        dryRunResult: "Would clear the DNS Client resolver cache (user-space, no service restart needed)."
       }
     ],
     success: "DNS cache cleared. Reload the page.",
@@ -404,6 +437,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "orange",
         requiresConfirm: true,
+        needsAdmin: true,
         command: "ipconfig /release; ipconfig /renew",
         dryRunResult: "Would briefly disconnect and renew the network address."
       },
@@ -413,6 +447,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "green",
         requiresConfirm: false,
+        needsAdmin: true,
         command: "Restart-Service WlanSvc -Force",
         dryRunResult: "Would restart the WLAN AutoConfig service so Windows reconnects to saved networks."
       }
@@ -442,6 +477,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "green",
         requiresConfirm: false,
+        needsAdmin: true,
         command: "Restart-Service Spooler -Force",
         dryRunResult: "Would restart the Print Spooler service so the stuck queue is re-read."
       }
@@ -729,6 +765,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "orange",
         requiresConfirm: true,
+        needsAdmin: true,
         command: "Restart-Service wuauserv,bits,cryptsvc -Force",
         dryRunResult: "Would restart Windows Update, BITS and Cryptographic Services."
       }
@@ -804,13 +841,14 @@ export const RECIPES = [
     risk: "yellow",
     mode: "confirmed",
     confidenceKeywords: ["internet seems down", "no internet connection", "network down troubleshoot", "cannot reach the internet"],
-    summary: "Renew the network address, flush DNS and restart the DNS/DHCP client services, then re-test connectivity.",
+    summary: "Renew the network address, flush DNS and restart the DHCP client service, then re-test connectivity.",
     detector: "Two consecutive reachability probes to a public resolver failed.",
     diagnostic: { shell: "powershell", command: "Test-NetConnection -ComputerName 1.1.1.1 -Port 53 -InformationLevel Quiet" },
     actions: [
-      { id: "renew-ip", label: "Renew network address", shell: "powershell", risk: "yellow", requiresConfirm: true, command: "ipconfig /release; ipconfig /renew", dryRunResult: "Would release and renew the network address." },
+      { id: "renew-ip", label: "Renew network address", shell: "powershell", risk: "yellow", requiresConfirm: true, needsAdmin: true, command: "ipconfig /release; ipconfig /renew", dryRunResult: "Would release and renew the network address (asks for administrator approval)." },
       { id: "flush-dns", label: "Flush DNS", shell: "powershell", risk: "green", requiresConfirm: true, command: "ipconfig /flushdns", dryRunResult: "Would flush the DNS resolver cache." },
-      { id: "restart-net-services", label: "Restart DNS + DHCP clients", shell: "powershell", risk: "yellow", requiresConfirm: true, command: "Restart-Service Dnscache,Dhcp -Force", dryRunResult: "Would restart the DNS Client and DHCP Client services." }
+      // PROD 2026-10-14 (audit M3) — DNS Client (Dnscache) cannot be restarted on Windows 10/11; only the DHCP client is.
+      { id: "restart-net-services", label: "Restart DHCP client", shell: "powershell", risk: "yellow", requiresConfirm: true, needsAdmin: true, command: "Restart-Service Dhcp -Force", dryRunResult: "Would restart the DHCP Client service (asks for administrator approval)." }
     ],
     success: "Network stack refreshed. Re-testing connectivity.",
     escalation: "Network Team if the internet stays down after the refresh."
@@ -837,6 +875,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "yellow",
         requiresConfirm: true,
+        needsAdmin: true,
         command: "Restart-Service bthserv -Force",
         dryRunResult: "Would restart the Bluetooth Support Service so adapters re-initialise."
       }
@@ -871,6 +910,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "green",
         requiresConfirm: false,
+        needsAdmin: true,
         command: "Restart-Service RasMan -Force",
         dryRunResult: "Would restart Remote Access Connection Manager so the VPN tunnel can re-establish."
       }
@@ -921,6 +961,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "green",
         requiresConfirm: false,
+        needsAdmin: true,
         command: "Restart-Service Audiosrv,AudioEndpointBuilder -Force",
         dryRunResult: "Would restart Windows Audio and Audio Endpoint Builder."
       }
@@ -971,6 +1012,7 @@ export const RECIPES = [
         shell: "powershell",
         risk: "yellow",
         requiresConfirm: true,
+        needsAdmin: true,
         command: "Update-MpSignature",
         dryRunResult: "Would trigger Microsoft Defender signature update."
       }
@@ -1137,6 +1179,11 @@ export const RECIPES = [
   svcRecipe("svc-wlansvc-stopped-v1", "WLANSVC", "WlanSvc", "WLAN AutoConfig", ["wlan autoconfig service stopped", "wlansvc not running", "wlan service is stopped"]),
   svcRecipe("svc-workstation-stopped-v1", "WORKSTATION", "LanmanWorkstation", "Workstation", ["workstation service stopped", "lanmanworkstation not running", "workstation service is stopped"]),
   svcRecipe("svc-rasman-stopped-v1", "RASMAN", "RasMan", "Remote Access Connection Manager", ["remote access service stopped", "rasman not running", "ras service is stopped"]),
+  // FAULT LAB 2026-10-14 (defect 1) — the DHCP Client (one of the service watcher's CRITICAL_SERVICES) had no recipe, so
+  // SYSTEM.SERVICE.STOPPED.DHCP fell through the matcher to system-time-drift-v1. Same shape as svc-wlansvc-stopped-v1:
+  // one green `Restart-Service Dhcp -Force` step (needsAdmin → a UAC prompt a person answers, never unattended), and a
+  // GATING verify probe in recipe-runner.mjs (the service is Running AND a DHCP lease is present).
+  svcRecipe("svc-dhcp-stopped-v1", "DHCP", "Dhcp", "DHCP Client", ["dhcp client service stopped", "dhcp not running", "dhcp service is stopped"]),
   {
     id: "system-high-cpu-v1", family: "SYSTEM", signal: "SYSTEM.SLOW.HIGH_CPU", title: "Sustained high CPU", chip: "SYSTEM - HIGH CPU",
     risk: "green", mode: "manual", confidenceKeywords: ["cpu sustained high", "high cpu usage stuck", "cpu pegged at 100"],
@@ -1224,6 +1271,23 @@ export const RECIPES = [
     actions: [{ id: "popup-guide", label: "Open pop-up guidance", shell: "manual", risk: "green", requiresConfirm: false, command: "Manual: allow pop-ups for this origin and retry.", dryRunResult: "Would open the pop-up allow walkthrough." }],
     success: "Pop-up guidance opened.", escalation: "Service Desk if the app needs broader settings."
   },
+  // JULY PORT 2026-10-14 (ddfcac5b) — the read-only .txt file-association guard's two recipes. Both are MANUAL
+  // (guide) recipes: the only "action" is opening Windows Default Apps so the person picks Notepad themselves;
+  // nothing here writes a registry key (asserted in tests/file-association-guard.test.mjs).
+  {
+    id: "app-txt-default-adobe-v1", family: "APP", signal: "APP.TXT.DEFAULT_ADOBE", title: ".txt files are opening in Adobe", chip: "APP - TXT DEFAULT",
+    risk: "orange", mode: "confirmed", confidenceKeywords: ["txt files opening in adobe", "text files open in adobe", "txt default adobe", "notepad association changed", "txt files are opening in adobe"],
+    summary: "Problem detected: text files are opening in Adobe. Shall I switch them back to Notepad?", detector: "Read-only Windows file-association guard sees .txt UserChoice pointing at Adobe/Acrobat/PDF.",
+    actions: [{ id: "open-default-apps-settings", label: "Open Notepad default-app fix", shell: "manual", risk: "green", requiresConfirm: true, command: "Manual: open Windows Default Apps and select Notepad for .txt files.", dryRunResult: "Would open Windows Default Apps so the user can choose Notepad for .txt files." }],
+    success: "Default-app correction opened. ARIA will re-scan after the user chooses Notepad.", escalation: "Desktop Support if policy blocks changing the default text-file app."
+  },
+  {
+    id: "app-txt-openwith-adobe-risk-v1", family: "APP", signal: "APP.TXT.OPENWITH_ADOBE_RISK", title: "Adobe is listed for text files", chip: "APP - TXT WARNING",
+    risk: "green", mode: "manual", confidenceKeywords: ["acrobat listed for txt files", "adobe in open with for text files", "txt openwith adobe risk", "text file open with adobe"],
+    summary: "Heads up: Adobe is in the text-file Open With list. Keep Notepad selected for .txt files; I will warn you if it becomes the default.", detector: "Read-only Windows file-association guard sees Adobe/Acrobat in .txt OpenWith history while Notepad remains current.",
+    actions: [{ id: "review-default-apps-settings", label: "Review text-file default app", shell: "manual", risk: "green", requiresConfirm: false, command: "Manual: review Windows Default Apps and keep Notepad selected for .txt files.", dryRunResult: "Would open Windows Default Apps for a quick text-file default-app review." }],
+    success: "Default-app review opened.", escalation: "Desktop Support if a corporate default-app policy keeps reintroducing the wrong handler."
+  },
   {
     id: "system-time-drift-v1", family: "SYSTEM", signal: "SYSTEM.TIME.DRIFT", title: "System clock drift", chip: "SYSTEM - TIME",
     risk: "green", mode: "manual", confidenceKeywords: ["system clock drift", "windows time out of sync", "time service drift"],
@@ -1285,6 +1349,25 @@ export const RECIPES = [
     ],
     success: "Update review opened. A restore point is taken before any install.",
     escalation: "Desktop Support for fleet-wide patch rollout or a failed update."
+  },
+  // FAULT LAB 2026-10-14 (defect 2) — NET.ADAPTER.DOWN (no network adapter is up) and NET.DOWN (two failed reachability
+  // probes in a row) matched NO recipe ("No local recipe matched"), so the most visible outage there is produced silence.
+  // A GUIDE ONLY: every step is the person's own (Settings, the cable) — none is a command, nothing here can ever run
+  // (shell "manual" never passes recipe-runner's gate). main.mjs legacySignalFor() routes NET.DOWN here too.
+  {
+    id: "net-adapter-down-v1", family: "NETWORK", signal: "NET.ADAPTER.DOWN", title: "Network connection down", chip: "NETWORK - ADAPTER",
+    risk: "green", mode: "manual",
+    confidenceKeywords: ["network adapter down", "network adapter disabled", "airplane mode is on", "no network adapter connected"],
+    summary: "This device has no working network connection. Four quick checks usually bring it back — ARIA changes nothing for you.",
+    detector: "Network watcher: no adapter up (NET.ADAPTER.DOWN) or two failed reachability probes in a row (NET.DOWN).",
+    actions: [
+      { id: "airplane-mode-off", label: "Turn Airplane mode off", shell: "manual", risk: "green", requiresConfirm: false, command: "Manual: open Settings > Network & internet and make sure Airplane mode is Off.", dryRunResult: "Shows the Airplane mode check. Nothing is changed." },
+      { id: "reenable-wifi-ethernet", label: "Turn Wi-Fi or Ethernet back on", shell: "manual", risk: "green", requiresConfirm: false, command: "Manual: in Settings > Network & internet, turn Wi-Fi On and reconnect to your usual network, or check that Ethernet shows Connected.", dryRunResult: "Shows the Wi-Fi / Ethernet check. Nothing is changed." },
+      { id: "check-cable-adapter", label: "Check the cable and the adapter", shell: "manual", risk: "green", requiresConfirm: false, command: "Manual: re-seat the network cable or the USB / dock adapter, check its lights, then try another port or cable.", dryRunResult: "Shows the cable and adapter check. Nothing is changed." },
+      { id: "restart-adapter", label: "Restart the adapter in Settings", shell: "manual", risk: "green", requiresConfirm: false, command: "Manual: Settings > Network & internet > Advanced network settings: choose the adapter, Disable it, wait 10 seconds, then Enable it again.", dryRunResult: "Shows how to restart the adapter in Settings. Nothing is changed." }
+    ],
+    success: "Network checks opened. ARIA keeps checking the connection on its own.",
+    escalation: "Network Team if the adapter is missing, or the connection stays down after these checks."
   }
 ];
 
@@ -1313,30 +1396,48 @@ function guideRecipe(id, family, signal, title, chip, risk, keywords) {
 
 // Helper for the 8 RUN 7 service-restart recipes — identical reversible shape, one per service.
 function svcRecipe(id, codeSuffix, serviceName, displayName, keywords) {
-  return {
-    id,
-    family: "SYSTEM",
-    signal: `SYSTEM.SERVICE.STOPPED.${codeSuffix}`,
-    title: `${displayName} service stopped`,
-    chip: "SYSTEM - SERVICE",
-    risk: "green",
-    mode: "confirmed",
-    confidenceKeywords: keywords,
-    summary: `Restart the stopped ${displayName} service.`,
-    detector: `${serviceName} service in a Stopped state.`,
-    diagnostic: { shell: "powershell", command: `Get-Service -Name ${serviceName} | Select-Object Name,Status` },
-    actions: [
+  // PROD 2026-10-14 (audit M3) — DNS Client (Dnscache) cannot be stopped/restarted by anyone on Windows 10 1809+, so
+  // its recipe refreshes the resolver in user space instead (same id, same signal, honest actions). Every other
+  // service restart needs administrator rights and says so (needsAdmin → a UAC prompt the person answers).
+  const unstoppable = /^dnscache$/i.test(serviceName);
+  const actions = unstoppable
+    ? [
+      { id: "flush-dns", label: "Flush DNS resolver cache", shell: "powershell", risk: "green", requiresConfirm: false, command: "ipconfig /flushdns", dryRunResult: "Would flush the DNS resolver cache." },
+      // FAULT LAB 2026-10-14 (defect 3) — the same non-fatal re-registration as dns-fail-v1 (same command, same rights question).
+      { id: "register-dns", label: "Re-register DNS", shell: "powershell", risk: "green", requiresConfirm: false, nonFatal: true, command: "ipconfig /registerdns", dryRunResult: "Would re-register the client's DNS records." },
+      { id: "clear-dns-client-cache", label: "Clear DNS client cache", shell: "powershell", risk: "green", requiresConfirm: false, command: "Clear-DnsClientCache", dryRunResult: "Would clear the DNS Client resolver cache (the service itself is protected by Windows and cannot be restarted)." }
+    ]
+    : [
       {
         id: "restart-service",
         label: `Restart ${displayName} service`,
         shell: "powershell",
         risk: "green",
         requiresConfirm: false,
+        needsAdmin: true,
         command: `Restart-Service ${serviceName} -Force`,
-        dryRunResult: `Would restart the ${displayName} service.`
+        dryRunResult: `Would restart the ${displayName} service (asks for administrator approval).`
       }
-    ],
-    success: `${displayName} service restarted.`,
+    ];
+  return {
+    id,
+    family: "SYSTEM",
+    signal: `SYSTEM.SERVICE.STOPPED.${codeSuffix}`,
+    // FAULT LAB 2026-10-14 (defect 5) — the Windows service this recipe is about (a fixed short name + its display name,
+    // never user data), so a detection can say "Print Spooler is disabled (start type)…" in plain words.
+    service: Object.freeze({ name: serviceName, display: displayName }),
+    title: `${displayName} service stopped`,
+    chip: "SYSTEM - SERVICE",
+    risk: "green",
+    mode: "confirmed",
+    confidenceKeywords: keywords,
+    summary: unstoppable
+      ? `Refresh the DNS resolver (the ${displayName} service is protected by Windows and cannot be restarted from a session; a reboot restarts it).`
+      : `Restart the stopped ${displayName} service.`,
+    detector: `${serviceName} service in a Stopped state.`,
+    diagnostic: { shell: "powershell", command: `Get-Service -Name ${serviceName} | Select-Object Name,Status` },
+    actions,
+    success: unstoppable ? "DNS resolver refreshed. If names still fail, restart the computer." : `${displayName} service restarted.`,
     escalation: "Desktop Support if the service will not stay running."
   };
 }

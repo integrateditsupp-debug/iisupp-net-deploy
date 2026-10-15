@@ -1,8 +1,8 @@
-// RUN 22 §4 — framework composite scores (SOC 2 · HIPAA · PIPEDA · GDPR) + the R11 private-folder
+// RUN 22 §4 — framework composite scores (SOC 2 · HIPAA · PIPEDA · GDPR) + the excluded-folder
 // enforcement counter. Pure + node-safe. Scores derive from real control states, not vibes.
 
 // Controls map to capabilities ARIA actually ships (audit chain, content-blind telemetry, env-only admin,
-// local processing, no external AI, kill-switch, triple-confirm, R11). `met` defaults true where shipped.
+// local processing, no external AI, kill-switch, triple-confirm, excluded folders). `met` defaults true where shipped.
 export const SOC2_CONTROLS = [
   { id: "CC6.1", name: "Logical access — env-only admin token", met: true },
   { id: "CC6.6", name: "Boundary protection — 6-host allowlist", met: true },
@@ -23,7 +23,7 @@ export const PIPEDA_ITEMS = [
   { id: "P4.1", name: "Accountability — local processing", met: true },
   { id: "P4.3", name: "Consent — opt-in trial + reports", met: true },
   { id: "P4.5", name: "Limiting use — content-blind telemetry", met: true },
-  { id: "P4.7", name: "Safeguards — R11 private-folder block", met: true },
+  { id: "P4.7", name: "Safeguards — excluded-folder block", met: true },
   { id: "P4.8", name: "Openness — privacy verifier", met: true }
 ];
 export const GDPR_RIGHTS = [
@@ -56,15 +56,22 @@ export function compositeScores(overrides = {}) {
   return out;
 }
 
-/** R11 enforcement status for the Compliance tab — the counter must always be 0 attempted accesses. */
-export function r11EnforcementStatus(attempts = 0, lastVerified = null) {
+// PROD 2026-10-14 (audit R7) — the customer-facing label for the excluded-folder rule. The real folder names
+// live only in the person's own settings (getState().excludedFolders carries a COUNT); this module never
+// names one, so no surface built from it can leak a name.
+export const EXCLUDED_FOLDER_LABEL = "your excluded folders";
+
+/** Excluded-folder enforcement status for the Compliance tab — the counter must always be 0 attempted accesses. */
+export function r11EnforcementStatus(attempts = 0, lastVerified = null, { count = null } = {}) {
   const a = Number(attempts) || 0;
+  const n = Number.isFinite(Number(count)) && count != null ? Number(count) : null;
   return {
-    folder: "Private pics and Vids",
+    folder: n == null ? EXCLUDED_FOLDER_LABEL : `excluded folders: ${n}`,
+    excludedCount: n,
     attempts: a,
     touched: a > 0,
     ok: a === 0,
-    statusLine: a === 0 ? "0 attempted accesses — folder never touched." : `${a} attempted access(es) BLOCKED.`,
+    statusLine: a === 0 ? "0 attempted accesses — excluded folders never touched." : `${a} attempted access(es) BLOCKED.`,
     lastVerified: lastVerified || null
   };
 }

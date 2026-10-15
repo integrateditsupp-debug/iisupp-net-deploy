@@ -10,11 +10,44 @@
  *    replay returns the SAME license without minting another or re-sending the welcome mail.
  *  - Internal call goes to process.env.URL (not the request Host header).
  *  - Welcome mail goes through lib/notify.mjs; the response says whether it was actually delivered.
+ *
+ * SENTINEL REVIEW FIXES 2026-10-14 (P0-1, ARIA-web half): a license is issued ONLY for a paid SUBSCRIPTION
+ * session, and the plan is the tier whose price the subscription actually charges — read from the subscription's
+ * line item and mapped through stripe-checkout's own PRICE_MAP. The old code issued `session.metadata.tier`
+ * (default 'pro') for any paid session: a $1 one-time checkout carrying tier "enterprise" came back with an
+ * Enterprise ARIA-web license. A one-time session → 422 not-an-aria-subscription (nothing issued, nothing mailed);
+ * a subscription whose price the server does not know → no license, the owner is paged to issue it by hand.
  */
-const Stripe = require('stripe');
 const { BRAND, OWNER_EMAIL, SUPPORT_PHONE, SUPPORT_TEL } = require('./lib/contacts.cjs');
 
 const STORE_NAME = 'stripe-confirm';
+const PAID = new Set(['paid', 'no_payment_required']);
+
+// Lazy Stripe client with a test seam (same pattern as sentinel-stripe-webhook / stripe-checkout).
+let _stripeFactory = null;
+/** Test seam: fn(secretKey) → a Stripe-like client ({ checkout: { sessions: { retrieve } }, subscriptions: { retrieve } }). */
+exports._setStripeFactory = (fn) => { _stripeFactory = typeof fn === 'function' ? fn : null; };
+function stripeClient(secretKey) {
+  if (_stripeFactory) return _stripeFactory(secretKey);
+  const Stripe = require('stripe');
+  return Stripe(secretKey);
+}
+
+/** The tier the server's own price table assigns to the subscription's (first) price, or null. */
+async function planFromSubscription(stripe, session) {
+  const ref = session.subscription;
+  let sub = ref && typeof ref === 'object' ? ref : null;
+  if (!sub || !sub.items) {
+    const id = typeof ref === 'string' ? ref : (ref && ref.id) || '';
+    if (!id) return { tier: null, reason: 'no-subscription' };
+    sub = await stripe.subscriptions.retrieve(id);
+  }
+  const item = sub && sub.items && Array.isArray(sub.items.data) ? sub.items.data[0] : null;
+  const price = item && item.price;
+  const { _plans } = require('./stripe-checkout.js');
+  const tier = price ? _plans.subscriptionTierForPriceId(price.id) : null;
+  return { tier, reason: tier ? null : 'price-not-in-server-table', priceId: price ? String(price.id || '') : '' };
+}
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'POST required' };
@@ -30,8 +63,8 @@ exports.handler = async (event) => {
   if (!sessionId) return j(400, { error: 'session_id required' });
   if (!/^cs_(test|live)_[A-Za-z0-9]{10,}$/.test(sessionId)) return j(400, { error: 'session_id malformed' });
 
-  const stripe = Stripe(stripeKey);
-  const store = await openStore();
+  const stripe = stripeClient(stripeKey);
+  const store = await openStore(event);
   const confirmKey = 'confirmed-' + sessionId;
 
   // Idempotency: a replayed session_id returns the stored outcome — no second license, no second email.
@@ -47,22 +80,36 @@ exports.handler = async (event) => {
 
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId, { expand: ['customer'] });
-    if (session.payment_status !== 'paid' && session.payment_status !== 'no_payment_required') {
+    // REVIEW FIX P0-1: only a SUBSCRIPTION session is an ARIA plan purchase. A one-time (payment-mode) session —
+    // whatever its metadata says — never yields a license.
+    if (session.mode !== 'subscription') {
+      console.warn('[stripe-confirm] not a subscription session — no license', JSON.stringify({ session: sessionId.slice(-8), mode: String(session.mode || '') }));
+      return j(422, { ok: false, error: 'not-an-aria-subscription', license_issued: false });
+    }
+    if (!PAID.has(session.payment_status)) {
       return j(402, { error: 'Payment not completed' });
     }
 
-    const tier = (session.metadata && session.metadata.tier) || 'pro';
-    const planName = (session.metadata && session.metadata.planName) || 'ARIA';
     const email = session.customer_details?.email || session.customer_email || (session.customer && session.customer.email);
-
     if (!email) return j(400, { error: 'No customer email on session' });
+
+    // The plan is the tier whose price the subscription charges (server table) — never session.metadata.tier.
+    const priced = await planFromSubscription(stripe, session);
+    const tier = priced.tier;
+    const planName = tier || 'ARIA';
+    if (session.metadata && session.metadata.tier && tier && session.metadata.tier !== tier) {
+      console.warn('[stripe-confirm] session metadata.tier ignored — the price decides', JSON.stringify({ metadata_tier: String(session.metadata.tier).slice(0, 40), price_tier: tier }));
+    }
 
     // Issue license (internal call, authenticated with the internal token)
     const origin = process.env.URL || process.env.SITE_BASE_URL || (event.headers.host ? `https://${event.headers.host}` : 'https://iisupp.net');
     const internalToken = process.env.INTERNAL_WEBHOOK_SECRET || process.env.ARIA_ADMIN_TOKEN;
     let license = {};
     let licenseError = null;
-    if (!internalToken) {
+    if (!tier) {
+      licenseError = `subscription price ${priced.priceId || '(none)'} is not in the server price table (${priced.reason}) — license must be issued manually`;
+      console.error('[stripe-confirm] ' + licenseError);
+    } else if (!internalToken) {
       licenseError = 'INTERNAL_WEBHOOK_SECRET not configured — license must be issued manually';
       console.error('[stripe-confirm] ' + licenseError);
     } else {
@@ -122,10 +169,15 @@ exports.handler = async (event) => {
   }
 };
 
-async function openStore() {
+// SENTINEL-BACKEND 2026-10-14 (audit B1): Lambda-compat functions must hand the event's Blobs credentials to
+// @netlify/blobs (connectLambda) before getStore, and strong consistency is unavailable in that mode (every
+// read threw). lib/sentinel-store.cjs does both; null still means "idempotency disabled for this invocation".
+async function openStore(event) {
   try {
-    const { getStore } = require('@netlify/blobs');
-    return getStore({ name: STORE_NAME, consistency: 'strong' });
+    const { openStore: open } = require('./lib/sentinel-store.cjs');
+    const store = await open(STORE_NAME, event);
+    if (!store) console.warn('[stripe-confirm] Blobs unavailable — idempotency disabled for this invocation');
+    return store;
   } catch (e) {
     console.warn('[stripe-confirm] Blobs unavailable — idempotency disabled for this invocation:', e.message);
     return null;

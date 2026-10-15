@@ -9,7 +9,38 @@
 // 🔒 R11: any free-text (session id) is path-scrubbed before it can be persisted.
 
 export const RESOLUTION_SCHEMA = "resolution-outcome.v1";
+
+// JULY PORT 2026-10-14 (af5e03ab, reconciled as a DIFF against this module — never duplicated). The July ledger knew a
+// third outcome, "escalated" (a conversation handed to a person: live help / a ticket), keyed its dedupe on `id`,
+// accepted "not_resolved", and reported hours_saved + hasProof on the pilot proof. All of that is added here
+// additively: OUTCOME_KINDS stays the two "was this fixed?" answers (the renderer's thumbs); an escalation is a
+// conversation that was NOT deflected, so it counts in the denominator and never in the numerator.
+import { computeRoi } from "./roi.mjs";
+export const ESCALATED_OUTCOME = "escalated";
+
+// PROD 2026-10-14 (F4 round 2 / R6a) — WHAT COUNTS AS A FIX for hours-saved / $-saved / pilot proof / trust posture.
+// The audit log carries a RUN row per execution — "Executing recipe X" (live) AND "Dry-run recipe X" (preview) —
+// and every surface used to count both as fixes, so a device that only ever previewed showed hours "saved".
+// A fix counts ONLY when it ran LIVE and finished: main writes one "FIX" row per completed live execution with
+// outcome "done" (verified / succeeded) or "failed"; only "done" counts. Logs written before the FIX row existed
+// (dev machines) fall back to the RUN "Executing …" rows (live attempts), never to "Dry-run …" previews. Pure.
+const LIVE_RUN_RE = /^Executing\b/;
+export function isLiveFixRow(entry) {
+  if (!entry || typeof entry !== "object" || entry.dryRun === true) return false;
+  return entry.tag === "FIX" && String(entry.outcome || "").toLowerCase() === "done";
+}
+export function isLegacyLiveRunRow(entry) {
+  return Boolean(entry && typeof entry === "object" && entry.tag === "RUN" && entry.dryRun !== true && LIVE_RUN_RE.test(String(entry.text || "")));
+}
+/** Count the live, completed fixes in an audit log (any order). Never counts a preview. */
+export function countLiveFixes(log = []) {
+  const rows = Array.isArray(log) ? log : [];
+  if (rows.some((e) => e && e.tag === "FIX")) return rows.filter(isLiveFixRow).length;
+  return rows.filter(isLegacyLiveRunRow).length; // pre-FIX-row logs: live attempts, still never previews
+}
 export const OUTCOME_KINDS = ["resolved", "not-yet"];
+// The full accepted vocabulary (July's name): the two thumbs + the escalation outcome.
+export const OUTCOMES = Object.freeze([...OUTCOME_KINDS, ESCALATED_OUTCOME]);
 
 // Confidence thresholds on a 0..1 match score. Chosen conservatively — "high" only when the match is strong.
 export const CONFIDENCE_HIGH = 0.75;
@@ -29,7 +60,8 @@ export function scrubField(value) {
 export function normalizeOutcome(kind) {
   const k = String(kind == null ? "" : kind).trim().toLowerCase().replace(/\s+/g, "-");
   if (k === "resolved" || k === "yes" || k === "fixed") return "resolved";
-  if (k === "not-yet" || k === "no" || k === "notyet" || k === "unresolved") return "not-yet";
+  if (k === "not-yet" || k === "no" || k === "notyet" || k === "unresolved" || k === "not_resolved" || k === "not-resolved") return "not-yet"; // JULY: not_resolved
+  if (k === ESCALATED_OUTCOME) return ESCALATED_OUTCOME; // JULY: handed to a person — counted, never "resolved"
   return null;
 }
 
@@ -58,6 +90,11 @@ export function buildOutcomeEvent(input = {}, { now = Date.now() } = {}) {
   const outcome = normalizeOutcome(input.outcome != null ? input.outcome : input.kind);
   if (!outcome) return { ok: false, errors: ["outcome-invalid"], record: null };
   const badge = confidenceBadge(input.matchScore != null ? input.matchScore : input.score);
+  // JULY: `id` / `issueId` are accepted as the dedupe key (the browser-outcome ledger keys on them).
+  const sid = input.sessionId != null ? input.sessionId : input.session_id != null ? input.session_id : input.id != null ? input.id : input.issueId;
+  // JULY: a caller may tag WHERE the outcome came from (e.g. "browser-extension"); it is a source label, never a
+  // measured confidence, so it lives beside the badge and never fakes one.
+  const sourceTag = input.source != null ? input.source : (input.confidence && typeof input.confidence === "object" && !Number.isFinite(input.confidence.score) ? input.confidence.level : "");
   return {
     ok: true,
     errors: [],
@@ -66,9 +103,11 @@ export function buildOutcomeEvent(input = {}, { now = Date.now() } = {}) {
       ts: new Date(now).toISOString(),
       outcome,
       resolved: outcome === "resolved",
-      session_id: scrubField(input.sessionId != null ? input.sessionId : input.session_id),
+      escalated: outcome === ESCALATED_OUTCOME,
+      session_id: scrubField(sid),
       confidence: badge,                 // { level, score } or null
-      match_score: badge ? badge.score : null
+      match_score: badge ? badge.score : null,
+      source: scrubField(sourceTag).slice(0, 40)
     }
   };
 }
@@ -113,12 +152,16 @@ export function deflectionStats(events = []) {
   const evs = normalizeEvents(events);
   const conversations = evs.length;
   const resolved = evs.filter((e) => normalizeOutcome(e.outcome) === "resolved").length;
+  const escalated = evs.filter((e) => normalizeOutcome(e.outcome) === ESCALATED_OUTCOME).length; // JULY
   return {
     conversations,
     resolved,
-    notYet: conversations - resolved,
+    notYet: conversations - resolved - escalated,
+    escalated,                          // JULY: handed to a person (never deflected)
+    notResolved: conversations - resolved - escalated, // JULY's name for notYet
     deflectionPct: deflectionRate(events),
-    sample: conversations               // buyers always ask "out of how many?"
+    sample: conversations,              // buyers always ask "out of how many?"
+    realOrEmpty: conversations > 0      // JULY: true only once a real conversation exists
   };
 }
 
@@ -142,9 +185,14 @@ export function deflectionTile(events = []) {
 // outcomes, conversations/resolvedNoEscalation stay null and case-study.deflectionRate returns null.
 export function pilotProofMetrics(events = [], { fixes = null } = {}) {
   const st = deflectionStats(events);
+  const realFixes = Number.isFinite(fixes) && fixes >= 0 ? fixes : null;
   return {
-    fixes: Number.isFinite(fixes) && fixes >= 0 ? fixes : null,
+    fixes: realFixes,
     conversations: st.conversations > 0 ? st.conversations : null,
-    resolvedNoEscalation: st.conversations > 0 ? st.resolved : null
+    resolvedNoEscalation: st.conversations > 0 ? st.resolved : null,
+    // JULY: hours_saved + hasProof — the SAME minutes-per-fix the ROI/value-proof surfaces use (roi.mjs), so no surface
+    // can disagree with another; null until a real fix exists (July used its own 47-minute constant; dropped).
+    hours_saved: realFixes > 0 ? computeRoi({ fixes: realFixes }).hoursSaved : null,
+    hasProof: (realFixes != null && realFixes > 0) || st.conversations > 0
   };
 }

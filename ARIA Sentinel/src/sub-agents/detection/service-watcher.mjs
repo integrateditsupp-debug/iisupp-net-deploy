@@ -44,6 +44,15 @@ const QUERY =
  * Emits a signal only on a Running->Stopped edge for an allow-listed service — AND only when that stop is a real
  * problem: an idle-normal / Manual / Disabled service that is simply stopped is suppressed (2026-07-16 gate). A
  * row may carry `StartType`/`Start` (real startup mode) and/or `Failing` (corroborating failure evidence).
+ *
+ * FAULT LAB 2026-10-14 (defect 5) — one exception to the Disabled suppression: a watched service that Windows needs
+ * RUNNING (an allow-listed service NOT on the idle-normal list — Spooler, Dhcp, WlanSvc, Audiosrv, …) that goes from
+ * Running to Stopped with its START TYPE set to Disabled. Before, that was silent (the lab's `spooler-disabled`: the
+ * printer just stopped working and ARIA said nothing). It now emits the SAME stopped-service signal with
+ * `startType: "disabled"` and hint "critical-service-disabled", so the card can say "disabled (start type), not just
+ * stopped — needs an administrator". Idle-normal services (wuauserv, BITS, …) stay suppressed when Disabled — an
+ * administrator disabling those is a common, deliberate policy — and a service already Disabled when the watcher starts
+ * (no Running edge) stays quiet, like every other edge-triggered signal.
  */
 export function evaluateServices(prev, raw) {
   const prevMap = prev || {};
@@ -54,12 +63,22 @@ export function evaluateServices(prev, raw) {
     if (!name || !SERVICE_SET.has(name.toLowerCase())) continue; // ignore anything off the allow-list
     const status = normalizeStatus(row?.Status);
     const before = prevMap[name];
-    if (before === "Running" && status === "Stopped" && shouldAlertOnStop(name, row)) {
-      signals.push({ signal: `SYSTEM.SERVICE.STOPPED.${name.toUpperCase()}`, hint: "critical-service-stopped" });
+    if (before === "Running" && status === "Stopped") {
+      if (shouldAlertOnStop(name, row)) {
+        signals.push({ signal: `SYSTEM.SERVICE.STOPPED.${name.toUpperCase()}`, hint: "critical-service-stopped" });
+      } else if (isDisabledCriticalStop(name, row)) {
+        signals.push({ signal: `SYSTEM.SERVICE.STOPPED.${name.toUpperCase()}`, hint: "critical-service-disabled", startType: "disabled" });
+      }
     }
     nextMap[name] = status;
   }
   return { state: nextMap, signals };
+}
+
+/** (defect 5) A watched, normally-running service stopped with its start type set to Disabled. Pure. */
+export function isDisabledCriticalStop(name, row) {
+  if (IDLE_NORMAL_SET.has(String(name).toLowerCase())) return false; // Manual/Trigger by design: Disabled is a policy
+  return normalizeStartType(row?.StartType ?? row?.Start) === "Disabled";
 }
 
 /**
@@ -105,13 +124,15 @@ export function createServiceWatcher({ emit, isBlocked }) {
   return {
     name: "service",
     cadenceMs: 60 * 1000,
+    spawnsPerTick: 1,
     async tick() {
       if (isBlocked()) return;
       const raw = await runPowerShellJson(QUERY);
       if (raw == null) return;
       const result = evaluateServices(state, raw);
       state = result.state;
-      for (const s of result.signals) emit(s.signal, s.hint);
+      // (defect 5) the start-type context travels with the signal (a fixed enum, never service output).
+      for (const s of result.signals) emit(s.signal, s.hint, s.startType === "disabled" ? { startType: "disabled" } : undefined);
     }
   };
 }

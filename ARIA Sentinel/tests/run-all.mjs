@@ -501,6 +501,9 @@ const TESTS = [
   "./r11-publish-paths.test.mjs",
   // RUN 23d — tab IA 17→9 consolidation (Dashboard/Compliance&Privacy/System/Settings merges + redirects).
   "./tab-ia-consolidation.test.mjs",
+  // JULY PORT 2026-10-14 (c0a0f6b4) — the Resolution surface as sub-anchors of the Recipes tab: Fix It search/family
+  // filter over the same lists + the real 30-day paginated Fix History (names kept — Rule 15; 11-tab budget kept).
+  "./resolution-tab.test.mjs",
   // RUN 23e — single build + license-tier feature gating + plan picker + upsell + shouldBump hotfix.
   "./pricing-tiers.test.mjs",
   "./license-features.test.mjs",
@@ -517,6 +520,10 @@ const TESTS = [
   // RUN 24 A6 — server-side license resolve (secret stays server-side) + desktop offline cache tiers.
   "./sentinel-resolve.test.mjs",
   "./desktop-license-cache.test.mjs",
+  // 2026-10-14 (review P1-3 app half · P2-9) — a cached verdict counts only when signed for this device + key (unsigned:
+  // this run, ≤1 h, never admin); the trial clock cannot be rolled back or restarted by deleting trial.json; the earliest
+  // start (the server's first sight of this device) wins; a pre-seeded licence waits for Setup consent.
+  "./license-verdict-trust.test.mjs",
   // RUN 29-A — mode-based dry-run defaults (Manual ON · Confirmed/Autonomous OFF).
   "./dryrun-defaults.test.mjs",
   // RUN 29-D — $0 content-blind crash reporter.
@@ -537,16 +544,32 @@ const TESTS = [
   "./l1-l3-director-scenarios.test.mjs",
   // D2 (2026-07-03) — Ask-ARIA usage recorded to local memory + stats (Memory/Dashboard reflect real asks).
   "./chat-stats.test.mjs",
+  // JULY PORT 2026-10-14 (a7f9e111 Phase F D2) — every stored chat turn is guard-scrubbed + capped on disk at the one
+  // choke point; parseSessions counts USER turns as asks. The content-blind browser-outcome ledger (local bridge
+  // POST /browser-outcome · GET /browser-outcomes/fleet-packet, local-only) + its frozen fleet-packet contract.
+  "./chat-activity-recording.test.mjs",
+  "./browser-outcome.test.mjs",
+  "./browser-outcome-fleet-contract.test.mjs",
   // RUN 32-B — 3-mode proof-of-life (Manual/Confirmed/Autonomous execution pipeline).
   "./mode-execution.test.mjs",
   // RUN 34-4 — 3-mode × 13-error matrix (every Windows error class × Manual/Confirmed/Autonomous disposition).
   "./mode-error-matrix.test.mjs",
   // RUN 34-5 — 20+ Windows-error detector sweep (every live watcher mapper, each content-blind under PII input).
   "./windows-error-sweep.test.mjs",
+  // JULY PORT 2026-10-14 (ddfcac5b) — the READ-ONLY .txt file-association guard: reg query only, two manual/guide
+  // recipes, the normal detection pipeline, the excluded-folder guard on every registry string, Settings as the fix.
+  "./file-association-guard.test.mjs",
   // RUN 33 PIVOT — ARIA Chat in-tab (Chat sub-section of the ARIA parent tab; detached window removed).
   "./aria-chat-window-ui.test.mjs",
   // RUN 35-1 — chat scroll containment (inner log scrolls; outer tab never grows).
   "./chat-scroll-containment.test.mjs",
+  // JULY PORT 2026-10-14 (cd518cea · 9f2b9bd7 · 69058206, ported from cc/security-lockdown-2026-07-01) — desktop ARIA
+  // chat KB answers framed as readable cards around the P7 lead; the web entry flow (welcome + quick chips); the
+  // SCRIPTED 100-call demo lab in Control Center (copy only — the runners reach nothing on the device).
+  "./aria-chat-readable-answer.test.mjs",
+  "./aria-chat-web-alignment.test.mjs",
+  "./common-call-demo.test.mjs",
+  "./common-call-demo-ui.test.mjs",
   // RUN 35-2 — aria-kb-query routing iter 7 (security families/takeover · wifi no-word · printer tightened).
   "./aria-kb-routing-iter7.test.mjs",
   // RUN 36 round-3 — routing coverage for calendar · external display · conference-room AV (top50-gaps).
@@ -591,6 +614,16 @@ const TESTS = [
   "./d2-wire-conversion.test.mjs",
   // RUN-B B1 (2026-07-01) — "Was this fixed?" feedback loop -> real deflection %% (real-or-empty; feeds dashboard tile + D2 proof).
   "./resolution-outcome.test.mjs",
+  // JULY PORT 2026-10-14 (af5e03ab, ported from cc/security-lockdown-2026-07-01) — the July ledger reconciled as a DIFF
+  // (id dedupe · not_resolved · escalated counted-never-resolved · hours_saved from roi.mjs · hasProof); the Office File
+  // Safety Net (pure planner · trainer · live service on a temp tree, opt-in + excluded-folder guard); the RDP rescue
+  // decision layer (secret-free, guard-scrubbed) + the admin console's static, disabled "Grant Asset RDP Access" tab.
+  "./resolution-outcome-july-reconcile.test.mjs",
+  "./office-file-safety.test.mjs",
+  "./office-trainer.test.mjs",
+  "./office-safety-service.test.mjs",
+  "./rdp-access.test.mjs",
+  "./admin-rdp-access-tab.test.mjs",
   "./value-proof.test.mjs",   // RUN-B B2 — real ROI $/hours + real deflection on every surface (real-or-empty)
   // RUN-B B5 (2026-07-01) — under-globe "issue resolved | email sent | ticket ref" confirmation (real-or-empty; desktop overlay + web mirror parity).
   "./b5-globe-confirmation.test.mjs",
@@ -914,6 +947,107 @@ const TESTS = [
   "../../tests/axis-overview-clearance.test.mjs",
   "../../tests/axis-blind-guards.test.mjs",
   "../../tests/axis-command-center.test.mjs",
+  // RUN-AX2 / RUN-SN1 (2026-10-14): the situation model every AXIS brain reads (Toronto clock, honest
+  // sources, CEO-ledger ranking) and the Netlify bundling guard (heavy external modules scoped per
+  // function — the 3.2 GB-of-zips ENOSPC of 2026-10-13). Both are node:assert suites with no
+  // process.exit, read on this extract: exit 0 standalone and clean under the one-process import.
+  "../../tests/axis-situation.test.mjs",
+  "../../tests/netlify-function-externals.test.mjs",
+  // RUN-SN1 / F1 (2026-10-14): the DEPLOYED Sentinel handlers under in-memory Blobs + stubbed fetch —
+  // store connection (connectLambda before getStore), v2 per-customer keys + v1 still resolving,
+  // revocation unified, session-report gated, Stripe webhook scoped to sentinel_* tiers, fleet
+  // endpoints (heartbeat/recipes/stop-codes/manifest), notify bound to the license record.
+  "../../tests/sentinel-store-and-keys.test.mjs",
+  "../../tests/sentinel-resolve-and-licenses.test.mjs",
+  "../../tests/sentinel-session-report.test.mjs",
+  "../../tests/sentinel-stripe-webhook.test.mjs",
+  "../../tests/sentinel-fleet-endpoints.test.mjs",
+  "../../tests/sentinel-notify-binding-and-contracts.test.mjs",
+  // RUN-SN1 / F2 (2026-10-14): the main process made true on a real machine — consent-gated live
+  // fixes (Tier-2 runs when a human initiated), honest elevation (UAC, needs-admin never "healthy"),
+  // PNG tray art, version from package.json, first-tick watcher baselines, startup tamper grace,
+  // the spawn budget, first-launch silence, policy.json loader, self-error quiet.
+  "./fresh-install-resolve.test.mjs",
+  "./needs-admin-matrix.test.mjs",
+  "./tray-art.test.mjs",
+  "./version-sync.test.mjs",
+  "./watcher-baselines.test.mjs",
+  // 2026-10-14 (review P2-10) — a cleared System log (RecordIds restart at 1) resets the event-log cursor instead of
+  // leaving the watcher blind until the new log out-grows the old one; the reset is a re-baseline (no old alarms).
+  "./event-log-cursor-reset.test.mjs",
+  "./startup-first-run.test.mjs",
+  "./spawn-budget.test.mjs",
+  "./first-launch-silence.test.mjs",
+  "./policy-overlay-loader.test.mjs",
+  "./self-error-quiet.test.mjs",
+  // RUN-SN1 / F3 (2026-10-14): the renderer made honest and finishable — buy path + prices from one
+  // source, 30-day trial copy that matches the code, fix outcomes described truthfully, real-or-empty
+  // KPIs, customer surfaces clean of internal wording, the 4-screen quick setup, the Home lists; the
+  // Playwright first-run harness skips with a clear line where Chromium is absent.
+  "./renderer-first-run.test.mjs",
+  "./pricing-surface-sync.test.mjs",
+  "./trial-copy-matches-code.test.mjs",
+  "./fix-outcome-copy.test.mjs",
+  "./customer-content-clean.test.mjs",
+  "./real-or-empty-ui.test.mjs",
+  "./home-lists.test.mjs",
+  "./setup-flow.test.mjs",
+  "./copy-claims.test.mjs",
+  // RUN-SN1 / F4 (2026-10-14): the customer build is an explicit allow-list derived from the import
+  // graph (business-ops modules stay in the repo, not in the asar), the Windows packager wrapper,
+  // version lockstep, sales copy == pricing-tiers, the binary host declared.
+  "./customer-build-allowlist.test.mjs",
+  "./package-win.test.mjs",
+  // 2026-10-14 (review P2-11) — this version's release notes ship (and move with the bump; the loader finds them in
+  // app.asar or resources); --print-config downloads and writes nothing; the voice model download is SHA-256 pinned.
+  "./package-release-integrity.test.mjs",
+  "./version-lockstep.test.mjs",
+  "./sales-copy-prices.test.mjs",
+  "./publish-binary-host.test.mjs",
+  // RUN-SN1 / F4 (repo root): /downloads + /plans Sentinel copy == pricing-tiers, the checkout states.
+  "../../tests/sentinel-sell-pages.test.mjs",
+  // 2026-10-14 (site sweep, registered by the review housekeeping): the /downloads "Get ARIA Sentinel" block — banner,
+  // advisory scenarios == advisoryCopy, legend == ruleSentence(), recipes/ROI/prices from the app's own modules. Its
+  // register-pending census-ledger entry was removed in the same change.
+  "../../tests/sentinel-downloads-page.test.mjs",
+  // RUN-SN1 / F2 round 2: the renderer/build requests wired in main — billing-aware checkout, watcher
+  // status in state, kill switch stops, manual-mode globe clickable, window fits 1366×768, reports
+  // folder IPC, signed-artifact names, live-fix counting only, device/key headers.
+  "./round2-main-wiring.test.mjs",
+  // 2026-10-14 (cc/sentinel-prod-2026-10-14): Autonomous mode's "advise three times, then act" rule —
+  // the pure escalation machine (cadence, choices, kill, freeze, restart resume), then the REAL
+  // main.mjs driven on a simulated Windows machine (tests/lib/fault-lab.mjs): every catalogued fault
+  // down the no-answer path, every person choice, every mode × trust level (writes
+  // docs/MODE-BEHAVIOUR-MATRIX.md), and a 200-sequence seeded soak with invariants.
+  "./advisory-escalation.test.mjs",
+  "./fault-lab-autonomous.test.mjs",
+  "./fault-lab-modes.test.mjs",
+  "./fault-lab-soak.test.mjs",
+  // …and its surfaces, fed main's REAL notices: the globe card (Notice n of 3 + Fix now · Not now · Never for this),
+  // the Home "What I need from you" rows, the ARIA chat line, Settings → Autonomy, the content-blind bridge slice.
+  "./advisory-ui.test.mjs",
+  // …and the REAL-Windows lab an operator runs on a test machine (scripts/fault-lab.ps1 + scripts/fault-lab-run.mjs,
+  // docs/FAULT-LAB.md): what can be proven without Windows — one catalogue, a script that cannot touch the network /
+  // DNS / registry / clock / default apps / startup types, the guard read at run time, and the verdict logic.
+  "./fault-lab-run.test.mjs",
+  // 2026-10-14 — the defects the fault lab found, each proven closed through the REAL detectIssue path on the simulated
+  // machine: the DHCP stop's own recipe, the network-down guide, the DNS gating verify (not_resolved → the IT contact),
+  // the Disabled start type, the read-only clock-drift check — and the vendor floor that lets "advise three times, then
+  // act" complete on a fresh install (green only; every other gate unchanged).
+  "./fault-lab-defects.test.mjs",
+  "./vendor-vetted-green.test.mjs",
+  // 2026-10-14 (review P0-2) — "Ctrl+Alt+K stops everything", on the simulated machine against the REAL main.mjs: one kill
+  // gate at every execution entry (a later detection, an emailed approval merged by the poll, a local / voice yes, the
+  // timeout policy, the bridge, a preview, a Tier-0 id), held approvals re-asked with new links only by Start ARIA, a
+  // relaunch that keeps the watchers off, a notice-3 escalation blocked for good, no step after the stop — each with a control.
+  "./fault-lab-kill-gate.test.mjs",
+  // 2026-10-14 (review P1-1) — "Confirmed asks once, every time; it never executes unattended": every colour, fresh and
+  // trusted, is ONE approval; the card's click approves that ask (one run, one record); the vendor floor belongs to the
+  // Autonomous advise-three-times track only (the control still acts after 3 notices).
+  "./fault-lab-confirmed-asks-once.test.mjs",
+  // 2026-10-14 (review P2-6) — after a restart the advise-first escalation re-issues the notice the person last saw (a real
+  // desktop notification + card) and never proceeds straight to the countdown; a quit during the countdown cancels the fix.
+  "./fault-lab-advisory-restart.test.mjs",
   // The commercial surface, audited end to end and proven RED FIRST on fixtures: the response-time
   // promise (BE1), the price a stranger is quoted (BF1), the tier vocabulary (BF2), the amount a buyer
   // is actually charged (BI2), the document a conversation ends in (BL1), the intake nobody keeps

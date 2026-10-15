@@ -58,8 +58,15 @@ const pkg = JSON.parse(read("package.json"));
 assert.deepEqual(Object.keys(pkg.dependencies).sort(), ["electron-store", "electron-updater", "vosk-browser"], "runtime deps locked (+ vosk-browser on-device STT)");
 assert.deepEqual(Object.keys(pkg.devDependencies).sort(), ["electron", "electron-builder"], "no new dev deps");
 
-// Customer build still ships from the src/** allow-list (new modules included; cowork-tools/netlify excluded).
-assert.ok(pkg.build.files.includes("src/**/*"), "src tree shipped to customers");
+// Customer build ships the customer src tree (cowork-tools/netlify excluded). F4 2026-10-14 (audit M16): the
+// allow-list is EXPLICIT now — derived from the import graph by scripts/customer-build-manifest.mjs — because the old
+// `src/**/*` wildcard shipped 121 unreachable business-ops modules inside app.asar. The RUN 23 modules this suite
+// guards are still shipped (every one is reachable); tests/customer-build-allowlist.test.mjs holds the full set.
+assert.ok(!pkg.build.files.includes("src/**/*"), "no src/** wildcard — the customer build is an explicit allow-list");
+assert.ok(pkg.build.files.includes("src/main/main.mjs") && pkg.build.files.includes("src/renderer/renderer.js"), "the customer src tree still ships (explicitly)");
+for (const f of ["src/shared/kill-switch.mjs", "src/shared/approval-policy.mjs", "src/main/approvals.mjs", "src/main/notify-dispatch.mjs"]) {
+  assert.ok(pkg.build.files.includes(f), `RUN 23 module still ships: ${f}`);
+}
 assert.ok(!pkg.build.files.some((f) => /cowork-tools|netlify/.test(f)), "cowork-tools/netlify excluded from customer build");
 
 console.log("Run-23-no-regression test passed (RUN 17→22 intact · 20 recipes · 9 tabs · axis untouched · R11 wired · 15 new files · 0 new deps).");

@@ -15,7 +15,7 @@
 //     reaching for a plausible substitute.
 //   - EVERY UNSUPPORTABLE CLAIM CLASS IS REFUSED BY NAME AND QUOTED BACK: invented savings, invented
 //     customer counts, "companies like yours", certifications we do not hold, guarantee language,
-//     and inflated experience (Ahmad is 15+ years, never 21+).
+//     and inflated experience (the founder is 15+ years, never 21+).
 //   - IT IS A SCRIPT FOR A HUMAN TO SAY, NOT A TEMPLATE FOR A MACHINE TO SEND. No transport, no
 //     scheduler, and no merge fields — a merge token is the seam a sender is later bolted onto.
 //   - PURE. No fs, no net, no spawn, no env — static-scanned.

@@ -13,7 +13,7 @@ import { deflectionStats } from "./resolution-outcome.mjs";
 
 export const TRUST_POSTURE_SCHEMA = "trust-posture.v1";
 
-// --- R11 / privacy scrub: never let a private path leak into a buyer-facing surface. ---
+// --- privacy scrub: never let a private path leak into a buyer-facing surface. ---
 export function scrubField(value) {
   if (value == null) return value;
   return String(value)
@@ -106,7 +106,7 @@ export function securityControls() {
     { id: "tamper-evident-audit", claim: "Actions are recorded in a hash-chained, tamper-evident log you can export.", verifiableBy: "src/shared/audit-integrity.mjs" },
     { id: "no-external-ai", claim: "Answers come from a local knowledge-base brain — no external/cloud LLM call; no prompt leaves the device.", verifiableBy: "tests/heartbeat-payload-content-blind.test.mjs" },
     { id: "content-blind-telemetry", claim: "Telemetry is content-blind — file contents never leave the device.", verifiableBy: "tests/content-leak.test.mjs" },
-    { id: "r11-private-folder", claim: "A hard rule blocks ARIA from ever reading your private folder (enforced at 0 accesses).", verifiableBy: "tests/private-folder-never-touched.test.mjs" },
+    { id: "r11-private-folder", claim: "A hard rule blocks ARIA from ever reading your excluded folders (enforced at 0 accesses).", verifiableBy: "tests/private-folder-never-touched.test.mjs" },
     { id: "least-privilege-admin", claim: "Admin actions require an environment-only token; no elevation is baked into the build.", verifiableBy: "tests/admin-build-gate.test.mjs" },
     { id: "destructive-triple-confirm", claim: "Destructive / delete actions require an explicit triple confirmation.", verifiableBy: "tests/delete-triple-confirm.test.mjs" }
   ];
@@ -156,7 +156,7 @@ export function selfAssessment() {
   return [
     { id: "data-location", q: "Where does my data live?", a: "On the device. Diagnostics, fixes, outcomes, and the audit log are stored locally (~/.aria-sentinel). Only four things ever leave (see Data residency) — all content-blind." },
     { id: "external-ai", q: "Do you send my data to a cloud AI or train models on it?", a: "No. ARIA answers from a local knowledge-base brain. No external/cloud LLM call is made and no prompt or file content leaves the device." },
-    { id: "file-access", q: "Can ARIA read my personal files?", a: "No. ARIA is content-blind by design, dry-runs first, and a hard rule (R11) blocks the private folder entirely — enforced at 0 accesses." },
+    { id: "file-access", q: "Can ARIA read my personal files?", a: "No. ARIA is content-blind by design, dry-runs first, and a hard rule blocks your excluded folders entirely — enforced at 0 accesses." },
     { id: "stop-it", q: "Can I stop it instantly?", a: "Yes. A human kill-switch (hotkey + tray) halts every ARIA action immediately." },
     { id: "audit-trail", q: "Is there an audit trail?", a: "Yes — a tamper-evident, hash-chained log of every action, exportable for your own review or an auditor." },
     { id: "certifications", q: "What are you certified for?", a: "Nothing independently — we hold no third-party certification. We self-assess against SOC 2, HIPAA, PIPEDA, and GDPR controls and publish the gaps. We tell you this plainly rather than imply a cert we don't have." },

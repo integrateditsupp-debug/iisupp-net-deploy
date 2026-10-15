@@ -95,15 +95,6 @@
     # tap-to-speak on /aria and /aria.html needs it.
     Permissions-Policy = "microphone=(self), camera=(), geolocation=(self), interest-cohort=()"
 
-# ARIA Sentinel binaries. The publish dir is "." so the installer physically lives at
-# /public/sentinel-binaries/..., but src/shared/update-manifest.mjs builds electron-updater
-# feed URLs as https://iisupp.net/sentinel-binaries/<file> — which 404'd, silently breaking
-# auto-update. This rewrite makes the documented path real. Keep it above the 404 rules.
-[[redirects]]
-  from = "/sentinel-binaries/*"
-  to = "/public/sentinel-binaries/:splat"
-  status = 200
-
 # RUN-CU 2026-10-09 (small-tasks close-out): /health → the health function. The ARIA morning agent and
 # the uptime checks probe https://iisupp.net/health, which until now had no rule and answered 404 —
 # so the agent has reported the site DEGRADED off the wrong path (reported since 2026-07-28). A rewrite (200,
@@ -113,6 +104,33 @@
 [[redirects]]
   from = "/health"
   to = "/.netlify/functions/health"
+  status = 200
+
+# --- HELD: the unsigned Sentinel installer must not be publicly downloadable. ---------------
+# SENTINEL-BACKEND 2026-10-14 (audit B6): these two force-404 rules used to sit ~600 lines BELOW the generic
+# /sentinel-binaries/* rewrite. Netlify takes the FIRST matching rule, so the hold never applied — live,
+# HEAD /sentinel-binaries/ARIA-Sentinel-0.1.0-unsigned.exe answered 200 and a Range request 206 (102,536,604
+# bytes of an unsigned, 16-versions-old build). They now come first, so the hold is real. Restore a download
+# only when the Authenticode EV cert is bought AND the installer is rebuilt from the current source tree
+# (docs/held-releases/downloads-available-now.html). The .exe also needs to leave git (it ships in every deploy).
+[[redirects]]
+  from = "/sentinel-binaries/ARIA-Sentinel-0.1.0-unsigned.exe"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/public/sentinel-binaries/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# ARIA Sentinel binaries. The publish dir is "." so a future SIGNED installer physically lives at
+# /public/sentinel-binaries/..., and src/shared/update-manifest.mjs builds electron-updater feed URLs as
+# https://iisupp.net/sentinel-binaries/<file>. This rewrite makes the documented path real for every file
+# that is NOT held by the two rules above (README.md today; a signed build tomorrow). Keep it above the 404 rules.
+[[redirects]]
+  from = "/sentinel-binaries/*"
+  to = "/public/sentinel-binaries/:splat"
   status = 200
 
 # HELD — the public Windows download link is intentionally NOT live. Restore this block
@@ -291,15 +309,27 @@
   to = "/404.html"
   status = 404
   force = true
+# SENTINEL-BACKEND 2026-10-14 (audit B15): /sentinel-admin and /aria-sentinel/docs rewrote to
+# /sentinel-admin/index.html and /aria-sentinel/docs/index.html — files that do not exist in this repo (both
+# answered 404 live). The ARIA Sentinel admin console is a LOCAL page inside the desktop package
+# (ARIA Sentinel/admin-console/), not a site page, and there is no hosted docs page yet. The shipped desktop's
+# in-app "Upgrade / details" fallback also opens https://iisupp.net/aria-sentinel/ (main.mjs openPlanCheckout),
+# which was a dead link. Until real pages exist these 302 to the live pages: anything under /aria-sentinel/
+# → /plans/ (choose a tier), /sentinel-admin → /downloads/ (the app that contains the console).
 [[redirects]]
   from = "/sentinel-admin"
-  to = "/sentinel-admin/index.html"
-  status = 200
+  to = "/downloads/"
+  status = 302
   force = true
 [[redirects]]
-  from = "/aria-sentinel/docs"
-  to = "/aria-sentinel/docs/index.html"
-  status = 200
+  from = "/aria-sentinel"
+  to = "/plans/"
+  status = 302
+  force = true
+[[redirects]]
+  from = "/aria-sentinel/*"
+  to = "/plans/"
+  status = 302
   force = true
 [[redirects]]
   from = "/downloads"
@@ -692,19 +722,9 @@
   force = true
 
 # --- HELD: unsigned Sentinel installer must not be publicly downloadable. -----------------
-# The comment on the /sentinel-binaries/* rewrite says the Windows download is held pending an
-# EV cert. It was not held: both of these returned 200 with 102,536,604 bytes. A force-404 is
-# the stopgap; the binary also needs to come out of git (it ships in every deploy).
-[[redirects]]
-  from = "/sentinel-binaries/ARIA-Sentinel-0.1.0-unsigned.exe"
-  to = "/404.html"
-  status = 404
-  force = true
-[[redirects]]
-  from = "/public/sentinel-binaries/*"
-  to = "/404.html"
-  status = 404
-  force = true
+# SENTINEL-BACKEND 2026-10-14 (audit B6): the two force-404 rules that lived here were shadowed by the
+# /sentinel-binaries/* rewrite near the top of this file (first match wins), so they never applied. They
+# have MOVED directly above that rewrite — search for "HELD: the unsigned Sentinel installer".
 
 # Rule 9 — kills + compliance hub merge (2026-06-18)
 # Fake-competitor page killed (Rule 7 — no fake proof)

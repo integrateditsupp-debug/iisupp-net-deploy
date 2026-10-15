@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1280">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Downloads · ARIA Sentinel — Integrated IT Support</title>
-<meta name="description" content="ARIA Sentinel — autonomous desktop IT support agent. Windows release within a month, then all platforms. Content-blind by design.">
+<meta name="description" content="ARIA Sentinel — resident desktop IT support agent for Windows. Subscribe, get your license key and the installer by email, install, paste the key. Content-blind by design.">
 <link rel="icon" type="image/png" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,12 +66,24 @@
   .platform b{display:block;color:#fff;font-size:14px;margin-bottom:4px;font-weight:600}
   .platform .when{color:rgba(255,255,255,.55);font-size:11px;letter-spacing:.05em}
   .platform.live .when{color:#f1dca7}
+  .checkout-state{display:none;max-width:860px;margin:0 auto 10px;padding:22px 26px;border-radius:14px;border:1px solid rgba(197,160,89,.45);background:rgba(197,160,89,.07);text-align:left}
+  .checkout-state.show{display:block}
+  .checkout-state h2{font-family:Cinzel,serif;font-size:22px;color:#f1dca7;margin:0 0 8px}
+  .checkout-state p{color:rgba(255,255,255,.78);font-size:14px;line-height:1.6;margin:0 0 6px}
+  .checkout-state ol{margin:12px 0 4px 20px;color:rgba(255,255,255,.85);font-size:14px;line-height:1.7}
+  .checkout-state li b{color:#f1dca7}
+  .checkout-state .ref{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:rgba(255,255,255,.45);margin-top:10px}
+  .checkout-state.neutral{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.03)}
+  .checkout-state.neutral h2{color:#fff}
+  .honest{max-width:860px;margin:18px auto 0;padding:14px 18px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.02);font-size:12.5px;color:rgba(255,255,255,.65);line-height:1.6;text-align:left}
+  .honest b{color:#f1dca7;font-weight:600}
   footer{padding:56px 28px 36px;text-align:center;color:rgba(255,255,255,.4);font-size:11.5px;border-top:1px solid rgba(255,255,255,.05);margin-top:64px}
   footer a{color:#c5a059;text-decoration:underline;text-underline-offset:3px}
 </style>
     <link rel="stylesheet" href="/assets/iis-motion.css?v=20260710L">
   <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&display=swap"><link rel="stylesheet" href="/assets/xo-elite-theme.css">
+<link rel="stylesheet" href="/assets/sentinel-sim.css?v=20261014a">
 </head>
 <body>
 <nav class="nav">
@@ -91,18 +103,37 @@
 <main>
 <section class="hero">
   <p class="hero-tag">DOWNLOADS</p>
-  <h1>ARIA Sentinel &mdash; <span class="gold">coming soon</span></h1>
-  <p>The desktop companion to ARIA. Keeps your machine running smoothly so you stop losing hours to IT. <strong style="color:#f1dca7">Available on all platforms beginning with Windows within a month.</strong> Talk to our team for a tailored walkthrough.</p>
+  <h1>ARIA Sentinel &mdash; <span class="gold">Windows pilot build</span></h1>
+  <p>The desktop companion to ARIA. Keeps your machine running smoothly so you stop losing hours to IT. <strong style="color:#f1dca7">Subscribe below, and your license key and the Windows installer arrive by email.</strong> Install, paste the key, done. macOS follows Windows.</p>
+
+  <!-- Post-checkout states. stripe-checkout returns Sentinel tiers to /downloads/?checkout=success&session_id=…
+       (sentinel-stripe-webhook mints + emails the key) and sends a cancelled checkout to /plans/?checkout=canceled.
+       Both are handled here too; nothing below calls a function that could create a token or send mail. -->
+  <div class="checkout-state" id="checkout-success" role="status" aria-live="polite">
+    <h2>Thank you &mdash; your license key is on its way</h2>
+    <p id="checkout-success-lead">We are emailing your ARIA Sentinel license key to the address you entered at checkout. It usually lands within a few minutes; check your spam folder if it does not.</p>
+    <ol>
+      <li><b>Check your email</b> for the message from Integrated IT Support with your license key and the Windows installer link.</li>
+      <li><b>Download and run the installer</b> on the Windows PC you want protected (per-user install, no admin rights needed). This pilot build is unsigned, so Windows SmartScreen will show &ldquo;Windows protected your PC&rdquo; &mdash; choose <em>More info &rarr; Run anyway</em>.</li>
+      <li><b>Open ARIA Sentinel and paste the key</b> in Settings &rarr; License. Your tier unlocks immediately; no reinstall.</li>
+    </ol>
+    <p>No email after 15 minutes? Reply to your Stripe receipt or write to <a href="mailto:ahmad.wasee@iisupp.net?subject=ARIA%20Sentinel%20license%20key" style="color:#c5a059">ahmad.wasee@iisupp.net</a> with the reference below and we will resend it.</p>
+    <div class="ref" id="checkout-ref"></div>
+  </div>
+  <div class="checkout-state neutral" id="checkout-cancel" role="status" aria-live="polite">
+    <h2>Checkout cancelled &mdash; nothing was charged</h2>
+    <p>No subscription was created. Pick a tier below whenever you are ready, or <a href="/plans/" style="color:#c5a059">compare every tier on the plans page</a>.</p>
+  </div>
 </section>
 
-<section class="cards">
+<section class="cards" id="tiers">
   <article class="card">
     <h3>Personal</h3>
     <div class="price">$899<small>/mo</small></div>
     <div class="seats">1 user &middot; 1 device</div>
     <p class="blurb">Hands-on IT support for one machine. Fewer interruptions, faster recovery.</p>
     <button class="pf-cta" data-tier="sentinel_personal_m" data-name="Personal">SUBSCRIBE</button>
-    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Desktop unlocks at launch</div>
+    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Key + installer emailed after checkout</div>
   </article>
   <article class="card">
     <h3>Pro</h3>
@@ -110,53 +141,158 @@
     <div class="seats">Small team</div>
     <p class="blurb">For small teams that want their IT to mostly run itself.</p>
     <button class="pf-cta" data-tier="sentinel_pro_m" data-name="Pro">SUBSCRIBE</button>
-    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Desktop unlocks at launch</div>
+    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Key + installer emailed after checkout</div>
   </article>
   <article class="card">
     <h3>Small Business</h3>
     <div class="price">$19,500<small>/mo</small></div>
-    <div class="seats">SMB fleet</div>
+    <div class="seats">SMB fleet &middot; $234,000/yr billed annually</div>
     <p class="blurb">Replaces a Tier-1 helpdesk. Includes compliance reporting.</p>
     <button class="pf-cta" data-tier="sentinel_business_y" data-name="Small Business">SUBSCRIBE</button>
-    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Desktop unlocks at launch</div>
+    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Key + installer emailed after checkout</div>
   </article>
   <article class="card">
     <h3>Mid Size</h3>
     <div class="price">$39,000<small>/mo</small></div>
-    <div class="seats">Mid-size org</div>
+    <div class="seats">Mid-size org &middot; $468,000/yr billed annually</div>
     <p class="blurb">Built for organizations growing past their first IT hire.</p>
     <button class="pf-cta" data-tier="sentinel_midsize_y" data-name="Mid Size">SUBSCRIBE</button>
-    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Desktop unlocks at launch</div>
+    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Key + installer emailed after checkout</div>
   </article>
   <article class="card">
     <h3>Enterprise</h3>
     <div class="price">$78,125<small>/mo</small></div>
-    <div class="seats">Enterprise fleet</div>
+    <div class="seats">Enterprise fleet &middot; $937,500/yr billed annually</div>
     <p class="blurb">For organizations that need IT to be invisible at scale.</p>
     <button class="pf-cta" data-tier="sentinel_enterprise_y" data-name="Enterprise">SUBSCRIBE</button>
-    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Desktop unlocks at launch</div>
+    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Key + installer emailed after checkout</div>
   </article>
+</section>
+
+<p class="honest"><b>How delivery works right now.</b> The Windows installer is a <b>pilot build</b>: it is sent by email with your license key after purchase rather than downloaded from this page, and it is <b>not yet code-signed</b>, so Windows SmartScreen warns on first run. A signed public download replaces this the moment signing is complete &mdash; leave your email below to hear when. Business tiers bundle a minimal number of on-site visits per year; any further human support is a separate, quote-based contract. No tier includes 24/7 human support or SMS alerts in this version.</p>
+
+<!-- 2026-10-14 additions (additive: every section above and below is unchanged).
+     #sentinel-sim      scripted simulation: assets/sentinel-sim.js + assets/sentinel-sim.css. Notice wording is the app's
+                        own (advisory-escalation.mjs advisoryCopy / ruleSentence); nothing runs on the visitor's PC.
+     #sentinel-savings  savings estimate from the visitor's inputs (inline script below; prices from #sentinel-plan-prices,
+                        copied from ARIA Sentinel/src/shared/pricing-tiers.mjs).
+     #get-sentinel      the purchase path; reads ./sentinel-release.json — windows:null keeps the emailed pilot build copy.
+     Guarded by tests/sentinel-downloads-page.test.mjs. -->
+<section class="sim" id="sentinel-sim" aria-labelledby="sim-title">
+  <div class="sim-shell">
+    <p class="sim-kicker">See it work</p>
+    <h2 class="sim-h2" id="sim-title">See ARIA Sentinel work</h2>
+    <p class="sim-banner" id="sim-banner">Simulation — scripted on this page. Nothing runs on your computer.</p>
+    <p class="sim-lead">Three everyday problems, played the way ARIA Sentinel handles them with <b>Autonomous mode</b> and <b>live fixes</b> switched on. Out of the box it starts in Manual mode with live fixes off, so it only previews. Every notice below uses the app's own wording.</p>
+    <div class="sim-modes" role="list" aria-label="The three modes">
+      <div class="sim-mode" role="listitem"><span class="sim-mode-name">Manual</span><span class="sim-mode-short">Previews only</span><p>ARIA shows what a fix would do and changes nothing on the PC.</p></div>
+      <div class="sim-mode" role="listitem"><span class="sim-mode-name">Confirmed</span><span class="sim-mode-short">Asks once</span><p>Nothing runs until you say yes. Every fix &mdash; green, yellow or red &mdash; waits for your one click, then runs with you present through the same safety checks (Windows asks for permission when a fix needs administrator rights).</p></div>
+      <div class="sim-mode sim-mode--auto" role="listitem"><span class="sim-mode-name">Autonomous</span><span class="sim-mode-short">The 3-notice rule</span><p id="sim-rule-autonomous">In Autonomous mode, when ARIA finds a problem it can fix, it tells you first — 3 times, 3 minutes apart. If nobody answers, it fixes the problem on its own after a 10-second countdown you can cancel, through the same safety checks as every fix. Problems that need administrator rights or a person are never fixed on their own: after 3 unanswered notices ARIA tells your IT contact instead. Every notice lets you choose Fix now, Not now (waits 4 hours) or Never for this.</p></div>
+    </div>
+    <p class="sim-modes-foot">Confirmed and Autonomous come with Pro and every business tier; Personal is Manual only. The 3 minutes and the 4 hours are defaults you can change in Settings &rarr; Autonomy.</p>
+    <div class="sim-tabs" role="tablist" aria-label="Scenarios">
+      <button type="button" class="sim-tab" role="tab" id="sim-tab-dns" aria-selected="true" aria-controls="sim-panel" data-sim-scenario="dns"><span class="sim-tab-dot sim-tone-green" aria-hidden="true"></span><span class="sim-tab-txt"><span class="sim-tab-k">Green &middot; ARIA fixes it</span><span class="sim-tab-t">Wi-Fi connected, no internet / stale DNS</span></span></button>
+      <button type="button" class="sim-tab" role="tab" id="sim-tab-printer" aria-selected="false" aria-controls="sim-panel" data-sim-scenario="printer" tabindex="-1"><span class="sim-tab-dot sim-tone-amber" aria-hidden="true"></span><span class="sim-tab-txt"><span class="sim-tab-k">Admin rights &middot; a person runs it</span><span class="sim-tab-t">Printer stuck / queue frozen</span></span></button>
+      <button type="button" class="sim-tab" role="tab" id="sim-tab-critical" aria-selected="false" aria-controls="sim-panel" data-sim-scenario="critical" tabindex="-1"><span class="sim-tab-dot sim-tone-red" aria-hidden="true"></span><span class="sim-tab-txt"><span class="sim-tab-k">Red &middot; never automatic</span><span class="sim-tab-t">Critical system files / BitLocker recovery</span></span></button>
+    </div>
+    <div class="sim-stage" id="sim-panel" role="tabpanel" aria-labelledby="sim-tab-dns">
+      <p class="sim-badge sim-badge--green" id="sim-badge">Green &middot; user-level fix &middot; no administrator rights</p>
+      <h3 class="sim-h3" id="sim-scn-title">Wi-Fi connected, no internet / stale DNS</h3>
+      <p class="sim-intro" id="sim-intro">Scripted with Autonomous mode and live fixes on. The DNS refresh is a vendor-vetted green fix: it ships with a check that must pass afterwards and has nothing to undo, so ARIA may run it on its own &mdash; but only after telling you three times.</p>
+      <div class="sim-controls">
+        <button type="button" class="sim-play" id="sim-play" data-sim-play>Play</button>
+        <span class="sim-speed">sped up: 3 minutes → 3 seconds</span>
+        <span class="sim-status" id="sim-status" role="status">Ready</span>
+      </div>
+      <ol class="sim-timeline" id="sim-timeline" aria-live="polite" aria-relevant="additions" aria-label="Simulation timeline"><li class="sim-empty">Press Play to run this scenario.</li></ol>
+    </div>
+    <noscript><p class="sim-noscript">The simulation needs JavaScript. In short: ARIA tells you three times, 3 minutes apart. A green fix like the DNS refresh then runs after a 10-second countdown you can cancel; a fix that needs administrator rights goes to your IT contact instead; red problems are never fixed automatically.</p></noscript>
+  </div>
+</section>
+
+<section class="sav" id="sentinel-savings" aria-labelledby="sav-title">
+  <div class="sav-shell">
+    <p class="sim-kicker">What it could save</p>
+    <h2 class="sim-h2" id="sav-title">Estimate your savings</h2>
+    <p class="sim-lead">Use your own numbers. Every figure below is an <b>estimate from your inputs</b>, worked out on this page &mdash; not a measured result &mdash; and nothing you type leaves your browser.</p>
+    <div class="sav-grid">
+      <div class="sav-fields">
+        <div class="sav-field"><label for="sav-devices">Devices</label><input type="number" id="sav-devices" min="1" max="100000" step="1" value="25" inputmode="numeric"></div>
+        <div class="sav-field"><label for="sav-incidents">Incidents per device per month</label><input type="number" id="sav-incidents" min="0" max="100" step="0.5" value="2" inputmode="decimal"></div>
+        <div class="sav-field"><label for="sav-minutes">Minutes lost per incident</label><input type="number" id="sav-minutes" min="1" max="480" step="1" value="20" inputmode="numeric" aria-describedby="sav-minutes-hint"><span class="sav-hint" id="sav-minutes-hint">ARIA's default estimate per fix &mdash; the same 20 minutes the app's own savings panel uses.</span></div>
+        <div class="sav-field"><label for="sav-rate">Loaded hourly cost (CA$)</label><input type="number" id="sav-rate" min="0" max="1000" step="1" value="45" inputmode="decimal" aria-describedby="sav-rate-hint"><span class="sav-hint" id="sav-rate-hint">What an hour of someone's time costs you: pay plus overhead.</span></div>
+        <div class="sav-field"><label for="sav-share">Share of incidents ARIA resolves or guides</label><div class="sav-range"><input type="range" id="sav-share" min="10" max="90" step="5" value="60" aria-describedby="sav-share-hint"><output id="sav-share-out" for="sav-share">60%</output></div><span class="sav-hint" id="sav-share-hint">Your assumption. ARIA Sentinel does not promise a resolution rate.</span></div>
+        <div class="sav-field"><label for="sav-fx">Exchange rate (CA$ per US$1)</label><input type="number" id="sav-fx" min="0.5" max="3" step="0.01" value="1.36" inputmode="decimal" aria-describedby="sav-fx-hint"><span class="sav-hint" id="sav-fx-hint">Plan prices are billed in US dollars; set today's rate.</span></div>
+      </div>
+      <div class="sav-out" aria-live="polite">
+        <p class="sav-out-label">Estimate from your inputs</p>
+        <div class="sav-kpis">
+          <div class="sav-kpi"><span class="sav-kpi-v" id="sav-hours">10.0</span><span class="sav-kpi-k">hours saved a month</span><span class="sav-est">estimate from your inputs</span></div>
+          <div class="sav-kpi"><span class="sav-kpi-v" id="sav-month">CA$450</span><span class="sav-kpi-k">saved a month</span><span class="sav-est">estimate from your inputs</span></div>
+          <div class="sav-kpi"><span class="sav-kpi-v" id="sav-year">CA$5,400</span><span class="sav-kpi-k">saved a year</span><span class="sav-est">estimate from your inputs</span></div>
+        </div>
+        <p class="sav-fine">Hours = devices &times; incidents &times; share &times; minutes &divide; 60. Savings = hours &times; your hourly cost.</p>
+      </div>
+    </div>
+    <div class="sav-plans">
+      <p class="sav-plans-head">Net against each plan's price, converted at your exchange rate &mdash; an estimate from your inputs. Personal covers one device, so its line counts one device.</p>
+      <div id="sav-plan-rows" role="table" aria-label="Net against each plan, estimate from your inputs"></div>
+    </div>
+    <p class="sav-fine">This counts only time lost to incidents. It leaves out compliance reporting, bundled on-site visits and outages avoided, and it is not a measured result.</p>
+  </div>
+</section>
+<script type="application/json" id="sentinel-plan-prices">{"source":"ARIA Sentinel/src/shared/pricing-tiers.mjs","currency":"USD","plans":[{"plan":"personal","label":"Personal","priceMonthly":899,"priceMonthlyDisplay":"$899","billedAnnually":false,"priceYearly":null,"seats":"1 user · 1 device","maxDevices":1},{"plan":"pro","label":"Pro","priceMonthly":2250,"priceMonthlyDisplay":"$2,250","billedAnnually":false,"priceYearly":null,"seats":"Small team","maxDevices":null},{"plan":"smb","label":"Small Business","priceMonthly":19500,"priceMonthlyDisplay":"$19,500","billedAnnually":true,"priceYearly":234000,"seats":"Small business fleet","maxDevices":null},{"plan":"midsize","label":"Mid Size","priceMonthly":39000,"priceMonthlyDisplay":"$39,000","billedAnnually":true,"priceYearly":468000,"seats":"Mid-size org fleet","maxDevices":null},{"plan":"enterprise","label":"Enterprise","priceMonthly":78125,"priceMonthlyDisplay":"$78,125","billedAnnually":true,"priceYearly":937500,"seats":"Enterprise fleet","maxDevices":null}]}</script>
+
+<section class="rel" id="get-sentinel" aria-labelledby="rel-title" data-release="pilot">
+  <div class="rel-shell">
+    <p class="sim-kicker">Get it</p>
+    <h2 class="sim-h2" id="rel-title">Get ARIA Sentinel</h2>
+    <div class="rel-grid">
+      <div>
+        <p class="rel-version">Current version <b id="rel-version">0.2.1</b> &middot; Windows</p>
+        <div class="rel-state" id="rel-pilot">
+          <p><b>Windows pilot build.</b> The installer and your license key are emailed after checkout &mdash; see &ldquo;How delivery works right now&rdquo; above.</p>
+        </div>
+        <div class="rel-state" id="rel-download" hidden>
+          <p><a class="rel-btn" id="rel-dl" href="#get-sentinel" rel="noopener">Download for Windows</a></p>
+          <dl class="rel-meta">
+            <dt>Version</dt><dd id="rel-dl-version"></dd>
+            <dt>Size</dt><dd id="rel-size"></dd>
+            <dt>Published</dt><dd id="rel-date"></dd>
+            <dt>SHA-256</dt><dd><code class="rel-sha" id="rel-sha" tabindex="0"></code></dd>
+          </dl>
+          <p class="rel-warn" id="rel-unsigned" hidden>This build is not yet code-signed, so Windows SmartScreen shows &ldquo;Windows protected your PC&rdquo; on first run &mdash; choose <em>More info &rarr; Run anyway</em>.</p>
+          <p>Check the file before you run it: in PowerShell, <code>Get-FileHash .\ARIA-Sentinel-Setup.exe -Algorithm SHA256</code> (use the file's own name) must print the SHA-256 above.</p>
+        </div>
+      </div>
+      <div class="rel-links">
+        <a class="rel-link" href="#tiers"><span>Subscribe<small>Pick a tier above &mdash; its SUBSCRIBE button starts checkout</small></span><span aria-hidden="true">&uarr;</span></a>
+        <a class="rel-link" href="/plans/"><span>View plans<small>Every tier, side by side</small></span><span aria-hidden="true">&rarr;</span></a>
+        <a class="rel-link" href="/services.html"><span>Managed services<small>Prefer people to software? Our managed IT services</small></span><span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section class="features">
   <p class="features-tag">WHAT THIS UNLOCKS FOR YOU</p>
   <div class="features-grid">
-    <div><b>Less downtime</b>Issues resolved before they slow you down.</div>
+    <div><b>Less downtime</b>Issues found the moment they happen and explained in plain words; vetted fixes applied with your consent.</div>
     <div><b>Quiet by design</b>Stays out of your way. Works while you work.</div>
     <div><b>Privacy first</b>Never reads your documents, screen, or files.</div>
     <div><b>Compliance ready</b>Reports your auditors can use (higher tiers).</div>
     <div><b>Scales with you</b>From one machine to a global team.</div>
-    <div><b>White-glove on call</b>Founder-level support when you need it.</div>
+    <div><b>White-glove, within reach</b>Founder-level support by email and phone during business hours; bundled on-site visits on business tiers.</div>
   </div>
 </section>
 
 <section class="platforms">
   <p class="platforms-tag">PLATFORM ROADMAP</p>
   <div class="platforms-grid">
-    <div class="platform live"><b>Windows</b><span class="when">Within a month</span></div>
+    <div class="platform live"><b>Windows</b><span class="when">Pilot build now &middot; emailed after purchase</span></div>
     <div class="platform"><b>macOS</b><span class="when">Following Windows</span></div>
-    <div class="platform"><b>Linux</b><span class="when">Following macOS</span></div>
-    <div class="platform"><b>Mobile</b><span class="when">Companion app</span></div>
+    <div class="platform"><b>Linux</b><span class="when">Roadmap &middot; not scheduled</span></div>
+    <div class="platform"><b>Mobile</b><span class="when">Roadmap &middot; not scheduled</span></div>
   </div>
 </section>
 
@@ -168,7 +304,7 @@
     <input type="hidden" name="source" value="/downloads">
     <button type="submit" id="notify-btn">NOTIFY ME</button>
   </form>
-  <p class="notify-note">We'll only email you when the Windows release goes live. No spam, ever.</p>
+  <p class="notify-note">We'll email you once when the signed public Windows download goes live. No spam, ever.</p>
   <div class="status-msg" id="notify-status"></div>
 </section>
 
@@ -179,6 +315,36 @@
 
 <script>
 (function(){
+  // ---- post-checkout state (?checkout=success&session_id=… | ?checkout=cancel|canceled) ----
+  try {
+    var q = new URLSearchParams(window.location.search);
+    var state = (q.get('checkout') || '').toLowerCase();
+    var sid = q.get('session_id') || '';
+    if (state === 'success') {
+      var box = document.getElementById('checkout-success');
+      box.classList.add('show');
+      var ref = document.getElementById('checkout-ref');
+      // Only a short, non-secret suffix is shown — enough for support to find the session, never the whole id.
+      if (sid && ref) ref.textContent = 'Reference: checkout session \u2026' + sid.slice(-8);
+      box.scrollIntoView({ block: 'start' });
+      // Optional: a read-only status endpoint may tell us the (masked) email the key went to. It does not exist yet
+      // (requested from the server lane); a 404 simply leaves the generic copy in place.
+      if (sid) {
+        fetch('/.netlify/functions/sentinel-checkout-status?session_id=' + encodeURIComponent(sid), { credentials: 'omit' })
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(d){
+            if (d && d.email_masked) {
+              document.getElementById('checkout-success-lead').textContent =
+                'We are emailing your ARIA Sentinel license key to ' + d.email_masked + '. It usually lands within a few minutes; check your spam folder if it does not.';
+            }
+          })
+          .catch(function(){ /* generic copy stays */ });
+      }
+    } else if (state === 'cancel' || state === 'canceled' || state === 'cancelled') {
+      document.getElementById('checkout-cancel').classList.add('show');
+    }
+  } catch (e) { /* the page works without the state banner */ }
+
   var form = document.getElementById('notify-form');
   var status = document.getElementById('notify-status');
   var btn = document.getElementById('notify-btn');
@@ -192,7 +358,7 @@
     fd.forEach(function(v,k){ body.append(k, String(v)); });
     fetch('/', { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: body.toString() })
       .then(function(r){
-        if(r.ok){ showStatus("You're on the list. We'll email when Sentinel goes live on Windows.", 'ok'); form.reset(); }
+        if(r.ok){ showStatus("You're on the list. We'll email you when the signed public Windows download is live.", 'ok'); form.reset(); }
         else{ showStatus('Submission failed — please email ahmad.wasee@iisupp.net directly.', 'err'); }
       })
       .catch(function(){ showStatus('Network error — please email ahmad.wasee@iisupp.net directly.', 'err'); })
@@ -225,6 +391,114 @@
   });
 })();
 </script>
+
+<script>
+/* 2026-10-14 — #sentinel-savings (estimate from the visitor's inputs, no network) and #get-sentinel (release file). */
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+
+  // ---- savings estimate ----
+  var plans = [];
+  try { plans = JSON.parse(($('sentinel-plan-prices') || {}).textContent || '{}').plans || []; } catch (e) { plans = []; }
+  var f = { devices: $('sav-devices'), incidents: $('sav-incidents'), minutes: $('sav-minutes'), rate: $('sav-rate'), share: $('sav-share'), fx: $('sav-fx') };
+  var ready = Object.keys(f).every(function (k) { return f[k]; });
+  var cad = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 });
+  var usd = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  function num(el, lo, hi, dflt) { var v = parseFloat(el.value); return isFinite(v) ? Math.min(hi, Math.max(lo, v)) : dflt; }
+  function signed(v) { var s = cad.format(Math.abs(Math.round(v))); return (Math.round(v) < 0 ? '−' : '+') + s; }
+  function cell(cls, text, small, key) {
+    var d = document.createElement('div');
+    d.className = cls; d.setAttribute('role', 'cell');
+    if (key) d.setAttribute('data-k', key);
+    d.appendChild(document.createTextNode(text));
+    if (small) { var s = document.createElement('small'); s.textContent = small; d.appendChild(s); }
+    return d;
+  }
+  function update() {
+    var devices = num(f.devices, 1, 100000, 25), incidents = num(f.incidents, 0, 100, 2), minutes = num(f.minutes, 1, 480, 20);
+    var rate = num(f.rate, 0, 1000, 45), share = num(f.share, 10, 90, 60) / 100, fx = num(f.fx, 0.5, 3, 1.36);
+    var hoursPerDevice = incidents * share * minutes / 60;
+    var hours = devices * hoursPerDevice;
+    $('sav-share-out').textContent = Math.round(share * 100) + '%';
+    $('sav-hours').textContent = hours.toFixed(1);
+    $('sav-month').textContent = cad.format(Math.round(hours * rate));
+    $('sav-year').textContent = cad.format(Math.round(hours * rate * 12));
+    var rows = $('sav-plan-rows');
+    if (!rows) return;
+    rows.textContent = '';
+    var head = document.createElement('div');
+    head.className = 'sav-plan sav-plan--head'; head.setAttribute('role', 'row');
+    ['Plan', 'Price (US$)', 'At your rate', 'Net a month · estimate', 'Net a year · estimate'].forEach(function (h) {
+      var c = document.createElement('div'); c.setAttribute('role', 'columnheader'); c.textContent = h; head.appendChild(c);
+    });
+    rows.appendChild(head);
+    plans.forEach(function (p) {
+      var covered = p.maxDevices ? Math.min(devices, p.maxDevices) : devices;
+      var saveMonth = covered * hoursPerDevice * rate;
+      var costMonth = p.priceMonthly * fx;
+      var netMonth = saveMonth - costMonth;
+      var netYear = p.billedAnnually && p.priceYearly ? saveMonth * 12 - p.priceYearly * fx : netMonth * 12;
+      var row = document.createElement('div');
+      row.className = 'sav-plan'; row.setAttribute('role', 'row');
+      var name = cell('sav-plan-name', p.label, p.seats + (p.maxDevices && devices > p.maxDevices ? ' — counts ' + p.maxDevices + ' of your ' + devices + ' devices' : ''));
+      name.setAttribute('role', 'rowheader');
+      row.appendChild(name);
+      row.appendChild(cell('sav-plan-cell', usd.format(p.priceMonthly) + '/mo', p.billedAnnually ? usd.format(p.priceYearly) + '/yr billed annually' : 'billed monthly', 'Price (US$)'));
+      row.appendChild(cell('sav-plan-cell', '≈ ' + cad.format(Math.round(costMonth)) + '/mo', 'estimate from your inputs', 'At your rate'));
+      var nm = cell('sav-plan-cell ' + (netMonth >= 0 ? 'sav-pos' : 'sav-neg'), signed(netMonth), 'estimate from your inputs', 'Net a month');
+      var ny = cell('sav-plan-cell ' + (netYear >= 0 ? 'sav-pos' : 'sav-neg'), signed(netYear), 'estimate from your inputs', 'Net a year');
+      row.appendChild(nm); row.appendChild(ny);
+      rows.appendChild(row);
+    });
+  }
+  if (ready) {
+    Object.keys(f).forEach(function (k) { f[k].addEventListener('input', update); f[k].addEventListener('change', update); });
+    update();
+  }
+
+  // ---- Get ARIA Sentinel: ./sentinel-release.json ----
+  // Contract: { version, windows: null | { url, sha256, sizeBytes, signed, publishedAt }, updatedAt }. windows:null, a
+  // malformed entry or a failed fetch leave the emailed pilot-build copy exactly as it is.
+  var box = $('get-sentinel');
+  if (!box || typeof fetch !== 'function') return;
+  // Relative to this page's folder. Built from the path, not './' alone: /downloads (no slash) is served by a rewrite,
+  // where './' would point at the site root.
+  var dir = location.pathname.replace(/\/index\.html$/, '/');
+  if (dir.slice(-1) !== '/') dir += '/';
+  var releaseUrl = new URL('./sentinel-release.json', location.origin + dir).href;
+  function safeUrl(u) {
+    u = String(u || '');
+    if (/^https:\/\/[^\s"'<>]+$/i.test(u)) return u;
+    if (/^\/(?!\/)[^\s"'<>]*$/.test(u)) return u;
+    return '';
+  }
+  fetch(releaseUrl, { cache: 'no-store', credentials: 'omit' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (rel) {
+      if (!rel || typeof rel !== 'object') return;
+      var version = /^\d+\.\d+\.\d+([.-][0-9A-Za-z.-]+)?$/.test(String(rel.version || '')) ? String(rel.version) : '';
+      if (version) $('rel-version').textContent = version;
+      var w = rel.windows;
+      if (!w || typeof w !== 'object') return;
+      var url = safeUrl(w.url), sha = String(w.sha256 || '').toLowerCase(), size = Number(w.sizeBytes);
+      if (!url || !/^[0-9a-f]{64}$/.test(sha) || !(size > 0) || !isFinite(size)) return;
+      $('rel-dl').setAttribute('href', url);
+      $('rel-dl').textContent = 'Download ARIA Sentinel ' + (version || '') + ' for Windows';
+      $('rel-dl-version').textContent = version || '—';
+      $('rel-size').textContent = (size / 1048576).toFixed(1) + ' MB (' + size.toLocaleString('en-US') + ' bytes)';
+      var when = Date.parse(w.publishedAt);
+      $('rel-date').textContent = isFinite(when) ? new Date(when).toISOString().slice(0, 10) : '—';
+      $('rel-sha').textContent = sha;
+      $('rel-unsigned').hidden = w.signed === true;
+      $('rel-download').hidden = false;
+      $('rel-pilot').hidden = true;
+      box.setAttribute('data-release', 'available');
+    })
+    .catch(function () { /* the pilot-build copy stays */ });
+})();
+</script>
+<script src="/assets/sentinel-sim.js?v=20261014b" defer></script>
 
   <script src="/assets/iis-motion.js?v=20260710L" defer></script>
 <!-- iis-fineprint:start -->

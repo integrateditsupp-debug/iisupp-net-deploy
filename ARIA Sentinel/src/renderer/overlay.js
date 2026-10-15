@@ -1,5 +1,6 @@
 import { COMPANION_MENU, getFlow, flowStep, resolveStep, stepKey, isStepAnswered, listFlows, autoRunAction, flowStepTag } from "../shared/walkthrough-steps.mjs";
-import { createLocalStt } from "./local-stt.mjs"; // TRUE on-device offline STT (Vosk) — no cloud, no audio egress
+import { createLocalStt, sttUnavailableReason } from "./local-stt.mjs"; // TRUE on-device offline STT (Vosk) — no cloud, no audio egress
+import { describeSupervisedResult } from "../shared/fix-outcome.mjs"; // PROD 2026-10-14 (audit R11) — the real result of a gated fix, in plain words
 import { createVoiceConversation } from "./voice-conversation.mjs"; // RUN-CU / CU4 — multi-turn voice loop (shared with the ARIA tab)
 
 // Keep the overlay renderable long enough to surface bridge failure, but never pretend fixes ran.
@@ -27,9 +28,22 @@ const sentinel = window.sentinel || {
   supervisedFix: async () => ({ ok: false, error: "bridge_unavailable", reason: "Desktop bridge unavailable." }),
   diagnose: async () => ({ ok: false, error: "bridge_unavailable" }),
   isVettedRecipe: async () => ({ vetted: false }),
-  voiceApprove: async () => ({ ok: false, error: "bridge_unavailable" }) // RUN-CU / CU4
+  voiceApprove: async () => ({ ok: false, error: "bridge_unavailable" }), // RUN-CU / CU4
+  fileAssociationFix: async () => ({ ok: false, error: "bridge_unavailable", message: "Desktop bridge unavailable." }), // JULY PORT 2026-10-14
+  onAdvisory: () => {}, // 2026-10-14 — advise-first notices (Notice n of 3)
+  advisoryAck: async () => ({ ok: false, error: "bridge_unavailable" })
 };
 let currentDetection = null;
+// 2026-10-14 — the advise-first notice on the card (null = none); declared up here because setMode() reads it.
+let currentAdvisory = null;
+let advisoryCloseTimer = null;
+const advisoryActions = document.getElementById("overlayAdvisoryActions");
+const advisoryStatus = document.getElementById("overlayAdvisoryStatus");
+// JULY PORT 2026-10-14 (ddfcac5b) — the read-only .txt association guard's two recipes. Their only action is opening
+// Windows Default Apps for the PERSON to choose Notepad (sentinel.fileAssociationFix → ms-settings:defaultapps):
+// the card's button says exactly that ("Fix in Settings") and ARIA writes nothing.
+const ASSOCIATION_RECIPE_IDS = new Set(["app-txt-default-adobe-v1", "app-txt-openwith-adobe-risk-v1"]);
+const fixButton = document.getElementById("overlayFix");
 let wiggledThisSession = false;
 const body = document.body;
 const card = document.getElementById("overlayCard");
@@ -134,17 +148,19 @@ function addTapToSpeak(input, container) {
   const hide = () => { try { btn.remove(); cap.remove(); } catch { /* already gone */ } };
   let stt = null, listening = false;
   const stop = () => { listening = false; btn.classList.remove("listening"); btn.textContent = "🎤 Tap to speak"; if (stt) { try { stt.stop(); } catch { /* ignore */ } stt = null; } };
+  // PROD 2026-10-14 (audit R12) — a failed start never makes the mic vanish: the caption says WHY voice is unavailable.
+  const unavailable = (err) => { stop(); btn.disabled = true; btn.textContent = "🎤 Voice unavailable"; cap.textContent = sttUnavailableReason(err); };
   btn.addEventListener("click", async () => {
     if (listening) { stop(); return; }
     try {
       const modelUrl = await window.sentinel.voskModelUrl();
-      if (!modelUrl) return hide(); // no bundled model → hide the mic; NEVER fall back to a cloud recognizer
+      if (!modelUrl) return unavailable(new Error("stt-no-model")); // no bundled model → say so; NEVER fall back to a cloud recognizer
       listening = true; btn.classList.add("listening"); btn.textContent = "● Listening… tap to stop";
       stt = await createLocalStt({
         modelUrl,
         onText: (said) => { if (said) { input.value = (input.value ? input.value + " " : "") + said; input.dispatchEvent(new Event("input")); } }
       });
-    } catch { stop(); hide(); } // local engine unavailable → hide the mic (typing still works)
+    } catch (err) { unavailable(err); } // local engine / mic unavailable → honest caption (typing still works)
   });
   host.appendChild(btn); host.appendChild(cap);
   // Probe up front: if there's no bundled model on this install, don't show a dead mic button.
@@ -186,6 +202,7 @@ sentinel.onGlobeConfirmation?.((c) => {
   confirmEl.onclick = () => { if (confirmTimer) clearTimeout(confirmTimer); hide(); };
 });
 
+sentinel.onState?.((st) => { if (st && st.mode) { overlayMode = st.mode; if (!currentDetection && chip && !chip.hidden) chip.textContent = modeChip(); } });
 sentinel.onOverlayMode?.((mode) => {
   setMode(mode);
   // If main put us into companion mode (globe click / proactive / launcher Start), render the right surface.
@@ -210,6 +227,10 @@ sentinel.onCompanionFlow?.((payload) => {
 
 sentinel.onDetection((detection) => {
   currentDetection = detection;
+  // 2026-10-14 — main sends the notice for a detection BEFORE the detection itself: never let the plain detector card
+  // replace "Notice n of 3" (and its three choices) for the same problem. Any other problem replaces it as before.
+  if (currentAdvisory && detection && detection.recipeId === currentAdvisory.recipeId) { setMode("card"); return; }
+  clearAdvisory();
   render(detection);
   setMode("card");
   const target = detection.risk === "red" ? "escalation" : "diagnosing";
@@ -224,6 +245,9 @@ sentinel.onDetection((detection) => {
 });
 
 sentinel.getState().then((state) => {
+  if (state && state.mode) { overlayMode = state.mode; chip.textContent = modeChip(); }
+  const notice = Array.isArray(state && state.advisories) ? state.advisories.find((a) => a && Array.isArray(a.choices) && a.choices.length && a.status !== "snoozed") : null;
+  if (notice) { renderAdvisory(notice); setGlobeState(notice.kind === "red" ? "escalation" : "diagnosing"); return; }
   const latest = state.detections && state.detections[0];
   if (latest) {
     currentDetection = latest;
@@ -239,6 +263,7 @@ document.getElementById("overlayGlobe").addEventListener("click", async () => {
   if (voiceConvo.isActive()) { await voiceConvo.globeTap(); return; } // RUN-CU / CU4 — multi-turn loop owns the tap
   if (voiceActive) { await stopVoiceAndAnswer(); return; }
   if (typeof speechSynthesis !== "undefined" && speechSynthesis.speaking) { cancelVoice(); return; }
+  if (currentAdvisory) { setMode("card"); return; } // 2026-10-14 — an open notice comes back on a globe click
   if (currentDetection) {
     setMode("card");
     return;
@@ -248,11 +273,16 @@ document.getElementById("overlayGlobe").addEventListener("click", async () => {
   await sentinel.openCompanion();
 });
 
+// (audit R11) the chip names the REAL mode (state.mode), never a hard-coded "MANUAL MODE".
+let overlayMode = "manual";
+function modeChip() { return `${String(overlayMode || "manual").toUpperCase()} MODE`; }
 document.getElementById("overlayDismiss").addEventListener("click", async () => {
   currentDetection = null;
-  chip.textContent = "MANUAL MODE";
+  clearAdvisory();
+  chip.textContent = modeChip();
   title.textContent = "ARIA is watching";
   copy.textContent = "Local self-diagnosis is active.";
+  if (fixButton) fixButton.textContent = "Open fix";
   setMode("globe");
   setGlobeState("idle");
   await sentinel.dismissOverlay?.();
@@ -269,20 +299,42 @@ document.getElementById("overlayFix").addEventListener("click", async () => {
     setTimeout(() => setGlobeState("idle"), 2000);
     return;
   }
-  const result = currentDetection.recipeId === "sentinel-self-repair-v1"
-    ? await sentinel.selfRepair("overlay")
-    : await sentinel.runRecipe(currentDetection.recipeId, { dryRun: true });
-  chip.textContent = result.dryRun ? "DRY-RUN COMPLETE" : result.ok ? "DONE" : "REVIEW";
-  title.textContent = result.recipe?.title || "ARIA self-repair";
-  copy.textContent = result.message || "Self-repair completed.";
-  setGlobeState(result.ok ? "done" : "escalation");
+  if (currentDetection.recipeId === "sentinel-self-repair-v1") {
+    const result = await sentinel.selfRepair("overlay");
+    chip.textContent = result && result.ok ? "DONE" : "REVIEW";
+    title.textContent = (result && result.recipe && result.recipe.title) || "ARIA self-repair";
+    copy.textContent = (result && result.message) || "Self-repair completed.";
+    setGlobeState(result && result.ok ? "done" : "escalation");
+    setTimeout(() => setGlobeState("idle"), 2400);
+    return;
+  }
+  // JULY PORT 2026-10-14 — a text-file association card: open Windows Default Apps for the person (a guide action;
+  // nothing is written by ARIA; refused by main while paused/killed). The card says what really happened.
+  if (ASSOCIATION_RECIPE_IDS.has(currentDetection.recipeId)) {
+    const r = await sentinel.fileAssociationFix(currentDetection.recipeId);
+    chip.textContent = r && r.opened ? "SETTINGS OPENED" : "REVIEW";
+    title.textContent = currentDetection.title || "Text-file default app";
+    copy.textContent = (r && r.message) || "Open Windows Settings > Apps > Default apps and choose Notepad for .txt files.";
+    setGlobeState(r && r.opened ? "done" : "escalation");
+    setTimeout(() => setGlobeState("idle"), 2400);
+    return;
+  }
+  // PROD 2026-10-14 (audit R11) — "Open fix" goes through the SAME gated pipeline as every other resolve
+  // (R11 → supervisor → policy → countdown → kill-switch) and the card says what REALLY happened: policy copy,
+  // needs-admin, countdown, preview, running — never "DRY-RUN COMPLETE" regardless of mode.
+  const r = await (sentinel.supervisedFix ? sentinel.supervisedFix({ recipeId: currentDetection.recipeId, mode: "confirmed", source: "overlay", risk: currentDetection.risk || "medium" }) : Promise.resolve(null));
+  const o = describeSupervisedResult(r);
+  chip.textContent = ({ countdown: "APPLYING SOON", running: "APPLYING", "needs-admin": "NEEDS ADMIN", preview: "PREVIEWED", approval: "WAITING FOR YES", deferred: "QUEUED", policy: "HELD", veto: "HELD", blocked: "BLOCKED", declined: "NOT RUN", failed: "FAILED", unavailable: "UNAVAILABLE", acknowledged: "NOTED" })[o.kind] || "REVIEW";
+  title.textContent = currentDetection.title || "ARIA fix";
+  copy.textContent = o.text;
+  setGlobeState(o.ok === false ? "escalation" : o.kind === "preview" ? "idle" : "fixing");
   setTimeout(() => setGlobeState("idle"), 2400);
 });
 
 // The single overlay box. Modes: "globe" (nothing but the globe) · "card" (detector Fix/Dismiss) · "companion"
 // (interactive assistant). BOTH card + companion use the ONE #overlayCard. Guarantees at most ONE of
 // {#overlayCard, #overlayConfirm, greeting} is ever visible — opening the card cancels the confirm + greeting
-// timers so they can't stack/clip on top of it (Ahmad's overlap bug). The globe is never covered.
+// timers so they can't stack/clip on top of it (the overlap bug). The globe is never covered.
 function setMode(mode) {
   const companion = mode === "companion";
   const showCard = mode === "card" || companion;
@@ -294,7 +346,9 @@ function setMode(mode) {
   if (cardHead) cardHead.hidden = !companion;
   if (chip) chip.hidden = companion;
   if (title) title.hidden = companion;
-  if (overlayActions) overlayActions.hidden = companion;
+  if (overlayActions) overlayActions.hidden = companion || Boolean(currentAdvisory);
+  if (advisoryActions) advisoryActions.hidden = companion || !currentAdvisory;
+  card.classList.toggle("advisory-active", !companion && Boolean(currentAdvisory));
   // ONE box: whenever the card opens, hide + cancel the confirm bubble AND the greeting (never stack/overlap).
   if (showCard) {
     if (confirmTimer) { clearTimeout(confirmTimer); confirmTimer = null; }
@@ -309,7 +363,97 @@ function render(detection) {
   chip.textContent = detection.chip;
   title.textContent = detection.title;
   copy.textContent = detection.summary;
+  if (fixButton) fixButton.textContent = ASSOCIATION_RECIPE_IDS.has(detection.recipeId) ? "Fix in Settings" : "Open fix";
 }
+
+// ============================================================================================================
+// ADVISE-FIRST NOTICES (2026-10-14, Autonomous mode) — "advise three times, then act". main sends each notice
+// (sentinel:advisory) already in plain words: what ARIA found · what it will do · WHEN ("in N minutes unless you
+// choose"), with the choices that still apply. This card shows exactly that copy (textContent only — never HTML) and
+// sends the person's choice back (sentinel:advisory-ack). Any choice ends the escalation; Close does not choose.
+// ============================================================================================================
+function setAdvisoryStatus(text) {
+  if (!advisoryStatus) return;
+  advisoryStatus.textContent = text || "";
+  advisoryStatus.hidden = !text;
+}
+function clearAdvisory() {
+  currentAdvisory = null;
+  if (advisoryCloseTimer) { clearTimeout(advisoryCloseTimer); advisoryCloseTimer = null; }
+  setAdvisoryStatus("");
+  card.classList.remove("advisory-active");
+  if (advisoryActions) advisoryActions.hidden = true;
+  if (overlayActions && !card.classList.contains("companion-active")) overlayActions.hidden = false;
+}
+function renderAdvisory(view) {
+  if (!view || !view.id) return;
+  const c = view.copy || {};
+  currentAdvisory = view;
+  if (advisoryCloseTimer) { clearTimeout(advisoryCloseTimer); advisoryCloseTimer = null; }
+  chip.textContent = String(c.line || `Notice ${view.advisory || 1} of ${view.of || 3}`).toUpperCase();
+  title.textContent = c.found || view.title || "ARIA found a problem";
+  copy.textContent = "";
+  copy.appendChild(el("p", "advisory-will", c.willDo || ""));
+  copy.appendChild(el("p", "advisory-when", c.when || ""));
+  const labels = new Map((Array.isArray(c.choices) ? c.choices : []).map((x) => [x && x.id, x && x.label]));
+  for (const b of advisoryActions ? advisoryActions.querySelectorAll("[data-advisory-choice]") : []) {
+    const id = b.dataset.advisoryChoice;
+    b.hidden = !labels.has(id);
+    b.disabled = false;
+    if (labels.has(id)) b.textContent = labels.get(id);
+  }
+  setAdvisoryStatus(view.frozen ? "Paused — nothing advances until ARIA is running normally again." : "");
+  card.classList.add("advisory-active");
+  if (overlayActions) overlayActions.hidden = true;
+  if (advisoryActions) advisoryActions.hidden = false;
+}
+/** What the person's choice really did, in plain words (never "fixed" before the pipeline says so — Rule 14). */
+function advisoryChoiceText(choice, r) {
+  if (!r || r.ok !== true) return r && /already|not-found/.test(String(r.error || "")) ? "That notice was already answered or has closed — nothing else changed." : "I couldn't record that choice. Nothing was changed.";
+  if (choice === "not-now") {
+    const until = r.advisory && Date.parse(r.advisory.snoozedUntil || "");
+    return `OK — not now. I'll tell you again ${Number.isFinite(until) ? "after " + new Date(until).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "later"}; nothing runs before then.`;
+  }
+  if (choice === "never") return "OK — I won't fix this on my own on this device again. If it comes back, I'll ask you first.";
+  if (!r.fix) return "Your IT contact has been told. Nothing was changed on this device.";
+  return describeSupervisedResult(r.fix).text;
+}
+sentinel.onAdvisory?.((view) => {
+  if (!view || !view.id) return;
+  if (comp) return; // never yank the person out of a walk-through; the notice is on Home and the next one re-pops
+  currentDetection = null;
+  renderAdvisory(view);
+  setMode("card");
+  setGlobeState(view.kind === "red" ? "escalation" : "diagnosing");
+});
+for (const b of advisoryActions ? advisoryActions.querySelectorAll("[data-advisory-choice]") : []) {
+  b.addEventListener("click", async () => {
+    const view = currentAdvisory;
+    if (!view) return;
+    const choice = b.dataset.advisoryChoice;
+    for (const x of advisoryActions.querySelectorAll("button")) x.disabled = true;
+    setAdvisoryStatus(choice === "fix-now" ? (view.kind === "red" ? "Telling your IT contact…" : "Starting the fix — a countdown you can cancel runs first…") : "Saving your choice…");
+    let r = null;
+    try { r = await sentinel.advisoryAck(view.id, choice); } catch { r = null; }
+    setAdvisoryStatus(advisoryChoiceText(choice, r));
+    for (const x of advisoryActions.querySelectorAll("[data-advisory-choice]")) x.hidden = true;
+    const closeBtn = document.getElementById("advisoryClose");
+    if (closeBtn) { closeBtn.disabled = false; closeBtn.textContent = "Close"; }
+    const ok = Boolean(r && r.ok);
+    setGlobeState(!ok ? "escalation" : choice === "fix-now" && view.kind !== "red" ? "fixing" : "idle");
+    advisoryCloseTimer = setTimeout(() => { advisoryCloseTimer = null; if (currentAdvisory === view) closeAdvisoryCard(); }, 9000);
+  });
+}
+async function closeAdvisoryCard() {
+  clearAdvisory();
+  chip.textContent = modeChip();
+  title.textContent = "ARIA is watching";
+  copy.textContent = "Local self-diagnosis is active.";
+  setMode("globe");
+  setGlobeState("idle");
+  await sentinel.dismissOverlay?.();
+}
+document.getElementById("advisoryClose")?.addEventListener("click", () => { closeAdvisoryCard(); });
 
 // ============================================================================================================
 // ARIA COMPANION — the interactive assistant on the globe. Renders ONE card at a time and carries the user's
@@ -485,7 +629,7 @@ function renderFlowStep(view) {
 
   // ── ONBOARDING FIX-CARD HEAD (2026-07-16) — every step renders in the SAME structure as the under-globe
   // detector fix-card: a small-caps TAG CHIP, a bold TITLE, then a one-line SUBTITLE. Reuses the card family so
-  // the walk-through and the fix-cards are visually identical siblings (Ahmad's screenshot reference). ─────────
+  // the walk-through and the fix-cards are visually identical siblings (the design reference). ─────────
   companionBody.appendChild(el("div", "companion-tag", flowStepTag(flow, view.index)));
   companionBody.appendChild(el("div", "companion-lead", step.title));
 
@@ -499,7 +643,7 @@ function renderFlowStep(view) {
     companionBody.appendChild(el("div", "companion-sub", r.text != null ? r.text : (step.body || "")));
   } else if (step.type === "input-text") {
     if (step.body) companionBody.appendChild(el("div", "companion-sub", step.body));
-    // Labeled field (small-caps label above the input) — the onboarding-card data-entry shape Ahmad asked for.
+    // Labeled field (small-caps label above the input) — the onboarding-card data-entry shape.
     if (step.label) companionBody.appendChild(el("div", "companion-field-label", step.label));
     const input = el("input", "companion-input"); input.type = "text"; input.placeholder = step.placeholder || "";
     input.value = comp.answers[step.key] || "";
@@ -644,9 +788,7 @@ async function renderFixResult(view) {
     resolve.addEventListener("click", async () => {
       status.textContent = "Starting the gated fix…";
       const r = await sentinel.supervisedFix({ recipeId: view.recipeId, mode: "confirmed" });
-      if (!r || r.ok === false) status.textContent = r?.error === "r11_blocked" ? "1 personal folder excluded." : r?.verdict === "veto" ? "Held by the safety supervisor." : "Couldn't start the fix.";
-      else if (r.countdown) status.textContent = `Applying in ${r.seconds || 10}s — cancel from the countdown, or Ctrl+Alt+K to abort.`;
-      else status.textContent = r.policy && r.policy.dryRun === false ? "Fix applied (reversible)." : "Previewed safely (dry-run).";
+      status.textContent = describeSupervisedResult(r).text; // (audit R1) the real outcome — never "Fix applied" before it ran
     });
     row.appendChild(resolve);
   } else if (view.recipeId) {

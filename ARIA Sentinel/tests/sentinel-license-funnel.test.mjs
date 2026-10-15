@@ -45,6 +45,12 @@ assert.match(ce.subject, /license is ready/i);
 assert.ok(ce.text.includes(rec.key), "customer email contains the key");
 assert.ok(ce.text.includes(DOWNLOADS_URL), "customer email links /downloads");
 assert.ok(ce.text.includes("Pro"), "customer email names the tier");
+// RUN-SN1 (2026-10-14): the installer is NOT served by the website while the build is unsigned. The
+// welcome email must say the installer is emailed (with a deadline), never "the link is on /downloads"
+// — a buyer who follows that reaches a page that points back to their inbox.
+assert.ok(/email the Windows pilot installer .* within one business day/.test(ce.text), "customer email says the installer is emailed, with a deadline");
+assert.ok(!/installer link is on/.test(ce.text), "customer email never claims a download link that the site does not serve");
+assert.ok(/Reply to this email/.test(ce.text), "customer email gives the fallback when the installer does not arrive");
 t();
 
 // 5 — 🔒 admin email shows a MASKED key, never the raw key.
@@ -53,6 +59,9 @@ assert.ok(!ae.text.includes(rec.key), "admin email never contains the raw key");
 assert.ok(ae.text.includes(maskKey(rec.key)), "admin email shows the masked key");
 assert.match(maskKey(rec.key), /^.{4}….{4}$/, "mask is XXXX…XXXX");
 assert.ok(ae.text.includes("cus_1") && ae.text.includes("sub_1"), "admin email has the Stripe ids");
+// RUN-SN1: the admin email carries the one manual step the welcome email promised the buyer.
+assert.ok(/ACTION \(yours, within one business day\): email the Windows pilot installer/.test(ae.text), "admin email tells the operator to send the installer");
+assert.ok(ae.text.includes(rec.email), "admin email names the buyer address the installer goes to");
 t();
 
 // 6 — 🔒 the SECRET never appears in any record or email.

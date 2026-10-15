@@ -79,8 +79,9 @@ export function parseSessions(sessions, { now = Date.now() } = {}) {
     return {
       id: redactPrivate(String(s.id || s.sessionId || "")),
       startedAt: s.started_at || s.startedAt || null,
-      // D2 — count = real ask count when the session records it (2 turns/ask), else fall back to turns.length.
-      count: Number(s.asks) || turns.length, turns,
+      // D2 — count = real ask count when the session records it (2 turns/ask); JULY PORT 2026-10-14 (a7f9e111 Phase F
+      // D2): else the USER turns (an ask is one side of an exchange, never both); turns.length only for role-less logs.
+      count: Number(s.asks) || turns.filter((tn) => tn.role === "user").length || turns.length, turns,
       kbHits: Number(s.kb_hits) || turns.filter((tn) => /knowledge base/i.test(tn.text)).length,
       anthropicHits: Number(s.anthropic_hits) || 0
     };

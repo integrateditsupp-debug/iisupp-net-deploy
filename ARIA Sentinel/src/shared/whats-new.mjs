@@ -27,3 +27,22 @@ export function shouldShowWhatsNew({ lastSeenVersion, currentVersion, firstRun }
   if (!lastSeenVersion) return false; // unknown last-seen on an existing install → don't nag
   return compareVersions(lastSeenVersion, currentVersion) < 0;
 }
+
+/**
+ * REVIEW P2-11 (2026-10-14) — where the shipped "What's new" notes can be, in the order main tries them (path SEGMENTS,
+ * so this module stays free of node:path): inside the package (appRoot — app.asar in a packaged build, the source tree
+ * in development; build.files carries docs/RELEASE_NOTES_<version>.md), then beside it in process.resourcesPath (the
+ * asar by name, an asar-unpacked copy, an extraResources copy). Only a file named RELEASE_NOTES_<x.y.z>.md is ever
+ * looked up — anything else yields no candidate (no path is built from free text).
+ */
+export function releaseNotesCandidates({ appRoot = "", resourcesPath = "", fileName = "" } = {}) {
+  const name = String(fileName);
+  if (!/^RELEASE_NOTES_\d+\.\d+\.\d+\.md$/.test(name)) return [];
+  const out = [];
+  if (appRoot) out.push([String(appRoot), "docs", name]);
+  if (resourcesPath) {
+    const r = String(resourcesPath);
+    out.push([r, "app.asar", "docs", name], [r, "app.asar.unpacked", "docs", name], [r, "docs", name]);
+  }
+  return out;
+}

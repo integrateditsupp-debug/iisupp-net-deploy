@@ -1,6 +1,6 @@
 // globe-confirmation - RUN-B B5: the "issue resolved | email sent | ticket reference" message shown
 // directly under the floating globe (and its web-ARIA equivalent) the moment ARIA REALLY resolves an issue.
-// PURE + node-safe (no DOM, no Electron, no I/O). Ahmad requested this and wants to SEE it.
+// PURE + node-safe (no DOM, no Electron, no I/O). Requested by the founder, who wants to SEE it.
 //
 // Rule 14 (honesty IS the moat) - everything real, nothing faked:
 //   1. The message renders ONLY after a real resolve that ACTUALLY completed and verified (a recipe/fix
@@ -75,7 +75,7 @@ export function mintTicketRef({ serviceNowNumber = "", now = Date.now(), seq } =
 }
 
 // The exact under-globe sentence. Kept as ONE function so desktop + web are byte-identical (parity-locked in
-// the test). Grammar is correct "has been sent" (Ahmad's note said "send"; shipped correct).
+// the test). Grammar is correct "has been sent" (the note said "send"; shipped correct).
 export function confirmationText({ issue, ticketRef, emailState }) {
   const head = `${issue} issue has been resolved.`;
   if (emailState === "sent") return `${head} Email has been sent with ticket reference ${ticketRef}.`;

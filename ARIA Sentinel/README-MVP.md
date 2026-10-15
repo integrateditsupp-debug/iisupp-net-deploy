@@ -9,7 +9,7 @@ ARIA Sentinel is the Windows desktop + Chrome extension branch of ARIA. This MVP
 
 ## No-cost safety defaults
 
-- `ARIA_SENTINEL_ALLOW_SYSTEM_FIXES=0`: OS-changing commands are dry-run only.
+- Live fixes are OFF until the person running setup turns them on (Settings → Autonomy → Live fixes). `ARIA_SENTINEL_ALLOW_SYSTEM_FIXES=1`/`=0` is a developer override of that consent; unset = the consent decides. Fixes that need administrator rights ask through Windows UAC.
 - Sentinel does not send raw symptoms, page content, URLs, file paths, credentials, or document text to AI APIs.
 - ServiceNow posting is disabled until a customer instance and OAuth app are configured.
 - Chrome fixes operate on the current origin only.
@@ -17,7 +17,7 @@ ARIA Sentinel is the Windows desktop + Chrome extension branch of ARIA. This MVP
 ## Run locally
 
 ```powershell
-cd "C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\ARIA Sentinel"
+cd "<path-to-repo>\ARIA Sentinel"
 npm install
 npm run start:dry-run
 ```
@@ -36,7 +36,7 @@ http://127.0.0.1:37841/health
 4. Select:
 
 ```text
-C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\ARIA Sentinel\chrome-extension
+<path-to-repo>\ARIA Sentinel\chrome-extension
 ```
 
 ## Package unsigned Windows build

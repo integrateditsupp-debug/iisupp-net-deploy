@@ -1,6 +1,6 @@
 import { app, BrowserWindow, Menu, Tray, ipcMain, nativeImage, shell, screen, session, globalShortcut, powerMonitor, clipboard, Notification } from "electron";
 import Store from "electron-store";
-import { exec, spawn } from "node:child_process";
+import { spawn } from "node:child_process";
 import { randomUUID, createHash } from "node:crypto";
 import { createServer } from "node:http";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -13,12 +13,14 @@ import {
   CONTROL_PLANE_MVP_RECIPE_COUNT,
   CONTROL_PLANE_MVP_STOP_CODE_COUNT,
   KB_BUNDLE_ENDPOINT,
+  isEndpointDeployed,
+  ENDPOINT_NOT_AVAILABLE_NOTE,
   RECIPES,
   RECIPE_ENDPOINT,
   ROUTING_TARGETS,
   STOP_CODES,
   STOP_CODES_ENDPOINT,
-  SENTINEL_VERSION,
+  SENTINEL_VERSION as REGISTRY_VERSION,
   buildIncidentDraft,
   matchRecipes,
   recipeById
@@ -29,14 +31,20 @@ import {
   sanitizeToSignature
 } from "../shared/safety.mjs";
 import { createDetectionOrchestrator } from "../sub-agents/detection/index.mjs";
+import { configurePowerShellRunner } from "../sub-agents/detection/ps.mjs"; // PROD 2026-10-14 (audit M27) — one tracked runner
 import { loadCustomerConfig } from "../shared/customer-config.mjs";
 import { DEEP_LINK_SCHEME, parseSentinelDeepLink, validateResolveLink } from "../shared/deep-link.mjs"; // Slice C — web→Sentinel handoff
 import { ingest as ingestKb } from "../shared/kb-ingester.mjs";
-import { parsePolicyOverlay, isRecipeAllowedByPolicy } from "../shared/policy.mjs";
+import { parsePolicyOverlay, isRecipeAllowedByPolicy, loadPolicyFile, POLICY_FILE_NAME } from "../shared/policy.mjs";
 import { parseControlPlaneKill, remediationDecision, blockedRecipeResult, KILL_HOTKEY, buildKillResult } from "../shared/kill-switch.mjs";
 // RUN-CU / CU4 (2026-10-08) — autonomy levels · approvals · notify · real restore points · evidence · bridge auth.
 import { normalizeSetupPrefs, updateSetupPrefs, resolveAutonomy, autonomyLevelToMode, AUTONOMY_LEVELS } from "../shared/app-config.mjs";
 import { decideExecution, describeDecision } from "../shared/approval-policy.mjs";
+// ADVISORY ESCALATION (2026-10-14) — "advise three times, then act" (Autonomous mode only). The pure clock + promises;
+// the effects (notices, the supervised run, the IT-contact escalation) are performed below through the existing paths.
+import { createAdvisoryEscalation, normalizeAdvisoryPrefs, advisoryView, ruleSentence, ADVISORY_CHOICES, ADVISORY_INTERVAL_MIN, ADVISORY_INTERVAL_MAX, ADVISORY_SNOOZE_MIN_H, ADVISORY_SNOOZE_MAX_H } from "../shared/advisory-escalation.mjs";
+import { COOLDOWN_MS as AUTOFIRE_COOLDOWN_MS } from "../shared/autonomous.mjs";
+import { redactPrivate as advisoryRedact } from "../shared/path-guard.mjs";
 import { checkMaintenanceWindow } from "./plan-maintenance-window.mjs";
 import { createApprovalsFlow } from "./approvals.mjs";
 import { createNotifyDispatcher, NOTIFY_ENDPOINT } from "./notify-dispatch.mjs";
@@ -62,10 +70,24 @@ import { resolveIntegrations, testIntegration as runIntegrationTest } from "../s
 import { checkForUpdate } from "./update-listener.mjs";
 import * as orchestrator from "./update-orchestrator.mjs";
 import { sealState, openState, defaultUpdateState } from "../shared/update-state.mjs";
-import { RUN_KEY, RUN_VALUE_NAME, TASK_NAME, registryRunEntry, taskDefinition } from "./startup-registrar.mjs";
+import { RUN_KEY, RUN_VALUE_NAME, TASK_NAME, registryRunEntry, taskDefinition, startupHealDecision, shouldShowWindowAtLaunch, shouldShowWindowOnSecondInstance, isStartupLaunch } from "./startup-registrar.mjs";
 import { classifyRemoval, buildTamperAudit, disabledBanner } from "./startup-watchdog.mjs";
 import { buildHeartbeatPayload } from "./heartbeat.mjs";
-import { isBlockedPath, r11AuditEntry } from "../shared/path-guard.mjs";
+import { isBlockedPath, r11AuditEntry, configureExcludedFolders, excludedFolderCount, excludedFoldersLabel, configuredExcludedFolders } from "../shared/path-guard.mjs";
+// JULY PORT 2026-10-14 (ddfcac5b) — the READ-ONLY .txt file-association guard (reg query only; never a write).
+import {
+  FILE_ASSOCIATION_GUARD_INTERVAL_MS,
+  TEXT_ASSOCIATION_PRIMARY_RECIPE_ID,
+  TEXT_ASSOCIATION_RISK_RECIPE_ID,
+  buildAssociationGuardStatus,
+  classifyTextAssociation,
+  parseRegQueryValues
+} from "../shared/file-association-guard.mjs";
+// JULY PORT 2026-10-14 (af5e03ab) — the Office File Safety Net (local 2 min backups + 3 min renamed-copy validation).
+import { createOfficeSafetyService } from "./office-safety-service.mjs";
+// JULY PORT 2026-10-14 (a7f9e111) — the content-blind browser-outcome ledger (bridge) + the chat-activity scrub/cap.
+import { appendBrowserOutcome, browserOutcomeToResolutionPayload, buildBrowserOutcomeFleetPacket } from "../shared/browser-outcome.mjs";
+import { scrubChatText, capSessionTurns } from "../shared/chat-activity.mjs";
 // RUN 22 — dashboard · performance · SLA · compliance · reports · retention.
 import { computeHeroStatus, heroSubline } from "../shared/dashboard-status.mjs";
 import * as Sla from "./sla-tracker.mjs";
@@ -78,24 +100,26 @@ import { buildDiagnostic } from "../shared/diagnostic.mjs";
 import { computeHealthScore, healthTooltip } from "../shared/health-score.mjs";
 import { tickFreeRoam, roamBounds } from "./overlay-physics.mjs";
 import { traySvgDataUrl, normalizeTrayState } from "./tray-art.mjs";
+import { trayPngDataUrl } from "./tray-art-png.mjs"; // PROD 2026-10-14 (audit M2) — generated by scripts/render-tray-png.mjs
 import { EXPECTED_OUTBOUND_PATHS, classifyRequest, summarizeCapture } from "../shared/network-capture.mjs";
 import { zipEvidencePack, evidenceFileName, EVIDENCE_ARTIFACTS } from "../shared/evidence-pack.mjs";
-import { shouldShowWhatsNew } from "../shared/whats-new.mjs";
+import { shouldShowWhatsNew, releaseNotesCandidates } from "../shared/whats-new.mjs";
 import { canEnableAutonomous, evaluateAutoFire, recordAutoFire, autonomousPauseUntil } from "../shared/autonomous.mjs";
 import { isGreenRecipe } from "../shared/recipe-runner.mjs";
 import { buildNotifyPayload, isAllowedWebhook, redactWebhookForLog } from "../shared/notify.mjs";
 import { toCsv as auditToCsv, toPdf as auditToPdf, auditFileName } from "../shared/audit-export.mjs";
 import { globeFrameMs } from "../shared/power-mode.mjs";
 import { issueLicense, verifyLicense, daysRemaining } from "../shared/license.mjs";
-import { updateAvailable, buildFeedUrl, recordInstall, rollbackTargets } from "../shared/auto-update.mjs";
+import { updateAvailable, buildFeedUrl, buildFeedRequest, recordInstall, rollbackTargets } from "../shared/auto-update.mjs";
 import { buildRemoteSession, sessionActive } from "../shared/remote-control.mjs";
 import { modeOverlayBehavior } from "../shared/mode-behavior.mjs";
 // RUN 24 A6 — resolvePlanFromKey/verifyLicenseStatus are SERVER-SIDE ONLY now (they need the secret); the
 // desktop resolves via the sentinel-resolve endpoint + a local cache (license-cache.mjs hashes the key itself).
 import { enabledFeatures as planEnabledFeatures, licenseIsAdmin } from "../shared/license-features.mjs";
-import { buildCache, cacheIsFresh, cacheMatchesKey, effectiveFromCache, FREE_PLAN as CACHE_FREE_PLAN } from "./license-cache.mjs";
+// REVIEW P1-3 — a cached verdict counts only when signed for this device + key (or, unsigned, in the run that got it, ≤1 h).
+import { buildCache, cacheIsFresh, cacheMatchesKey, effectiveFromCache, unsignedFingerprint, highWaterOf, VERDICT_STATUSES, CLOCK_SKEW_MS as LICENSE_CLOCK_SKEW_MS, FREE_PLAN as CACHE_FREE_PLAN } from "./license-cache.mjs";
 import { installCrashReporter } from "./crash-reporter.mjs"; // RUN 29-D — $0 content-blind crash reporter
-import { bindAll, withRebinds, DEFAULT_HOTKEYS } from "../shared/hotkeys.mjs";
+import { bindAll, withRebinds, DEFAULT_HOTKEYS, selectDefaultHotkeys } from "../shared/hotkeys.mjs";
 import { applyRunState } from "../shared/start-stop.mjs";
 import { auditFeatures, summarizeAudit, buildHealReport } from "../shared/self-heal.mjs";
 import { askAria, scrubR11 } from "../shared/aria-brain-client.mjs";
@@ -116,24 +140,30 @@ import { sealAudit, verifyAudit } from "../shared/audit-integrity.mjs";
 import { createProcessDetector, IPC as PROC_HEALTH_IPC } from "./process-detectors.mjs";
 import { recommendAction } from "../shared/recommend-action.mjs";
 import { superviseProposal, supervisorAuditEntry, recipeSideEffects } from "./supervisor-agent.mjs";
-import { executionPolicy, recordOutcome, vettedCountOf, emptyHistory } from "./dry-run-policy.mjs";
+import { executionPolicy, recordOutcome, vettedCountOf, emptyHistory, vettedTier, VENDOR_FLOOR_TRACK } from "./dry-run-policy.mjs";
 import { createCountdown, createCountdownManager, shouldCountdown, countdownChatLine, countdownBannerText, COUNTDOWN_SECONDS } from "./action-countdown.mjs";
-import { EXECUTABLE_RECIPES, YELLOW_RECIPES } from "../shared/recipe-runner.mjs";
+// FAULT LAB 2026-10-14 — the vendor floor (defect 4) and the not_resolved outcome of a failed gating verify (defect 3).
+import { EXECUTABLE_RECIPES, YELLOW_RECIPES, isVendorVetted, NOT_RESOLVED } from "../shared/recipe-runner.mjs";
 // RUN 23b — Tier-0 executor: maps Tier-0 recipe ids to real, reversible PowerShell with pre/post/rollback.
-import { executeTier0, resolveExecutorId, TIER0_EXECUTOR_IDS } from "./tier-0-executor.mjs";
+import { executeTier0, resolveExecutorId, TIER0_EXECUTOR_IDS, TIER0_COMMANDS, validateTier0Command } from "./tier-0-executor.mjs";
+import { actionNeedsAdmin, buildElevatedExecution, UAC_CANCELLED_EXIT } from "../shared/recipe-runner.mjs"; // PROD 2026-10-14 (audit M3) — admin-aware steps
 // RUN 23c — OTA: the local bridge serves the built dist .exe metadata so the admin console can 1-click publish.
-import { assetName as otaAssetName, githubAssetUrl as otaAssetUrl } from "../shared/ota-release.mjs";
+import { assetName as otaAssetName, signedAssetName as otaSignedAssetName, githubAssetUrlFor as otaAssetUrlFor, isSignedArtifactName } from "../shared/ota-release.mjs";
 
 // RUN 23e — single build: the license PLAN (not a build-time flag) decides admin access + feature gates.
 // Reads gateStatus() (license + trial) each call, so a fresh paste / trial expiry re-gates live. An active
 // trial resolves to Pro features; an expired/absent trial falls back to free Personal (never admin).
 function currentPlanFeatures() { return planEnabledFeatures(gateStatus()); }
 function currentIsAdmin() { return licenseIsAdmin(gateStatus()); }
+// PROD 2026-10-14 (audit M32) — developer affordances (simulate detection, globe-confirm test, agent heartbeats from the
+// vault) exist ONLY in a dev run; the packaged customer build never shows or serves them.
+function devModeNow() { try { return !app.isPackaged || Boolean(process.env.ARIA_SENTINEL_DEV); } catch { return false; } }
 let hotkeyStatus = [];
-import { computeTrialStatus, isUnlocked as licenseUnlocked, trialBadge } from "../shared/license.mjs";
+let crashReporter = null; // PROD 2026-10-14 (audit M17) — { capture, flush }; flush runs only after Setup consent
+import { trialStatusFor, resolveTrialStart, isUnlocked as licenseUnlocked, trialBadge, TRIAL_DAYS } from "../shared/license.mjs";
 import { pilotStatus, pilotBadge, pilotUpgradePrompt, buildPilotRecord, stampTtfv, firstFixAtFromAudit, ttfvMinutes, ttfvLabel } from "../shared/pilot-state.mjs"; // RUN-E E1 — TTFV clock
 import { conversionMoment, buildCaseStudy, caseStudyReadiness, autorunCaseStudy, withConsent, publishableCaseStudy } from "../shared/case-study.mjs"; // RUN-D D2 pilot->paid capture + RUN-E E2 proof autorun (consent-gated)
-import { deflectionStats, recordOutcome as recordResolutionEvent, pilotProofMetrics } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — real deflection %
+import { deflectionStats, recordOutcome as recordResolutionEvent, pilotProofMetrics, countLiveFixes } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — real deflection %; R6a — live fixes only
 import { valueProof, valueProofKpis } from "../shared/value-proof.mjs"; // RUN-B B2 — real ROI ($/hours) + deflection on every surface
 import { buildTrustSummary } from "../shared/trust-posture.mjs"; // RUN-B B3 — honest trust/security surface (real-or-empty)
 import {
@@ -149,6 +179,10 @@ import {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = path.resolve(__dirname, "../..");
+// PROD 2026-10-14 (audit M4) — the version every surface reports (About, /health, heartbeat, user-agent, update
+// checks, evidence pack, What's new) is the one Electron reads from package.json in dev AND in the packaged app.
+// The registry's own derived constant is the fallback, never a hand-typed literal.
+const SENTINEL_VERSION = (() => { try { const v = app.getVersion(); return /^\d+\.\d+/.test(String(v || "")) ? String(v) : REGISTRY_VERSION; } catch { return REGISTRY_VERSION; } })();
 loadLocalEnv(path.join(appRoot, ".env.local"));
 
 const store = new Store({
@@ -165,10 +199,17 @@ const store = new Store({
     incidents: [],
     transparencyLog: [],
     resolutionOutcomes: [],
+    browserOutcomes: [], // JULY PORT 2026-10-14 — content-blind outcomes the companion extension reports (never URLs/titles)
     // RUN-CU / CU4 — approvals ledger (pending + decided) + fixes queued to a maintenance window.
     // (keepSystemFixesDryRun is deliberately NOT defaulted: undefined = "follow the mode", the RUN 29-A rule.)
     approvals: [],
     deferredFixes: [],
+    // JULY PORT 2026-10-14 (ddfcac5b) — the last file-association guard status + the last surfaced issue key (dedupe).
+    fileAssociationGuard: null,
+    fileAssociationLastIssueKey: "",
+    // JULY PORT 2026-10-14 (af5e03ab) — Office Safety Net consent. OFF until the person turns it on (Integrations →
+    // Office Safety Net): the production line never scans or copies a person's documents unasked.
+    officeSafety: { enabled: false },
     serviceNow: {
       instanceUrl: "",
       caller: "",
@@ -184,20 +225,73 @@ const store = new Store({
   }
 });
 
-const allowSystemFixes = process.env.ARIA_SENTINEL_ALLOW_SYSTEM_FIXES === "1";
+// PROD 2026-10-14 (audit M1) — live fixes are a PERSISTED, CONSENT-GATED setting, not an env var nobody ships.
+// `liveFixesEnabled` (electron-store, default false) is written only by the Settings toggle / wizard step through
+// sentinel:set-live-fixes (audit-logged). The env override stays for developers: ARIA_SENTINEL_ALLOW_SYSTEM_FIXES=1
+// forces ON, =0 forces OFF, unset → the stored consent decides. Every gate that used to read the const reads this.
+function allowSystemFixes() {
+  const env = process.env.ARIA_SENTINEL_ALLOW_SYSTEM_FIXES;
+  if (env === "1") return true;
+  if (env === "0") return false;
+  try { return store.get("liveFixesEnabled") === true; } catch { return false; }
+}
+/** { enabled, source:'store'|'env', elevation:'uac'|'none', note } — the honest live-fix status the UI shows. */
+function liveFixesStatus() {
+  const env = process.env.ARIA_SENTINEL_ALLOW_SYSTEM_FIXES;
+  const source = env === "1" || env === "0" ? "env" : "store";
+  const enabled = allowSystemFixes();
+  const elevation = process.platform === "win32" ? "uac" : "none";
+  let note;
+  if (!enabled) note = source === "env" ? "Live fixes are forced off by ARIA_SENTINEL_ALLOW_SYSTEM_FIXES=0 on this device." : "Live fixes are off — every fix previews only. Turn them on to let ARIA apply vetted fixes you confirm.";
+  else if (elevation === "uac") note = "Live fixes are on. Fixes that need administrator rights ask for your approval (UAC) each time; nothing runs unattended as administrator.";
+  else note = "Live fixes are on. Fixes that need administrator rights are not available on this platform; they stay in preview.";
+  return { enabled, source, elevation, note };
+}
+/** The legacy RUN 13 global dry-run safety, folded with the consent gate: true = every fix previews only. */
+function globalDryRun() { return !allowSystemFixes() || Boolean(store.get("dryRun")); }
+function setLiveFixes(payload) {
+  const enabled = typeof payload === "boolean" ? payload : Boolean(payload && payload.enabled);
+  const before = allowSystemFixes();
+  store.set("liveFixesEnabled", enabled);
+  // The pre-consent global flag (store.dryRun, default true since RUN 13) would otherwise keep every fix in
+  // preview after the person said yes. Turning live fixes on/off is the explicit, audited answer to that flag.
+  store.set("dryRun", !enabled);
+  const status = liveFixesStatus();
+  logEvent("POLICY", `Live fixes ${enabled ? "ENABLED" : "DISABLED"} by the person at this device${status.source === "env" ? " (env override still decides: " + (status.enabled ? "on" : "off") + ")" : ""}.`, { liveFixes: enabled, source: status.source });
+  if (before !== status.enabled) broadcastState();
+  return status;
+}
 Menu.setApplicationMenu(null); // No File/Edit/View bar — Sentinel is a focused app, not a generic Electron shell
 let mainWindow;
 let overlayWindow;
 let adminWindow;
 let overlayInteractUntil = 0;
+// (F3 round 2) the overlay renderer's hover-forward pattern: true while the pointer is over the globe art, which
+// pins the window interactive; false lets the transparent parts of the window pass clicks through (forward:true
+// keeps mousemove flowing so the renderer can detect re-entry).
+let overlayHoverOverride = false;
+function setOverlayHover(over) {
+  if (!overlayWindow || overlayWindow.isDestroyed() || overlayExpanded) return { ok: false };
+  overlayHoverOverride = true;
+  try {
+    if (over) overlayWindow.setIgnoreMouseEvents(false);
+    else overlayWindow.setIgnoreMouseEvents(true, { forward: true });
+  } catch { /* window state is best-effort */ }
+  return { ok: true, over: Boolean(over) };
+}
 let tray;
 let bridgeServer;
 let bridgeStatus = { listening: false, conflict: false, port: BRIDGE_PORT, owner: null, lastError: "", killed: false, killReason: "" };
 let isQuitting = false;
 let overlayExpanded = false;
 let overlayCompanion = false; // the interactive assistant panel is open on the globe overlay
+// 2026-10-14 — an advise-first notice (Notice n of 3 + three choices) is taller than a detector card: while one is up the
+// expanded window grows so the card never hides its choices behind a scrollbar. Cleared on dismiss / hide / companion.
+let overlayAdvisory = false;
 // RUN 19 §3 — every ARIA-spawned child process is tracked so the kill-switch can terminate them all.
 const childProcesses = new Set();
+// (audit M27) the watcher / process-scan PowerShell children join the same set, so Ctrl+Alt+K ends them too.
+configurePowerShellRunner({ track: (child) => { childProcesses.add(child); return () => childProcesses.delete(child); } });
 const startedAt = Date.now(); // RUN 21 — uptime for the heartbeat
 let detectionOrchestrator = null;
 // RUN 23 — process-health poller + the set of in-flight pre-execution countdowns (so Ctrl+Alt+K aborts them).
@@ -213,6 +307,9 @@ let overlayPhysics = null;
 let overlayPhysicsTimer = null;
 let overlayLastTick = 0;
 let overlayActiveUntil = 0;
+let fileAssociationGuardTimer = null; // JULY PORT 2026-10-14 — the 60 s read-only association re-check
+let officeSafetyService = null; // JULY PORT 2026-10-14 — the Office File Safety Net (opt-in)
+let officeSafetyRootsWarned = false;
 
 // ── RUN-CU / CU4 (2026-10-08) — autonomy · approvals · notify plumbing ─────────────────────────────────────
 // Every main-process network call goes through ONE wrapper that records {host, path, method, bytes} into a
@@ -221,6 +318,11 @@ const outbound = createOutbound({});
 const APPROVAL_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-sentinel-approval";
 
 function readSetupConfigSafe() { try { return store.get("setupConfig") || null; } catch { return null; } }
+// PROD 2026-10-14 (audit M17) — NOTHING leaves the device on its own until the person finished Setup (the wizard is
+// where the channels and what is sent are explained). Heartbeat, automatic update checks, crash-queue flush and the
+// knowledge pull all wait for this; a person's explicit click (Check updates / Update knowledge / Enter license)
+// is its own consent and is never blocked here.
+function telemetryAllowed() { try { return !shouldShowSetup(store.get("setupConfig")); } catch { return false; } }
 /** The sanitized Setup-wizard prefs (v1 + v2), defaults filled in. */
 function setupPrefsNow() { return normalizeSetupPrefs(readSetupConfigSafe()); }
 /** The autonomy level Sentinel honours right now (business clamp applied) + its mapped mode. */
@@ -275,6 +377,9 @@ const approvals = createApprovalsFlow({
   uuid: randomUUID,
   onChange: () => { try { broadcastState(); } catch { /* window may be gone */ } },
   notify: (event, ctx) => notifyEvent(event, ctx),
+  // KILL GATE (review P0-2) — an approval (in-app click, voice "yes", emailed link merged by the poll) and the
+  // "proceed-green-only" timeout never run a fix while the gate is closed; the approval is not consumed either.
+  gate: () => killGateReason(),
   // An approved fix runs through the SAME supervised pipeline (R11 → supervisor → policy → execute); the
   // approval replaces the countdown, never the gates.
   runner: ({ recipeId, approvalId, decidedBy, channel }) => runSupervisedFix({ recipeId, mode: "confirmed", approved: true, approvalId, source: `approval:${channel || "desktop"}`, risk: (recipeById(recipeId) || {}).risk || "medium", decidedBy })
@@ -282,14 +387,21 @@ const approvals = createApprovalsFlow({
 let approvalPollTimer = null;
 function ensureApprovalPolling() {
   if (approvalPollTimer) return;
+  if (ariaStoppedNow()) return; // (review P0-2) a stopped ARIA polls nothing; Start ARIA restarts the poll
   approvalPollTimer = setInterval(() => { approvalTick().catch(() => undefined); }, 60 * 1000);
   approvalPollTimer.unref?.();
 }
+function stopApprovalPolling() {
+  if (approvalPollTimer) { clearInterval(approvalPollTimer); approvalPollTimer = null; }
+}
 /** Every 60s while anything is pending: expire overdue asks (per approver.onTimeout) + poll remote decisions. */
 async function approvalTick() {
+  // KILL GATE (review P0-2) — stopped: no expiry, no poll, no merge (and the timer goes away).
+  if (ariaStoppedNow()) { stopApprovalPolling(); return; }
   try { await approvals.expire(Date.now()); } catch { /* expiry is best-effort */ }
   const pending = approvals.pending();
-  if (!pending.length) { if (approvalPollTimer) { clearInterval(approvalPollTimer); approvalPollTimer = null; } return; }
+  if (!pending.length) { stopApprovalPolling(); return; }
+  if (!killGateOpen()) return; // paused / fleet kill: a remote "approved" waits on the server; nothing is merged into a run
   const keyHash = licenseKeyHash();
   if (!keyHash) return; // no license → no remote approvals (in-app only)
   for (const a of pending.filter((p) => p.remoteId)) {
@@ -419,8 +531,11 @@ if (!hasSingleInstanceLock) {
   app.quit();
 } else {
   app.on("second-instance", (_event, argv) => {
-    logEvent("SELF-REPAIR", "Second ARIA Sentinel launch redirected to existing instance.");
-    showMainWindow("mode");
+    // PROD 2026-10-14 (audit M7) — an auto-start relaunch (`--startup` from the Run key / task) must never pop the
+    // Settings window over the person's desktop; only a launch a PERSON started brings the window forward.
+    const byPerson = shouldShowWindowOnSecondInstance(argv);
+    logEvent("SELF-REPAIR", byPerson ? "Second ARIA Sentinel launch redirected to existing instance." : "Auto-start relaunch redirected to the running instance (window left as it was).");
+    if (byPerson) showMainWindow("mode");
     showOverlay({ expanded: false });
     // Windows delivers the deep-link as an argv on the relaunch that hits the running instance.
     const link = extractDeepLink(argv);
@@ -437,6 +552,8 @@ process.on("unhandledRejection", (reason) => {
 });
 
 scrubLegacyState();
+// PROD 2026-10-14 (audit M15) — the configurable excluded-folder list joins the locked default at launch.
+try { configureExcludedFolders(store.get("excludedFolders") || []); } catch { /* the locked default always applies */ }
 
 function loadLocalEnv(envPath) {
   try {
@@ -457,9 +574,35 @@ function loadLocalEnv(envPath) {
 }
 
 function makeTrayImage(state = "idle") {
-  // Four state variants (idle / detection / fixing / escalation) — the SVG art lives in tray-art.mjs
-  // so it can be unit tested without Electron. Matches design_handoff_aria_sentinel/globe.html.
-  return nativeImage.createFromDataURL(traySvgDataUrl(state));
+  // Four state variants (idle / detection / fixing / escalation) — the art lives in tray-art.mjs so it can be
+  // unit tested without Electron. PROD 2026-10-14 (audit M2): nativeImage decodes PNG/JPEG only, so the icon is
+  // the PNG rasterized from that art (tray-art-png.mjs, 1x + 2x), falling back to build/icon-256.png, and only
+  // then to the legacy SVG URL (which Electron renders empty — kept as the last resort so nothing throws).
+  const key = normalizeTrayState(state);
+  try {
+    const img = nativeImage.createFromDataURL(trayPngDataUrl(key, 1));
+    if (img && !img.isEmpty()) {
+      try { img.addRepresentation({ scaleFactor: 2, dataURL: trayPngDataUrl(key, 2) }); } catch { /* 1x alone is fine */ }
+      return img;
+    }
+  } catch { /* fall through to the file icon */ }
+  try {
+    const fromFile = nativeImage.createFromPath(path.join(appRoot, "build", "icon-256.png"));
+    if (fromFile && !fromFile.isEmpty()) return fromFile.resize({ width: 32, height: 32 });
+  } catch { /* fall through */ }
+  return nativeImage.createFromDataURL(traySvgDataUrl(key));
+}
+
+/** The window / taskbar icon: the ARIA brand icon (build/icon-256.png) when it ships beside the app, else the globe. */
+let windowIconCache = null;
+function makeWindowIcon() {
+  if (windowIconCache) return windowIconCache;
+  try {
+    const brand = nativeImage.createFromPath(path.join(appRoot, "build", "icon-256.png"));
+    if (brand && !brand.isEmpty()) { windowIconCache = brand; return brand; }
+  } catch { /* fall through to the globe */ }
+  windowIconCache = makeTrayImage("idle");
+  return windowIconCache;
 }
 
 // Current at-a-glance agent state shown by the tray icon. Driven by detection + recipe execution.
@@ -476,17 +619,45 @@ function setAgentState(next) {
   }
 }
 
+// PROD 2026-10-14 (F3 round 2 / R15) — the Settings window fits the screen it opens on (1366×768 laptops), and the size
+// the person last used is remembered (validated against the current display before it is reused).
+function mainWindowSizing() {
+  let wa = { x: 0, y: 0, width: 1280, height: 820 };
+  try { wa = screen.getPrimaryDisplay().workArea; } catch { /* headless / early call */ }
+  const width = Math.max(640, Math.min(1280, wa.width - 40));
+  const height = Math.max(480, Math.min(820, wa.height - 40));
+  const sizing = { width, height, minWidth: 1024, minHeight: 720 };
+  if (width < sizing.minWidth) sizing.minWidth = width;    // a 1366×768 work area cannot host a 1024×720 minimum
+  if (height < sizing.minHeight) sizing.minHeight = height;
+  try {
+    const saved = store.get("mainWindowBounds");
+    if (saved && Number.isFinite(saved.width) && Number.isFinite(saved.height)) {
+      const w = Math.max(sizing.minWidth, Math.min(Number(saved.width), wa.width));
+      const h = Math.max(sizing.minHeight, Math.min(Number(saved.height), wa.height));
+      Object.assign(sizing, { width: w, height: h });
+      if (Number.isFinite(saved.x) && Number.isFinite(saved.y) && saved.x >= wa.x && saved.y >= wa.y && saved.x + w <= wa.x + wa.width && saved.y + h <= wa.y + wa.height) Object.assign(sizing, { x: Number(saved.x), y: Number(saved.y) });
+    }
+  } catch { /* defaults */ }
+  return sizing;
+}
+let boundsSaveTimer = null;
+function rememberMainWindowBounds() {
+  if (boundsSaveTimer) clearTimeout(boundsSaveTimer);
+  boundsSaveTimer = setTimeout(() => {
+    boundsSaveTimer = null;
+    try { if (mainWindow && !mainWindow.isDestroyed() && !mainWindow.isMinimized() && !mainWindow.isMaximized()) store.set("mainWindowBounds", mainWindow.getBounds()); } catch { /* best-effort */ }
+  }, 500);
+  boundsSaveTimer.unref?.();
+}
 function createMainWindow() {
   mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 820,
-    minWidth: 1024,
-    minHeight: 720,
-    show: !process.env.ARIA_BOOT_SMOKE,
+    ...mainWindowSizing(),
+    // (audit M7) headless at auto-start: `--startup` (Run key / task) never shows the 1280×820 window at logon.
+    show: shouldShowWindowAtLaunch(process.argv, process.env),
     title: "ARIA Sentinel - Settings",
     backgroundColor: "#050505",
     autoHideMenuBar: true,
-    icon: makeTrayImage(),
+    icon: makeWindowIcon(),
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
       contextIsolation: true,
@@ -579,6 +750,8 @@ function createMainWindow() {
     });
   }
   mainWindow.setMenuBarVisibility(false);
+  mainWindow.on("resize", rememberMainWindowBounds);
+  mainWindow.on("move", rememberMainWindowBounds);
   mainWindow.on("close", (event) => {
     if (isQuitting) return;
     event.preventDefault();
@@ -651,7 +824,7 @@ function overlayBounds() {
   if (overlayExpanded) {
     const wa = screen.getPrimaryDisplay().workArea;
     const width = 360;
-    const height = Math.min(340, wa.height - 80); // was 214 → clipped the card behind a scrollbar
+    const height = Math.min(overlayAdvisory ? 500 : 340, wa.height - 80); // was 214 → clipped the card behind a scrollbar
     return { width, height, x: Math.round(wa.x + (wa.width - width) / 2), y: wa.y + 44 };
   }
   if (overlayPhysics && Number.isFinite(overlayPhysics.x)) {
@@ -670,6 +843,8 @@ function positionOverlay() {
 function showOverlay(options = {}) {
   if (!app.isReady()) return;
   overlayCompanion = Boolean(options.companion);
+  if (options.advisory) overlayAdvisory = true;
+  if (overlayCompanion) overlayAdvisory = false;
   // The companion panel reuses the "expanded" (pinned + interactive, physics off) window path, just bigger.
   overlayExpanded = Boolean(options.expanded) || overlayCompanion;
   // Fix 5: when the user has hidden the floating globe, the ambient globe never shows (a detection
@@ -701,6 +876,7 @@ function hideOverlay() {
   if (!overlayWindow || overlayWindow.isDestroyed()) return;
   overlayExpanded = false;
   overlayCompanion = false;
+  overlayAdvisory = false;
   stopOverlayPhysics();
   overlayWindow.webContents.send("sentinel:overlay-mode", "globe");
   overlayWindow.hide();
@@ -727,9 +903,10 @@ function startOverlayPhysics() {
   if (overlayPhysicsTimer) return;
   if (!overlayWindow || overlayWindow.isDestroyed()) return;
   overlayLastTick = Date.now();
-  // Globe v2: click-through by DEFAULT (Fix 4). The per-tick re-enable that used to block clicks is
-  // gone; clicks pass through except during a brief interaction window (Ctrl+Alt+G) or card mode.
-  if (Date.now() > overlayInteractUntil && store.get("mode") === "manual") overlayWindow.setIgnoreMouseEvents(true, { forward: true });
+  // Globe v2 → PROD 2026-10-14 (F3 round 2): the resting mouse state comes from the MODE behaviour (manual is
+  // interactive now, so the globe can be clicked to open the companion); the overlay's hover IPC may still make
+  // the transparent parts click-through with forward:true. A brief interaction window always wins.
+  if (Date.now() > overlayInteractUntil && !overlayHoverOverride) overlayWindow.setIgnoreMouseEvents(modeOverlayBehavior(store.get("mode")).ignoreMouse, { forward: true });
   if (!overlayPhysics || !Number.isFinite(overlayPhysics.x)) {
     const spawn = randomGlobeSpawn();
     overlayPhysics = { x: spawn.x, y: spawn.y, vx: 0, vy: 0 };
@@ -755,8 +932,8 @@ function startOverlayPhysics() {
       overlayPhysics = next;
       overlayWindow.setBounds({ x: overlayPhysics.x, y: overlayPhysics.y, width: GLOBE_SIZE, height: GLOBE_SIZE }, false);
       maybeGreet(now);
-      // Restore click-through once an interaction window has elapsed.
-      if (now > overlayInteractUntil) overlayWindow.setIgnoreMouseEvents(true, { forward: true });
+      // Restore the mode's resting mouse state once an interaction window has elapsed (hover override respected).
+      if (now > overlayInteractUntil && !overlayHoverOverride) overlayWindow.setIgnoreMouseEvents(modeOverlayBehavior(store.get("mode")).ignoreMouse, { forward: true });
     } catch {
       // A bad screen read must never stop the loop; the next tick recovers.
     }
@@ -789,22 +966,32 @@ function hotkeyHandler(action) {
 }
 function registerHotkeys() {
   try { globalShortcut.unregisterAll(); } catch { /* none yet */ }
-  const defs = withRebinds(DEFAULT_HOTKEYS, store.get("hotkeyRebinds") || {});
+  // PROD 2026-10-14 (audit M20) — the everyday chords are configurable: off entirely (hotkeysEnabled:false), AltGr-safe
+  // (Ctrl+Shift+Alt+key) by opt-in or automatically on AltGr-heavy system languages, classic Ctrl+Alt otherwise.
+  const hk = store.get("hotkeyPrefs") || {};
+  let locales = [];
+  try { locales = typeof app.getPreferredSystemLanguages === "function" ? app.getPreferredSystemLanguages() : [app.getLocale()]; } catch { locales = []; }
+  const base = selectDefaultHotkeys({ locales, altGrSafe: hk.altGrSafe, enabled: hk.enabled !== false });
+  const defs = withRebinds(base, store.get("hotkeyRebinds") || {});
   hotkeyStatus = bindAll(
     defs,
     (combo, handler) => globalShortcut.register(combo, handler),
     (combo) => globalShortcut.isRegistered(combo),
     (def) => hotkeyHandler(def.action)
   );
+  if (hk.enabled === false) hotkeyStatus = DEFAULT_HOTKEYS.map((d) => ({ id: d.id, action: d.action, label: d.label, combo: d.combo, status: "disabled", usedFallback: false, reason: "hotkeys-off" }));
   // RUN 19 §3 — the single-purpose panic kill-switch (Ctrl+Alt+K, fallback Ctrl+Shift+Pause). Registered
   // separately from DEFAULT_HOTKEYS so it can't be confused with the everyday hotkeys, then appended to
-  // the live status list so it still shows + is rebindable in the Hotkeys tab.
-  const killStatus = registerWithFallback(
-    KILL_HOTKEY,
-    (combo, handler) => globalShortcut.register(combo, handler),
-    (combo) => globalShortcut.isRegistered(combo),
-    activateKillSwitch
-  );
+  // the live status list so it still shows + is rebindable in the Hotkeys tab. Its own switch: hotkeyPrefs.killSwitch.
+  const killDef = (store.get("hotkeyRebinds") || {}).kill ? { ...KILL_HOTKEY, combo: (store.get("hotkeyRebinds") || {}).kill } : KILL_HOTKEY;
+  const killStatus = hk.killSwitch === false
+    ? { id: KILL_HOTKEY.id, action: KILL_HOTKEY.action, label: KILL_HOTKEY.label, combo: killDef.combo, status: "disabled", usedFallback: false, reason: "kill-hotkey-off" }
+    : registerWithFallback(
+      killDef,
+      (combo, handler) => globalShortcut.register(combo, handler),
+      (combo) => globalShortcut.isRegistered(combo),
+      activateKillSwitch
+    );
   hotkeyStatus = [...hotkeyStatus, killStatus];
   for (const h of hotkeyStatus) {
     logEvent("HOTKEY", `${h.id}: ${h.combo} → ${h.status}${h.usedFallback ? " (fallback)" : ""}`);
@@ -824,13 +1011,25 @@ function killAllChildren() {
 
 // RUN 19 §3 — the kill-switch handler. Single purpose: kill children, undo the last action, dim the
 // globe, toast the user. Does nothing else (no menu, no dialog, no second action).
+// KILL GATE 2026-10-14 (review P0-2) — the gate closes FIRST (ariaStopped + the kill record), so every continuation that
+// resumes after this function (a child's close, a countdown's tick, a poll response) already finds it closed; then the
+// pending approvals go on hold and the approval poll stops. An elevated step already running (a UAC child Windows owns)
+// finishes its own command — ARIA cannot end an elevated process — but nothing after it runs: every later step, spawn,
+// approval and notice is refused at the gate until Start ARIA.
 function activateKillSwitch() {
+  store.set("ariaStopped", true);
+  store.set("ariaKill", { at: new Date().toISOString(), by: "ctrl-alt-k" });
   const restorePoints = store.get("restorePoints") || [];
-  const result = buildKillResult({ children: [...childProcesses], restorePoints });
   const killed = killAllChildren();
-  if (result.undoId) {
-    try { rollbackRestorePoint(result.undoId); } catch { /* rollback best-effort under panic */ }
+  // PROD 2026-10-14 (audit M19) — rollbackRestorePoint records the request and offers the System Restore point; it
+  // does NOT undo anything by itself (a real restore needs admin + a restart). So `undone` stays false and the toast
+  // says "undo available" / "nothing to undo" — never "last action undone" for an undo that did not run.
+  let undoRan = false;
+  const target = buildKillResult({ children: [], restorePoints });
+  if (target.undoId) {
+    try { const rb = rollbackRestorePoint(target.undoId); undoRan = Boolean(rb && rb.undone === true); } catch { /* rollback best-effort under panic */ }
   }
+  const result = buildKillResult({ children: Array.from({ length: killed }, () => ({})), restorePoints, undoRan });
   // RUN 21 — if an update was installed in the last 60 min, the kill-switch also reverts it.
   try {
     const us = readUpdateState();
@@ -841,17 +1040,28 @@ function activateKillSwitch() {
       writeUpdateState({ ...us, phase: "IDLE", installedAt: null });
     }
   } catch { /* update rollback is best-effort under panic */ }
-  // Halt remediation: stop watchers + hide the globe so nothing new fires mid-undo.
+  // Halt remediation: stop watchers + hide the globe so nothing new fires mid-undo. (F3 round 2) the state says
+  // ariaStopped:true so the renderer's Start button re-arms from the truth, not from a local guess.
   try { if (detectionOrchestrator) detectionOrchestrator.stopAll(); } catch { /* ignore */ }
+  store.set("ariaStopped", true);
+  // ADVISORY ESCALATION (2026-10-14) — every open "advise three times, then act" escalation is BLOCKED (audited) and never
+  // resumes on its own. Done BEFORE the countdowns are aborted so an in-flight auto-fix is recorded as blocked, not cancelled.
+  try { const k = advisoryMachine.kill("kill-switch"); if (k.blocked) logEvent("KILL-SWITCH", `Ctrl+Alt+K: ${k.blocked} advisory escalation(s) blocked — they will not resume on their own.`, { advisoriesBlocked: k.blocked }); } catch { /* best-effort under panic */ }
   // RUN 23 — abort any pending pre-execution countdowns so an in-flight fix never lands after the kill.
   try { const aborted = countdownManager.abortAll(); if (aborted) { closeActionIndicator(); logEvent("KILL-SWITCH", `Aborted ${aborted} pending action countdown(s).`); } } catch { /* best-effort under panic */ }
+  // KILL GATE (review P0-2) — pending approvals go ON HOLD (no click, link or timeout can run them; Start ARIA asks again)
+  // and the approval poll stops, so a decision made on the server can never be merged into a run while ARIA is stopped.
+  try { const h = approvals.hold("kill-switch"); if (h.held.length) logEvent("KILL-SWITCH", `Ctrl+Alt+K: ${h.held.length} pending approval(s) put on hold — they cannot be approved or run until Start ARIA asks again.`, { approvalsHeld: h.held.length }); } catch { /* best-effort under panic */ }
+  stopApprovalPolling();
+  // The opt-in Office Safety Net (local backups) stops too — "stops everything" (it restarts on Start ARIA when it is on).
+  try { if (officeSafetyService && officeSafetyService.status().running) officeSafetyService.stop(); } catch { /* best-effort under panic */ }
   setAgentState("idle");
-  logEvent("KILL-SWITCH", `Ctrl+Alt+K: ${killed} child process(es) terminated; ${result.undone ? "last action undone" : "no action to undo"}.`);
+  logEvent("KILL-SWITCH", `Ctrl+Alt+K: ${killed} child process(es) terminated; ${result.undone ? "last action undone" : result.undoAvailable ? "undo available via System Restore (not applied automatically)" : "nothing to undo"}.`);
   if (mainWindow && !mainWindow.isDestroyed()) {
-    try { mainWindow.webContents.send("sentinel:kill-switch", { toast: result.toast, killedCount: killed, undone: result.undone }); } catch { /* renderer toast best-effort */ }
+    try { mainWindow.webContents.send("sentinel:kill-switch", { toast: result.toast, killedCount: killed, undone: result.undone, undoAvailable: result.undoAvailable }); } catch { /* renderer toast best-effort */ }
   }
   broadcastState();
-  return { ok: true, killedCount: killed, undone: result.undone };
+  return { ok: true, killedCount: killed, undone: result.undone, undoAvailable: result.undoAvailable, toast: result.toast };
 }
 
 // ── RUN 19 §4 — triple-confirm delete prefs, persisted to userData/delete-prefs.json ──────────────
@@ -905,7 +1115,8 @@ function runPowerShell(command, timeoutMs = 12000) {
     let out = "";
     let child;
     try {
-      child = spawn("powershell.exe", ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-Command", command],
+      // PROD 2026-10-14 (audit M8) — Restricted: an inline -Command never needs Bypass (Restricted only forbids .ps1 files).
+      child = spawn("powershell.exe", ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Restricted", "-Command", command],
         { windowsHide: true, timeout: timeoutMs });
     } catch { return resolve(""); }
     childProcesses.add(child);
@@ -1006,10 +1217,14 @@ function writeUpdateState(state) {
 
 // Update-channel poll (launch · daily-jittered · wake · on-demand). Persists state + fires to renderer.
 async function runUpdateCheck(reason = "manual") {
+  if (reason !== "manual" && !telemetryAllowed()) { logEvent("UPDATE", `Update check (${reason}) deferred until Setup is completed.`); return { updateAvailable: false, deferred: true, reason: "setup-not-completed" }; }
   const lic = readLicense() || {};
+  // PROD 2026-10-14 (audit M9/M17) — the device credential travels as x-sentinel-key (sha256 of the key); the raw key
+  // in the query string is only the legacy fallback when there is no 64-hex key to hash.
+  const feed = buildFeedRequest(lic.key || "", "https://iisupp.net", `version=${encodeURIComponent(SENTINEL_VERSION)}`);
   const result = await checkForUpdate({
     fetchManifest: async () => {
-      const r = await outbound.fetch(`${UPDATE_MANIFEST_ENDPOINT}?license=${encodeURIComponent(lic.key || "")}&version=${SENTINEL_VERSION}`, { headers: { "user-agent": "aria-sentinel" } });
+      const r = await outbound.fetch(feed.url, { headers: { "user-agent": "aria-sentinel", "x-sentinel-device": deviceIdHash(), ...feed.requestHeaders } });
       return r.status === 200 ? await r.text() : "";
     },
     installedVersion: SENTINEL_VERSION
@@ -1029,6 +1244,7 @@ async function runUpdateCheck(reason = "manual") {
 
 // Daily heartbeat (content-blind) — license keepalive + update advisory.
 async function sendHeartbeat() {
+  if (!telemetryAllowed()) { logEvent("HEARTBEAT", "Heartbeat not sent — waiting for Setup to be completed (nothing leaves the device before consent)."); return { sent: false, reason: "setup-not-completed" }; }
   const lic = readLicense() || {};
   const payload = buildHeartbeatPayload({
     licenseId: lic.key ? String(lic.key).slice(0, 16) : null,
@@ -1041,16 +1257,23 @@ async function sendHeartbeat() {
     osBuild: os.release()
   });
   try {
-    const res = await outbound.fetch(HEARTBEAT_ENDPOINT, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
-    logEvent("HEARTBEAT", "Daily heartbeat sent (content-blind).");
+    // (audit M9/M31) the device credential + device hash ride in headers, like notify/approval already do.
+    const keyHash = licenseKeyHash();
+    const headers = { "content-type": "application/json", "user-agent": "aria-sentinel", "x-sentinel-device": deviceIdHash() };
+    if (keyHash) headers["x-sentinel-key"] = keyHash;
+    const res = await outbound.fetch(HEARTBEAT_ENDPOINT, { method: "POST", headers, body: JSON.stringify(payload) });
+    store.set("lastHeartbeat", { ok: Boolean(res && res.ok), status: res && res.status, ts: new Date().toISOString() });
+    logEvent("HEARTBEAT", res && res.ok ? "Daily heartbeat sent (content-blind)." : `Daily heartbeat not accepted (HTTP ${res && res.status}).`);
     // RUN-CU / CU4 (audit P0 #2) — the heartbeat reply is the fleet control plane's second channel: a
     // { killed, reason } directive here propagates without waiting for a manual "Update knowledge" click.
     try {
       const body = res && res.ok && typeof res.json === "function" ? await res.json().catch(() => null) : null;
       const kill = parseControlPlaneKill(body);
       if (kill.present) applyControlPlaneKill(kill.killed, kill.reason);
+      // REVIEW P1-3 — the server's first sight of this device anchors the local trial (only ever moves its start earlier).
+      if (body && body.trialStartedAt) noteServerTrialStart(body.trialStartedAt);
     } catch { /* an unparseable reply never affects the kill state */ }
-  } catch { /* offline is fine; next daily tick retries */ }
+  } catch { store.set("lastHeartbeat", { ok: false, status: 0, ts: new Date().toISOString() }); /* offline is fine; next daily tick retries */ }
 }
 
 // Startup registration: HKCU Run key + at-logon Task (belt + suspenders). HKCU only → no elevation.
@@ -1064,18 +1287,25 @@ function runWinCmd(args) {
     child.on("close", (code) => { childProcesses.delete(child); resolve({ ok: code === 0 }); });
   });
 }
-async function registerStartup() {
+// PROD 2026-10-14 (audit M7) — ONE launcher per logon. Registration writes the HKCU Run key only; the at-logon task
+// is created only as the SELF-HEAL after the key was removed (belt-and-suspenders used to mean two launches per
+// logon, the second of which hit second-instance and popped the Settings window ~30 s after every login).
+async function registerStartup({ withTask = false } = {}) {
+  if (process.platform !== "win32") return { ok: false, reason: "not-windows" };
   const exe = process.execPath;
   // 🔒 R11 — never register/scan a path inside the off-limits private folder.
   if (isBlockedPath(exe)) { logEvent("SECURITY", `R11 blocked startup path. ${r11AuditEntry("startup").surfaced}`); return { ok: false }; }
   const reg = registryRunEntry(exe);
-  const task = taskDefinition(exe);
-  await runWinCmd(["reg", "add", reg.key, "/v", reg.name, "/t", "REG_SZ", "/d", reg.value, "/f"]);
-  await runWinCmd(["schtasks", "/Create", "/TN", task.name, "/TR", task.command, "/SC", "ONLOGON", "/DELAY", "0000:30", "/RL", "LIMITED", "/F"]);
+  const regRes = await runWinCmd(["reg", "add", reg.key, "/v", reg.name, "/t", "REG_SZ", "/d", reg.value, "/f"]);
+  let taskRes = { ok: false, skipped: true };
+  if (withTask) {
+    const task = taskDefinition(exe);
+    taskRes = await runWinCmd(["schtasks", "/Create", "/TN", task.name, "/TR", task.command, "/SC", "ONLOGON", "/DELAY", "0000:30", "/RL", "LIMITED", "/F"]);
+  }
   store.set("startupEnabled", true);
-  store.set("startupBothSeenAt", new Date().toISOString());
-  logEvent("STARTUP", "Registered HKCU Run key + at-logon task.");
-  return { ok: true };
+  if (regRes.ok) store.set("startupBothSeenAt", new Date().toISOString());
+  logEvent("STARTUP", regRes.ok ? (withTask ? `Registered HKCU Run key + at-logon task (self-heal)${taskRes.ok ? "" : " — task creation did not complete"}.` : "Registered HKCU Run key.") : "Startup registration did not complete (reg add failed).");
+  return { ok: regRes.ok, task: taskRes.ok };
 }
 async function probeStartup() {
   const reg = await runWinCmd(["reg", "query", RUN_KEY, "/v", RUN_VALUE_NAME]);
@@ -1083,12 +1313,17 @@ async function probeStartup() {
   return { registry: reg.ok, task: task.ok };
 }
 async function healStartupIfNeeded() {
-  if (store.get("startupEnabled") === false) return; // user explicitly turned it off
+  // (audit M7) pure decision (startup-registrar.mjs) → no tamper audit on a clean first run, nothing at all off win32,
+  // the 24h grace honoured, and the at-logon task only as the heal after a removal.
+  if (process.platform !== "win32") return { action: "skip", reason: "not-windows" };
+  if (store.get("startupEnabled") === false) return { action: "skip", reason: "user-disabled" }; // user explicitly turned it off
   const status = await probeStartup();
-  if (status.registry && status.task) { store.set("startupBothSeenAt", new Date().toISOString()); return; }
-  // Both gone → possible tamper (classify + audit). A single missing entry just self-heals silently.
-  if (!status.registry && !status.task) recordStartupTamper(classifyRemoval({ registryMissing: true, taskMissing: true }));
-  await registerStartup(); // self-heal
+  const decision = startupHealDecision({ platform: process.platform, startupEnabled: store.get("startupEnabled"), status, lastBothPresentAt: store.get("startupBothSeenAt"), now: Date.now() });
+  if (decision.action === "ok") { store.set("startupBothSeenAt", new Date().toISOString()); return decision; }
+  if (decision.action !== "register") return decision;
+  if (decision.tamper) recordStartupTamper(classifyRemoval({ registryMissing: true, taskMissing: !status.task }));
+  await registerStartup({ withTask: decision.reason !== "never-registered" }); // first run: key only; a heal: key + task
+  return decision;
 }
 function recordStartupTamper(method) {
   const audit = buildTamperAudit({ method, now: Date.now(), userConfirmed: false });
@@ -1098,7 +1333,7 @@ function recordStartupTamper(method) {
   if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send("startup:tamper", audit);
 }
 function setAutoStartup(on) {
-  if (on) { store.set("startupEnabled", true); registerStartup().catch(() => undefined); return { ok: true, enabled: true }; }
+  if (on) { store.set("startupEnabled", true); registerStartup({ withTask: false }).catch(() => undefined); return { ok: true, enabled: true }; }
   store.set("startupEnabled", false);
   recordStartupTamper("settings-toggle");
   return { ok: true, enabled: false };
@@ -1122,10 +1357,14 @@ async function performUpdateInstall(state) {
   const ctx = { on: true, running: true, fullscreen: isFullscreenBusy() };
   if (!orchestrator.canInstallNow(ctx)) return { ok: false, reason: "deferred-fullscreen" };
   snapshotPreUpdate(state.version);
-  writeUpdateState({ ...state, phase: "INSTALLED", installedAt: new Date().toISOString() });
   logEvent("UPDATE", `Installing update ${state.version} in an opportunity window.`);
-  try { await installUpdate(); } catch { /* installUpdate guards its own failure */ }
-  return { ok: true };
+  // (audit M24) INSTALLED is written only when the installer was really handed the update (quitAndInstall reached);
+  // a failed download leaves the phase where it was, so a retry is still possible and the state never lies.
+  let r = { ok: false, reason: "not-attempted" };
+  try { r = await installUpdate(); } catch { r = { ok: false, reason: "install-threw" }; }
+  if (r && r.ok) writeUpdateState({ ...state, phase: "INSTALLED", installedAt: new Date().toISOString() });
+  else logEvent("UPDATE", `Update ${state.version} not installed (${(r && r.reason) || "unknown"}); will retry at the next opportunity.`);
+  return r && r.ok ? { ok: true } : { ok: false, reason: (r && r.reason) || "install-failed" };
 }
 function updateTick() {
   let st = readUpdateState();
@@ -1134,7 +1373,7 @@ function updateTick() {
     writeUpdateState(st);
     if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send("update:notice", { phase: st.phase, strike: st.strike, version: st.version });
   }
-  if (st.phase === "AUTO") {
+  if (st.phase === "AUTO" && !ariaStoppedNow()) { // (review P0-2) no automatic update install while ARIA is stopped
     const ctx = { on: true, running: true, localHour: new Date().getHours(), fullscreen: isFullscreenBusy(), now: Date.now() };
     if (orchestrator.nextOpportunity(st, ctx).action === "install") performUpdateInstall(st);
   }
@@ -1162,9 +1401,11 @@ function dashboardData() {
   // ever reach Anthropic": a novel question answered by the fallback is not a privacy incident. externalAiCalls
   // is reported separately + honestly in getState().
   const pc = lastPrivacyCapture || store.get("lastPrivacyCapture") || null;
-  const sources = { auditOk, privacyOk: !(pc && pc.pass === false), tier0Ok: !remediationKilled(), heartbeatOk: true };
+  // (audit M29) heartbeatOk is the LAST real heartbeat outcome (true until one has actually failed; never a literal "all good").
+  const hb = store.get("lastHeartbeat") || null;
+  const sources = { auditOk, privacyOk: !(pc && pc.pass === false), tier0Ok: !remediationKilled(), heartbeatOk: !(hb && hb.ok === false) };
   const log = store.get("transparencyLog") || [];
-  const fixes = log.filter((e) => e.tag === "RUN").length;
+  const fixes = countLiveFixes(log); // R6a — live fixes only, never a preview
   const pending = [];
   const upd = readUpdateState();
   if (upd.phase && upd.phase !== "IDLE" && upd.phase !== "INSTALLED") pending.push({ text: `Update v${upd.version || ""} available`, cta: "Install", tab: "about" });
@@ -1178,21 +1419,28 @@ function dashboardData() {
   const csDraft = readCaseStudyDraft(); // RUN-E E2 — staged proof review card (consent-gated; never auto-published)
   if (csDraft && !(csDraft.consent && csDraft.consent.granted)) pending.push({ text: caseStudyPendingText(csDraft), cta: "Review proof", tab: "about" });
   const vp = valueProofNow(); // RUN-B B2 — real-or-empty ROI ($/hours) + deflection for the dashboard hero
+  const sla = slaData();
   return {
     sources,
-    subline: { eventsToday: log.length, threats: 0, lastSyncAgo: upd.lastCheckAt ? relativeAgo(upd.lastCheckAt) : "just now" },
-    metrics: { uptime7d: null, mttr: null, accuracy: null, breaches: 0, hoursSaved: vp.hoursSaved, dollarsSaved: vp.dollarsSaved, deflection: resolutionStatsNow().deflectionPct, version: SENTINEL_VERSION, updatePending: pending.some((p) => /Update/.test(p.text)) },
+    // (audit M29) real-or-empty: threats are the SECURITY rows (null when none were ever evaluated is not a thing —
+    // the count is real); breaches come from the SLA surface (null until measured); "last sync" says "never" honestly.
+    subline: { eventsToday: log.length, threats: log.filter((e) => e.tag === "SECURITY").length, lastSyncAgo: upd.lastCheckAt ? relativeAgo(upd.lastCheckAt) : "never" },
+    metrics: { uptime7d: sla.uptime.d7, mttr: null, accuracy: null, breaches: sla.measured ? (sla.breaches || []).length : null, hoursSaved: vp.hoursSaved, dollarsSaved: vp.dollarsSaved, deflection: resolutionStatsNow().deflectionPct, version: SENTINEL_VERSION, updatePending: pending.some((p) => /Update/.test(p.text)) },
     pending,
     activity: recentLog(10),
     // Rule 14 — the trust strip states what was measured, and says "not measured yet" when it was not.
     trust: `🔒 Local processing · audit integrity ${auditOk ? "verified" : "NEEDS REVIEW"} · ${pc && pc.ts ? `privacy verifier ${pc.pass ? "PASS" : "REVIEW"} (${pc.disallowedHostCount || 0} off-allowlist, ${pc.leakingPayloadCount || 0} with content, last capture ${relativeAgo(pc.ts)})` : "privacy verifier not run yet — run Live capture (10s)"}${s.externalAiCalls ? " · Anthropic fallback used this session" : ""}`
   };
 }
+/** (audit M13) fixes whose read-only post-fix probe PASSED — the only number allowed to be called "verified". */
+function verifiedFixCount() {
+  return (store.get("transparencyLog") || []).filter((e) => e && e.tag === "DONE" && /^Verification for .*: passed\.$/.test(String(e.text || ""))).length;
+}
 function relativeAgo(iso) { const t = Date.parse(iso); if (!t) return "just now"; const m = Math.round((Date.now() - t) / 60000); return m < 1 ? "just now" : m < 60 ? `${m}m ago` : `${Math.round(m / 60)}h ago`; }
 
 function performanceData() {
   const log = store.get("transparencyLog") || [];
-  const fixes = log.filter((e) => e.tag === "RUN").length;
+  const fixes = countLiveFixes(log); // R6a — live fixes only, never a preview
   const diags = log.filter((e) => e.tag === "DIAGNOSE").length;
   const chatStats = store.get("chatStats") || {}; // D2 — real Ask-ARIA usage
   return {
@@ -1208,19 +1456,39 @@ function performanceData() {
 function readSlaState() {
   try { return Sla.openSlaState(fs.readFileSync(SLA_STATE_FILE(), "utf8"), appHmacKey()); } catch { return { downtime: [], detections: [] }; }
 }
+function writeSlaState(state) {
+  try { fs.mkdirSync(path.dirname(SLA_STATE_FILE()), { recursive: true }); fs.writeFileSync(SLA_STATE_FILE(), Sla.sealSlaState(state, appHmacKey())); } catch { /* best-effort */ }
+  return state;
+}
+// PROD 2026-10-14 (audit M12) — the SLA surface is REAL-OR-EMPTY: nulls + "not measured yet" until a detection or a
+// downtime row has actually been recorded on this device; never "100% met" over zero data.
 function slaData() {
   const tier = licenseTier();
   const st = readSlaState();
-  const compliance = Sla.slaCompliance(st.detections || [], st.downtime || [], tier);
-  const breaches = Sla.breaches(st.detections || [], tier);
+  const surface = Sla.slaSurface(st, tier, Date.now());
   return {
     tier,
-    uptime: { h24: Sla.uptimePct(st.downtime, 86400000), d7: Sla.uptimePct(st.downtime, 7 * 86400000), d30: Sla.uptimePct(st.downtime, 30 * 86400000), d90: Sla.uptimePct(st.downtime, 90 * 86400000) },
-    compliance,
-    thresholds: { response: Sla.tierSla(tier).response, resolution: Sla.tierSla(tier).resolution },
-    breaches,
-    credits: Sla.serviceCredits(breaches, tier, 0)
+    ...surface,
+    thresholds: { response: Sla.tierSla(tier).response, resolution: Sla.tierSla(tier).resolution }
   };
+}
+// (audit M12) the producers that were missing: a launch after an unseen gap > 2 min is downtime; every detection
+// writes a row (responseMs = watcher → card), updated with resolveMs when its fix verifies.
+const LAST_SEEN_KEY = "slaLastSeenAt";
+function recordLaunchGapAsDowntime() {
+  try {
+    const last = Date.parse(store.get(LAST_SEEN_KEY) || "");
+    const gap = Number.isFinite(last) ? startedAt - last : NaN;
+    if (Number.isFinite(gap) && gap > 2 * 60 * 1000) writeSlaState(Sla.recordDowntime(readSlaState(), { startMs: last, durationMs: gap, reason: "not-running" }));
+  } catch { /* best-effort */ }
+  touchSlaLastSeen();
+}
+function touchSlaLastSeen() { try { store.set(LAST_SEEN_KEY, new Date().toISOString()); } catch { /* best-effort */ } }
+function recordSlaDetectionRow(detection, recipe) {
+  try {
+    const sev = recipe && recipe.risk === "red" ? "P1" : recipe && (recipe.risk === "yellow" || recipe.risk === "orange") ? "P3" : "P4";
+    writeSlaState(Sla.recordSlaDetection(readSlaState(), { severity: sev, responseMs: 0, resolved: false, ts: detection && detection.ts }));
+  } catch { /* best-effort */ }
 }
 
 // RUN-CU / CU4 (audit P0 #4) — the Compliance tab + the quarterly PDF read EVIDENCE, not literals. Every control
@@ -1274,8 +1542,9 @@ function reportData(now = Date.now()) {
     license: (readLicense() || {}).key ? String(readLicense().key).slice(0, 16) : "trial",
     company: "your organization", // content-blind: never the real machine/user name
     quarter: quarterOf(now),
-    kpis: { incidents: perf.ai.diagnoses || 0, autoPct: perf.operational.autoPct, hoursSaved: vp.hoursSaved, dollarsSaved: vp.dollarsSaved, deflectionPct: vp.deflectionPct, resolved: vp.resolved, conversations: vp.conversations, accuracy: perf.ai.accuracy, breaches: (sla.breaches || []).length, uptime7d: sla.uptime.d7, mttr: perf.operational.mttr, version: SENTINEL_VERSION },
-    sla: { composite: sla.compliance.composite, floor: sla.compliance.floor, breaches: (sla.breaches || []).length, categories: { uptime: `${sla.compliance.uptime}%`, met: sla.compliance.met ? "yes" : "no" } },
+    // (audit M13) incidents = detections logged; diagnoses + verified fixes are counted separately — never conflated.
+    kpis: { incidents: (store.get("transparencyLog") || []).filter((e) => e.tag === "DETECT").length, diagnoses: perf.ai.diagnoses || 0, verifiedFixes: verifiedFixCount(), autoPct: perf.operational.autoPct, hoursSaved: vp.hoursSaved, dollarsSaved: vp.dollarsSaved, deflectionPct: vp.deflectionPct, resolved: vp.resolved, conversations: vp.conversations, accuracy: perf.ai.accuracy, breaches: (sla.breaches || []).length, uptime7d: sla.uptime.d7, mttr: perf.operational.mttr, version: SENTINEL_VERSION },
+    sla: { composite: sla.compliance.composite, floor: sla.compliance.floor, breaches: (sla.breaches || []).length, measured: sla.measured !== false, categories: sla.measured === false ? { uptime: "not measured yet", met: "not measured yet" } : { uptime: `${sla.compliance.uptime}%`, met: sla.compliance.met ? "yes" : "no" } },
     compliance: { soc2: comp.frameworks.soc2, hipaa: comp.frameworks.hipaa, pipeda: comp.frameworks.pipeda, gdpr: comp.frameworks.gdpr },
     // RUN-CU / CU4 — evidence + the measured privacy verdict so the PDF says "verified" only when it is.
     evidence: comp.evidence,
@@ -1406,23 +1675,40 @@ function maybeRunQuarterly() {
 }
 
 // RUN 15 §6 — Start/Stop ARIA. Stop hides the globe + stops watchers; Start re-shows + monitors.
+// KILL GATE 2026-10-14 (review P0-2) — Stop ARIA closes the same gate Ctrl+Alt+K does (nothing runs while stopped: no
+// fix, no approval, no timeout policy, no poll); its open escalations freeze in place (Ctrl+Alt+K blocks them for good).
 function stopAria() {
   const next = applyRunState({ running: true, watchers: true }, "stop");
   store.set("ariaStopped", true);
   store.set("pausedUntil", 0);
   try { if (detectionOrchestrator) detectionOrchestrator.stopAll(); } catch { /* ignore */ }
+  try { const aborted = countdownManager.abortAll(); if (aborted) closeActionIndicator(); } catch { /* best-effort */ }
+  stopApprovalPolling();
   hideOverlay();
   setAgentState("idle");
-  logEvent("WATCH", "ARIA stopped by user — globe hidden, monitoring paused.");
+  logEvent("WATCH", "ARIA stopped by user — globe hidden, monitoring paused, nothing runs until Start ARIA.");
   broadcastState();
   return { ok: true, state: next };
 }
+/**
+ * Start ARIA — the ONE deliberate way out of a stop (Stop ARIA or Ctrl+Alt+K), from the visible Start ARIA button
+ * (sentinel:start-aria). Audited: after a kill it says so, re-asks every held approval (fresh links) and restarts the
+ * watchers, the approval poll and an enabled Office Safety Net. Blocked escalations stay closed.
+ */
 function startAria() {
+  const wasStopped = ariaStoppedNow();
+  const kill = store.get("ariaKill") || null;
   store.set("ariaStopped", false);
+  store.delete("ariaKill");
   store.set("pausedUntil", 0);
   startDetection();
   if (store.get("showFloatingGlobe") !== false) showOverlay({ expanded: false });
   applyModeBehavior(store.get("mode"));
+  let reasked = 0;
+  if (kill) { try { reasked = approvals.reaskHeld().reasked.length; } catch { reasked = 0; } }
+  if (approvals.pending().length) ensureApprovalPolling();
+  try { if ((store.get("officeSafety") || {}).enabled === true && !(officeSafetyService && officeSafetyService.status().running)) startOfficeSafety(); } catch { /* the safety net never blocks a start */ }
+  if (wasStopped) logEvent("KILL-SWITCH", `Resumed by the person at this device (Start ARIA) after ${kill ? `Ctrl+Alt+K (${String(kill.at || "").slice(0, 19)})` : "Stop ARIA"} — fixes may run again through every gate${kill ? `; ${reasked} held approval(s) asked again with new links; escalations blocked by Ctrl+Alt+K stay closed` : ""}.`, { resumed: true, after: kill ? "kill-switch" : "stop", reasked });
   logEvent("WATCH", "ARIA started — now monitoring (screen errors → event log → KB → research → escalate).");
   broadcastState();
   return { ok: true, state: applyRunState({}, "start") };
@@ -1430,13 +1716,15 @@ function startAria() {
 
 // RUN 15 §1 — runtime self-heal pass: audit real surfaces, auto-heal recoverable, escalate the rest.
 function runSelfHeal() {
+  // (audit M20) probe the chords that are ACTUALLY configured (AltGr-safe / rebinds); a deliberately disabled hotkey is healthy.
+  const liveHotkeys = hotkeyStatus.length ? hotkeyStatus.filter((h) => h.id !== KILL_HOTKEY.id) : DEFAULT_HOTKEYS.map((h) => ({ id: h.id, combo: h.combo, status: "active" }));
   const features = [
-    ...DEFAULT_HOTKEYS.map((h) => ({ id: `hotkey-${h.id}`, type: "hotkey", recoverable: true, combo: h.combo })),
+    ...liveHotkeys.map((h) => ({ id: `hotkey-${h.id}`, type: "hotkey", recoverable: true, combo: h.combo, disabled: h.status === "disabled" })),
     { id: "watcher-orchestrator", type: "watcher", recoverable: true },
     { id: "bridge", type: "ipc", recoverable: false, fixType: "code" }
   ];
   const probe = (f) => {
-    if (f.type === "hotkey") { try { return globalShortcut.isRegistered(f.combo); } catch { return false; } }
+    if (f.type === "hotkey") { if (f.disabled) return true; try { return globalShortcut.isRegistered(f.combo); } catch { return false; } }
     if (f.id === "watcher-orchestrator") return Boolean(detectionOrchestrator);
     if (f.id === "bridge") return !bridgeStatus.conflict;
     return true;
@@ -1478,8 +1766,8 @@ function enableGlobeInteraction(ms = 3000) {
   overlayInteractUntil = Date.now() + ms;
   overlayWindow.setIgnoreMouseEvents(false);
   setTimeout(() => {
-    if (Date.now() >= overlayInteractUntil && overlayWindow && !overlayWindow.isDestroyed() && !overlayExpanded) {
-      overlayWindow.setIgnoreMouseEvents(true, { forward: true });
+    if (Date.now() >= overlayInteractUntil && overlayWindow && !overlayWindow.isDestroyed() && !overlayExpanded && !overlayHoverOverride) {
+      overlayWindow.setIgnoreMouseEvents(modeOverlayBehavior(store.get("mode")).ignoreMouse, { forward: true });
     }
   }, ms + 50).unref?.();
 }
@@ -1531,14 +1819,22 @@ function buildHealthState() {
       fixesThisWeek += 1;
     }
   }
+  // PROD 2026-10-14 (audit M29) — no fabricated constants: the watcher heartbeat is the orchestrator's REAL status
+  // (null = not measured → the scorer's neutral), and `tampered` is the real integrity verdict.
+  let heartbeats = null;
+  try {
+    const st = detectionOrchestrator ? detectionOrchestrator.status() : null;
+    if (st) heartbeats = { healthy: st.running && !agentBlocked() ? st.count : 0, total: st.count };
+  } catch { heartbeats = null; }
+  const integrity = store.get("auditIntegrity") || null;
   return {
     state: {
-      heartbeats: { healthy: agentBlocked() ? 0 : 7, total: 7 },
+      heartbeats,
       recipeOutcomes: { success, failure },
       serviceNow: { queued: serviceNowQueueDepthSafe(), failed: 0 },
       // kb age is unknown locally (no signed-bundle timestamp on disk yet) → neutral-healthy.
       kb: {},
-      audit: { entries: log.length, valid: log.length, tampered: false }
+      audit: { entries: log.length, valid: integrity && integrity.ok === false ? Math.max(0, Number(integrity.brokenAt) || 0) : log.length, tampered: Boolean(integrity && integrity.ok === false) }
     },
     fixesThisWeek
   };
@@ -1582,7 +1878,7 @@ function refreshTray() {
     sessionActive(remoteSession)
       ? { label: "End remote control", click: () => endRemoteControl() }
       : { label: "Allow remote control (10 min)", click: () => allowRemoteControl() },
-    { label: "Update knowledge", click: () => updateKnowledge().catch(() => undefined) },
+    { label: "Update knowledge", click: () => updateKnowledge({ manual: true }).catch(() => undefined) },
     {
       label: paused ? "Resume watching" : "Pause for 24 hours",
       click: () => {
@@ -1599,7 +1895,7 @@ function refreshTray() {
       { label: "Grant Accessibility…", click: () => openMacPermissions("accessibility") }
     ] : []),
     { type: "separator" },
-    { label: "Simulate ARIA detection (test)", click: () => simulateAriaDetection() },
+    ...(devModeNow() ? [{ label: "Simulate ARIA detection (test)", click: () => simulateAriaDetection() }] : []), // (audit M32) dev only
     { label: "Quit ARIA Sentinel", click: () => app.quit() }
   ];
   tray.setContextMenu(Menu.buildFromTemplate(template));
@@ -1631,7 +1927,7 @@ function openPlanPicker() {
     title: "ARIA Sentinel - Choose your plan",
     backgroundColor: "#050505",
     autoHideMenuBar: true,
-    icon: makeTrayImage(),
+    icon: makeWindowIcon(),
     webPreferences: { preload: path.join(__dirname, "preload.cjs"), contextIsolation: true, nodeIntegration: false }
   });
   planPickerWindow.setMenuBarVisibility(false);
@@ -1672,7 +1968,7 @@ function openAdminConsole() {
     title: "ARIA Sentinel - Admin Console",
     backgroundColor: "#050505",
     autoHideMenuBar: true,
-    icon: makeTrayImage(),
+    icon: makeWindowIcon(),
     webPreferences: { contextIsolation: true, nodeIntegration: false }
   });
   adminWindow.setMenuBarVisibility(false);
@@ -1711,8 +2007,20 @@ function readLicense() {
 // { plan, status }. The verdict is cached at ~/.aria-sentinel/license-cache.json (hash-only, no raw key) so
 // the app keeps working offline; license-cache.mjs owns the 24h-fresh / 72h-degrade policy. A network blip
 // never locks a paying customer out — only a server-confirmed "revoked" or a >72h-unverified cache downgrades.
+// REVIEW P1-3 (2026-10-14) — the cache is believed only when the server SIGNED the verdict for this device + key
+// (license-cache.mjs); an unsigned answer counts for ≤1 h in the run that received it, never as admin.
 const RESOLVE_ENDPOINT = "https://iisupp.net/.netlify/functions/sentinel-resolve";
 const LICENSE_CACHE_FILE = path.join(os.homedir(), ".aria-sentinel", "license-cache.json");
+// REVIEW P1-3 — the trial clock's marks in the store: the monotonic last-seen high-water mark (also kept in the licence
+// cache as `last_seen`), a mirror of the local trial start, and the server's first sight of this device.
+const CLOCK_HIGH_WATER_KEY = "clockHighWater";
+const TRIAL_START_MIRROR_KEY = "trialStartedAt";
+const SERVER_TRIAL_START_KEY = "serverTrialStartedAt";
+const UNSIGNED_RECHECK_MS = 50 * 60 * 1000; // an unsigned verdict lasts 1 h: ask again before it lapses
+let unsignedVerdictThisRun = ""; // the fingerprint of the one UNSIGNED verdict this process itself received (never from disk)
+let unsignedRecheckTimer = null;
+let lastSigningState = "";
+let highWaterCacheWrittenAt = 0;
 
 function readLicenseCache() {
   try { return JSON.parse(fs.readFileSync(LICENSE_CACHE_FILE, "utf8")); } catch { return null; }
@@ -1720,26 +2028,111 @@ function readLicenseCache() {
 // The cache holds only a key HASH + plan + timestamps — deliberately no secret and no raw key, so even if
 // another local user could read it they gain nothing forgeable. We still scope it to the user profile dir
 // and best-effort user-only perms (consistent with license.json / trial.json alongside it).
-function writeLicenseCache(cache) {
+function writeLicenseCacheRaw(cache) {
   try {
     fs.mkdirSync(path.dirname(LICENSE_CACHE_FILE), { recursive: true });
     fs.writeFileSync(LICENSE_CACHE_FILE, JSON.stringify(cache, null, 2));
     try { fs.chmodSync(LICENSE_CACHE_FILE, 0o600); } catch { /* perms best-effort (no-op on some FS) */ }
   } catch { /* cache write best-effort */ }
 }
-function clearLicenseCache() { try { fs.rmSync(LICENSE_CACHE_FILE, { force: true }); } catch { /* already gone */ } }
+// REVIEW P1-3 — every write carries the last-seen high-water mark forward (never lowers it).
+function writeLicenseCache(cache) {
+  const keep = highWaterOf((readLicenseCache() || {}).last_seen, cache && cache.last_seen, store.get(CLOCK_HIGH_WATER_KEY));
+  writeLicenseCacheRaw({ ...cache, ...(keep > 0 ? { last_seen: new Date(keep).toISOString() } : {}) });
+}
+// REVIEW P1-3 — the verdict goes; the last-seen high-water mark stays (it is what stops a deleted trial.json from
+// meaning "never ran here").
+function clearLicenseCache() {
+  unsignedVerdictThisRun = "";
+  try {
+    const keep = highWaterOf((readLicenseCache() || {}).last_seen, store.get(CLOCK_HIGH_WATER_KEY));
+    if (keep > 0) writeLicenseCacheRaw({ last_seen: new Date(keep).toISOString() });
+    else fs.rmSync(LICENSE_CACHE_FILE, { force: true });
+  } catch { /* already gone */ }
+}
 
-// POST the key to sentinel-resolve. Returns { httpStatus, status, plan, verified_at }. Throws on a network
-// failure (caller falls back to the cache). The raw key never leaves over anything but this one HTTPS POST.
-async function resolveLicenseOnline(key, email = "") {
+// REVIEW P1-3 — the monotonic last-seen high-water mark: the latest time this app has seen (store + licence cache).
+function clockHighWaterMs(cache) {
+  let fromCache = 0;
+  try { fromCache = highWaterOf(((cache === undefined ? readLicenseCache() : cache) || {}).last_seen); } catch { fromCache = 0; }
+  return highWaterOf(store.get(CLOCK_HIGH_WATER_KEY), fromCache);
+}
+/** Raise the high-water mark to now (a clock rolled back never lowers it). The licence-cache copy is written ≤ every 10 min. */
+function touchClockHighWater() {
+  const now = Date.now();
+  try { if (now > (Number(store.get(CLOCK_HIGH_WATER_KEY)) || 0)) store.set(CLOCK_HIGH_WATER_KEY, now); } catch { /* best-effort */ }
+  if (highWaterCacheWrittenAt && now - highWaterCacheWrittenAt < 10 * 60 * 1000 && now >= highWaterCacheWrittenAt) return;
+  highWaterCacheWrittenAt = now;
+  try {
+    const cache = readLicenseCache() || {};
+    if (highWaterOf(cache.last_seen) < now) writeLicenseCacheRaw({ ...cache, last_seen: new Date(now).toISOString() });
+  } catch { /* best-effort */ }
+}
+/**
+ * A SIGNED verdict carries the server's clock. When it agrees with this device's clock but the high-water mark is
+ * ahead of both, the mark was poisoned by a clock that once ran fast — reset it to now, or a paying customer would be
+ * locked out for good. Only a verified signature can lower the mark; nothing unsigned ever does.
+ */
+function reconcileHighWaterWithSignedVerdict(cache) {
+  try {
+    const now = Date.now();
+    const server = Date.parse(String((cache && cache.verdict && cache.verdict.verified_at) || ""));
+    if (!Number.isFinite(server) || Math.abs(server - now) > LICENSE_CLOCK_SKEW_MS) return false;
+    if (clockHighWaterMs(cache) <= now + LICENSE_CLOCK_SKEW_MS) return false;
+    if (effectiveFromCache(cache, now, { ...licenseCacheOpts(), highWaterMs: 0 }).signed !== true) return false;
+    store.set(CLOCK_HIGH_WATER_KEY, now);
+    writeLicenseCacheRaw({ ...cache, last_seen: new Date(now).toISOString() });
+    logEvent("LICENSE", "The clock high-water mark was ahead of the licence server's signed time (this clock once ran fast) — reset to now.");
+    return true;
+  } catch { return false; }
+}
+/** REVIEW P1-3 — the server's first sight of this device (heartbeat / sentinel-resolve). Kept only if it is EARLIER. */
+function noteServerTrialStart(iso) {
+  try {
+    const t = Date.parse(String(iso || ""));
+    if (!Number.isFinite(t) || t <= 0 || t > Date.now() + LICENSE_CLOCK_SKEW_MS) return false; // a later start never matters
+    const prev = Date.parse(String(store.get(SERVER_TRIAL_START_KEY) || ""));
+    if (Number.isFinite(prev) && prev <= t) return false;
+    store.set(SERVER_TRIAL_START_KEY, new Date(t).toISOString());
+    return true;
+  } catch { return false; }
+}
+/** The options every cache decision is made with: this device, the high-water mark, the one unsigned answer of this run. */
+function licenseCacheOpts(cache) {
+  return { deviceHash: deviceIdHash(), highWaterMs: clockHighWaterMs(cache), trustedUnsigned: unsignedVerdictThisRun };
+}
+/** Store a sentinel-resolve answer (verdict + sig verbatim) and remember an unsigned one for THIS run only. */
+function storeVerdict(key, r) {
+  const cache = buildCache(key, r, Date.now());
+  writeLicenseCache(cache);
+  noteServerTrialStart(r.trialStartedAt);
+  if (cache.sig) {
+    unsignedVerdictThisRun = "";
+    reconcileHighWaterWithSignedVerdict(cache);
+  } else {
+    unsignedVerdictThisRun = unsignedFingerprint(cache);
+    try { clearTimeout(unsignedRecheckTimer); } catch { /* none */ }
+    unsignedRecheckTimer = setTimeout(() => { refreshLicense({ force: true }).catch(() => undefined); }, UNSIGNED_RECHECK_MS);
+    unsignedRecheckTimer?.unref?.();
+  }
+  if (cache.signing !== lastSigningState) {
+    lastSigningState = cache.signing;
+    if (!cache.sig) logEvent("LICENSE", `The licence server's answer was not signed (${cache.signing}) — it counts for at most 1 hour, never unlocks admin, and is checked again before it lapses and at the next launch.`);
+  }
+  return cache;
+}
+
+// POST the key to sentinel-resolve. Returns { httpStatus, status, plan, verified_at, verdict, sig, … }. Throws on a
+// network failure (caller falls back to the cache). The raw key never leaves over anything but this one HTTPS POST.
+async function resolveLicenseOnline(key, _email = "") {
   // RUN 34-3 — 10s timeout so license verification can NEVER hang the activation/trial flow on a slow or
   // mis-deployed endpoint. A timeout throws → enterLicense/refreshLicense treat it as offline (fail-closed).
-  // SENTINEL TRIAL GATING 2026-07-02 — email lets the server resolve a per-customer Walk-Through entitlement
-  // (looked up by email, never the shared plan key). Optional: a blank email just resolves the plan.
+  // REVIEW P1-3 — X-Sentinel-Device binds the signed verdict to this device. (The email is no longer sent: the
+  // server stopped reading it — review P2-2 — and an address the server ignores has no reason to leave the device.)
   const res = await outbound.fetch(RESOLVE_ENDPOINT, {
     method: "POST",
-    headers: { "content-type": "application/json", "user-agent": "aria-sentinel" },
-    body: JSON.stringify(email ? { key, email } : { key }),
+    headers: { "content-type": "application/json", "user-agent": "aria-sentinel", "x-sentinel-device": deviceIdHash() },
+    body: JSON.stringify({ key }),
     signal: AbortSignal.timeout ? AbortSignal.timeout(10000) : undefined
   });
   const data = await res.json().catch(() => ({}));
@@ -1750,45 +2143,55 @@ async function resolveLicenseOnline(key, email = "") {
     verified_at: data.verified_at || null,
     // SENTINEL TRIAL GATING 2026-07-02 — server-authoritative Walk-Through entitlement + real 30-day trial end.
     walkthroughEntitled: Boolean(data.walkthroughEntitled),
-    trialEndsAt: data.trialEndsAt || null
+    trialEndsAt: data.trialEndsAt || null,
+    // REVIEW P1-3 — the signed verdict, verbatim, and the server's first sight of this device.
+    verdict: data.verdict && typeof data.verdict === "object" && !Array.isArray(data.verdict) ? data.verdict : null,
+    sig: typeof data.sig === "string" ? data.sig : null,
+    signing: typeof data.signing === "string" ? data.signing : null,
+    trialStartedAt: typeof data.trialStartedAt === "string" ? data.trialStartedAt : null
   };
 }
 
-// Silent launch re-verify. A fresh, same-key cache skips the network; otherwise we re-resolve and refresh the
-// cache. Only "active"/"revoked" verdicts update the cache — "invalid"/429/5xx/offline keep the prior cache
-// (never downgrade on a non-revoked signal), and the staleness tiers in licenseStatus() handle the rest.
+// Silent launch re-verify. A fresh, same-key, SIGNED cache skips the network; otherwise we re-resolve and refresh the
+// cache. Only a server verdict (active / revoked / expired / past_due) updates the cache — "invalid"/429/5xx/offline
+// keep the prior cache (never downgrade on a non-verdict), and licenseStatus() decides what the cache is worth.
 async function refreshLicense({ force = false } = {}) {
+  // REVIEW P2-9 — nothing leaves the device before Setup consent: a pre-seeded license.json (Intune) is checked once
+  // the person finishes Setup (setup:complete runs this), never at a launch before it. A key the person pastes
+  // (enterLicense) is their own request and is not deferred.
+  if (!telemetryAllowed()) { logEvent("LICENSE", "Licence check deferred until Setup is completed (nothing leaves the device before consent)."); return { deferred: true, reason: "setup-not-completed" }; }
   const lic = readLicense();
   const key = lic && lic.key ? String(lic.key) : "";
   if (!/^[a-f0-9]{64}$/i.test(key)) { clearLicenseCache(); return; }
   const cache = readLicenseCache();
-  if (!force && cacheMatchesKey(cache, key) && cacheIsFresh(cache)) return;
+  if (!force && cacheMatchesKey(cache, key) && cacheIsFresh(cache, Date.now(), licenseCacheOpts(cache))) return;
   try {
-    const r = await resolveLicenseOnline(key, (lic && lic.email) || "");
-    if (r.status === "active" || r.status === "revoked") {
-      writeLicenseCache(buildCache(key, { plan: r.plan, status: r.status, walkthroughEntitled: r.walkthroughEntitled, trialEndsAt: r.trialEndsAt }));
+    const r = await resolveLicenseOnline(key);
+    noteServerTrialStart(r.trialStartedAt);
+    if (VERDICT_STATUSES.includes(r.status)) {
+      storeVerdict(key, r);
       if (r.status === "revoked") logEvent("LICENSE", "License revoked by issuer — downgraded to free.");
       else if (r.plan && lic.plan !== r.plan) {
         try { fs.writeFileSync(LICENSE_FILE, JSON.stringify({ ...lic, plan: r.plan, validated_at: new Date().toISOString() }, null, 2)); } catch { /* plan-sync best-effort */ }
       }
       broadcastState();
     }
-    // "invalid"/429/5xx → keep the prior cache; only "revoked" downgrades. Fail-open, like the old behavior.
+    // "invalid"/429/5xx → keep the prior cache; only a server verdict changes it. Fail-open, like the old behavior.
   } catch {
-    // Offline / endpoint down → keep cache; effectiveFromCache degrades by age (toast at 24h, Personal at 72h).
+    // Offline / endpoint down → keep cache; effectiveFromCache degrades by age (toast at 24h, free floor at 72h).
   }
 }
 
 // The effective plan + licensed flag come from the server's cached verdict, degraded by cache age. "licensed"
-// (a paid tier unlocked) holds while the cache is fresh (≤24h) or merely stale (24–72h, keeps the tier with a
-// reconnect nudge); a >72h-unverified or revoked cache, or no cache, falls back to Personal/Manual (fail-closed).
+// (a paid tier unlocked) holds while a trusted verdict is fresh (≤24h) or merely stale (24–72h, keeps the tier with a
+// reconnect nudge); an untrusted, >72h-unverified, revoked/expired/past-due cache, or no cache, falls back to the free floor.
 function licenseStatus() {
   const lic = readLicense();
   const key = lic && lic.key ? String(lic.key) : "";
-  if (!/^[a-f0-9]{64}$/i.test(key)) return { mode: "manual", licensed: false, email: null, plan: null, licenseSignal: "personal", licenseMessage: "" };
+  if (!/^[a-f0-9]{64}$/i.test(key)) return { mode: "manual", licensed: false, email: null, plan: null, ...trialFields(null), licenseSignal: "personal", licenseMessage: "" };
   const raw = readLicenseCache();
   const cache = cacheMatchesKey(raw, key) ? raw : null;
-  const eff = effectiveFromCache(cache, Date.now());
+  const eff = effectiveFromCache(cache, Date.now(), licenseCacheOpts(raw));
   const licensed = eff.action === "use" || eff.action === "toast"; // fresh or stale-but-trusted
   return {
     mode: licensed ? "licensed" : "manual",
@@ -1798,28 +2201,86 @@ function licenseStatus() {
     // SENTINEL TRIAL GATING 2026-07-02 — the permanent Walk-Through entitlement + real 30-day trial end,
     // echoed even when the plan degrades offline (a paid Walk-Through survives a network blip; fail-open).
     walkthroughEntitled: Boolean(eff.walkthroughEntitled),
-    trialEndsAt: eff.trialEndsAt || null,
+    ...trialFields(eff.trialEndsAt || null),
     licenseSignal: eff.action,        // "use" | "toast" | "banner" | "personal" — drives the renderer nudge/banner
-    licenseMessage: eff.message || ""
+    licenseMessage: eff.message || "",
+    licenseSigned: eff.signed === true // REVIEW P1-3 — true only for a verified, device-bound signed verdict
   };
 }
+/**
+ * PROD 2026-10-14 (R3) — the TRUE trial end + days left for the renderer: the server-issued entitlement end when the
+ * server sent one, otherwise the local 30-day trial's end; null when no trial exists. Same numbers on every surface.
+ * REVIEW P1-3 — the local trial's days left come from its state (high-water mark, a start in the future refused), never
+ * from the raw end date, so a rolled-back clock or an edited trial.json cannot show days that are not there.
+ */
+function trialFields(serverTrialEndsAt) {
+  const local = trialState();
+  const endsAt = serverTrialEndsAt || local.endsAt || null;
+  const endsMs = endsAt ? Date.parse(endsAt) : NaN;
+  const daysLeft = !serverTrialEndsAt ? (local.daysLeft == null ? null : local.daysLeft)
+    : Number.isFinite(endsMs) ? Math.max(0, Math.ceil((endsMs - Math.max(Date.now(), clockHighWaterMs())) / 86400000)) : null;
+  return { trialEndsAt: endsAt, daysLeft, trialDays: TRIAL_DAYS };
+}
 
-// RUN 13 §7 — 12-hour trial, stored at ~/.aria-sentinel/trial.json.
+// RUN 13 §7 — the trial, stored at ~/.aria-sentinel/trial.json. PROD 2026-10-14 (audit M14 / R3): 30 DAYS from the
+// first launch, started exactly once (the file is write-once; a later "Start trial" click or relaunch never resets
+// it); the state carries the TRUE end date + days left so every surface shows the same number.
+// REVIEW P1-3 — and deleting it does not restart it: the start is mirrored in the store, the server remembers when it
+// first saw this device, and a device ARIA has run on before (a high-water mark exists) never starts a second trial.
 function readTrial() {
   try { return JSON.parse(fs.readFileSync(TRIAL_FILE, "utf8")); } catch { return null; }
 }
-function ensureTrialStarted() {
-  if (readTrial() || licenseStatus().licensed) return;
+/** Every recorded trial start: trial.json, its store mirror, and the server's first sight (heartbeat / resolve). */
+function trialStarts(cache) {
+  const c = (cache === undefined ? readLicenseCache() : cache) || {};
+  return [readTrial()?.started_at, store.get(TRIAL_START_MIRROR_KEY), store.get(SERVER_TRIAL_START_KEY), c.trialStartedAt];
+}
+/** Has ARIA run on this device before? (any high-water mark or any recorded start — never "fresh" after the first run) */
+function trialHasRunBefore(cache) {
+  return clockHighWaterMs(cache) > 0 || Boolean(resolveTrialStart(store.get(TRIAL_START_MIRROR_KEY), store.get(SERVER_TRIAL_START_KEY)));
+}
+function writeTrialRecord(started, email = "", extra = {}) {
+  fs.mkdirSync(path.dirname(TRIAL_FILE), { recursive: true });
+  const record = { started_at: started, days: TRIAL_DAYS, ends_at: new Date(Date.parse(started) + TRIAL_DAYS * 86400000).toISOString(), device_id: os.hostname(), ...extra };
+  if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email))) record.email = String(email).trim().toLowerCase(); // local only, never sent
+  fs.writeFileSync(TRIAL_FILE, JSON.stringify(record, null, 2));
+  return record;
+}
+function mirrorTrialStart() {
   try {
-    fs.mkdirSync(path.dirname(TRIAL_FILE), { recursive: true });
-    fs.writeFileSync(TRIAL_FILE, JSON.stringify({ started_at: new Date().toISOString(), device_id: os.hostname() }, null, 2));
-    logEvent("LICENSE", "12-hour trial started.");
+    const local = Date.parse(String(readTrial()?.started_at || ""));
+    const mirror = Date.parse(String(store.get(TRIAL_START_MIRROR_KEY) || ""));
+    if (Number.isFinite(local) && local > 0 && !(mirror <= local)) store.set(TRIAL_START_MIRROR_KEY, new Date(local).toISOString());
+  } catch { /* best-effort */ }
+}
+function ensureTrialStarted(email = "") {
+  const ranBefore = trialHasRunBefore(); // decided BEFORE this launch leaves its own marks
+  mirrorTrialStart();
+  touchClockHighWater();
+  if (readTrial() || licenseStatus().licensed) return false;
+  // REVIEW P1-3 — trial.json is missing. A start recorded anywhere else is restored (never a new 30 days); with none, a
+  // device ARIA has run on before keeps "trial ended" — only a first run ever starts a trial.
+  const prior = resolveTrialStart(trialStarts());
+  if (prior || ranBefore) {
+    try { if (prior) writeTrialRecord(prior, "", { restored: true }); } catch { /* best-effort */ }
+    logEvent("LICENSE", prior
+      ? `trial.json was missing — restored from the recorded start (${prior.slice(0, 10)}); the trial is not restarted.`
+      : "trial.json was missing on a device ARIA has run on before — the trial is not restarted (it counts as ended).");
+    return false;
+  }
+  try {
+    const started = new Date().toISOString();
+    const record = writeTrialRecord(started, email);
+    store.set(TRIAL_START_MIRROR_KEY, started);
+    logEvent("LICENSE", `${TRIAL_DAYS}-day trial started (ends ${record.ends_at.slice(0, 10)}).`);
+    return true;
   } catch {
-    // trial file write best-effort
+    return false; // trial file write best-effort
   }
 }
 function trialState() {
-  return computeTrialStatus(readTrial()?.started_at);
+  const cache = readLicenseCache();
+  return trialStatusFor({ starts: trialStarts(cache), hasRunBefore: trialHasRunBefore(cache), now: Date.now(), highWaterMs: clockHighWaterMs(cache) });
 }
 // RUN-C C2 — 14-day SMB free-pilot, stored at ~/.aria-sentinel/pilot.json. Local only, no external send;
 // distinct from the 12-hour trial gate above. Falls back to free Manual at expiry (never locks the user out).
@@ -1918,26 +2379,27 @@ function dismissPilotPrompt(state) {
 // fixes = audit-log RUN entries (real resolved fixes). Real-or-empty: 0 fixes or an immature pilot => no ask, ever.
 function pilotMetricsNow() {
   const log = store.get("transparencyLog") || [];
-  const fixes = log.filter((e) => e.tag === "RUN").length;
+  const fixes = countLiveFixes(log); // R6a — live fixes only, never a preview
   // RUN-B B1 — feed the REAL deflection (resolved / conversations) into the D2 pilot->paid proof, not just a fix count.
   return pilotProofMetrics(store.get("resolutionOutcomes") || [], { fixes });
 }
 // RUN-B B1 — the "Was this fixed?" feedback loop -> a real, defensible deflection %. Outcomes persist
 // locally (no external send); the metric is real-or-empty and moves ONLY on a real resolved outcome.
 function resolutionOutcomesLog() { return store.get("resolutionOutcomes") || []; }
+function browserOutcomesLog() { return store.get("browserOutcomes") || []; } // JULY PORT 2026-10-14
 function resolutionStatsNow() { return deflectionStats(resolutionOutcomesLog()); }
 // RUN-B B2 — the ONE real-or-empty value proof (ROI $/hours + real deflection %) every surface renders. fixes =
 // the SAME audit-log RUN count the D2 pilot proof uses; outcomes = the real B1 "was this fixed?" events.
 function valueProofNow() {
   const log = store.get("transparencyLog") || [];
-  const fixes = log.filter((e) => e.tag === "RUN").length;
+  const fixes = countLiveFixes(log); // R6a — live fixes only, never a preview
   return valueProof({ fixes, outcomeEvents: resolutionOutcomesLog() });
 }
 // RUN-B B3 — the honest trust/security surface, real-or-empty. Same real signals B1/B2 use: audit-log RUN
 // count for fixes + the real "was this fixed?" outcomes for deflection. No seeded values, no cert we don't hold.
 function trustPostureNow() {
   const log = store.get("transparencyLog") || [];
-  const fixes = log.filter((e) => e.tag === "RUN").length;
+  const fixes = countLiveFixes(log); // R6a — live fixes only, never a preview
   return buildTrustSummary({ resolutionEvents: resolutionOutcomesLog(), fixes });
 }
 // RUN-B B5 - globe "issue resolved | email sent | ticket reference" confirmation. Everything real (Rule 14):
@@ -1972,9 +2434,13 @@ async function sendResolutionEmail({ issueTitle, ticketRef, sessionId } = {}) {
     user: to ? { email: to } : {}
   };
   try {
+    // (audit M31) the device credential + device hash ride along so the server can require them.
+    const headers = { "content-type": "application/json", "user-agent": "aria-sentinel", "x-sentinel-device": deviceIdHash() };
+    const keyHash = licenseKeyHash();
+    if (keyHash) headers["x-sentinel-key"] = keyHash;
     const res = await outbound.fetch(RESOLUTION_EMAIL_ENDPOINT, {
       method: "POST",
-      headers: { "content-type": "application/json", "user-agent": "aria-sentinel" },
+      headers,
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout?.(9000)
     });
@@ -2008,6 +2474,46 @@ function recordResolutionOutcome(payload = {}) {
   if (!res.deduped) logEvent("FEEDBACK", `Answer marked "${res.record.outcome}"${res.record.confidence ? ` (${res.record.confidence.level} confidence)` : ""}.`);
   return { ok: true, deduped: res.deduped, stats: resolutionStatsNow() };
 }
+// JULY PORT 2026-10-14 (a7f9e111) — a browser issue outcome reported by the companion extension over the local bridge.
+// The pure module keeps only symbolic data (issue id · signal · action · outcome · origin CATEGORY · severity); a URL,
+// title, page text or credential never enters the ledger. A resolved / failed / live-help outcome also feeds the SAME
+// real "was this fixed?" deflection ledger (resolved · not-yet · escalated) — real-or-empty, deduped per issue.
+// The managed browser-protection policy evaluator the July line ran here (decision-only) is NOT ported (out of scope).
+function recordBrowserOutcome(payload = {}) {
+  const res = appendBrowserOutcome(browserOutcomesLog(), payload || {});
+  if (!res.ok) return { ok: false, errors: res.errors, stats: resolutionStatsNow() };
+  store.set("browserOutcomes", res.events);
+  let proof = null;
+  const resolutionPayload = browserOutcomeToResolutionPayload(res.record);
+  if (resolutionPayload) proof = recordResolutionOutcome(resolutionPayload);
+  if (!res.deduped) {
+    logEvent("BROWSER", `Browser issue ${res.record.signal} marked ${res.record.outcome}.`, {
+      signal: res.record.signal,
+      outcome: res.record.outcome,
+      action: res.record.action,
+      originCategory: res.record.originCategory
+    });
+  }
+  broadcastState();
+  return {
+    ok: true,
+    deduped: res.deduped,
+    record: res.record,
+    proof,
+    browserOutcomes: res.events.length,
+    stats: resolutionStatsNow()
+  };
+}
+
+// The content-blind fleet packet (handles + ISO times + counts), served LOCALLY over the bridge only — no outbound
+// path is added; the 6-host telemetry allowlist does not grow.
+function browserOutcomeFleetPacketNow() {
+  return buildBrowserOutcomeFleetPacket(browserOutcomesLog(), {
+    now: Date.now(),
+    endpointSeed: "local-browser"
+  });
+}
+
 function conversionMomentNow() {
   return conversionMoment({ pilot: readPilot(), metrics: pilotMetricsNow() });
 }
@@ -2040,7 +2546,9 @@ function gateStatus() {
     // tab gating (isWalkthroughEntitled) with honest days-left; independent of the Sentinel plan.
     walkthroughEntitled: Boolean(lic.walkthroughEntitled),
     trialEndsAt: lic.trialEndsAt || null,
-    trial: { state: trial.state, remainingMs: trial.remainingMs, badge: trialBadge(trial.remainingMs) },
+    daysLeft: lic.daysLeft == null ? null : lic.daysLeft,
+    trialDays: TRIAL_DAYS,
+    trial: { state: trial.state, remainingMs: trial.remainingMs, endsAt: trial.endsAt, daysLeft: trial.daysLeft, durationMs: trial.durationMs, days: trial.days, badge: trialBadge(trial.remainingMs) },
     pilot: { state: pilot.state, daysRemaining: pilot.daysRemaining, badge: pilotBadge(pilot), ttfvMinutes: ttfvMinutes(readPilot()), ttfv: ttfvLabel(readPilot()) }, // RUN-E E1 — real-or-empty TTFV ("--" until a real first fix)
     conversion: conversionMomentNow(), // RUN-D D2 — surfaced to renderer alongside the pilot block
     unlocked: licenseUnlocked({ licenseValid: lic.licensed, trialState: trial.state })
@@ -2061,11 +2569,12 @@ function persistLicense(key, email, plan) {
 // rejected; a revoked key is stored-but-not-unlocked; offline keeps the key for a later launch re-verify
 // while the tier stays Personal (fail-closed) until the device can reach the endpoint.
 async function enterLicense(payload = {}) {
-  const key = String(payload.key || "").trim();
-  if (!/^[a-f0-9]{64}$/i.test(key)) return { ok: false, error: "invalid_key" };
+  // (audit M9) a key pasted from an email in UPPER/mixed case is the same key: normalise before the shape gate.
+  const key = String(payload.key || "").trim().toLowerCase();
+  if (!/^[a-f0-9]{64}$/.test(key)) return { ok: false, error: "invalid_key" };
   let r;
   try {
-    r = await resolveLicenseOnline(key, String(payload.email || "").trim());
+    r = await resolveLicenseOnline(key);
   } catch {
     if (!persistLicense(key, payload.email, null)) return { ok: false, error: "store_failed" };
     clearLicenseCache();
@@ -2076,11 +2585,20 @@ async function enterLicense(payload = {}) {
   if (r.status === "invalid" || r.httpStatus === 400 || r.httpStatus === 401) return { ok: false, error: "invalid_key" };
   if (r.httpStatus >= 500 || r.status === "error") return { ok: false, error: "server_error" };
   if (!persistLicense(key, payload.email, r.plan)) return { ok: false, error: "store_failed" };
-  writeLicenseCache(buildCache(key, { plan: r.plan, status: r.status, walkthroughEntitled: r.walkthroughEntitled, trialEndsAt: r.trialEndsAt }));
+  // REVIEW P1-3 — the answer is stored verbatim (verdict + sig); what it unlocks is licenseStatus()'s decision (a signed
+  // verdict for this device + key, or an unsigned one for ≤1 h in this run and never as admin).
+  if (!VERDICT_STATUSES.includes(r.status)) return { ok: false, error: "server_error" };
+  storeVerdict(key, r);
   if (r.status === "revoked") {
     logEvent("LICENSE", "License key entered but revoked by issuer — Personal tier.");
     broadcastState();
     return { ok: false, error: "revoked", status: gateStatus() };
+  }
+  if (!licenseStatus().licensed) {
+    const error = r.status === "expired" ? "expired" : r.status === "past_due" ? "past_due" : "unverified";
+    logEvent("LICENSE", `License key entered but not unlocked (${error.replace(/_/g, " ")}) — free tier.`);
+    broadcastState();
+    return { ok: false, error, status: gateStatus() };
   }
   logEvent("LICENSE", "License key entered + verified.");
   broadcastState();
@@ -2095,29 +2613,36 @@ function logoutLicense() {
 }
 
 // Open a Stripe checkout URL for a plan tier (env-configured), in the default browser.
-function openPlanCheckout(tier) {
+function openPlanCheckout(tier, opts = {}) {
   // RUN 19 §5 — tier → Stripe Checkout URL. New canonical env names with the RUN 13 names as fallback.
+  // PROD 2026-10-14 (F3 round 2) — `billing` ("monthly" | "yearly") picks the matching env URL when one exists and is
+  // carried on the /plans fallback (&billing=yearly) so the web page lands on the same toggle the app showed.
+  const yearly = opts && opts.billing === "yearly";
+  const env = process.env;
+  const pick = (...keys) => keys.map((k) => env[k]).find((v) => typeof v === "string" && /^https:\/\//.test(v)) || "";
   const map = {
-    personal: process.env.STRIPE_PERSONAL_MONTHLY_URL,
-    pro: process.env.STRIPE_PRO_MONTHLY_URL,
-    smb: process.env.STRIPE_SMALL_BUSINESS_YEARLY_URL || process.env.STRIPE_SMB_URL,
-    midsize: process.env.STRIPE_MIDSIZE_YEARLY_URL || process.env.STRIPE_MIDSIZE_URL,
-    enterprise: process.env.STRIPE_ENTERPRISE_YEARLY_URL || process.env.STRIPE_ENTERPRISE_URL
+    personal: yearly ? pick("STRIPE_PERSONAL_YEARLY_URL", "STRIPE_PERSONAL_MONTHLY_URL") : pick("STRIPE_PERSONAL_MONTHLY_URL", "STRIPE_PERSONAL_YEARLY_URL"),
+    pro: yearly ? pick("STRIPE_PRO_YEARLY_URL", "STRIPE_PRO_MONTHLY_URL") : pick("STRIPE_PRO_MONTHLY_URL", "STRIPE_PRO_YEARLY_URL"),
+    smb: yearly ? pick("STRIPE_SMALL_BUSINESS_YEARLY_URL", "STRIPE_SMB_URL", "STRIPE_SMALL_BUSINESS_MONTHLY_URL") : pick("STRIPE_SMALL_BUSINESS_MONTHLY_URL", "STRIPE_SMALL_BUSINESS_YEARLY_URL", "STRIPE_SMB_URL"),
+    midsize: yearly ? pick("STRIPE_MIDSIZE_YEARLY_URL", "STRIPE_MIDSIZE_URL", "STRIPE_MIDSIZE_MONTHLY_URL") : pick("STRIPE_MIDSIZE_MONTHLY_URL", "STRIPE_MIDSIZE_YEARLY_URL", "STRIPE_MIDSIZE_URL"),
+    enterprise: yearly ? pick("STRIPE_ENTERPRISE_YEARLY_URL", "STRIPE_ENTERPRISE_URL", "STRIPE_ENTERPRISE_MONTHLY_URL") : pick("STRIPE_ENTERPRISE_MONTHLY_URL", "STRIPE_ENTERPRISE_YEARLY_URL", "STRIPE_ENTERPRISE_URL")
   };
-  const url = map[String(tier)] || "https://iisupp.net/aria-sentinel/";
-  try { shell.openExternal(url); return { ok: true }; } catch { return { ok: false }; }
+  // (audit M10) the fallback is a page that exists: /plans (the old /aria-sentinel/ was a 404).
+  const safeTier = /^[a-z]{1,20}$/.test(String(tier)) ? String(tier) : "pro";
+  const url = map[String(tier)] || `https://iisupp.net/plans/?from=app&tier=${safeTier}${yearly ? "&billing=yearly" : ""}`;
+  try { shell.openExternal(url); return { ok: true, billing: yearly ? "yearly" : "monthly", source: map[String(tier)] ? "stripe" : "plans-page" }; } catch { return { ok: false }; }
 }
 
-// Legacy RUN 10 entry point retained for compatibility (now starts the 12h trial).
-function startTrial() {
-  ensureTrialStarted();
-  return { ok: true, status: gateStatus() };
+// Legacy RUN 10 entry point retained for compatibility (starts the 30-day trial once; a second click is a no-op).
+function startTrial(email) {
+  const started = ensureTrialStarted(typeof email === "string" ? email : (email && email.email) || "");
+  return { ok: true, started, status: gateStatus() };
 }
 
 async function checkForUpdates() {
   // D3 (2026-07-03) — OTA needs a real signed manifest at UPDATE_ENDPOINT (not wired yet). Rather than a dead,
   // alarming "Update check unavailable," report the HONEST state: no manifest reachable → manual-update mode
-  // ("You're on 0.1.16 · manual updates for now"). A real manifest with a newer version still surfaces the
+  // ("You're on <version> · manual updates for now"). A real manifest with a newer version still surfaces the
   // update. mode: "manual" | "ota" lets the renderer pick honest copy; ok stays true so it never reads as a failure.
   try {
     const res = await outbound.fetch(UPDATE_ENDPOINT, { headers: { "user-agent": "aria-sentinel" }, signal: AbortSignal.timeout?.(8000) });
@@ -2177,7 +2702,8 @@ async function initAutoUpdate() {
     autoUpdaterRef = mod.autoUpdater;
     autoUpdaterRef.autoDownload = false;
     autoUpdaterRef.autoInstallOnAppQuit = true;
-    autoUpdaterRef.setFeedURL({ provider: "generic", url: buildFeedUrl(readLicense()?.key || "") });
+    const feed = buildFeedRequest(readLicense()?.key || ""); // (audit M17) hash in a header, never the raw key in the URL
+    autoUpdaterRef.setFeedURL({ provider: "generic", url: feed.url, requestHeaders: { "x-sentinel-device": deviceIdHash(), ...feed.requestHeaders } });
     autoUpdaterRef.on("update-available", (info) => {
       if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send("update:available", info);
       logEvent("UPDATE", `Update available: ${info?.version || "?"}.`);
@@ -2185,7 +2711,9 @@ async function initAutoUpdate() {
     autoUpdaterRef.on("update-downloaded", (info) => {
       writeUpdateHistory(recordInstall(readUpdateHistory(), { version: info?.version, installed: new Date().toISOString(), notes: String(info?.releaseNotes || "") }));
     });
-    const poll = () => autoUpdaterRef.checkForUpdates().catch(() => undefined);
+    // REVIEW P2-9 (2026-10-14) — the self-updater's feed check is an outbound request like any other: it waits for Setup
+    // consent too (the 4-hourly poll picks it up after Setup; setup:complete already runs the app's own update check).
+    const poll = () => { if (!telemetryAllowed()) return; autoUpdaterRef.checkForUpdates().catch(() => undefined); };
     setTimeout(poll, 30 * 1000); // 30s startup grace
     setInterval(poll, 4 * 60 * 60 * 1000).unref?.(); // every 4h
   } catch {
@@ -2208,7 +2736,9 @@ async function installUpdate() {
 async function rollbackToVersion(version) {
   if (!autoUpdaterRef || !version) return { ok: false, reason: "updater_unavailable" };
   try {
-    autoUpdaterRef.setFeedURL({ provider: "generic", url: `${buildFeedUrl(readLicense()?.key || "")}&pin=${encodeURIComponent(version)}` });
+    const feed = buildFeedRequest(readLicense()?.key || "", "https://iisupp.net", `pin=${encodeURIComponent(version)}`);
+    autoUpdaterRef.setFeedURL({ provider: "generic", url: feed.url, requestHeaders: { "x-sentinel-device": deviceIdHash(), ...feed.requestHeaders } });
+    autoUpdaterRef.allowDowngrade = true; // (audit M24) a rollback IS a downgrade; electron-updater refuses them by default
     store.set("autoUpdate", false); // pause auto-updates after a manual rollback
     logEvent("UPDATE", `Rolling back to ${version}; auto-update paused.`);
     await autoUpdaterRef.checkForUpdates();
@@ -2226,7 +2756,7 @@ function manageSubscription() {
 // Tray → "Need help? Book a call" opens the IIS Calendly booking page (CALENDLY_URL env), falling
 // back to the public contact page. Opens in the default browser; sends nothing.
 function bookSupportCall() {
-  const url = process.env.CALENDLY_URL || "https://iisupp.net/contact";
+  const url = process.env.CALENDLY_URL || "https://iisupp.net/aria"; // (audit M10) /contact was a 404; /aria is live
   try {
     shell.openExternal(url);
     logEvent("SUPPORT", "Opened support booking link.");
@@ -2274,14 +2804,31 @@ function autonomousPaused() {
 }
 
 async function autoFireIfEligible(recipe, context = {}) {
-  // RUN-CU / CU4 — the autonomy level from the Setup wizard governs unattended fixes alongside the legacy mode:
-  // safe-auto / full-auto may act on their own (green only here; evaluateAutoFire keeps yellow out), observe and
-  // approve-first never do (approve-first turns the detection into an approval request instead).
+  // KILL GATE 2026-10-14 (review P0-2) — a detection that arrives while ARIA is stopped (Ctrl+Alt+K / Stop ARIA) — from
+  // the bridge's /detect, the 5-minute self-diagnosis or a chat — is recorded, and NOTHING acts on it: no fix, no
+  // approval request, no advisory notice. (A pause / fleet kill is handled below exactly as before.)
+  if (ariaStoppedNow()) {
+    logEvent("KILL-SWITCH", `${advisoryRedact(recipeTitle(recipe.id))}: detected while ARIA is stopped — nothing runs and nothing is asked until you press Start ARIA.`, { recipeId: recipe.id });
+    return;
+  }
+  // RUN-CU / CU4 — the autonomy level from the Setup wizard governs unattended fixes alongside the legacy mode.
+  // REVIEW P1-1 (2026-10-14) — the owner's decision: Confirmed asks once, every time, and never executes unattended;
+  // unattended execution exists ONLY in Autonomous mode (the advise-three-times rule, and the guarded auto-fire below).
+  // So outside Autonomous: observe notes it, approve-first and Confirmed (safe-auto) turn the detection into ONE approval
+  // request (one click on the globe card / Home row) — whatever its colour and however vetted the recipe is.
   const auto = autonomyNow();
-  const levelActs = auto.level === "safe-auto" || auto.level === "full-auto";
-  if (!(store.get("mode") === "autonomous" || levelActs) || autonomousPaused() || agentBlocked()) {
-    if (auto.level === "approve-first" && !agentBlocked() && !autonomousPaused()) {
-      approvals.request({ recipeId: recipe.id, title: recipe.title, color: recipeColor(recipe.id), tier: 2, requestedBy: "watcher", reason: "level-approve-first", source: "detection" });
+  // ADVISORY ESCALATION (2026-10-14) — "Never for this": the person opted this recipe out of fixing on its own, so on
+  // this device it behaves as approve-first (an approval request, never an unattended run).
+  if (advisoryMachine.isNever(recipe.id)) { advisoryNeverDetection(recipe); return; }
+  // ADVISORY ESCALATION — Autonomous mode + live fixes on: instead of firing now, the problem is ADVISED three times
+  // first (a fix ARIA may make on its own → the auto-fix track; red / needs-admin / not-yet-vetted / needs-a-yes → the
+  // IT-contact track). Everything the rule does not take falls through to the unchanged paths below.
+  if (!autonomousPaused() && !agentBlocked() && considerAdvisory(recipe, context)) return;
+  const autonomous = store.get("mode") === "autonomous";
+  if (!autonomous || autonomousPaused() || agentBlocked()) {
+    if (!agentBlocked() && !autonomousPaused() && auto.level !== "observe") {
+      const reason = auto.level === "approve-first" ? "level-approve-first" : "confirmed-asks-once";
+      approvals.request({ recipeId: recipe.id, title: recipe.title, color: recipeColor(recipe.id), tier: vettedTierOf(recipe.id), requestedBy: "watcher", reason, source: "detection" });
       ensureApprovalPolling();
     }
     return;
@@ -2310,21 +2857,29 @@ async function autoFireIfEligible(recipe, context = {}) {
   }
   store.set("autoFireHistory", recordAutoFire(history, { recipeId: recipe.id }));
   const started = Date.now();
-  const result = await runRecipe(recipe.id, { dryRun: false, confirmed: false });
-  sendAutoFixNotify({
-    recipeId: recipe.id,
-    signal: recipe.signal,
-    outcome: result.ok ? "applied" : "failed",
-    endpoint,
-    durationMs: Date.now() - started,
-    tier: "green"
-  }).catch(() => undefined);
-  afterFixOutcome(recipe.id, result, { decision: verdict, source: "autonomous" });
+  // PROD 2026-10-14 (audit M18) — an auto-fire goes through the SAME supervised pipeline as every other fix
+  // (R11 → supervisor → vetted-tier policy → approval policy → countdown → executor). source:"detection" keeps it
+  // honest: unattended, so a not-yet-vetted (Tier-2) or admin-needing fix becomes an approval request, never a
+  // silent change; the "Keep fixes in dry-run" checkbox and the live-fix consent apply here too.
+  const result = await runSupervisedFix({ recipeId: recipe.id, mode: "confirmed", source: "detection", risk: recipe.risk || "medium", startedAt: started });
+  if (result && result.verdict && result.verdict !== "approve" && result.verdict !== "approve-fast") {
+    logEvent("AUTONOMOUS", `Auto-fix for ${recipe.signal} → ${result.verdict}${result.reason ? ` (${result.reason})` : ""}.`, { recipeId: recipe.id });
+  }
+  // The Slack/Teams webhook (if configured) fires from afterFixOutcome with the REAL outcome once the gated run
+  // completes — never "applied" from here, where the countdown has not even finished (Rule 14).
+  void endpoint;
 }
 
-/** Vetted tier (0/1/2) of a recipe from the recipe-history ledger. */
-function vettedTierOf(recipeId) {
-  try { const n = vettedCountOf(readRecipeHistory(), String(recipeId || "")); return n >= 100 ? 0 : n >= 10 ? 1 : 2; } catch { return 2; }
+/**
+ * Vetted tier (0/1/2) of a recipe from the recipe-history ledger. The vendor floor for a vendor-vetted GREEN fix applies
+ * ONLY on the Autonomous advisory track (REVIEW P1-1): `track` is VENDOR_FLOOR_TRACK there and undefined everywhere else.
+ */
+function vettedTierOf(recipeId, track) {
+  try {
+    const id = String(recipeId || "");
+    // FAULT LAB 2026-10-14 (defect 4) — the same rule executionPolicy() applies (dry-run-policy.mjs vettedTier).
+    return vettedTier(vettedCountOf(readRecipeHistory(), id), { color: recipeColor(id), vendorVetted: isVendorVetted(id), track });
+  } catch { return 2; }
 }
 
 // RUN-CU / CU4 — after every execution outcome: failures notify immediately (always); successes notify per
@@ -2335,8 +2890,19 @@ function afterFixOutcome(recipeId, result, meta = {}) {
     const dryRun = Boolean(result && result.dryRun);
     const failed = !result || result.ok === false;
     const rp = result && result.restorePoint;
+    // ADVISORY ESCALATION — an auto-fix made after three unanswered notices reports its real outcome to its escalation.
+    // FAULT LAB 2026-10-14 (defect 3) — a `not_resolved` auto-fix is ESCALATED there (the IT contact is told through the
+    // existing advisoryEscalate path); that path then owns the notifications, so they are not sent twice from here.
+    const escalated = advisoryFixOutcome(recipeId, result, meta) === "escalated";
+    const notResolved = Boolean(result && result.outcome === NOT_RESOLVED);
+    // (audit M18) a watcher-sourced auto-fix reports its REAL outcome to the Slack/Teams webhook from here (the
+    // advisory auto-fix is watcher-sourced too: source "detection:advisory").
+    if (/^detection(?::|$)/.test(String(meta.source || "")) && !dryRun && !escalated) {
+      const recipe = recipeById(recipeId);
+      sendAutoFixNotify({ recipeId, signal: (recipe && recipe.signal) || recipeId, outcome: failed ? "failed" : "applied", endpoint: os.hostname(), durationMs: Math.max(0, Date.now() - (Number(meta.startedAt) || Date.now())), tier: recipeColor(recipeId) === "green" ? "green" : "yellow" }).catch(() => undefined);
+    }
     if (failed && !dryRun) {
-      notifyEvent("fix-failed", { title, recipeId, severity: recipeColor(recipeId), outcome: "failed", rolledBack: Boolean(result && result.rolledBack) });
+      if (!escalated) notifyEvent("fix-failed", { title, recipeId, severity: recipeColor(recipeId), outcome: notResolved ? "not resolved" : "failed", rolledBack: Boolean(result && result.rolledBack) });
       return;
     }
     if (setupPrefsNow().reportCadence === "per-fix") {
@@ -2344,6 +2910,339 @@ function afterFixOutcome(recipeId, result, meta = {}) {
     }
     // daily/weekly cadences: the outcome is already in the audit log, which the aggregate report summarizes.
   } catch { /* reporting never affects the fix */ }
+}
+
+// ── ADVISORY ESCALATION (2026-10-14) — "advise three times, then act" (Autonomous mode only) ─────────────────────────
+// src/shared/advisory-escalation.mjs keeps the clock and the promises (pure); this block performs its effects through the
+// EXISTING paths and nothing else:
+//   · notice n of 3 → desktopNotify + the globe card (sentinel:advisory) + the Home "What I need from you" row + an
+//     "ADVISORY n/3" audit row, in plain words, with Fix now · Not now · Never for this;
+//   · no answer after notice 3 + one interval → the autonomous guards (evaluateAutoFire) → an "AUTO-FIX after 3
+//     advisories" audit row → runSupervisedFix (kill switch → R11 → supervisor → vetted-tier policy → approval policy →
+//     needs-admin → the visible, cancellable 10-s countdown → executor → verify → audit) → afterFixOutcome (notify-after);
+//   · red / needs-admin / not-yet-vetted / yellow (needs a yes) problems get the same notices but end with the IT contact
+//     told (notifyEvent fix-failed + sendAutoFixNotify escalated) — never an execution;
+//   · Ctrl+Alt+K blocks every open escalation for good; pause · fleet/customer kill · license · Stop ARIA · live fixes
+//     off FREEZE them in place (the remaining time is kept; nothing skips ahead); leaving Autonomous closes them.
+// Which track a detection takes is decided from the REAL gates (decideExecution · executionPolicy · the needs-admin rule ·
+// the supervisor) so a notice never promises a fix the pipeline would refuse (Rule 14).
+const ADVISORY_TICK_MS = 15 * 1000;
+let advisoryTimer = null;
+const advisoryMachine = createAdvisoryEscalation({
+  now: () => Date.now(),
+  load: () => store.get("advisoryEscalations") || null,
+  save: (s) => store.set("advisoryEscalations", s)
+});
+/** { intervalMinutes, snoozeHours } — the person's advisory prefs (Settings → Autonomy), defaults filled in. */
+function advisoryPrefsNow() { return normalizeAdvisoryPrefs(setupPrefsNow()); }
+/** The rule applies only in Autonomous mode with live fixes on (otherwise every fix previews and nothing escalates). */
+function advisoryApplies() { return store.get("mode") === "autonomous" && allowSystemFixes() && !globalDryRun(); }
+/** Why open escalations must stand still right now ("" = they may advance). */
+function advisoryFrozenReason() {
+  if (remediationKilled()) return "fixes-disabled-by-policy";
+  if (Number(store.get("pausedUntil") || 0) > Date.now()) return "paused";
+  if (autonomousPaused()) return "autonomous-paused";
+  if (store.get("ariaStopped")) return "aria-stopped";
+  if (!allowSystemFixes()) return "live-fixes-off";
+  try { if (!gateStatus().unlocked) return "license"; } catch { return "license"; }
+  return "";
+}
+/** Does the recipe have a live step ARIA could apply at all (an executor binding or a cleared registry action)? */
+function recipeHasLiveSteps(recipeId) {
+  const id = String(recipeId || "");
+  if (resolveExecutorId(id)) return true;
+  if (!isExecutableRecipe(id)) return false;
+  const r = recipeById(id);
+  return Boolean(r && (r.actions || []).some((a) => a && a.shell === "powershell" && a.command));
+}
+/**
+ * The track a detection takes under the rule, read from the REAL gates. null = the rule does not take it (the unchanged
+ * paths decide: approval / maintenance window / observe / preview / guide-only).
+ *   auto-fix     — green, user-space, vetted for unattended runs, supervisor-clean → notices, then the supervised fix
+ *   tech-contact — red · needs administrator rights · not yet vetted for unattended runs · yellow (always needs a yes)
+ */
+function advisoryTrackFor(recipe) {
+  const id = String((recipe && recipe.id) || "");
+  if (!id || isBlockedPath(id)) return null;
+  const auto = autonomyNow();
+  const color = recipeColor(id);
+  const win = maintenanceWindowNow(id);
+  // A yellow fix is only ever promised conditionally: a REAL restore point is made at the last step, never at notice time.
+  const decision = decideExecution({ level: auto.level, color, tier: vettedTierOf(id, VENDOR_FLOOR_TRACK), approverMode: auto.approverMode, inWindow: win.within, hasRestorePoint: color === "yellow", killed: remediationKilled(), blocked: agentBlocked() });
+  if (decision.action === "notify-only" && decision.reason === "red-never-automated") return { track: "tech-contact", kind: "red", color };
+  if (decision.action !== "execute") return null;
+  if (!recipeHasLiveSteps(id)) return null; // guide-only: nothing ARIA could apply on its own
+  if (recipeNeedsAdmin(id)) return { track: "tech-contact", kind: "needs-admin", color };
+  // recipe-runner + autonomous.mjs: a yellow fix NEVER fires on its own — it always waits for a person's yes.
+  if (color === "yellow" || !isGreenRecipe(id)) return { track: "tech-contact", kind: "needs-confirm", color };
+  // FAULT LAB 2026-10-14 (defect 4) — a vendor-vetted green fix starts at the vendor floor (Tier 1), so on a fresh install
+  // the third unanswered notice can end in the fix itself — still through every gate in runSupervisedFix.
+  // (REVIEW P1-1: this track — and its final step, source "detection:advisory" — is the ONLY place the floor applies.)
+  const policy = executionPolicy({ vettedCount: vettedCountOf(readRecipeHistory(), id), vendorVetted: isVendorVetted(id), color, track: VENDOR_FLOOR_TRACK, mode: "confirmed", dryRunCheckbox: store.get("keepSystemFixesDryRun"), supervisorVerdict: "approve", humanInitiated: false });
+  if (policy.dryRun) return null; // "keep every fix in preview" → the preview path, unchanged
+  if (!policy.allowed) return { track: "tech-contact", kind: "not-yet-vetted", color };
+  if (!isRecipeAllowedByPolicy(store.get("policyOverlay") || null, id)) return null;
+  const sup = superviseProposal({ recipeId: id, riskTier: (recipe && recipe.risk) || "medium", expectedImpact: recipeSideEffects(id), rollbackPlan: "restore-point" }, { mode: "confirmed", history: [], now: Date.now(), vettedCatalog: supervisedVettedCatalog() });
+  if (sup.verdict === "veto") return null;
+  return { track: "auto-fix", kind: "green", color };
+}
+/** autoFireIfEligible → true when the rule took this detection (the immediate auto-fire is then skipped). */
+function considerAdvisory(recipe, context = {}) {
+  if (!recipe || !advisoryApplies()) return false;
+  const frozen = advisoryFrozenReason();
+  if (frozen) {
+    // A license / Stop-ARIA freeze: nothing unattended happens at all (no notice, no fix) until it clears.
+    logEvent("ADVISORY", `Noted ${advisoryRedact(recipeTitle(recipe.id))} — not advising or fixing on its own while ${frozen}.`, { recipeId: recipe.id, frozen });
+    return true;
+  }
+  const t = advisoryTrackFor(recipe);
+  if (!t) return false;
+  const r = advisoryMachine.open({
+    detectionId: String(context.detectionId || ""),
+    recipeId: recipe.id,
+    title: advisoryRedact(String(context.advisoryTitle || recipeTitle(recipe.id))),
+    summary: advisoryRedact(String(recipe.summary || "")),
+    color: t.color,
+    track: t.track,
+    kind: t.kind
+  }, advisoryPrefsNow());
+  if (!r.opened) return r.reason !== "never" && r.reason !== "bad-recipe"; // an open / snoozed escalation already owns it
+  performAdvisoryEffects(r.effects);
+  ensureAdvisoryTimer();
+  return true;
+}
+/** A Never-listed recipe detected again: approve-first on this device (red is never automated, so it is only noted). */
+function advisoryNeverDetection(recipe) {
+  const color = recipeColor(recipe.id);
+  if (color !== "red" && !agentBlocked()) {
+    approvals.request({ recipeId: recipe.id, title: recipe.title, color, tier: vettedTierOf(recipe.id), requestedBy: "watcher", reason: "never-for-this", source: "detection" });
+    ensureApprovalPolling();
+  }
+  logEvent("ADVISORY", `${advisoryRedact(recipeTitle(recipe.id))}: you chose "Never for this" — ${color === "red" ? "noted only; nothing runs" : "asking for a yes instead of fixing it on its own"}.`, { recipeId: recipe.id });
+}
+/** Notice n of 3: audit row + desktop notification (when that channel is on) + the globe card + the Home row (state). */
+function advisoryNotice(rec, n, { reissued = false } = {}) {
+  const prefs = advisoryPrefsNow();
+  const view = advisoryView(rec, prefs, Date.now());
+  // (review P2-6) a notice re-issued after a restart is the SAME notice shown again — a real desktop notification + card.
+  logEvent("ADVISORY", `ADVISORY ${n}/${rec.of}: ${rec.title} — ${view.copy.when}`, { recipeId: rec.recipeId, advisoryId: rec.id, advisory: n, of: rec.of, track: rec.track, kind: rec.kind, cycle: rec.cycle, ...(reissued ? { reissued: true } : {}) });
+  if ((setupPrefsNow().notifyChannels || {}).desktop !== false) desktopNotify({ title: `${view.copy.line}: ${rec.title}`, body: `${view.copy.willDo} ${view.copy.when}` });
+  pushAdvisoryCard(view);
+}
+function pushAdvisoryCard(view) {
+  try {
+    overlayActiveUntil = Date.now() + 8000;
+    if (overlayWindow && !overlayWindow.isDestroyed()) { showOverlay({ expanded: true, advisory: true }); overlayWindow.webContents.send("sentinel:advisory", view); }
+    if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send("sentinel:advisory", view);
+  } catch { /* the card is best-effort; the state + the Home row carry the same notice */ }
+}
+/** The last step of the auto-fix track: the autonomous guards, then the supervised pipeline (countdown first). */
+async function advisoryAutoFix(rec) {
+  // KILL GATE 2026-10-14 (review P0-2) — the final step checks the gate FIRST: no AUTO-FIX row, no auto-fire history, no
+  // countdown when it is closed. (A stop / pause freezes the escalation upstream; this is the line that holds if a tick
+  // and a kill ever race.) Ctrl+Alt+K / Stop ARIA end it as blocked; a pause / fleet kill holds it for the next tick.
+  if (!killGateOpen()) {
+    const reason = killGateReason();
+    if (ariaStoppedNow()) { advisoryMachine.settle(rec.id, "blocked", "kill-switch"); logEvent("KILL-SWITCH", `${rec.title}: the advise-first fix did not run — ${reason}. The escalation is closed (blocked).`, { recipeId: rec.recipeId, advisoryId: rec.id }); }
+    else { advisoryMachine.defer(rec.id, Date.now() + ADVISORY_TICK_MS, "the gate to open"); logEvent("ADVISORY", `${rec.title}: ready to fix, but ${reason} — nothing runs until that clears.`, { recipeId: rec.recipeId, advisoryId: rec.id }); }
+    broadcastState();
+    return { ok: false, reason: "kill-gate", gate: reason };
+  }
+  const recipe = recipeById(rec.recipeId);
+  if (!recipe) { advisoryMachine.settle(rec.id, "closed", "recipe-missing"); broadcastState(); return { ok: false, reason: "recipe-missing" }; }
+  if (!advisoryApplies()) { advisoryMachine.settle(rec.id, "closed", "autonomous-off"); logEvent("ADVISORY", `${rec.title}: Autonomous mode or live fixes are off now — nothing runs on its own.`, { recipeId: rec.recipeId, advisoryId: rec.id }); broadcastState(); return { ok: false, reason: "autonomous-off" }; }
+  const t = advisoryTrackFor(recipe);
+  if (!t || t.track !== "auto-fix") {
+    // The gates changed since notice 1 (vetting, a new organization rule, the window): ARIA may no longer fix it alone.
+    advisoryMachine.settle(rec.id, "escalated", `gates-changed${t ? "-" + t.kind : ""}`);
+    advisoryEscalate({ ...rec, kind: t ? t.kind : rec.kind }, "gates-changed");
+    broadcastState();
+    return { ok: false, reason: "gates-changed" };
+  }
+  // The same autonomous guards autoFireIfEligible applies: 3 per recipe per 24 h · 30 min between automatic fixes · fleet limit.
+  const history = store.get("autoFireHistory") || [];
+  const guard = evaluateAutoFire({ recipeId: rec.recipeId, tier: isGreenRecipe(rec.recipeId) ? "green" : "yellow", mode: "autonomous", now: Date.now(), history });
+  if (!guard.allow) {
+    if (guard.reason === "cooldown") {
+      const lastAny = history.reduce((m, h) => Math.max(m, Number(h.ts) || 0), 0);
+      const until = lastAny + AUTOFIRE_COOLDOWN_MS + 1000;
+      advisoryMachine.defer(rec.id, until, "the 30-minute gap between automatic fixes");
+      logEvent("ADVISORY", `Ready to fix ${rec.title} — waiting for the 30-minute gap between automatic fixes (until ${new Date(until).toISOString()}).`, { recipeId: rec.recipeId, advisoryId: rec.id });
+      broadcastState();
+      return { ok: false, reason: "cooldown", until };
+    }
+    advisoryMachine.settle(rec.id, "held", `autofire-${guard.reason}`);
+    approvals.request({ recipeId: rec.recipeId, title: rec.title, color: rec.color, tier: vettedTierOf(rec.recipeId, VENDOR_FLOOR_TRACK), requestedBy: "advisory", reason: `advisory-${guard.reason}`, source: "advisory" });
+    ensureApprovalPolling();
+    logEvent("ADVISORY", `${rec.title}: not fixed on its own (${guard.reason}) — asked for a yes instead. Nothing was changed.`, { recipeId: rec.recipeId, advisoryId: rec.id });
+    broadcastState();
+    return { ok: false, reason: guard.reason };
+  }
+  store.set("autoFireHistory", recordAutoFire(history, { recipeId: rec.recipeId, ts: Date.now() }, Date.now()));
+  advisoryMachine.markFixing(rec.id);
+  logEvent("AUTO-FIX", `AUTO-FIX after ${rec.of} advisories: ${rec.title} — no answer, so ARIA is fixing it through the supervised pipeline (countdown first).`, { recipeId: rec.recipeId, advisoryId: rec.id, advisories: rec.advisory });
+  const result = await runSupervisedFix({ recipeId: rec.recipeId, mode: "confirmed", source: "detection:advisory", risk: recipe.risk || "medium", startedAt: Date.now(), detectionId: rec.detectionId || undefined });
+  advisoryFollowPipeline(rec, result);
+  broadcastState();
+  return result;
+}
+/** What the supervised pipeline said: a countdown is followed (cancel → the escalation ends); a refusal ends it honestly. */
+function advisoryFollowPipeline(rec, result) {
+  const r = result || {};
+  if (r.countdown === true && r.countdownId) {
+    const cd = countdownManager.list().find((c) => c && c.id === r.countdownId);
+    if (cd && cd.signal && typeof cd.signal.addEventListener === "function") {
+      cd.signal.addEventListener("abort", () => {
+        const s = advisoryMachine.settle(rec.id, "cancelled", "countdown-cancelled");
+        if (s.ok) { logEvent("ADVISORY", `${rec.title}: the countdown was cancelled — nothing was changed, and ARIA will not retry on its own.`, { recipeId: rec.recipeId, advisoryId: rec.id }); broadcastState(); }
+      }, { once: true });
+    }
+    return; // completion arrives through afterFixOutcome → advisoryFixOutcome
+  }
+  if (r.verdict === "approve" || r.verdict === "approve-fast") return; // running now (no countdown); the result arrives the same way
+  const verdict = String(r.verdict || r.error || "refused");
+  const status = verdict === "blocked" ? "blocked" : "held";
+  advisoryMachine.settle(rec.id, status, verdict === "approval-requested" ? "approval-requested" : verdict);
+  logEvent("ADVISORY", `${rec.title}: not fixed on its own — ${advisoryRedact(String(r.copy || r.reason || verdict)).slice(0, 160)}`, { recipeId: rec.recipeId, advisoryId: rec.id, verdict });
+}
+/**
+ * afterFixOutcome → the auto-fix's real outcome closes its escalation (fixed / fix-failed / preview-only), or — when the
+ * fix ran but its gating verify says the problem is still there (`not_resolved`) — ESCALATES it to the IT contact.
+ * Returns the status it settled ("escalated" means the escalation path owns the notifications), or undefined.
+ */
+function advisoryFixOutcome(recipeId, result, meta = {}) {
+  try {
+    if (!/^detection:advisory/.test(String(meta.source || ""))) return undefined;
+    const rec = advisoryMachine.state.records.find((r) => r.recipeId === recipeId && r.status === "fixing");
+    if (!rec) return undefined;
+    // FAULT LAB 2026-10-14 (defect 3) — not resolved is never "fixed": the item goes to the IT contact (the EXISTING
+    // escalation path: fix-failed notify incl. the IT contact + the webhook + an ESCALATE audit row). Nothing further runs.
+    if (result && result.dryRun !== true && result.outcome === NOT_RESOLVED) {
+      advisoryMachine.settle(rec.id, "escalated", NOT_RESOLVED);
+      logEvent("ADVISORY", `${rec.title}: the fix ran after ${rec.of} notices, but the check afterwards says the problem is still there — NOT RESOLVED. Telling your IT contact; nothing further is changed.`, { recipeId, advisoryId: rec.id, status: "escalated", outcome: NOT_RESOLVED });
+      advisoryEscalate(rec, "not-resolved");
+      broadcastState();
+      return "escalated";
+    }
+    const dryRun = Boolean(result && result.dryRun);
+    const failed = !result || result.ok === false;
+    const status = dryRun ? "held" : failed ? "fix-failed" : "fixed";
+    const outcome = dryRun ? "preview-only" : failed ? String((result && (result.reason || result.outcome)) || "failed") : result.verified === false ? "applied-unverified" : result.verified === true ? "verified" : String(result.outcome || "applied");
+    advisoryMachine.settle(rec.id, status, outcome);
+    logEvent("ADVISORY", `${rec.title}: ${status === "fixed" ? `fixed on its own after ${rec.of} notices (${outcome})` : status === "held" ? "previewed only — nothing was changed" : `the fix did not complete (${outcome}) — nothing further was changed`}.`, { recipeId, advisoryId: rec.id, status, outcome });
+    broadcastState();
+    return status;
+  } catch { return undefined; /* reporting never affects the fix */ }
+}
+/**
+ * The IT-contact track's last step (or "Get help now" on a red notice, or a `not_resolved` auto-fix): the EXISTING notify
+ * paths, never an execution. why ∈ unanswered · fix-now · gates-changed · not-resolved.
+ */
+function advisoryEscalate(rec, why = "unanswered") {
+  const prefs = setupPrefsNow();
+  const contacts = Array.isArray(prefs.techContacts) ? prefs.techContacts.length : 0;
+  const notResolved = why === "not-resolved"; // FAULT LAB 2026-10-14 (defect 3) — the fix ran; its check says the problem is still there
+  const reason = why === "fix-now" ? "you asked for help" : why === "gates-changed" ? "it can no longer be fixed on its own" : notResolved ? "the fix ran but the problem is still there (not resolved)" : `no answer after ${rec.of} notices`;
+  notifyEvent("fix-failed", { title: rec.title, recipeId: rec.recipeId, severity: rec.color, outcome: why === "fix-now" ? "needs a person - help requested" : notResolved ? "needs a person - not resolved" : "needs a person - no answer" });
+  sendAutoFixNotify({ recipeId: rec.recipeId, signal: (recipeById(rec.recipeId) || {}).signal || rec.recipeId, outcome: "escalated", endpoint: os.hostname(), durationMs: 0, tier: rec.color === "green" ? "green" : rec.color === "red" ? "red" : "yellow" }).catch(() => undefined);
+  // A fix a person CAN approve (needs admin · not yet vetted · needs a yes) also waits as an approval; red never runs.
+  // A not-resolved fix already ran: asking to run the same fix again would only repeat it, so no approval is raised.
+  if (rec.kind !== "red" && rec.color !== "red" && !notResolved) {
+    approvals.request({ recipeId: rec.recipeId, title: rec.title, color: rec.color, tier: vettedTierOf(rec.recipeId, VENDOR_FLOOR_TRACK), requestedBy: "advisory", reason: `advisory-${rec.kind}`, source: "advisory" });
+    ensureApprovalPolling();
+  }
+  logEvent("ESCALATE", `ESCALATED to ${contacts ? "your IT contact" : "the device user (no IT contact configured)"} — ${reason}: ${rec.title}. ${notResolved ? "Nothing further was changed." : "Nothing was changed."}`, { recipeId: rec.recipeId, advisoryId: rec.id, kind: rec.kind, why });
+}
+/** "Fix now": the person chose — the SAME supervised pipeline, human-initiated (UAC when needed, countdown first). */
+async function advisoryFixNow(rec) {
+  logEvent("ADVISORY", `Fix now: ${rec.title} — you chose to fix it at notice ${rec.advisory}/${rec.of}; running it through the supervised pipeline.`, { recipeId: rec.recipeId, advisoryId: rec.id });
+  const recipe = recipeById(rec.recipeId) || {};
+  return runSupervisedFix({ recipeId: rec.recipeId, mode: "confirmed", source: "advisory-fix-now", risk: recipe.risk || "medium", startedAt: Date.now(), detectionId: rec.detectionId || undefined });
+}
+function performAdvisoryEffects(effects = []) {
+  for (const e of Array.isArray(effects) ? effects : []) {
+    const rec = advisoryMachine.find(e.id);
+    if (!rec) continue;
+    const meta = { recipeId: rec.recipeId, advisoryId: rec.id };
+    try {
+      if (e.type === "advise") advisoryNotice(rec, e.n, { reissued: e.reissued === true });
+      else if (e.type === "auto-fix") advisoryAutoFix(rec).catch(() => undefined);
+      else if (e.type === "escalate") advisoryEscalate(rec, e.why);
+      else if (e.type === "snoozed") logEvent("ADVISORY", `Not now: ${rec.title} — snoozed until ${new Date(e.until).toISOString()}; nothing runs before then.`, meta);
+      else if (e.type === "never") { logEvent("ADVISORY", `Never for this: ${rec.title} — ARIA will not fix this on its own on this device again; it asks for a yes instead (approve-first).`, meta); if (rec.color !== "red") { approvals.request({ recipeId: rec.recipeId, title: rec.title, color: rec.color, tier: vettedTierOf(rec.recipeId, VENDOR_FLOOR_TRACK), requestedBy: "advisory", reason: "never-for-this", source: "advisory" }); ensureApprovalPolling(); } }
+      else if (e.type === "frozen") logEvent("ADVISORY", `Paused at notice ${rec.advisory}/${rec.of}: ${rec.title} (${e.reason}) — nothing advances until this clears.`, { ...meta, frozen: e.reason });
+      else if (e.type === "unfrozen") logEvent("ADVISORY", `Resumed at notice ${rec.advisory}/${rec.of}: ${rec.title} — the remaining time was kept.`, meta);
+      // REVIEW P2-6 — a restart never proceeds on its own: notice N is shown AGAIN at the next tick, the next step a full interval later.
+      else if (e.type === "resumed") logEvent("ADVISORY", `Restarted at notice ${e.n}/${rec.of}: ${rec.title} — ARIA shows notice ${e.n} again (a desktop notification and the card) before anything else happens; the next step waits ${advisoryPrefsNow().intervalMinutes} min after it.`, { ...meta, resumed: true, was: e.was });
+      // REVIEW P2-6 — the app died (crash / power / kill) while this fix was in its countdown or before it reported back:
+      // that attempt is CANCELLED, never resumed. Whether any step had started is read from the audit itself.
+      else if (e.type === "interrupted") {
+        const since = Number(e.fixingSince) || 0;
+        const started = since > 0 && (store.get("transparencyLog") || []).some((r) => r && r.recipeId === rec.recipeId && ["RUN", "FIX", "DONE", "ERROR", "WARN"].includes(r.tag) && Date.parse(r.ts) >= since);
+        logEvent("CANCEL", started
+          ? `${rec.title}: ARIA closed before this fix reported back (it had started — its rows are above). It is not resumed; notice ${e.n} of ${rec.of} is shown again first.`
+          : `${rec.title}: ARIA closed during the countdown — the fix was cancelled and nothing ran. Notice ${e.n} of ${rec.of} is shown again before anything else happens.`, { ...meta, interrupted: true, started });
+      }
+      else if (e.type === "reopened") logEvent("ADVISORY", `Snooze over: ${rec.title} — telling you again (round ${e.cycle}).`, meta);
+      else if (e.type === "closed") logEvent("ADVISORY", `Advisory closed: ${rec.title} (${e.reason}) — nothing runs on its own.`, meta);
+    } catch { /* one effect never breaks the next */ }
+  }
+  if (effects && effects.length) broadcastState();
+}
+/** The ONE interval that drives the machine (15 s). Leaving Autonomous closes; a freeze holds; otherwise the clock runs. */
+function advisoryTick() {
+  const closeAll = store.get("mode") !== "autonomous" ? "autonomous-mode-off" : "";
+  const frozen = closeAll ? "" : advisoryFrozenReason();
+  const r = advisoryMachine.tick({ closeAll, frozen }, advisoryPrefsNow());
+  performAdvisoryEffects(r.effects);
+  return r;
+}
+function ensureAdvisoryTimer() {
+  if (advisoryTimer) return;
+  advisoryTimer = setInterval(() => { try { advisoryTick(); } catch { /* the tick never throws into the loop */ } }, ADVISORY_TICK_MS);
+  advisoryTimer.unref?.();
+}
+/** At launch: resume persisted escalations CONSERVATIVELY (same notice number, a full interval before the next step). */
+function startAdvisoryEscalation() {
+  try { performAdvisoryEffects(advisoryMachine.restore(advisoryPrefsNow()).effects); } catch { /* never blocks startup */ }
+  ensureAdvisoryTimer();
+}
+/** sentinel:advisory-ack {id, choice} — Fix now · Not now · Never for this. Any choice ends the escalation. */
+async function handleAdvisoryAck(payload) {
+  const p = payload && typeof payload === "object" ? payload : {};
+  const id = String(p.id || "").slice(0, 96);
+  const choice = String(p.choice || "");
+  if (!id || isBlockedPath(id) || !ADVISORY_CHOICES.includes(choice)) return { ok: false, error: "bad-request" };
+  // KILL GATE (review P0-2) — "Fix now" while the gate is closed is refused BEFORE the notice is consumed (Not now and
+  // Never never run anything, so they stay available).
+  if (choice === "fix-now" && !killGateOpen()) return { ok: false, error: "kill-gate", gate: killGateReason(), copy: describeDecision({ action: "blocked", reason: killGateDecisionReason() }) };
+  const r = advisoryMachine.ack(id, choice, advisoryPrefsNow());
+  if (!r.ok) return { ok: false, error: r.reason };
+  const rec = r.record;
+  logEvent("ADVISORY", `You chose ${choice === "fix-now" ? (rec.kind === "red" ? "Get help now" : "Fix now") : choice === "not-now" ? "Not now" : "Never for this"} at notice ${rec.advisory}/${rec.of}: ${rec.title}.`, { recipeId: rec.recipeId, advisoryId: rec.id, choice });
+  performAdvisoryEffects(r.effects.filter((e) => e.type !== "run-now"));
+  let fix = null;
+  if (r.effects.some((e) => e.type === "run-now")) fix = await advisoryFixNow(rec);
+  broadcastState();
+  return { ok: true, choice, advisory: advisoryView(advisoryMachine.find(id), advisoryPrefsNow(), Date.now()), fix };
+}
+/** sentinel:get-advisory-prefs — the interval/snooze, their limits, the rule in plain words and the Never list. */
+function advisoryPrefsPayload() {
+  return { ok: true, prefs: advisoryPrefsNow(), limits: { intervalMinutes: [ADVISORY_INTERVAL_MIN, ADVISORY_INTERVAL_MAX], snoozeHours: [ADVISORY_SNOOZE_MIN_H, ADVISORY_SNOOZE_MAX_H] }, rule: ruleSentence(setupPrefsNow()), never: advisoryMachine.neverList() };
+}
+/** sentinel:set-advisory-prefs { intervalMinutes?, snoozeHours?, allowAgain?: [recipeId] } — clamped, stored in the setup prefs. */
+function setAdvisoryPrefs(payload) {
+  const p = payload && typeof payload === "object" ? payload : {};
+  const partial = {};
+  if ("intervalMinutes" in p) partial.advisoryIntervalMinutes = p.intervalMinutes;
+  if ("snoozeHours" in p) partial.advisorySnoozeHours = p.snoozeHours;
+  if (Object.keys(partial).length) store.set("setupConfig", updateSetupPrefs(readSetupConfig(), partial));
+  const allowed = [];
+  for (const rid of Array.isArray(p.allowAgain) ? p.allowAgain.slice(0, 50) : []) { if (advisoryMachine.clearNever(String(rid || "")).removed) allowed.push(String(rid)); }
+  const now = advisoryPrefsNow();
+  logEvent("SETUP", `Advise-first rule: a notice every ${now.intervalMinutes} min, Not now waits ${now.snoozeHours} h${allowed.length ? ` · allowed again: ${allowed.join(", ")}` : ""}.`);
+  broadcastState();
+  return advisoryPrefsPayload();
 }
 
 function openMacPermissions(pane = "fulldisk") {
@@ -2361,6 +3260,7 @@ function openMacPermissions(pane = "fulldisk") {
 function dismissOverlay() {
   overlayExpanded = false;
   overlayCompanion = false;
+  overlayAdvisory = false;
   if (overlayWindow && !overlayWindow.isDestroyed()) {
     positionOverlay();
     overlayWindow.webContents.send("sentinel:overlay-mode", "globe");
@@ -2400,22 +3300,357 @@ function remediationKilled() {
   }).killed;
 }
 
-function agentBlocked() {
-  // True when watchers + recipe execution must stand down: paused OR kill switch.
-  const pausedUntil = Number(store.get("pausedUntil") || 0);
-  return pausedUntil > Date.now() || remediationKilled();
+/**
+ * KILL GATE 2026-10-14 (review P0-2) — THE one gate between "a fix is wanted" and "a fix runs". "" = open; otherwise the
+ * plain reason nothing may run. Closed by:
+ *   · Ctrl+Alt+K / Stop ARIA (`ariaStopped`) — until the person presses Start ARIA (the ONLY way out: a relaunch, a mode
+ *     change, a remote approval or the timeout policy never reopens it);
+ *   · a fleet / customer kill (detect-only) — while it lasts;
+ *   · a pause — until it ends.
+ * It used to be that `ariaStopped` was set by the panic switch but read by no execution path, so a later detection, an
+ * emailed approval, the approval timeout and a relaunch's watchers all still acted. Every execution entry now checks this
+ * (runSupervisedFix · runRecipe · runTier0Fix · autoFireIfEligible · the approvals runner + its expiry · the advisory
+ * escalation's final step · the bridge's /run-recipe · every fix-step spawn), and agentBlocked() IS this gate.
+ */
+function ariaStoppedNow() { try { return store.get("ariaStopped") === true; } catch { return true; } }
+function killGateReason() {
+  if (ariaStoppedNow()) return store.get("ariaKill") ? "ARIA was stopped with Ctrl+Alt+K — nothing runs until you press Start ARIA" : "ARIA is stopped — nothing runs until you press Start ARIA";
+  if (remediationKilled()) return bridgeStatus.killReason || (customerConfig?.disabled === true ? "Customer policy disabled fixes." : "remediation disabled");
+  if (Number(store.get("pausedUntil") || 0) > Date.now()) return "ARIA is paused on this device";
+  return "";
 }
+function killGateOpen() { return killGateReason() === ""; }
+function agentBlocked() {
+  // True when watchers + recipe execution must stand down: stopped (Ctrl+Alt+K / Stop ARIA) · fleet/customer kill · paused.
+  return !killGateOpen();
+}
+/** The decision-copy reason for a closed gate (approval-policy describeDecision). */
+function killGateDecisionReason() { return ariaStoppedNow() ? "aria-stopped" : remediationKilled() ? "kill-switch" : "agent-blocked"; }
 
+// PROD 2026-10-14 (audit M6) — persisted watcher cursors: the event-log RecordId / WER report-time the watchers
+// last saw, so a relaunch continues from there instead of re-emitting a month of old errors as new detections.
+const watcherCursors = {
+  get: (key) => { try { return ((store.get("watcherCursors") || {})[String(key)]); } catch { return undefined; } },
+  set: (key, value) => { try { store.set("watcherCursors", { ...(store.get("watcherCursors") || {}), [String(key)]: value }); } catch { /* best-effort */ } }
+};
+/** { running, count, lastTickAgeMs, names, spawnsPerMinute } — real-or-empty (no orchestrator → not running, 0 watchers). */
+function watchersStatus() {
+  try {
+    if (!detectionOrchestrator) return { running: false, count: 0, lastTickAgeMs: null, names: [], spawnsPerMinute: 0 };
+    const st = detectionOrchestrator.status();
+    return { running: Boolean(st.running) && !store.get("ariaStopped"), count: Number(st.count) || 0, lastTickAgeMs: st.lastTickAgeMs == null ? null : Number(st.lastTickAgeMs), names: Array.isArray(st.names) ? st.names : [], spawnsPerMinute: Number(st.spawnsPerMinute) || 0 };
+  } catch { return { running: false, count: 0, lastTickAgeMs: null, names: [], spawnsPerMinute: 0 }; }
+}
+/**
+ * KILL GATE 2026-10-14 (review P0-2) — the launch-time watcher start. A relaunch used to call startDetection()
+ * unconditionally, so after Ctrl+Alt+K + a reboot the watchers ran (and acted) while the status line said "stopped".
+ * Returns true when the watchers were started; false (audited) when ARIA is still stopped.
+ */
+function startDetectionAtLaunch() {
+  if (ariaStoppedNow()) {
+    const kill = store.get("ariaKill") || null;
+    logEvent("KILL-SWITCH", `Launch: ARIA is still stopped (${kill ? `Ctrl+Alt+K at ${String(kill.at || "").slice(0, 19)}` : "Stop ARIA"}) — watchers, fixes, approvals and notices stay off until you press Start ARIA.`, { launch: true, stopped: true });
+    return false;
+  }
+  startDetection();
+  return true;
+}
 function startDetection() {
-  if (detectionOrchestrator) return detectionOrchestrator;
+  // (audit M11) Stop ARIA → Start ARIA: the orchestrator survives a stop with its timers cleared; restart them.
+  if (detectionOrchestrator) {
+    if (!detectionOrchestrator.status().running) detectionOrchestrator.startAll();
+    return detectionOrchestrator;
+  }
   detectionOrchestrator = createDetectionOrchestrator({
     detectIssue,
     isBlocked: agentBlocked,
+    cursors: watcherCursors,
+    watcherOptions: { network: (setupPrefsNow().networkProbe || {}) },
     logger: (tag, text) => logEvent(tag, text),
     onError: (name, err) => logEvent("SELF-REPAIR", `Watcher ${name} skipped a tick.`, { code: "APP.SENTINEL.ERROR" })
   });
   detectionOrchestrator.startAll();
   return detectionOrchestrator;
+}
+
+// ── JULY PORT 2026-10-14 (ddfcac5b) — the READ-ONLY .txt file-association guard ────────────────────────────
+// Ported from cc/security-lockdown-2026-07-01 and re-wired to the production gates. What it does: on launch, every
+// 60 s, on a manual scan and when Autonomous mode is switched on, read the Windows .txt association with positional
+// `reg query` calls (never `reg add` / `reg delete` / Set-ItemProperty — asserted by the suite), classify it in the
+// pure module, and surface a NORMAL detection (addDetection → globe card → the same supervised pipeline as every other
+// recipe). The two recipes are MANUAL/guide recipes, so the executor can never "apply" them; the only action ARIA
+// offers is opening Windows Default Apps for the person to pick Notepad themselves (openDefaultAppsForTextFiles —
+// user-initiated, audit-logged, nothing written). 🔒 Registry-derived strings pass the excluded-folder guard in the
+// module; a redaction is logged here as a SECURITY audit row. Windows only; anywhere else the scan is a no-op.
+function runRegQuery(args, timeoutMs = 5000) {
+  return new Promise((resolve) => {
+    if (process.platform !== "win32" || !Array.isArray(args) || args.length === 0) return resolve("");
+    let out = "";
+    let child;
+    try {
+      child = spawn("reg", args, { windowsHide: true, timeout: timeoutMs, stdio: ["ignore", "pipe", "ignore"] });
+    } catch {
+      return resolve("");
+    }
+    childProcesses.add(child); // tracked so Ctrl+Alt+K ends it like every other child
+    child.stdout?.on("data", (d) => { if (out.length < 64000) out += d.toString(); });
+    child.on("error", () => { childProcesses.delete(child); resolve(""); });
+    child.on("close", () => { childProcesses.delete(child); resolve(out); });
+  });
+}
+
+function safeProgIdForRegPath(progId) {
+  const text = String(progId || "").trim();
+  return /^[A-Za-z0-9_.!{}-]{1,180}$/.test(text) ? text : "";
+}
+
+async function readClassValues(progId, subkey) {
+  const safeProgId = safeProgIdForRegPath(progId);
+  if (!safeProgId) return {};
+  const suffix = subkey ? `\\${subkey}` : "";
+  for (const root of ["HKCU\\Software\\Classes", "HKCR"]) {
+    const values = parseRegQueryValues(await runRegQuery(["query", `${root}\\${safeProgId}${suffix}`]));
+    if (Object.keys(values).length) return values;
+  }
+  return {};
+}
+
+async function readTextAssociationSnapshot() {
+  if (process.platform !== "win32") {
+    return { extension: ".txt", source: "unsupported-platform" };
+  }
+  const userChoice = parseRegQueryValues(await runRegQuery([
+    "query",
+    "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.txt\\UserChoice",
+    "/v",
+    "ProgId"
+  ]));
+  const openWithList = parseRegQueryValues(await runRegQuery([
+    "query",
+    "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.txt\\OpenWithList"
+  ]));
+  const openWithExecutables = Object.entries(openWithList)
+    .filter(([key]) => /^[a-z]$/i.test(key))
+    .map(([, value]) => value)
+    .filter(Boolean);
+  const association = parseRegQueryValues(await runRegQuery(["query", "HKCR\\.txt"]));
+  const userChoiceProgId = userChoice.ProgId || "";
+  const appValues = await readClassValues(userChoiceProgId, "Application");
+  const commandValues = await readClassValues(userChoiceProgId, "Shell\\open\\command");
+  return {
+    extension: ".txt",
+    source: "windows-registry-readonly",
+    userChoiceProgId,
+    userChoiceApplicationName: appValues.ApplicationName || "",
+    userChoiceCommand: commandValues["(Default)"] || "",
+    associationProgId: association["(Default)"] || "",
+    openWithExecutables
+  };
+}
+
+async function scanFileAssociationGuard(reason = "interval") {
+  if (process.platform !== "win32") {
+    const status = { ...buildAssociationGuardStatus(null), status: "unsupported", summary: "The text-file association guard runs on Windows only.", reason };
+    store.set("fileAssociationGuard", status);
+    return { ok: true, status, issue: null, unsupported: true };
+  }
+  const snapshot = await readTextAssociationSnapshot();
+  const classification = classifyTextAssociation(snapshot);
+  if (classification.snapshot && classification.snapshot.r11Redacted) {
+    logEvent("SECURITY", "File association guard redacted a registry value that referenced an excluded folder.", r11AuditEntry("file-association-guard"));
+  }
+  const status = buildAssociationGuardStatus(classification);
+  store.set("fileAssociationGuard", { ...status, reason });
+
+  if (!classification.issue) {
+    if (store.get("fileAssociationLastIssueKey")) store.set("fileAssociationLastIssueKey", "");
+    broadcastState();
+    return { ok: true, status, issue: null };
+  }
+
+  const issue = classification.issue;
+  const lastKey = String(store.get("fileAssociationLastIssueKey") || "");
+  if (issue.key !== lastKey || reason === "mode-autonomous" || reason === "manual") {
+    const recipe = recipeById(issue.recipeId);
+    if (recipe) {
+      addDetection(recipe, {
+        source: "desktop-scan",
+        signal: issue.signal,
+        issue: issue.summary,
+        signature: { code: issue.signal, family: issue.family, confidence: issue.confidence, source: "desktop" }
+      });
+      logEvent("WATCH", `File association guard surfaced ${issue.signal} (${reason}).`, { recipeId: recipe.id });
+    }
+    store.set("fileAssociationLastIssueKey", issue.key);
+  } else {
+    broadcastState();
+  }
+  return { ok: true, status, issue };
+}
+
+function startFileAssociationGuard() {
+  if (fileAssociationGuardTimer || process.platform !== "win32") return;
+  scanFileAssociationGuard("startup").catch((error) => handleSelfError(error, "association-guard-startup"));
+  fileAssociationGuardTimer = setInterval(() => {
+    if (agentBlocked()) return; // paused / stopped ARIA does not scan
+    scanFileAssociationGuard("interval").catch(() => undefined);
+  }, FILE_ASSOCIATION_GUARD_INTERVAL_MS);
+  fileAssociationGuardTimer.unref?.();
+}
+
+// The ONLY "fix" the guard offers: open Windows Default Apps (ms-settings:defaultapps) so the PERSON selects Notepad.
+// User-initiated (a click on the globe card / fix card), audit-logged, nothing written by ARIA, re-scan afterwards.
+// Refused while the kill switch / a pause is active so the guard behaves like every other remediation surface.
+async function openDefaultAppsForTextFiles(recipeId) {
+  const id = String(recipeId || "");
+  if (![TEXT_ASSOCIATION_PRIMARY_RECIPE_ID, TEXT_ASSOCIATION_RISK_RECIPE_ID].includes(id)) return { ok: false, error: "recipe_not_found" };
+  const recipe = recipeById(id);
+  if (!recipe) return { ok: false, error: "recipe_not_found" };
+  if (remediationKilled() || agentBlocked()) {
+    return { ok: false, opened: false, recipe: publicRecipe(recipe), message: "ARIA is paused or stopped — open Windows Settings > Apps > Default apps yourself and choose Notepad for .txt files." };
+  }
+  if (process.platform !== "win32") {
+    return { ok: false, opened: false, recipe: publicRecipe(recipe), message: "Default-app settings can only be opened on Windows." };
+  }
+  try {
+    await shell.openExternal("ms-settings:defaultapps");
+    logEvent("GUIDE", "Opened Windows Default Apps so the person can choose Notepad for .txt files (nothing changed by ARIA).", { recipeId: id });
+    setTimeout(() => { scanFileAssociationGuard("post-fix-opened").catch(() => undefined); }, 45000).unref?.();
+    return { ok: true, opened: true, recipe: publicRecipe(recipe), message: "Opened Windows Default Apps. Choose Notepad for .txt files — ARIA re-checks in a minute and nothing was changed by ARIA." };
+  } catch {
+    return { ok: false, opened: false, recipe: publicRecipe(recipe), message: "Windows Default Apps could not be opened automatically. Open Windows Settings > Apps > Default apps and choose Notepad for .txt files." };
+  }
+}
+
+// ── JULY PORT 2026-10-14 (af5e03ab · 24a33108) — the Office File Safety Net ──────────────────────────────────
+// Local rescue backups for recently changed Word/Excel/PowerPoint files (every 2 min) proven by opening a RENAMED
+// copy (every 3 min) — never the live file, never Office, never a macro, never a byte off the device. OPT-IN on the
+// production line (store.officeSafety.enabled, default false; Integrations → Office Safety Net); July started it at
+// launch for everyone. The public status is path-blind (counts + timestamps). 🔒 The excluded-folder guard is applied
+// inside the service to every root / directory / file; the watch roots are also filtered here so the audit row can say so.
+function appPathSafe(name) {
+  try { return app.getPath(name); } catch { return ""; }
+}
+
+function officeSafetyConfigNow() {
+  const saved = store.get("officeSafety") || {};
+  const userData = appPathSafe("userData") || path.join(os.homedir(), ".aria-sentinel");
+  const defaultRoots = [
+    appPathSafe("documents"),
+    appPathSafe("desktop"),
+    process.env.ONEDRIVE,
+    process.env.OneDrive,
+    process.env.OneDriveCommercial,
+    process.env.OneDriveConsumer
+  ].filter(Boolean);
+  const wanted = Array.isArray(saved.watchRoots) && saved.watchRoots.length ? saved.watchRoots : defaultRoots;
+  const watchRoots = wanted.filter((root) => !isBlockedPath(root));
+  if (watchRoots.length !== wanted.length && !officeSafetyRootsWarned) {
+    officeSafetyRootsWarned = true; // one audit row per process, not one per re-check
+    logEvent("SECURITY", "Office Safety Net skipped a watch root inside an excluded folder.", r11AuditEntry("office-safety-roots"));
+  }
+  return {
+    ...saved,
+    enabled: saved.enabled === true, // opt-in: only an explicit true runs the scanner
+    backupRoot: saved.backupRoot || path.join(userData, "RescueBackups"),
+    watchRoots
+  };
+}
+
+function officeSafetyStatus() {
+  if (officeSafetyService) return officeSafetyService.status();
+  const cfg = store.get("officeSafety") || {};
+  return {
+    ok: true,
+    enabled: cfg.enabled === true,
+    running: false,
+    excludedFolderSkips: 0,
+    backupIntervalMs: 2 * 60 * 1000,
+    validationIntervalMs: 3 * 60 * 1000,
+    scanIntervalMs: 30 * 1000,
+    activeWindowMs: 24 * 60 * 60 * 1000,
+    watchRootsCount: 0,
+    backupVault: "local-user-vault",
+    backupRootConfigured: false,
+    filesTracked: 0,
+    backupsCreated: 0,
+    validationsPassed: 0,
+    validationFailures: 0,
+    lastScanAt: null,
+    lastBackupAt: null,
+    lastValidationAt: null,
+    lastError: "",
+    documents: [],
+    recentEvents: [],
+    safeContract: {
+      localOnly: true,
+      cloudUpload: false,
+      validatesLiveFile: false,
+      validationUsesRenamedCopy: true,
+      launchesOffice: false,
+      macrosRun: false
+    }
+  };
+}
+
+function ensureOfficeSafetyService() {
+  if (!officeSafetyService) {
+    officeSafetyService = createOfficeSafetyService({
+      fs,
+      path,
+      os,
+      config: officeSafetyConfigNow(),
+      log: (tag, message) => logEvent(tag, message),
+      onChange: () => broadcastState()
+    });
+  }
+  return officeSafetyService;
+}
+
+function startOfficeSafety() {
+  const cfg = officeSafetyConfigNow();
+  if (!cfg.enabled) return { ok: true, status: officeSafetyStatus(), skipped: "opt-in" }; // nothing scans unasked
+  const result = ensureOfficeSafetyService().start(cfg);
+  logEvent("OFFICE-SAFETY", result.ok ? "Office Safety Net started (local vault, renamed-copy validation)." : "Office Safety Net did not start cleanly.");
+  broadcastState();
+  return result;
+}
+
+function setOfficeSafetyEnabled(on) {
+  const next = { ...(store.get("officeSafety") || {}), enabled: on === true || (on && typeof on === "object" && on.enabled === true) };
+  store.set("officeSafety", next);
+  const result = ensureOfficeSafetyService().configure(officeSafetyConfigNow());
+  logEvent("OFFICE-SAFETY", `Office Safety Net ${next.enabled ? "enabled by the person at the device" : "disabled"}.`);
+  broadcastState();
+  return result;
+}
+
+function scanOfficeSafety() {
+  if ((store.get("officeSafety") || {}).enabled !== true) {
+    return { ok: false, error: "office-safety-off", status: officeSafetyStatus(), copy: "Office Safety Net is off. Turn it on to scan and back up recently changed Office files." };
+  }
+  const service = ensureOfficeSafetyService();
+  if (!service.status().running) service.start(officeSafetyConfigNow());
+  const result = service.scanNow();
+  broadcastState();
+  return result;
+}
+
+function registerOfficeSafetyFile(filePath) {
+  if (typeof filePath !== "string" || !filePath.trim() || filePath.length > 2048) {
+    return { ok: false, error: "invalid-file-path", status: officeSafetyStatus() };
+  }
+  if (isBlockedPath(filePath)) { // 🔒 never read, never copied, surfaced as the usual count
+    logEvent("SECURITY", "Office Safety Net refused a file inside an excluded folder.", r11AuditEntry("office-safety-register"));
+    return { ok: false, error: "excluded-folder", surface: "1 personal folder excluded", status: officeSafetyStatus() };
+  }
+  if ((store.get("officeSafety") || {}).enabled !== true) {
+    return { ok: false, error: "office-safety-off", status: officeSafetyStatus() };
+  }
+  const service = ensureOfficeSafetyService();
+  const result = service.registerFile(filePath);
+  broadcastState();
+  return result;
 }
 
 // ── RUN 23 — process-health poller + supervised-fix control plane ─────────────────────────────────────────
@@ -2433,7 +3668,8 @@ function pushProcessHealth(snap) {
 function startProcessHealth() {
   try {
     processDetector = createProcessDetector();
-    const poll = () => { processDetector.tick().then((snap) => pushProcessHealth(snap)).catch(() => undefined); };
+    // (review P0-2) a stopped ARIA (Ctrl+Alt+K / Stop ARIA) takes no process snapshots either.
+    const poll = () => { if (ariaStoppedNow()) return; processDetector.tick().then((snap) => pushProcessHealth(snap)).catch(() => undefined); };
     poll();
     setInterval(poll, processDetector.cadenceMs).unref?.();
   } catch { /* the detector is best-effort and must never block startup */ }
@@ -2441,7 +3677,9 @@ function startProcessHealth() {
 
 // The supervisor's signed catalog = Tier-0 safe-generic ∪ green/yellow executable recipes.
 function supervisedVettedCatalog() {
-  return new Set([...TIER0_RECIPES.map((r) => r.id), ...EXECUTABLE_RECIPES, ...YELLOW_RECIPES]);
+  // PROD 2026-10-14 (audit M23) — the canonical executor ids (restart-audio, flush-dns-cache, …) are vetted too; a
+  // voice/chat offer that resolves to one of them used to be vetoed as "not in the signed catalog".
+  return new Set([...TIER0_RECIPES.map((r) => r.id), ...TIER0_EXECUTOR_IDS, ...EXECUTABLE_RECIPES, ...YELLOW_RECIPES]);
 }
 
 // Action-indicator: a small frameless banner anchored just below the floating globe during a countdown.
@@ -2477,24 +3715,44 @@ function closeActionIndicator() {
   lastIndicatorInfo = null;
 }
 
-function startActionCountdown({ recipeId, risk, onComplete }) {
-  const info = (remaining) => ({ recipeId, remaining, risk });
+function startActionCountdown({ recipeId, risk, title, onComplete }) {
+  // PROD 2026-10-14 — one tick payload for every surface (renderer contract): { id, secondsLeft, recipeId, title,
+  // canCancel } plus the legacy fields (remaining, risk, chat) so the action-indicator keeps rendering unchanged.
+  const id = randomUUID();
+  const label = title || recipeTitle(recipeId);
+  const info = (remaining) => ({ id, secondsLeft: remaining, recipeId, title: label, canCancel: true, remaining, risk, chat: countdownChatLine(recipeId, remaining) });
   createActionIndicatorWindow(info(COUNTDOWN_SECONDS));
   const c = createCountdown({
     seconds: COUNTDOWN_SECONDS,
     recipeId,
     onTick: (remaining) => {
-      updateActionIndicator(info(remaining));
-      if (mainWindow && !mainWindow.isDestroyed()) {
-        try { mainWindow.webContents.send("sentinel:countdown-tick", { ...info(remaining), chat: countdownChatLine(recipeId, remaining) }); } catch { /* chat line best-effort */ }
+      const payload = info(remaining);
+      updateActionIndicator(payload);
+      for (const win of BrowserWindow.getAllWindows()) {
+        if (win === actionIndicatorWindow || win.isDestroyed() || win.webContents.isDestroyed()) continue;
+        try { win.webContents.send("sentinel:countdown-tick", payload); } catch { /* a window mid-teardown is harmless */ }
       }
     },
-    onComplete: () => { closeActionIndicator(); try { if (onComplete) onComplete(); } catch { /* execution guarded by runRecipe */ } },
-    onAbort: () => { closeActionIndicator(); logEvent("CANCEL", `Action countdown aborted: ${recipeId}.`, { recipeId }); }
+    onComplete: () => { countdownManager.remove(c); closeActionIndicator(); try { if (onComplete) onComplete(); } catch { /* execution guarded by runRecipe */ } },
+    onAbort: () => { countdownManager.remove(c); closeActionIndicator(); logEvent("CANCEL", `Action countdown aborted: ${recipeId}.`, { recipeId }); }
   });
+  c.id = id;
+  c.title = label;
   countdownManager.register(c);
   c.start();
   return c;
+}
+/** Cancel one countdown by id (or every pending one when no id is given). Returns how many were aborted. */
+function cancelCountdown(id) {
+  const key = String(id || "");
+  let n = 0;
+  if (key) {
+    for (const c of countdownManager.list()) {
+      if (c && c.id === key && c.isPending()) { c.abort(); countdownManager.remove(c); n += 1; }
+    }
+  } else n = countdownManager.abortAll();
+  if (n) closeActionIndicator();
+  return { ok: true, aborted: n, id: key || null };
 }
 
 /**
@@ -2506,17 +3764,18 @@ function startActionCountdown({ recipeId, risk, onComplete }) {
 async function runSupervisedFix(payload = {}) {
   // RUN-CU / CU4 (audit P0 #1) — LINE 1: a fleet/customer kill or a paused agent refuses to apply ANY change on
   // this path too (it used to be checked only by the autonomous path). Detection + guidance keep working.
+  // KILL GATE 2026-10-14 (review P0-2) — and Ctrl+Alt+K / Stop ARIA: agentBlocked() IS the one gate now (killGateReason).
   if (remediationKilled() || agentBlocked()) {
-    const reason = remediationKilled() ? (bridgeStatus.killReason || "remediation disabled") : "ARIA is paused on this device";
-    logEvent("KILL-SWITCH", `Supervised fix ${String(payload.recipeId || "(none)")} blocked: ${reason}.`, { recipeId: String(payload.recipeId || "") });
-    return { ...blockedRecipeResult(reason), verdict: "blocked", countdown: false, copy: describeDecision({ action: "blocked" }) };
+    const reason = killGateReason();
+    logEvent("KILL-SWITCH", `Supervised fix ${String(payload.recipeId || "(none)")} blocked: ${reason}.`, { recipeId: String(payload.recipeId || ""), source: String(payload.source || "app").slice(0, 40) });
+    return { ...blockedRecipeResult(reason), verdict: "blocked", countdown: false, copy: describeDecision({ action: "blocked", reason: killGateDecisionReason() }) };
   }
   const recipeId = String(payload.recipeId || "");
   const pname = String(payload.processName || "");
   // 🔒 R11 — refuse anything referencing the off-limits folder up front.
   if (isBlockedPath(recipeId) || isBlockedPath(pname)) {
     logEvent("SECURITY", "Supervised fix blocked by R11 (private folder).", r11AuditEntry("supervised-fix"));
-    return { ok: false, error: "r11_blocked", surface: "1 personal folder excluded" };
+    return { ok: false, error: "r11_blocked", surface: "1 personal folder excluded", copy: "This fix touches an excluded folder, so ARIA will not run it." };
   }
   // Low-risk action sentinels (end-task / investigate / info) bypass supervisor + countdown.
   if (["end-task", "investigate", "info", "none"].includes(recipeId)) {
@@ -2533,19 +3792,35 @@ async function runSupervisedFix(payload = {}) {
   const mode = (requested === "manual" || requested === "confirmed") ? requested : (store.get("mode") || "manual");
   const verdict = superviseProposal(proposal, { mode, history: runs, now: Date.now(), vettedCatalog: supervisedVettedCatalog() });
   logEvent(verdict.verdict === "veto" ? "SECURITY" : "SUPERVISOR", `${supervisorAuditEntry(verdict, proposal).event}: ${verdict.reason}`, { recipeId });
-  if (verdict.verdict === "veto") { writeRecipeHistory(recordOutcome(history, recipeId, "veto")); return { ok: false, verdict: "veto", reason: verdict.reason }; }
+  if (verdict.verdict === "veto") { writeRecipeHistory(recordOutcome(history, recipeId, "veto")); return { ok: false, verdict: "veto", reason: verdict.reason, copy: `The safety supervisor stopped this fix: ${verdict.reason}` }; }
 
-  const policy = executionPolicy({ vettedCount: vettedCountOf(history, recipeId), mode, dryRunCheckbox: store.get("keepSystemFixesDryRun"), supervisorVerdict: verdict.verdict });
+  // WHO asked decides what a fresh (Tier-2) recipe may do (audit M1): a person at the device or an approval
+  // may run it in Confirmed; an unattended source (watcher / deep-link / bridge) may not.
+  const source = String(payload.source || "app");
+  const humanInitiated = !/^(detection|deep-link|bridge)/.test(source) && payload.approved !== true;
+  const approvedRecord = payload.approved === true && payload.approvalId ? approvals.byId(String(payload.approvalId)) : null;
+  const approved = Boolean(approvedRecord && approvedRecord.status === "approved" && approvedRecord.recipeId === recipeId);
+  // FAULT LAB 2026-10-14 (defect 4) — the vendor floor applies to a GREEN fix only; a fix the supervisor flagged high-risk
+  // (needsConfirm → treated as yellow below) never takes it.
+  const policyColor = verdict.supervisorEvidence && verdict.supervisorEvidence.needsConfirm ? "yellow" : recipeColor(recipeId);
+  // REVIEW P1-1 — the vendor floor is the Autonomous advisory track's alone: only its final step (source
+  // "detection:advisory") names VENDOR_FLOOR_TRACK; every other caller is judged on the local count (Confirmed never
+  // executes unattended — it asks once, so a person's click or approval is what allows a fresh Tier-2 fix here).
+  const policy = executionPolicy({ vettedCount: vettedCountOf(history, recipeId), vendorVetted: isVendorVetted(recipeId), color: policyColor, track: source === "detection:advisory" ? VENDOR_FLOOR_TRACK : undefined, mode, dryRunCheckbox: store.get("keepSystemFixesDryRun"), supervisorVerdict: verdict.verdict, humanInitiated, approved });
+  // The consent gate folds into the policy's dry-run so the renderer sees ONE truth: policy.dryRun === false
+  // means "this will change the device". Without live fixes on, a human run is an honest preview.
+  if (!policy.dryRun && globalDryRun()) { policy.dryRun = true; policy.execute = false; policy.heldBy = "live-fixes-off"; policy.copy = liveFixesStatus().enabled ? "Preview only — the global dry-run safety is on for this device." : "Preview only — live fixes are off. Turn them on in Settings → Fixes to apply this for real."; }
 
   // ── RUN-CU / CU4 (audit P1 #6) — the policy's outputs are ENFORCED, not just read ────────────────────────
   if (!policy.allowed) {
     logEvent("POLICY", `Fix ${recipeId} held by execution policy: ${policy.reason}`, { recipeId });
-    return { ok: false, verdict: "policy", reason: policy.reason, policy, countdown: false };
+    return { ok: false, verdict: "policy", reason: policy.reason, policy, countdown: false, copy: policy.copy };
   }
   const overlay = store.get("policyOverlay") || null;
   if (!isRecipeAllowedByPolicy(overlay, recipeId)) {
     logEvent("POLICY", `Fix ${recipeId} disabled by customer policy overlay.`, { recipeId });
-    return { ok: false, verdict: "policy", reason: "This fix is disabled by your organization's policy.", policy, countdown: false };
+    const reason = "This fix is disabled by your organization's policy.";
+    return { ok: false, verdict: "policy", reason, policy, countdown: false, copy: reason };
   }
   const needsConfirm = Boolean(verdict.supervisorEvidence && verdict.supervisorEvidence.needsConfirm); // high-risk in Autonomous
   const hours = businessHoursOpen(overlay, new Date());
@@ -2555,10 +3830,6 @@ async function runSupervisedFix(payload = {}) {
   let color = recipeColor(recipeId);
   if (needsConfirm && color === "green") color = "yellow"; // the supervisor flagged it high-risk: treat as yellow
   const auto = autonomyNow();
-  const source = String(payload.source || "app");
-  const humanInitiated = !/^(detection|deep-link|bridge)/.test(source) && payload.approved !== true;
-  const approvedRecord = payload.approved === true && payload.approvalId ? approvals.byId(String(payload.approvalId)) : null;
-  const approved = Boolean(approvedRecord && approvedRecord.status === "approved" && approvedRecord.recipeId === recipeId);
   let decision;
   if (approved) {
     decision = { action: "execute", reason: `approved-by-${approvedRecord.decidedBy || "person"}`, requiresRestorePoint: color === "yellow", notifyBefore: false, notifyAfter: true, level: auto.level, color };
@@ -2581,8 +3852,37 @@ async function runSupervisedFix(payload = {}) {
     // A person who clicked "Resolve it for me" on their OWN device (approver = self) IS the approver: the visible,
     // abortable 10s countdown is that approval — exactly today's consent model. Admin/either approver modes
     // still route to an approval request so the named approver decides.
-    if (decision.action === "request-approval" && humanInitiated && auto.approverMode === "self" && decision.reason !== "restore-point-unavailable") {
+    // REVIEW P1-1 — in Confirmed that click IS the "once" in "asks once": the fix runs with the person present. A red
+    // problem is never self-approved: it needs a person — said plainly, nothing changed (as in every other mode).
+    if (decision.action === "request-approval" && decision.reason === "confirmed-asks-once" && color === "red" && humanInitiated) {
+      decision = { ...decision, action: "notify-only", reason: "red-never-automated" };
+    }
+    if (decision.action === "request-approval" && humanInitiated && auto.approverMode === "self" && decision.reason !== "restore-point-unavailable" && color !== "red") {
+      // REVIEW P1-1 — when Confirmed already asked about this fix (one pending approval for this recipe), this click IS
+      // the yes to THAT ask: it is approved (audited, the approval replaces the countdown) — one record, one run, never
+      // a second run later from the same ask. With no ask open, the visible countdown is the yes (as before).
+      const open = approvals.pending().find((a) => a && a.recipeId === recipeId);
+      if (open) {
+        const r = await approvals.approve(open.id, { decidedBy: "self", channel: String(source || "app").slice(0, 20) });
+        if (!r.ok) return { ok: false, verdict: r.reason === "kill-gate" ? "blocked" : "approval-failed", reason: r.gate || r.reason, approvalId: open.id, countdown: false, copy: r.reason === "kill-gate" ? describeDecision({ action: "blocked", reason: killGateDecisionReason() }) : "That approval could not be applied — nothing was changed." };
+        return { ...(r.result || {}), approvedPending: true, approvalId: open.id };
+      }
       decision = { ...decision, action: "execute", reason: `${decision.reason}:self-approved-by-countdown`, notifyAfter: true, forceCountdown: true };
+    }
+  }
+  // ── PROD 2026-10-14 (audit M3) — honest elevation. A fix whose command needs administrator rights can only run
+  // through a UAC prompt the person at the device answers (Confirmed / Approve-first / Manual, human-started or
+  // human-approved, never red). An UNATTENDED run of such a fix (watcher-sourced full-auto) is turned into an
+  // approval request and says so: unattended elevated fixes need the admin runner, which is not registered.
+  const needsAdmin = !policy.dryRun && recipeNeedsAdmin(recipeId);
+  const elevation = liveFixesStatus().elevation;
+  if (needsAdmin) {
+    const attended = humanInitiated || approved;
+    if (decision.action === "execute" && (!attended || elevation !== "uac" || color === "red")) {
+      const reason = elevation !== "uac" ? "needs-admin-unavailable" : "needs-admin-unattended";
+      decision = { ...decision, action: "request-approval", reason, needsAdmin: true, elevation, notifyBefore: true };
+    } else if (decision.action === "execute") {
+      decision = { ...decision, needsAdmin: true, elevation };
     }
   }
   const copy = describeDecision(decision);
@@ -2608,20 +3908,38 @@ async function runSupervisedFix(payload = {}) {
   }
 
   const execute = () => {
-    // Pass the policy's resolved dry-run so a Tier-0 recipe the customer opted into actually runs live.
-    Promise.resolve(runRecipe(recipeId, { confirmed: true, dryRun: policy.dryRun, approvalId: approved ? approvedRecord.id : undefined }))
+    // Pass the policy's resolved dry-run so a Tier-0 recipe the customer opted into actually runs live. The
+    // elevation flag tells the runner a person is present (UAC may be asked); it is "none" for anything unattended.
+    const elevationFor = (humanInitiated || approved) && color !== "red" ? elevation : "none";
+    Promise.resolve(runRecipe(recipeId, { confirmed: true, dryRun: policy.dryRun, elevation: elevationFor, approvalId: approved ? approvedRecord.id : undefined }))
       .then((res) => {
+        // Ledger (audit M1): a live success counts +1; a completed preview is "preview" (±0); a live failure is "abort".
         const ran = Boolean(res && res.ok && res.dryRun === false);
-        writeRecipeHistory(recordOutcome(readRecipeHistory(), recipeId, ran ? "success" : "abort"));
-        afterFixOutcome(recipeId, res, { decision, source });
+        const previewed = Boolean(res && res.ok && res.dryRun === true);
+        writeRecipeHistory(recordOutcome(readRecipeHistory(), recipeId, ran ? "success" : previewed ? "preview" : "abort"));
+        afterFixOutcome(recipeId, res, { decision, source, startedAt: payload.startedAt });
       })
       .catch(() => writeRecipeHistory(recordOutcome(readRecipeHistory(), recipeId, "abort")));
   };
   // An approval REPLACES the countdown (the person already said yes); the supervisor's needsConfirm FORCES one.
   const countdown = approved ? false : (policy.requiresCountdown || needsConfirm || decision.forceCountdown === true);
   if (!countdown) { execute(); return { ok: true, verdict: verdict.verdict, countdown: false, policy, decision, approved, copy }; }
-  startActionCountdown({ recipeId, risk: proposal.riskTier, onComplete: execute });
-  return { ok: true, verdict: verdict.verdict, countdown: true, seconds: COUNTDOWN_SECONDS, policy, decision, copy };
+  const cd = startActionCountdown({ recipeId, risk: proposal.riskTier, title, onComplete: execute });
+  return { ok: true, verdict: verdict.verdict, countdown: true, countdownId: cd.id, seconds: COUNTDOWN_SECONDS, policy, decision, copy };
+}
+
+/**
+ * PROD 2026-10-14 (audit M3) — does this recipe have at least one live step that needs administrator rights?
+ * Tier-0 executor bindings carry `needsAdmin`; registry recipes are scanned per action (explicit flag or command shape).
+ */
+function recipeNeedsAdmin(recipeId) {
+  const id = String(recipeId || "");
+  const exec = resolveExecutorId(id);
+  if (exec) return Boolean(TIER0_COMMANDS[exec] && TIER0_COMMANDS[exec].needsAdmin);
+  if (process.platform === "darwin" && isDarwinTier0(id)) return false; // user-level darwin set, never sudo
+  const r = recipeById(id);
+  if (!r) return false;
+  return (r.actions || []).some((a) => a && a.shell === "powershell" && actionNeedsAdmin(a));
 }
 
 // RUN 23b — Tier-0 execution path. childProcesses-tracked PowerShell runner (so Ctrl+Alt+K kills it) + the
@@ -2629,6 +3947,8 @@ async function runSupervisedFix(payload = {}) {
 function tier0Run(command) {
   return new Promise((resolve) => {
     if (process.platform !== "win32" || !command) return resolve({ stdout: "", stderr: "", exitCode: 0 });
+    // KILL GATE (review P0-2) — no fix step spawns after Ctrl+Alt+K / Stop ARIA.
+    if (ariaStoppedNow()) return resolve({ stdout: "", stderr: "stopped by the kill switch", exitCode: 1, reason: "kill-switch" });
     let out = "", err = "", child;
     try {
       child = spawn("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", String(command)], { windowsHide: true, timeout: 30000 });
@@ -2641,11 +3961,46 @@ function tier0Run(command) {
   });
 }
 
+// PROD 2026-10-14 (audit M3) — run ONE allow-listed command with administrator rights through a UAC prompt the
+// person at this device answers (Start-Process -Verb RunAs). Rules, enforced here and not only upstream:
+//   · win32 only; the command must pass the Tier-0 allowlist OR the recipe command allowlist, and never a deny verb;
+//   · the caller must say a person is present (`attended:true`) — this is never used from an unattended path;
+//   · stdout of the elevated process is not readable (Windows forbids redirecting a RunAs child), so the result is
+//     the exit code only — the exit guard inside the command makes a refused step exit non-zero;
+//   · a declined / timed-out prompt comes back as exitCode 1223 + reason "uac-denied" (nothing was changed);
+//   · tracked in childProcesses so Ctrl+Alt+K terminates the waiting outer shell too.
+const UAC_WAIT_MS = 3 * 60 * 1000; // Windows auto-dismisses an unanswered consent prompt well inside this.
+function runElevated(command, { attended = false, timeoutMs = UAC_WAIT_MS } = {}) {
+  return new Promise((resolve) => {
+    const cmd = String(command || "");
+    if (process.platform !== "win32" || !cmd) return resolve({ stdout: "", stderr: "", exitCode: 1, reason: "elevation-unavailable", elevated: false });
+    if (attended !== true) return resolve({ stdout: "", stderr: "", exitCode: 1, reason: "unattended-elevation-refused", elevated: false });
+    // KILL GATE (review P0-2) — no UAC prompt (and no elevated step) after Ctrl+Alt+K / Stop ARIA.
+    if (ariaStoppedNow()) return resolve({ stdout: "", stderr: "", exitCode: 1, reason: "kill-switch", elevated: false });
+    if (!(isAllowedCommand(cmd) || validateTier0Command(cmd))) return resolve({ stdout: "", stderr: "", exitCode: 1, reason: "command-not-allowlisted", elevated: false });
+    const { file, args } = buildElevatedExecution(cmd);
+    let child;
+    try { child = spawn(file, args, { windowsHide: true, timeout: timeoutMs, stdio: ["ignore", "ignore", "ignore"] }); }
+    catch { return resolve({ stdout: "", stderr: "spawn-failed", exitCode: 1, reason: "spawn-failed", elevated: false }); }
+    childProcesses.add(child);
+    logEvent("ELEVATE", "Asked Windows for administrator approval (UAC) for one allow-listed fix step.", { needsAdmin: true });
+    child.on("error", () => { childProcesses.delete(child); resolve({ stdout: "", stderr: "error", exitCode: 1, reason: "spawn-error", elevated: false }); });
+    child.on("close", (code, signal) => {
+      childProcesses.delete(child);
+      if (signal) return resolve({ stdout: "", stderr: "", exitCode: 1, reason: "uac-timeout", elevated: false });
+      const exitCode = code == null ? 1 : code;
+      if (exitCode === UAC_CANCELLED_EXIT) return resolve({ stdout: "", stderr: "", exitCode, reason: "uac-denied", elevated: false });
+      resolve({ stdout: "", stderr: "", exitCode, reason: exitCode === 0 ? "" : "exit-code", elevated: true });
+    });
+  });
+}
+
 // RUN-CU / CU4 — macOS user-level Tier-0 runner: each command is spawned POSITIONALLY (argv array, no shell),
 // tracked for the kill-switch, 20s timeout, stdout never surfaced (counts/exit codes only — content-blind).
 function runDarwinArgv(argv) {
   return new Promise((resolve) => {
     if (process.platform !== "darwin" || !Array.isArray(argv) || !argv.length) return resolve({ exitCode: 1, ran: false });
+    if (ariaStoppedNow()) return resolve({ exitCode: 1, ran: false, reason: "kill-switch" }); // KILL GATE (review P0-2)
     let child;
     try { child = spawn(argv[0], argv.slice(1), { stdio: ["ignore", "ignore", "ignore"], timeout: 20000 }); }
     catch { return resolve({ exitCode: 1, ran: false }); }
@@ -2674,27 +4029,44 @@ async function runDarwinTier0Fix(recipe, actualDryRun) {
 
 async function runTier0Fix(recipeId, options = {}) {
   // RUN-CU / CU4 (audit P0 #1) — line 1: the fleet/customer kill switch and a paused agent cover THIS executor too.
+  // KILL GATE 2026-10-14 (review P0-2) — and Ctrl+Alt+K / Stop ARIA: agentBlocked() IS the one gate now (killGateReason).
   if (remediationKilled() || agentBlocked()) {
-    const reason = remediationKilled() ? (bridgeStatus.killReason || "remediation disabled") : "ARIA is paused on this device";
+    const reason = killGateReason();
     logEvent("KILL-SWITCH", `Tier-0 fix ${recipeId} blocked: ${reason}.`, { recipeId });
-    return { ...blockedRecipeResult(reason), dryRun: true, recipe: { id: String(recipeId || ""), tier: "tier-0" }, outcome: "blocked", steps: [], message: "Fixes are paused on this device." };
+    return { ...blockedRecipeResult(reason), dryRun: true, recipe: { id: String(recipeId || ""), tier: "tier-0" }, outcome: "blocked", steps: [], message: ariaStoppedNow() ? "ARIA is stopped on this device — nothing runs until you press Start ARIA." : "Fixes are paused on this device." };
   }
   // Dry-run unless system fixes are enabled AND the global gate is off AND the caller didn't force dry-run.
-  const actualDryRun = !allowSystemFixes || Boolean(store.get("dryRun")) || options.dryRun === true;
+  const actualDryRun = globalDryRun() || options.dryRun === true;
   // macOS user-level Tier-0 (dry-run by default; no PowerShell engine involved).
   if (process.platform === "darwin" && isDarwinTier0(recipeId)) return runDarwinTier0Fix(tier0ById(recipeId, "darwin"), actualDryRun);
+  // PROD 2026-10-14 (audit M3) — a person is present (options.elevation === "uac") → the executor's EXEC step for a
+  // needsAdmin binding goes through the UAC runner; otherwise the executor is told elevation is unavailable and
+  // reports "needs-admin" honestly instead of trying a change Windows will refuse.
+  const attended = options.elevation === "uac" && process.platform === "win32";
   const result = await executeTier0(recipeId, {
     dryRun: actualDryRun,
     run: tier0Run,
+    runElevated: attended ? (cmd) => runElevated(cmd, { attended: true }) : undefined,
+    elevated: attended ? undefined : false,
     logger: (event, text, extra) => logEvent(event, text, { ...extra })
   });
   try { refreshHealthScore(); } catch { /* health refresh best-effort */ }
+  // KILL GATE (review P0-2) — stopped mid-run: every spawn after the stop was refused (tier0Run / runElevated), so say
+  // that instead of the executor's generic failure line.
+  if (!actualDryRun && ariaStoppedNow() && result.outcome !== "success" && result.outcome !== "no-op-neutral") {
+    result.message = "Stopped by Ctrl+Alt+K — no step after the stop ran (a step already running when it was pressed finished its own command).";
+    logEvent("KILL-SWITCH", `Tier-0 fix ${recipeId} stopped mid-run — nothing after the stop ran.`, { recipeId });
+  }
   const ok = ["success", "no-op-neutral", "dry-run"].includes(result.outcome);
+  // (R6a) one FIX row per completed LIVE execution — the only row the hours-saved / pilot-proof counters read.
+  if (!actualDryRun) logEvent("FIX", `${recipeTitle(recipeId)}: ${result.message}`, { recipeId: result.recipeId || recipeId, outcome: result.outcome === "success" ? "done" : result.outcome === "no-op-neutral" ? "no-op" : "failed", tier: "tier-0" });
   return {
     ok,
     dryRun: actualDryRun,
     recipe: { id: result.recipeId || recipeId, tier: "tier-0" },
     outcome: result.outcome,
+    needsAdmin: Boolean(result.needsAdmin),
+    reason: result.reason || "",
     steps: result.events,
     message: result.message
   };
@@ -2706,10 +4078,13 @@ function readDistInfo() {
   try {
     const root = path.resolve(__dirname, "../..");
     const version = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).version;
-    const exePath = path.join(root, "dist", otaAssetName(version));
-    if (!fs.existsSync(exePath)) return { ok: false, reason: "dist-exe-not-found", version };
+    // (F4 round 2) prefer the SIGNED installer (-setup.exe), fall back to the unsigned name; the name is the truth.
+    const candidates = [path.join(root, "dist", otaSignedAssetName(version)), path.join(root, "dist", otaAssetName(version))];
+    const exePath = candidates.find((p) => fs.existsSync(p));
+    if (!exePath) return { ok: false, reason: "dist-exe-not-found", version };
+    const name = path.basename(exePath);
     const buf = fs.readFileSync(exePath);
-    return { ok: true, version, sha512: createHash("sha512").update(buf).digest("base64"), size: buf.length, url: otaAssetUrl(version) };
+    return { ok: true, version, name, signed: isSignedArtifactName(name), sha512: createHash("sha512").update(buf).digest("base64"), size: buf.length, url: otaAssetUrlFor(version, name) };
   } catch { return { ok: false, reason: "dist-info-error" }; }
 }
 
@@ -2738,12 +4113,18 @@ function logEvent(tag, text, extra = {}) {
   const trimmed = current.slice(0, 250);
   // RUN-CU / CU4 — rows pushed out of the 250-row hot window are archived (userData/audit/YYYY-MM.jsonl), never dropped.
   if (current.length > 250) { try { archiveAuditRows(current.slice(250)); } catch { /* archive is best-effort */ } }
-  store.set("transparencyLog", trimmed);
-  // RUN 16 §H — re-seal the log on every write so the next session can detect off-app tampering.
-  try { store.set("auditSeal", sealAudit(trimmed)); } catch { /* sealing must never block logging */ }
-  // RUN-CU / CU4 (audit P1 #9) — the KEYED seal (HMAC under appHmacKey()) lives in its own file; it is the one
-  // the startup verifier trusts. Written on every log write, same as the legacy seal.
-  try { writeKeyedAuditSeal(trimmed); } catch { /* sealing must never block logging */ }
+  // PROD 2026-10-14 (audit M21) — ONE atomic write (electron-store writes temp+rename) carries the log, the RUN 16
+  // legacy seal AND the keyed seal, so a crash / power loss between three separate writes can no longer leave the
+  // log and its seal out of step and raise a false "tamper detected" banner on an honest machine. The keyed seal
+  // file (audit-seal.json) is kept as a MIRROR for the verifier CLI and older readers, written atomically too.
+  let keyed = null;
+  try { keyed = sealAuditKeyed(trimmed, appHmacKey()); } catch { keyed = null; }
+  try {
+    store.set(keyed ? { transparencyLog: trimmed, auditSeal: sealAudit(trimmed), auditSealKeyed: keyed } : { transparencyLog: trimmed, auditSeal: sealAudit(trimmed) });
+  } catch {
+    try { store.set("transparencyLog", trimmed); } catch { /* logging must never throw */ }
+  }
+  if (keyed) { try { writeKeyedAuditSealFile(keyed); } catch { /* the mirror is best-effort */ } }
   // RUN-E E1 — a real fix just landed in the audit log: stamp pilot TTFV (write-once; no-op for other tags).
   if (tag === "RUN") { try { maybeStampPilotTtfv(); } catch { /* TTFV must never block logging */ } }
   if (tag === "RUN") { try { maybeAutorunCaseStudy(); } catch { /* RUN-E E2 — proof autorun must never block logging */ } }
@@ -2756,11 +4137,25 @@ function logEvent(tag, text, extra = {}) {
 // SECURITY entry, surface it to the admin (state + tray), then re-baseline the seal to the current log.
 // RUN-CU / CU4 — the keyed seal file (separate from the electron-store log; HMAC under the per-install key).
 const AUDIT_SEAL_FILE = () => path.join(app.getPath("userData"), "audit-seal.json");
-function readKeyedAuditSeal() { try { return JSON.parse(fs.readFileSync(AUDIT_SEAL_FILE(), "utf8")); } catch { return null; } }
+// The keyed seal is read from the SAME store record as the log first (written atomically with it, audit M21); the
+// file is the mirror / the migration source for installs that only ever wrote the file.
+function readKeyedAuditSeal() {
+  try { const inStore = store.get("auditSealKeyed"); if (inStore && Array.isArray(inStore.chain)) return inStore; } catch { /* fall through */ }
+  try { return JSON.parse(fs.readFileSync(AUDIT_SEAL_FILE(), "utf8")); } catch { return null; }
+}
+/** Atomic mirror write: temp file + rename, so a power loss mid-write never leaves a half seal on disk. */
+function writeKeyedAuditSealFile(sealed) {
+  const file = AUDIT_SEAL_FILE();
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const tmp = `${file}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(sealed));
+  fs.renameSync(tmp, file);
+  return sealed;
+}
 function writeKeyedAuditSeal(log) {
   const sealed = sealAuditKeyed(log, appHmacKey());
-  fs.mkdirSync(path.dirname(AUDIT_SEAL_FILE()), { recursive: true });
-  fs.writeFileSync(AUDIT_SEAL_FILE(), JSON.stringify(sealed));
+  try { store.set("auditSealKeyed", sealed); } catch { /* the store write is best-effort here; the mirror follows */ }
+  writeKeyedAuditSealFile(sealed);
   return sealed;
 }
 function verifyAuditIntegrity() {
@@ -2815,10 +4210,13 @@ function getState() {
     version: SENTINEL_VERSION,
     // F5 (2026-07-02) — dev-only affordances (e.g. "Simulate ARIA error") show ONLY in a dev run, never in the
     // packaged customer build. app.isPackaged is true for the shipped .exe → devMode false.
-    devMode: !app.isPackaged || Boolean(process.env.ARIA_SENTINEL_DEV),
+    devMode: devModeNow(),
+    // PROD 2026-10-14 (audit M15) — the exclusion guard as a COUNT + the configured names; the locked default is never named.
+    excludedFolders: { count: excludedFolderCount(), label: excludedFoldersLabel(), configured: configuredExcludedFolders() },
     mode: store.get("mode"),
-    dryRun: !allowSystemFixes || Boolean(store.get("dryRun")),
-    systemFixesEnabled: allowSystemFixes,
+    dryRun: globalDryRun(),
+    systemFixesEnabled: allowSystemFixes(),
+    liveFixes: liveFixesStatus(), // PROD 2026-10-14 (audit M1) — { enabled, source, elevation, note }
     keepSystemFixesDryRun: store.get("keepSystemFixesDryRun") === true,
     externalAiCalls: externalAiCallsNow(),
     reasoningMode: externalAiCallsNow() ? "kb-first + anthropic fallback (used this session)" : "local-symbolic",
@@ -2826,6 +4224,13 @@ function getState() {
     // RUN-CU / CU4 — autonomy level + approvals + platform honesty + the wizard prefs (for Settings → Autonomy & contacts).
     autonomy: { level: auto.level, clamped: auto.clamped, reason: auto.reason, mode: auto.mode, approverMode: auto.approverMode, levels: AUTONOMY_LEVELS },
     approvals: approvals.forState(),
+    // ADVISORY ESCALATION (2026-10-14) — the open notices ({ id, recipeId, title, advisory, of: 3, nextAt, choices, copy }),
+    // the person's interval/snooze, the rule in plain words, recent outcomes (content-blind) and the Never list.
+    advisories: advisoryMachine.forState(advisoryPrefsNow()),
+    advisoryPrefs: advisoryPrefsNow(),
+    advisoryRule: ruleSentence(setupPrefsNow()),
+    advisoryOutcomes: advisoryMachine.recentOutcomes(10),
+    advisoryNever: advisoryMachine.neverList(),
     deferredFixes: (store.get("deferredFixes") || []).slice(0, 10),
     platformCapabilities: platformCapabilities(process.platform),
     setupPrefs: setupPrefsNow(),
@@ -2838,6 +4243,8 @@ function getState() {
     bridgeStatus,
     systemChecks: store.get("systemChecks") || [],
     healthScore: lastHealth || store.get("healthScore") || null,
+    // PROD 2026-10-14 (F3 round 2) — the real watcher status for the Home "Watching: … last check N s ago" line.
+    watchers: watchersStatus(),
     agentState,
     platform: process.platform,
     autonomousPausedUntil: Number(store.get("autonomousPausedUntil") || 0),
@@ -2875,6 +4282,8 @@ function getState() {
     transparencyLog: store.get("transparencyLog") || [],
     serviceNow: store.get("serviceNow"),
     serviceNowStatus: serviceNowSummary(),
+    fileAssociationGuard: store.get("fileAssociationGuard") || null, // JULY PORT 2026-10-14 — last read-only .txt association check
+    officeSafety: officeSafetyStatus(), // JULY PORT 2026-10-14 — Office Safety Net status (path-blind; opt-in)
     knowledgeSources: store.get("knowledgeSources"),
     restorePoints: (store.get("restorePoints") || []).slice(0, 10),
     deletePrefs: readDeletePrefs(),
@@ -2895,12 +4304,14 @@ function publicRecipe(recipe) {
     detector: recipe.detector,
     success: recipe.success,
     escalation: recipe.escalation,
+    needsAdmin: (recipe.actions || []).some((a) => a && a.shell === "powershell" && actionNeedsAdmin(a)), // PROD 2026-10-14 (audit M3)
     actions: (recipe.actions || []).map((action) => ({
       id: action.id,
       label: action.label,
       shell: action.shell,
       risk: action.risk,
       requiresConfirm: action.requiresConfirm,
+      needsAdmin: action.shell === "powershell" && actionNeedsAdmin(action),
       dryRunResult: action.dryRunResult
     }))
   };
@@ -2917,15 +4328,27 @@ function buildReports() {
     auditEvents: log.length,
     recipes: RECIPES.length,
     stopCodes: STOP_CODES.length,
-    dryRun: !allowSystemFixes || Boolean(store.get("dryRun")),
+    dryRun: globalDryRun(),
     contentBlind: true,
     externalAiCalls: externalAiCallsNow() // RUN-CU / CU4 — real, not a literal
   };
 }
 
-function broadcastState() {
+// PROD 2026-10-14 (audit M33) — coalesced: every logEvent used to re-read ~8 files and ship the whole state (log +
+// 77 recipes) to every window, ~10 times per fix. A 16 ms trailing debounce sends ONE snapshot per burst; callers
+// that need the send now pass { immediate: true }.
+let broadcastTimer = null;
+function broadcastState(opts = {}) {
   if (isQuitting) return;
-  const state = getState();
+  if (opts && opts.immediate === true) { if (broadcastTimer) { clearTimeout(broadcastTimer); broadcastTimer = null; } return broadcastStateNow(); }
+  if (broadcastTimer) return;
+  broadcastTimer = setTimeout(() => { broadcastTimer = null; broadcastStateNow(); }, 16);
+  broadcastTimer.unref?.();
+}
+function broadcastStateNow() {
+  if (isQuitting) return;
+  let state;
+  try { state = getState(); } catch { return; }
   for (const win of BrowserWindow.getAllWindows()) {
     // Guard against the teardown race: a window can be disposed between enumeration and send.
     if (win.isDestroyed() || win.webContents.isDestroyed()) continue;
@@ -2963,6 +4386,8 @@ function scrubDetection(detection = {}) {
     risk: detection.risk || "yellow",
     mode: detection.mode || "manual",
     confidence: detection.confidence || signature.confidence,
+    // FAULT LAB 2026-10-14 (defect 5) — the fixed enum only: a watched service disabled at its start type needs an admin.
+    ...(detection.startType === "disabled" ? { startType: "disabled", needsAdmin: true } : {}),
     context: contentSafeContext({ signal: signature.code, source: detection.source || signature.source })
   };
 }
@@ -3008,6 +4433,13 @@ function addDetection(recipe, context = {}) {
     signal: signature.code,
     source: context.source || signature.source
   });
+  // FAULT LAB 2026-10-14 (defect 5) — a watched service whose START TYPE is Disabled (the service watcher's
+  // `startType: "disabled"`, accepted only from the watcher and only for a service recipe): the card says what is really
+  // wrong — disabled, not just stopped — and that an administrator is needed. It routes to the same service recipe, whose
+  // restart needs administrator rights (needsAdmin → never unattended); no recipe ever changes a start type.
+  const disabled = context.startType === "disabled" && String(context.source || "") === "detection-watcher" && Boolean(recipe.service && recipe.service.display);
+  const disabledLine = disabled ? `${recipe.service.display} is disabled (start type), not just stopped — needs an administrator` : "";
+  if (disabled) safeContext.startType = "disabled";
   const detection = {
     id: randomUUID(),
     ts: new Date().toISOString(),
@@ -3017,23 +4449,28 @@ function addDetection(recipe, context = {}) {
     signal: recipe.signal,
     title: recipe.title,
     chip: recipe.chip,
-    summary: recipe.summary,
+    summary: disabled ? `${disabledLine}.` : recipe.summary,
     risk: recipe.risk,
     mode: recipe.mode,
     confidence: signature.confidence,
+    ...(disabled ? { startType: "disabled", needsAdmin: true } : {}),
     context: safeContext
   };
   const detections = store.get("detections") || [];
   detections.unshift(detection);
   store.set("detections", detections.slice(0, 100));
-  logEvent("DETECT", `${recipe.signal}: ${recipe.title}`, { recipeId: recipe.id });
+  logEvent("DETECT", `${recipe.signal}: ${recipe.title}${disabled ? " — start type Disabled, needs an administrator" : ""}`, disabled ? { recipeId: recipe.id, startType: "disabled" } : { recipeId: recipe.id });
+  recordSlaDetectionRow(detection, recipe); // (audit M12) the SLA tab measures real detections, never zero data as 100%
   // Tray reflects the new situation at a glance: a red recipe escalates, everything else is a detection.
   setAgentState(recipe.risk === "red" ? "escalation" : "detection");
   // RUN-CU / CU4 — "who should know when something breaks": desktop/email/SMS per the wizard channels,
   // deduped per issue for 6h, content-blind (catalog title + id + severity + platform only).
   notifyEvent("issue-detected", { title: recipe.title, recipeId: recipe.id, severity: recipeColor(recipe.id), detectionId: detection.id });
-  // Autonomous mode may auto-apply a green recipe — gated by the opt-in + cap/cooldown/fleet guards.
-  autoFireIfEligible(recipe, context).catch(() => undefined);
+  // Autonomous mode may auto-apply a green recipe — gated by the opt-in + cap/cooldown/fleet guards. (ADVISORY ESCALATION:
+  // the detection id travels along so its escalation is idempotent per detection; a disabled service's notices carry the
+  // same plain sentence as its card.)
+  // (advisoryTitle is always set HERE — never taken from the caller's input — so no free text can reach a notice.)
+  autoFireIfEligible(recipe, { ...context, detectionId: detection.id, advisoryTitle: disabled ? disabledLine : undefined }).catch(() => undefined);
   overlayActiveUntil = Date.now() + 8000; // run the globe at 60fps through the fix animation
   if (overlayWindow) {
     showOverlay({ expanded: true });
@@ -3042,10 +4479,22 @@ function addDetection(recipe, context = {}) {
   return detection;
 }
 
+// PROD 2026-10-14 (audit M30) — a self-error is an audit row + a crash-queue record (content-blind), NOT a customer
+// detection: it used to mint a fix card, pop the globe and e-mail the IT contact on every renderer hiccup / GPU
+// process restart / bridge-port conflict. At most one self-repair card per hour, and only for a REPEATED fault.
+const SELF_ERROR_CARD_MIN_MS = 60 * 60 * 1000;
+let lastSelfErrorCardAt = 0;
+let selfErrorsSinceCard = 0;
 function handleSelfError(error, source = "runtime") {
   const message = error instanceof Error ? error.message : String(error || "unknown runtime error");
   const safeMessage = safeShortText(message, "ARIA Sentinel runtime fault");
   logEvent("SELF-ERROR", "ARIA Sentinel self-diagnosed a runtime fault.", { source, code: "APP.SENTINEL.ERROR" });
+  try { if (crashReporter && typeof crashReporter.capture === "function") crashReporter.capture(error instanceof Error ? error : new Error(String(message))); } catch { /* never a second crash */ }
+  selfErrorsSinceCard += 1;
+  const now = Date.now();
+  if (selfErrorsSinceCard < 3 || now - lastSelfErrorCardAt < SELF_ERROR_CARD_MIN_MS) return; // quiet: logged + queued only
+  lastSelfErrorCardAt = now;
+  selfErrorsSinceCard = 0;
   setAgentState("escalation");
   const recipe = recipeById("sentinel-self-repair-v1");
   if (recipe) {
@@ -3068,13 +4517,18 @@ async function selfDiagnose(reason = "manual") {
     check("bridge", bridgeStatus.listening && !bridgeStatus.conflict, bridgeStatus.conflict ? `Port ${BRIDGE_PORT} is already in use.` : `Bridge listening state: ${bridgeStatus.listening}.`),
     check("overlay", Boolean(overlayWindow && !overlayWindow.isDestroyed()), "Top-center ARIA globe window is available."),
     check("main-window", Boolean(mainWindow && !mainWindow.isDestroyed()), "Settings window is available."),
-    check("dry-run", !allowSystemFixes || Boolean(store.get("dryRun")), "System-changing actions remain gated."),
+    check("dry-run", globalDryRun(), "System-changing actions remain gated."),
     // RUN-CU / CU4 (fix j) — say what is true: the KB-first chain may reach the Anthropic fallback for a novel question.
     check("content-boundary", true, externalAiCallsNow() ? "KB-first chain reached the Anthropic fallback this session (question text only; never logs/paths/docs)." : "No external AI call this session — answers came from the knowledge base / local KB.")
   ];
   store.set("systemChecks", checks);
   const ok = checks.every((item) => item.ok || item.severity === "warn");
-  logEvent(ok ? "SELF-CHECK" : "SELF-REPAIR", `${reason} self diagnosis ${ok ? "passed" : "needs attention"}.`);
+  // PROD 2026-10-14 (audit M28) — the 5-minute interval logs ONLY when the verdict changes (288 "interval self
+  // diagnosis passed" rows a day were pushing real events out of the hot audit window). Manual / startup runs log.
+  const signature = `${ok}:${checks.filter((c) => !c.ok).map((c) => c.id).join(",")}`;
+  const last = store.get("selfDiagnoseSignature");
+  if (reason !== "interval" || signature !== last) logEvent(ok ? "SELF-CHECK" : "SELF-REPAIR", `${reason} self diagnosis ${ok ? "passed" : "needs attention"}.`);
+  store.set("selfDiagnoseSignature", signature);
   broadcastState();
   if (!ok) {
     const recipe = recipeById("sentinel-self-repair-v1");
@@ -3137,6 +4591,14 @@ async function detectIssue(input = {}) {
 }
 
 async function runRecipe(recipeId, options = {}) {
+  // KILL GATE 2026-10-14 (review P0-2) — line 1, before anything else: a stopped ARIA (Ctrl+Alt+K / Stop ARIA), a
+  // fleet/customer kill or a pause refuses this executor outright — a preview included ("stops everything").
+  if (!killGateOpen()) {
+    const reason = killGateReason();
+    logEvent("KILL-SWITCH", `Recipe ${String(recipeId || "(none)")} blocked: ${reason}.`, { recipeId: String(recipeId || "") });
+    const known = recipeById(recipeId);
+    return { ...blockedRecipeResult(reason), dryRun: true, steps: [], ...(known ? { recipe: publicRecipe(known) } : {}), message: ariaStoppedNow() ? "ARIA is stopped on this device — nothing runs until you press Start ARIA." : "Fixes are paused on this device." };
+  }
   // RUN 23b — a Tier-0 id (direct or aliased) routes to the dedicated executor instead of the diagnostic
   // recipe registry. Still dry-run-gated by the same flags; the supervisor + countdown gate it upstream.
   if (resolveExecutorId(recipeId) || (process.platform === "darwin" && isDarwinTier0(recipeId))) return runTier0Fix(recipeId, options);
@@ -3160,7 +4622,7 @@ async function runRecipe(recipeId, options = {}) {
   const executionId = options.executionId || options.execution_id;
   const confirmed = options.confirmed === true;
   const core = async () => {
-  const actualDryRun = !allowSystemFixes || Boolean(store.get("dryRun")) || options.dryRun !== false;
+  const actualDryRun = globalDryRun() || options.dryRun !== false;
   setAgentState("fixing");
   const steps = [];
   // A System Restore point is created — and VERIFIED (sequence number increased) — before any change touches
@@ -3175,19 +4637,42 @@ async function runRecipe(recipeId, options = {}) {
     logEvent("RESTORE PT", `${recipe.signal}: restore point unavailable on this platform/account — yellow-tier actions stay in preview.`, { recipeId });
   }
   logEvent("RUN", `${actualDryRun ? "Dry-run" : "Executing"} recipe ${recipe.signal}`, { recipeId });
+  // PROD 2026-10-14 (audit M3) — elevation is allowed for this run only when the gate said a person is present.
+  const elevation = options.elevation === "uac" && process.platform === "win32" && recipeColor(recipe.id) !== "red" ? "uac" : "none";
+  let stoppedMidRun = false;
   for (const action of recipe.actions || []) {
-    const result = await runAction(action, actualDryRun, recipe.id, { confirmed, restorePointTaken });
+    // KILL GATE (review P0-2) — Ctrl+Alt+K between two steps: the next step never starts (the running one was ended,
+    // or — an elevated step Windows owns — finished its own command). Recorded, never silent.
+    if (!actualDryRun && ariaStoppedNow()) {
+      stoppedMidRun = true;
+      steps.push({ actionId: action.id, label: action.label, ok: false, dryRun: false, stopped: true, reason: "kill-switch", message: "Stopped by Ctrl+Alt+K before this step — it did not run." });
+      logEvent("KILL-SWITCH", `${recipe.signal}: stopped by Ctrl+Alt+K before "${action.label}" — no step after the stop ran.`, { recipeId, actionId: action.id });
+      break;
+    }
+    const result = await runAction(action, actualDryRun, recipe.id, { confirmed, restorePointTaken, elevation });
+    // FAULT LAB 2026-10-14 (defect 3) — a NON-FATAL step (action.nonFatal, e.g. `ipconfig /registerdns`, which Windows may
+    // refuse a standard user) that fails LIVE is a WARNING, not a failed fix: it is recorded, said in the audit, and the
+    // remaining steps run. It never counts as a live change and never makes the fix "done" — the verify probe decides.
+    if (!result.ok && action.nonFatal === true && result.dryRun === false) {
+      steps.push({ actionId: action.id, label: action.label, ...result, nonFatal: true });
+      logEvent("WARN", `${action.label}: did not complete (Windows may require administrator rights for this step) — a non-fatal step, so the fix continues without it. Nothing else was skipped.`, { recipeId, actionId: action.id, nonFatal: true });
+      continue;
+    }
     steps.push({ actionId: action.id, label: action.label, ...result });
     logEvent(result.ok ? "DONE" : "ERROR", `${action.label}: ${result.message}`, { recipeId, actionId: action.id });
-    if (!result.ok) break;
+    // (review P0-2) a step ended by Ctrl+Alt+K (its child was terminated, or its spawn refused) stops the run as "stopped".
+    if (!result.ok) { if (!actualDryRun && ariaStoppedNow()) stoppedMidRun = true; break; }
   }
   // After a real (non-dry-run) execution of a cleared recipe, run a read-only verification probe.
   let verifiedFlag = null;
-  const liveSteps = steps.filter((s) => s.dryRun === false).length;
-  if (!actualDryRun && isExecutableRecipe(recipe.id) && steps.every((s) => s.ok) && liveSteps > 0) {
+  const requiredSteps = steps.filter((s) => !s.nonFatal); // a failed non-fatal step never fails (or passes) the fix
+  const liveSteps = steps.filter((s) => s.dryRun === false && !(s.nonFatal && !s.ok) && !s.stopped).length;
+  if (!actualDryRun && !stoppedMidRun && isExecutableRecipe(recipe.id) && requiredSteps.every((s) => s.ok) && liveSteps > 0) {
     const verified = await verifyRecipe(recipe.id);
     verifiedFlag = Boolean(verified.ok);
-    logEvent(verified.ok ? "DONE" : "REVIEW", `Verification for ${recipe.signal}: ${verified.ok ? "passed" : "inconclusive"}.`, { recipeId });
+    // FAULT LAB 2026-10-14 (defect 3) — the verify probe's verdict IS the outcome: the steps ran but the check after them
+    // failed = NOT RESOLVED (never "success", never "fixed and verified"), and the audit row says so in those words.
+    logEvent(verified.ok ? "DONE" : "REVIEW", `Verification for ${recipe.signal}: ${verified.ok ? "passed" : "failed — not resolved (the steps ran, but the check after them says the problem is still there)"}.`, verified.ok ? { recipeId } : { recipeId, outcome: NOT_RESOLVED });
     // RUN-B B5 - a REAL applied+verified fix: show the under-globe "resolved | email sent | ticket ref"
     // confirmation (real email + real recorded ticket ref). Non-blocking; never fires on an unverified fix.
     if (verified.ok) {
@@ -3195,23 +4680,37 @@ async function runRecipe(recipeId, options = {}) {
     }
   }
   refreshHealthScore();
-  const ok = steps.every((step) => step.ok);
+  // FAULT LAB 2026-10-14 (defect 3) — every required step ran, the gate's verify failed → `not_resolved`: ok:false (so the
+  // vetted ledger never counts it as a success and every surface treats it as "needs a person"), outcome + reason say it.
+  const stepsOk = requiredSteps.every((step) => step.ok);
+  const notResolved = stepsOk && verifiedFlag === false;
+  const ok = stepsOk && !notResolved;
   setAgentState(ok ? "idle" : "escalation");
   // Rule 14 — "live" only when at least one action really executed; a yellow fix held in preview for want of a
   // restore point reports dryRun:true + says why, never "Fix applied".
   const effectiveDryRun = actualDryRun || liveSteps === 0;
   const heldForRestorePoint = !actualDryRun && liveSteps === 0 && isYellowRecipe(recipe.id) && !restorePointTaken;
+  const warnings = steps.filter((s) => s.nonFatal && !s.ok).map((s) => s.actionId);
+  // (R6a) one FIX row per completed LIVE execution: "done" only when every step ran and verification did not fail.
+  if (!effectiveDryRun) logEvent("FIX", `${recipe.title}: ${ok ? (warnings.length ? "applied (a non-fatal step did not complete)" : "applied") : notResolved ? "applied, NOT RESOLVED — the check after the fix says the problem is still there" : stoppedMidRun ? "stopped by Ctrl+Alt+K part-way — no step after the stop ran" : "failed"}`, { recipeId, outcome: ok && verifiedFlag !== false ? "done" : "failed", liveSteps, ...(notResolved ? { resolution: NOT_RESOLVED } : {}), ...(stoppedMidRun ? { stopped: true } : {}), ...(warnings.length ? { warnings } : {}) });
   return {
     ok,
     dryRun: effectiveDryRun,
+    ...(notResolved ? { outcome: NOT_RESOLVED, reason: NOT_RESOLVED } : {}),
+    ...(stoppedMidRun ? { stopped: true, reason: "kill-switch" } : {}),
     recipe: publicRecipe(recipe),
     steps,
     restorePoint,
     restorePointTaken,
     verified: verifiedFlag,
-    message: heldForRestorePoint
+    warnings,
+    message: stoppedMidRun
+      ? (liveSteps > 0 ? "Stopped by Ctrl+Alt+K part-way: the steps before the stop ran; nothing after it did." : "Stopped by Ctrl+Alt+K before the first step — nothing ran.")
+      : heldForRestorePoint
       ? "Held in preview: a restore point is unavailable on this platform/account, so this yellow-tier fix was not applied."
-      : effectiveDryRun ? "Dry-run complete. No system changes were made." : recipe.success
+      : effectiveDryRun ? "Dry-run complete. No system changes were made."
+        : notResolved ? "Not resolved: the fix ran, but the check afterwards says the problem is still there. Nothing further was changed — a person should take a look."
+          : recipe.success
   };
   };
   // Idempotency: a repeated execution_id returns the cached outcome instead of re-applying.
@@ -3234,7 +4733,7 @@ function runAction(action, dryRun, recipeId, gate = {}) {
   const executable = isActionExecutable({
     recipeId,
     action,
-    allowSystemFixes,
+    allowSystemFixes: allowSystemFixes(),
     dryRun,
     confirmed: gate.confirmed,
     restorePointTaken: gate.restorePointTaken
@@ -3255,25 +4754,55 @@ function runAction(action, dryRun, recipeId, gate = {}) {
       output: ""
     });
   }
+  // PROD 2026-10-14 (audit M3) — a step that needs administrator rights runs ONLY through the UAC runner, and only
+  // when the gate said a person is present. Otherwise it is reported as not applied, never attempted-and-masked.
+  if (actionNeedsAdmin(action)) {
+    if (gate.elevation !== "uac") {
+      return Promise.resolve({ ok: false, dryRun: false, needsAdmin: true, reason: "needs-admin", message: "Needs administrator approval (UAC) — not attempted because no one is here to approve it. Nothing was changed.", output: "[needs-admin]" });
+    }
+    return runElevated(guardedRecipeCommand(action.command), { attended: true }).then((r) => {
+      if (r.reason === "kill-switch") return { ok: false, dryRun: false, needsAdmin: true, stopped: true, reason: "kill-switch", message: "Stopped by Ctrl+Alt+K — this step did not run.", output: "[stopped]" };
+      if (r.exitCode === 0) return { ok: true, dryRun: false, needsAdmin: true, elevated: true, message: "Command completed (with administrator approval).", output: "[command-complete]" };
+      if (r.reason === "uac-denied" || r.reason === "uac-timeout") return { ok: false, dryRun: false, needsAdmin: true, reason: r.reason, message: "Not applied — the administrator prompt was declined or timed out. Nothing was changed.", output: "[uac-denied]" };
+      return { ok: false, dryRun: false, needsAdmin: true, reason: r.reason || "exit-code", message: "Command failed even with administrator rights. Review local admin console.", output: "[command-error]" };
+    });
+  }
+  // KILL GATE (review P0-2) — no fix step spawns after Ctrl+Alt+K / Stop ARIA.
+  if (ariaStoppedNow()) return Promise.resolve({ ok: false, dryRun: false, stopped: true, reason: "kill-switch", message: "Stopped by Ctrl+Alt+K — this step did not run.", output: "[stopped]" });
   // Real execution: spawn with positional argv (no shell string interpolation), Restricted policy.
   const { file, args } = buildExecution(action);
   return new Promise((resolve) => {
     let settled = false;
-    const finish = (ok, message, output) => {
+    let stderr = "";
+    const finish = (ok, message, output, extra = {}) => {
       if (settled) return;
       settled = true;
-      resolve({ ok, dryRun: false, message, output });
+      resolve({ ok, dryRun: false, message, output, ...extra });
     };
     let child;
     try {
-      child = spawn(file, args, { windowsHide: true, timeout: 120000, stdio: ["ignore", "ignore", "ignore"] });
+      child = spawn(file, args, { windowsHide: true, timeout: 120000, stdio: ["ignore", "ignore", "pipe"] });
     } catch {
       return finish(false, "Command could not start. Review local admin console.", "[spawn-error]");
     }
     childProcesses.add(child); // tracked so the kill-switch (Ctrl+Alt+K) can terminate it
+    child.stderr?.on("data", (d) => { if (stderr.length < 4000) stderr += d.toString(); }); // classified, never surfaced raw
     child.on("error", () => { childProcesses.delete(child); finish(false, "Command failed. Review local admin console.", "[command-error]"); });
-    child.on("close", (code) => { childProcesses.delete(child); finish(code === 0, code === 0 ? "Command completed." : "Command failed. Review local admin console.", code === 0 ? "[command-complete]" : "[command-error]"); });
+    child.on("close", (code) => {
+      childProcesses.delete(child);
+      // (audit M5) an "access is denied" on stderr is a refusal, whatever the exit code of a trailing statement says.
+      if (/access is denied|cannot open|PermissionDenied|cannot be stopped/i.test(stderr)) return finish(false, "Needs administrator approval (UAC) — Windows refused this step for a standard user. Nothing was changed.", "[needs-admin]", { needsAdmin: true, reason: "needs-admin" });
+      finish(code === 0, code === 0 ? "Command completed." : "Command failed. Review local admin console.", code === 0 ? "[command-complete]" : "[command-error]");
+    });
   });
+}
+
+/** `if(-not $?){exit 1}` after the first statement of a registry command, so a refused step exits non-zero. */
+function guardedRecipeCommand(command) {
+  const parts = String(command || "").split(";");
+  const first = parts[0].trim();
+  const rest = parts.slice(1).map((s) => s.trim()).filter(Boolean);
+  return [first, "if(-not $?){exit 1}", ...rest].join("; ");
 }
 
 function verifyRecipe(recipeId) {
@@ -3314,6 +4843,7 @@ function isAllowedCommand(command) {
     "Remove-Item",
     "Start-Process",
     "Checkpoint-Computer",
+    "Clear-DnsClientCache", // PROD 2026-10-14 (audit M3) — the user-space replacement for Restart-Service Dnscache
     "sfc"
   ];
   return allowedPrefixes.some((prefix) => command.trim().startsWith(prefix));
@@ -3427,12 +4957,21 @@ function exportEvidencePack() {
 }
 
 // ---- "What's new" modal trigger ---------------------------------------------------------------
+// REVIEW P2-11 (2026-10-14) — the notes ship inside the package (build.files carries docs/RELEASE_NOTES_<version>.md), so
+// the first candidate is appRoot (= app.asar when packaged); process.resourcesPath layouts are tried after it. The first
+// non-empty file wins; none → "" (the modal then says "See the release notes for details").
 function readReleaseNotes(version) {
-  try {
-    return fs.readFileSync(path.join(appRoot, "docs", `RELEASE_NOTES_${version}.md`), "utf8");
-  } catch {
-    return "";
+  const seen = new Set();
+  for (const segs of releaseNotesCandidates({ appRoot, resourcesPath: process.resourcesPath || "", fileName: `RELEASE_NOTES_${version}.md` })) {
+    const file = path.join(...segs);
+    if (seen.has(file)) continue;
+    seen.add(file);
+    try {
+      const text = fs.readFileSync(file, "utf8");
+      if (text.trim()) return text;
+    } catch { /* try the next layout */ }
   }
+  return "";
 }
 
 function initWhatsNew() {
@@ -3455,44 +4994,47 @@ function acknowledgeWhatsNew() {
 }
 
 async function scanDisk() {
-  return new Promise((resolve) => {
-    const command = "Get-PSDrive C | ConvertTo-Json -Compress";
-    exec(`powershell -NoProfile -Command ${JSON.stringify(command)}`, { timeout: 20000 }, (error, stdout) => {
-      if (error) {
-        resolve({ ok: false, error: error.message });
-        return;
-      }
-      try {
-        const disk = JSON.parse(stdout);
-        const free = Number(disk.Free || 0);
-        const used = Number(disk.Used || 0);
-        const percentFree = free + used > 0 ? Math.round((free / (free + used)) * 1000) / 10 : null;
-        if (percentFree != null && percentFree < 8) {
-          detectIssue({ source: "desktop-scan", issue: `disk low space ${percentFree}% free`, signal: "DISK.LOW_SPACE" });
-        }
-        resolve({ ok: true, disk: { free, used, percentFree } });
-      } catch (err) {
-        resolve({ ok: false, error: err.message });
-      }
-    });
-  });
+  // PROD 2026-10-14 (audit M27) — through the tracked, win32-guarded runner (it used to shell-exec an untracked
+  // `powershell` on every platform and fail noisily on macOS).
+  if (process.platform !== "win32") return { ok: false, error: "not-windows", skipped: true };
+  const stdout = await runPowerShell("Get-PSDrive C | Select-Object Used,Free | ConvertTo-Json -Compress", 20000);
+  if (!stdout) return { ok: false, error: "no-output" };
+  try {
+    const disk = JSON.parse(stdout);
+    const free = Number(disk.Free || 0);
+    const used = Number(disk.Used || 0);
+    const percentFree = free + used > 0 ? Math.round((free / (free + used)) * 1000) / 10 : null;
+    if (percentFree != null && percentFree < 8) {
+      detectIssue({ source: "desktop-scan", issue: `disk low space ${percentFree}% free`, signal: "DISK.LOW_SPACE" });
+    }
+    return { ok: true, disk: { free, used, percentFree } };
+  } catch (err) {
+    return { ok: false, error: safeShortText(err && err.message, "scan error") };
+  }
 }
 
-async function updateKnowledge() {
+async function updateKnowledge(opts = {}) {
+  // Automatic pulls (launch / daily) wait for Setup consent; a person's click passes { manual:true } and never waits.
+  if (opts.manual !== true && !telemetryAllowed()) { logEvent("KB", "Knowledge pull deferred until Setup is completed."); return { ok: false, deferred: true, reason: "setup-not-completed", results: [] }; }
+  // PROD 2026-10-14 (audit M9) — only endpoints that exist are called; a declared-but-not-deployed feed (kb-bundle)
+  // is reported as "not available in this version" (ok:null), never as a failed check / red row at every launch.
+  // The two live feeds (aria-recipes, aria-stop-codes) carry the fleet kill directive and are checked for real.
+  const fetchImpl = typeof opts.fetchImpl === "function" ? opts.fetchImpl : (url, init) => outbound.fetch(url, init);
   const results = [];
   for (const item of [
     { id: "recipes", endpoint: RECIPE_ENDPOINT },
     { id: "stop-codes", endpoint: STOP_CODES_ENDPOINT },
     { id: "kb-bundle", endpoint: KB_BUNDLE_ENDPOINT }
   ]) {
+    if (!isEndpointDeployed(item.id)) { results.push({ id: item.id, ok: null, status: "not-available", note: ENDPOINT_NOT_AVAILABLE_NOTE }); continue; }
     try {
       const headers = { "user-agent": `ARIA-Sentinel/${SENTINEL_VERSION}` };
       if (customerConfig?.customerId) headers["x-aria-customer"] = customerConfig.customerId;
-      const res = await outbound.fetch(item.endpoint, { headers });
+      const res = await fetchImpl(item.endpoint, { headers });
       results.push({ id: item.id, ok: res.ok, status: res.status });
       // The recipes endpoint is the control plane: it may carry a global kill switch.
       if (item.id === "recipes" && res.ok) {
-        const body = await res.clone().json().catch(() => null);
+        const body = await (typeof res.clone === "function" ? res.clone() : res).json().catch(() => null);
         const kill = parseControlPlaneKill(body);
         if (kill.present) applyControlPlaneKill(kill.killed, kill.reason);
       }
@@ -3500,15 +5042,18 @@ async function updateKnowledge() {
       results.push({ id: item.id, ok: false, error: err.message });
     }
   }
-  logEvent("KB", "Knowledge update check complete", { results });
+  const live = results.filter((r) => r.ok !== null);
+  const summary = results.map((r) => `${r.id} ${r.ok === null ? ENDPOINT_NOT_AVAILABLE_NOTE : r.ok ? r.status : `failed (${r.status || r.error || "no response"})`}`).join(" · ");
+  logEvent(live.every((r) => r.ok) ? "KB" : "ERROR", `Knowledge update check: ${summary}.`, { results });
   store.set("endpointStatus", results.map((result) => ({
     id: result.id,
-    ok: Boolean(result.ok),
+    ok: result.ok === null ? null : Boolean(result.ok),
     status: result.status || 0,
+    note: result.note || "",
     error: result.error ? safeShortText(result.error, "endpoint error") : ""
   })));
   broadcastState();
-  return { ok: results.every((r) => r.ok), results };
+  return { ok: live.every((r) => r.ok), results, note: results.some((r) => r.ok === null) ? `kb-bundle ${ENDPOINT_NOT_AVAILABLE_NOTE}` : "" };
 }
 
 // RUN 30-B — the bundled cross-platform KB pack, indexed once and cached. aria-kb-pack ships in the .exe via
@@ -3545,7 +5090,9 @@ function persistChatAsk(message, reply, kind) {
     const file = path.join(dir, `${sid}.json`);
     let session = {};
     try { session = JSON.parse(fs.readFileSync(file, "utf8")); } catch { session = { id: sid }; }
-    session = recordAsk(session, { message, reply, kind, at });
+    // JULY PORT 2026-10-14 (a7f9e111) — every stored turn is scrubbed on disk (excluded folders through the guard, then
+    // drive / home paths → "[path]") and the session is capped at MAX_SESSION_TURNS; parseSessions scrubs again on render.
+    session = capSessionTurns(recordAsk(session, { message: scrubChatText(message), reply: scrubChatText(reply), kind, at }));
     if (!session.id) session.id = sid;
     fs.writeFileSync(file, JSON.stringify(session, null, 2));
   } catch { /* memory persistence is best-effort; never break the chat reply over it */ }
@@ -3707,6 +5254,9 @@ function legacySignalFor(code) {
     "BROWSER.ZOOM.WRONG": "ZOOM.WEIRD",
     "NET.DNS.FAIL": "DNS.FAIL",
     "NET.ADAPTER.APIPA": "NET.NO_GATEWAY",
+    // FAULT LAB 2026-10-14 (defect 2) — "the internet is unreachable" gets the same guide as "no adapter is up"
+    // (net-adapter-down-v1); before this NET.DOWN matched no recipe at all and the person heard nothing.
+    "NET.DOWN": "NET.ADAPTER.DOWN",
     "APP.TEAMS.SIGNIN_LOOP": "TEAMS.SIGNIN_LOOP",
     "BSOD.CRITICAL_PROCESS_DIED": "BLUE.SCREEN",
     "BSOD.SYSTEM_SERVICE_EXCEPTION": "BLUE.SCREEN",
@@ -3780,6 +5330,37 @@ export function applyPolicyOverlay(jsonString) {
   broadcastState();
   return overlay;
 }
+// PROD 2026-10-14 (audit M25) — the overlay has a LOADER now: ~/.aria-sentinel/policy.json (an IT lead / MDM drop) is
+// read at launch, on the daily tick and whenever the file changes; customer.json is re-read on the same cadence.
+const POLICY_FILE = path.join(os.homedir(), ".aria-sentinel", POLICY_FILE_NAME);
+let lastPolicySignature = null;
+function loadPolicyOverlayFromDisk(reason = "launch") {
+  try {
+    const { overlay, present } = loadPolicyFile(POLICY_FILE, fs);
+    const signature = JSON.stringify(overlay);
+    if (signature === lastPolicySignature) return overlay;
+    lastPolicySignature = signature;
+    const prev = store.get("policyOverlay") || null;
+    const prevActive = Boolean(prev && ((prev.recipes_disabled || []).length || prev.business_hours || prev.confirmation_threshold != null));
+    store.set("policyOverlay", overlay);
+    // Quiet when nothing is configured (the common case): a log row only when a policy applies or one was removed.
+    if (present) logEvent("POLICY", `Policy file applied (${reason}): ${overlay.recipes_disabled.length} recipe(s) disabled${overlay.business_hours ? ", business hours set" : ""}.`);
+    else if (prevActive) logEvent("POLICY", `Policy file removed (${reason}) — organization policy overlay cleared.`);
+    broadcastState();
+    return overlay;
+  } catch { return null; }
+}
+function watchPolicyFile() {
+  try {
+    const dir = path.dirname(POLICY_FILE);
+    fs.mkdirSync(dir, { recursive: true });
+    const w = fs.watch(dir, { persistent: false }, (_ev, name) => { if (String(name || "") === POLICY_FILE_NAME) loadPolicyOverlayFromDisk("file-change"); });
+    w.on?.("error", () => { /* watching is best-effort; the daily tick still re-reads */ });
+  } catch { /* best-effort */ }
+}
+function reloadCustomerConfig() {
+  try { const next = loadCustomerConfig(); const changed = JSON.stringify(next) !== JSON.stringify(customerConfig); customerConfig = next; if (changed) { logEvent("POLICY", `Customer config re-read: ${customerConfig ? (customerConfig.disabled ? "fixes DISABLED by customer policy" : "managed, fixes allowed") : "unmanaged"}.`); broadcastState(); } } catch { /* keep the last good config */ }
+}
 
 // RUN-CU / CU4 (audit P0 #3) — a restore point is REAL or it is honestly "unavailable". The wrapper runs
 // src/main/restore-point.mjs's commands through the childProcesses-tracked PowerShell runner and verifies by
@@ -3806,7 +5387,7 @@ async function recordRestorePoint(recipeId, name) {
   }
   let status = "unavailable", sequenceNumber = null;
   if (process.platform !== "win32") status = "unavailable";
-  else if (!allowSystemFixes || Boolean(store.get("dryRun"))) status = "dry-run";
+  else if (globalDryRun()) status = "dry-run";
   else if (isThrottled(Number(store.get("lastRestoreCheckpointTs") || 0), now)) status = "throttled-degraded";
   else {
     try {
@@ -3851,7 +5432,7 @@ function rollbackRestorePoint(snapshotId) {
     ? `Roll back requested to verified restore point #${point.sequenceNumber} (run System Restore to apply; requires a restart).`
     : `Roll back requested for ${snapshotId.slice(0, 8)} — no verified restore point exists for it (nothing to roll back to).`, { snapshotId });
   broadcastState();
-  return { ok: true, snapshot: point, real, dryRun: !allowSystemFixes || Boolean(store.get("dryRun")), message: real ? `Use System Restore → point #${point.sequenceNumber} to undo this fix (restart required).` : "No verified restore point exists for this fix, so there is nothing to roll back to." };
+  return { ok: true, snapshot: point, real, undone: false, dryRun: globalDryRun(), message: real ? `Use System Restore → point #${point.sequenceNumber} to undo this fix (restart required).` : "No verified restore point exists for this fix, so there is nothing to roll back to." };
 }
 
 function ariaCallerId() {
@@ -3865,7 +5446,7 @@ function runDiagnostic() {
     bridge: { listening: bridgeStatus.listening, conflict: bridgeStatus.conflict, port: BRIDGE_PORT },
     watchers: detectionOrchestrator ? detectionOrchestrator.status() : { running: false, count: 0, lastTickAgeMs: null },
     serviceNow: serviceNowSummary(),
-    kb: { bundleOk: true, version: (store.get("endpointStatus") || []).every((e) => e.ok !== false) },
+    kb: { bundleOk: true, version: (store.get("endpointStatus") || []).every((e) => e.ok !== false) }, // null = not available, not a failure
     audit: { entries: store.get("transparencyLog") || [] },
     tray: Boolean(tray),
     overlay: Boolean(overlayWindow && !overlayWindow.isDestroyed()),
@@ -3917,7 +5498,7 @@ async function serviceNowRaiseIncident(recipeId, context = {}) {
   const result = await snCreateIncident({
     symbolicCode: safeContext.symbolicCode || recipe.signal,
     recipeIds: [recipe.id],
-    dryRun: !allowSystemFixes || Boolean(store.get("dryRun")),
+    dryRun: globalDryRun(),
     category: recipe.family,
     assignmentGroup: route?.group,
     priority: route?.priority,
@@ -3950,6 +5531,22 @@ async function serviceNowDrain() {
   return result;
 }
 
+/**
+ * The bridge's POST /run-recipe (the browser extension asks for a fix). KILL GATE 2026-10-14 (review P0-2): the gate is
+ * checked here FIRST — a stopped / killed / paused ARIA answers "blocked" without parsing the ask any further. Otherwise
+ * routed through runSupervisedFix (R11 → supervisor → policy → approval/countdown); the caller's dryRun / confirmed flags
+ * are stripped by sanitizeRunRecipeBody — the bridge can ask, never force.
+ */
+async function bridgeRunRecipe(rawBody) {
+  if (!killGateOpen()) {
+    const reason = killGateReason();
+    logEvent("KILL-SWITCH", `Bridge /run-recipe refused: ${reason}.`, { source: "bridge" });
+    return { ...blockedRecipeResult(reason), verdict: "blocked", countdown: false, copy: describeDecision({ action: "blocked", reason: killGateDecisionReason() }) };
+  }
+  const body = sanitizeRunRecipeBody(rawBody); // idempotent: the route already sanitized; a direct caller is sanitized here
+  return runSupervisedFix({ ...body, mode: "confirmed", risk: (recipeById(body.recipeId) || {}).risk || "medium" });
+}
+
 function startBridge() {
   if (bridgeServer?.listening) return;
   bridgeServer = createServer(async (req, res) => {
@@ -3974,11 +5571,14 @@ function startBridge() {
       if (req.method === "GET" && url.pathname === "/dist-info") return sendJson(res, 200, readDistInfo());
       if (req.method === "POST" && url.pathname === "/signature") return sendJson(res, 200, { ok: true, signature: sanitizeToSignature(await readJson(req)) });
       if (req.method === "POST" && url.pathname === "/detect") return sendJson(res, 200, await detectIssue(await readJson(req)));
+      // JULY PORT 2026-10-14 (a7f9e111) — the extension reports a content-blind issue outcome; the fleet packet is local-only.
+      if (req.method === "POST" && url.pathname === "/browser-outcome") return sendJson(res, 200, recordBrowserOutcome(await readJson(req)));
+      if (req.method === "GET" && url.pathname === "/browser-outcomes/fleet-packet") return sendJson(res, 200, browserOutcomeFleetPacketNow());
       if (req.method === "POST" && url.pathname === "/run-recipe") {
-        // Routed through runSupervisedFix (R11 → supervisor → policy → approval/countdown); the caller's
-        // dryRun / confirmed flags are stripped by sanitizeRunRecipeBody — the bridge can ask, never force.
-        const body = sanitizeRunRecipeBody(await readJson(req));
-        return sendJson(res, 200, await runSupervisedFix({ ...body, mode: "confirmed", risk: (recipeById(body.recipeId) || {}).risk || "medium" }));
+        // KILL GATE (review P0-2) — bridgeRunRecipe answers "blocked" while the gate is closed; otherwise the ask goes
+        // through the supervised pipeline (R11 → supervisor → policy → approval/countdown). The caller's dryRun /
+        // confirmed flags are stripped by sanitizeRunRecipeBody — the bridge can ask, never force.
+        return sendJson(res, 200, await bridgeRunRecipe(sanitizeRunRecipeBody(await readJson(req))));
       }
       if (req.method === "POST" && url.pathname === "/incident") {
         const body = await readJson(req);
@@ -3989,7 +5589,7 @@ function startBridge() {
         return sendJson(res, 200, await chat(body.message || "", body.context || {}));
       }
       if (req.method === "POST" && url.pathname === "/scan") return sendJson(res, 200, await scanDisk());
-      if (req.method === "POST" && url.pathname === "/knowledge/update") return sendJson(res, 200, await updateKnowledge());
+      if (req.method === "POST" && url.pathname === "/knowledge/update") return sendJson(res, 200, await updateKnowledge({ manual: true }));
       if (req.method === "POST" && url.pathname === "/self-diagnose") return sendJson(res, 200, await selfDiagnose("bridge"));
       if (req.method === "POST" && url.pathname === "/self-repair") return sendJson(res, 200, await selfRepair("bridge"));
       sendJson(res, 404, { ok: false, error: "not_found" });
@@ -4080,7 +5680,10 @@ ipcMain.handle("sentinel:set-mode", (_event, mode, optIn) => {
   }
   store.set("mode", mode);
   applyModeBehavior(mode);
-  if (mode === "autonomous") logEvent("MODE", "Autonomous mode enabled via explicit opt-in.");
+  if (mode === "autonomous") {
+    logEvent("MODE", "Autonomous mode enabled via explicit opt-in.");
+    scanFileAssociationGuard("mode-autonomous").catch(() => undefined); // JULY PORT 2026-10-14 — immediate read-only re-check
+  }
   // RUN-CU / CU4 — keep the autonomy level in step with a manual Mode change (one truth, two controls):
   // autonomous → full-auto · confirmed → safe-auto · manual → approve-first. Business clamp still applies.
   try {
@@ -4104,17 +5707,29 @@ ipcMain.handle("sentinel:set-notify", (_event, config = {}) => setNotifyConfig(c
 ipcMain.handle("sentinel:test-notify", () => sendAutoFixNotify({ recipeId: "dns-fail-v1", signal: "NET.DNS.FAIL", outcome: "applied", endpoint: os.hostname(), durationMs: 0, tier: "green" }, { test: true }));
 // RUN-B B5 - lets Cowork/Ahmad trigger the under-globe confirmation live (records a real ticket ref + sends the
 // real resolution email, then renders the message under the globe) so the end-to-end can be seen + verified.
-ipcMain.handle("sentinel:globe-confirm-test", (_e, input = {}) => emitGlobeConfirmation({
-  issueTitle: (input && input.issueTitle) || "DNS lookup failed",
-  sessionId: (input && input.sessionId) || `test-${Date.now()}`
-}));
+ipcMain.handle("sentinel:globe-confirm-test", (_e, input = {}) => {
+  // (audit M32) a REAL ticket + a REAL email from a test button is a dev-only affordance; packaged builds refuse it.
+  if (!devModeNow()) return { show: false, reason: "not-available-in-this-build" };
+  return emitGlobeConfirmation({
+    issueTitle: (input && input.issueTitle) || "DNS lookup failed",
+    sessionId: (input && input.sessionId) || `test-${Date.now()}`
+  });
+});
 ipcMain.handle("sentinel:set-dry-run", (_event, dryRun) => {
   store.set("dryRun", Boolean(dryRun));
   broadcastState();
   return { ok: true, state: getState() };
 });
 ipcMain.handle("sentinel:detect", (_event, input) => detectIssue(input));
-ipcMain.handle("sentinel:run-recipe", (_event, recipeId, options) => runRecipe(recipeId, options || {}));
+// PROD 2026-10-14 (audit M18) — the direct channel is PREVIEW-ONLY. The renderer only ever passes dryRun:true here;
+// anything that should change the device goes through sentinel:supervised-fix (R11 → supervisor → policy →
+// approval/countdown → executor). Forcing dryRun keeps a forged/stale caller from skipping those gates.
+ipcMain.handle("sentinel:run-recipe", (_event, recipeId, options) => runRecipe(recipeId, { ...(options || {}), dryRun: true, elevation: "none" }));
+// PROD 2026-10-14 (audit M1) — the persisted, audited live-fix consent (Settings toggle / wizard step).
+ipcMain.handle("sentinel:get-live-fixes", () => liveFixesStatus());
+ipcMain.handle("sentinel:set-live-fixes", (_event, payload) => setLiveFixes(payload));
+// Cancel a pending pre-execution countdown by id (or all of them). Same effect as the ABORT button / Ctrl+Alt+K.
+ipcMain.handle("sentinel:cancel-countdown", (_event, payload) => cancelCountdown(payload && typeof payload === "object" ? payload.id : payload));
 ipcMain.handle("sentinel:chat", (_event, message, context) => chat(message, context || {}));
 // RUN 33 — ARIA tab data surfaces. Network ones (status/learning) fetch read-only stats (no chat content sent);
 // local ones (memory/agents) read on-device files. All parsing + R11 scrub happens in the shared parsers.
@@ -4145,6 +5760,9 @@ ipcMain.handle("aria:memory", () => {
   } catch { return { ok: true, data: parseSessions([]) }; }
 });
 ipcMain.handle("aria:agents", () => {
+  // (audit M32) the agent heartbeats live in the developer's vault beside the dev checkout; a packaged customer
+  // build has no such folder and must not go looking for it.
+  if (!devModeNow()) return { ok: true, data: parseHeartbeats([]) };
   try {
     const dir = path.join(app.getAppPath(), "..", "aria-vault", "11_CorpusCallosum", "agent-heartbeats");
     const beats = fs.readdirSync(dir).filter((f) => f.endsWith(".json")).map((f) => { try { return JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")); } catch { return null; } }).filter(Boolean);
@@ -4152,10 +5770,21 @@ ipcMain.handle("aria:agents", () => {
   } catch { return { ok: true, data: parseHeartbeats([]) }; }
 });
 ipcMain.handle("sentinel:scan", () => scanDisk());
-ipcMain.handle("sentinel:update-knowledge", () => updateKnowledge());
+ipcMain.handle("sentinel:update-knowledge", () => updateKnowledge({ manual: true }));
+// JULY PORT 2026-10-14 (ddfcac5b) — the read-only .txt association guard: a manual re-check, and the ONE guide action
+// (open Windows Default Apps for the person to pick Notepad; ARIA writes nothing; refused while paused/killed).
+ipcMain.handle("sentinel:file-association-scan", () => scanFileAssociationGuard("manual"));
+ipcMain.handle("sentinel:file-association-fix", (_event, recipeId) => openDefaultAppsForTextFiles(recipeId));
+// JULY PORT 2026-10-14 (af5e03ab) — the Office File Safety Net (opt-in): status · enable/disable · scan now · register a file.
+ipcMain.handle("sentinel:office-safety-status", () => officeSafetyStatus());
+ipcMain.handle("sentinel:office-safety-set-enabled", (_event, on) => setOfficeSafetyEnabled(on));
+ipcMain.handle("sentinel:office-safety-scan", () => scanOfficeSafety());
+ipcMain.handle("sentinel:office-safety-register-file", (_event, filePath) => registerOfficeSafetyFile(filePath));
 ipcMain.handle("sentinel:incident", (_event, recipeId, context) => makeIncident(recipeId, context || {}));
 ipcMain.handle("sentinel:self-diagnose", (_event, reason) => selfDiagnose(reason || "renderer"));
 ipcMain.handle("sentinel:self-repair", (_event, reason) => selfRepair(reason || "renderer"));
+// (F3 round 2) overlay hover-forward: over=true → interactive, over=false → click-through with forwarded mousemove.
+ipcMain.handle("sentinel:overlay-hover", (_event, payload) => setOverlayHover(Boolean(payload && typeof payload === "object" ? payload.over : payload)));
 ipcMain.handle("sentinel:show-globe", () => {
   showOverlay({ expanded: false });
   return { ok: true, state: getState() };
@@ -4201,9 +5830,21 @@ ipcMain.handle("sentinel:rebind-hotkey", (_event, id, combo) => {
   registerHotkeys();
   return { ok: true, status: hotkeyStatus };
 });
+// PROD 2026-10-14 (audit M20) — hotkey preferences: { enabled, altGrSafe, killSwitch } (all optional booleans).
+ipcMain.handle("sentinel:get-hotkey-prefs", () => ({ ok: true, prefs: store.get("hotkeyPrefs") || {}, status: hotkeyStatus }));
+ipcMain.handle("sentinel:set-hotkey-prefs", (_event, prefs) => {
+  const p = prefs && typeof prefs === "object" ? prefs : {};
+  const next = { ...(store.get("hotkeyPrefs") || {}) };
+  for (const k of ["enabled", "altGrSafe", "killSwitch"]) if (typeof p[k] === "boolean") next[k] = p[k]; else if (p[k] === null) delete next[k];
+  store.set("hotkeyPrefs", next);
+  registerHotkeys();
+  logEvent("HOTKEY", `Hotkey preferences updated (${Object.keys(next).map((k) => `${k}=${next[k]}`).join(", ") || "defaults"}).`);
+  broadcastState();
+  return { ok: true, prefs: next, status: hotkeyStatus };
+});
 ipcMain.handle("sentinel:enter-license", async (_event, payload) => enterLicense(payload || {})); // RUN 24 A6 — async (server resolve)
 ipcMain.handle("sentinel:logout", () => logoutLicense());
-ipcMain.handle("sentinel:choose-plan", (_event, tier) => openPlanCheckout(tier));
+ipcMain.handle("sentinel:choose-plan", (_event, tier, opts) => openPlanCheckout(tier, opts && typeof opts === "object" ? opts : {}));
 ipcMain.handle("sentinel:open-plan-picker", () => openPlanPicker());
 ipcMain.handle("sentinel:privacy-capture", (_event, windowMs) => runPrivacyCapture(Number(windowMs) || 10000));
 ipcMain.handle("sentinel:export-evidence", () => exportEvidencePack());
@@ -4262,7 +5903,11 @@ ipcMain.handle("sentinel:set-low-power", (_event, on) => {
 ipcMain.handle("sentinel:export-audit", (_event, kind) => {
   const dateStamp = new Date().toISOString().slice(0, 10);
   const log = store.get("transparencyLog") || [];
-  const content = kind === "pdf" ? auditToPdf("ARIA Sentinel — audit (30 days)", log) : auditToCsv(log);
+  // (audit M28) the title says what the export CONTAINS: the hot rows and their real date range, not "30 days".
+  const oldest = log.length ? String(log[log.length - 1].ts || "").slice(0, 10) : "";
+  const newest = log.length ? String(log[0].ts || "").slice(0, 10) : "";
+  const title = log.length ? `ARIA Sentinel — audit (${log.length} rows, ${oldest} to ${newest})` : "ARIA Sentinel — audit (no rows yet)";
+  const content = kind === "pdf" ? auditToPdf(title, log) : auditToCsv(log);
   logEvent("AUDIT", `Exported human-readable audit (${kind === "pdf" ? "PDF" : "CSV"}).`);
   return { ok: true, filename: auditFileName(kind, dateStamp), content, kind: kind === "pdf" ? "pdf" : "csv" };
 });
@@ -4302,6 +5947,14 @@ ipcMain.handle("setup:complete", (_event, prefs) => {
   if (prefs && typeof prefs === "object" && "autonomyLevel" in prefs) applied = applyAutonomyLevel(cfg.setup.prefs, { understood: cfg.setup.prefs.fullAutoUnderstood === true });
   logEvent("SETUP", "Setup wizard completed.");
   broadcastState();
+  // (audit M17) consent just arrived: the deferred launch-time telemetry runs now, once.
+  setTimeout(() => {
+    sendHeartbeat().catch(() => undefined);
+    runUpdateCheck("launch").catch(() => undefined);
+    updateKnowledge().catch(() => undefined);
+    if (crashReporter && typeof crashReporter.flush === "function") crashReporter.flush().catch(() => undefined);
+    refreshLicense().catch(() => undefined); // REVIEW P2-9 — a pre-seeded licence is checked now, not before consent
+  }, 1500).unref?.();
   return { ok: true, setup: cfg.setup, applied };
 });
 ipcMain.handle("setup:reopen", () => {
@@ -4338,6 +5991,10 @@ ipcMain.handle("sentinel:deny-fix", async (_event, payload) => {
   return r;
 });
 ipcMain.handle("sentinel:list-approvals", () => approvals.forState());
+// ADVISORY ESCALATION (2026-10-14) — the three choices on a notice + the advise-first prefs (Settings → Autonomy).
+ipcMain.handle("sentinel:advisory-ack", (_event, payload) => handleAdvisoryAck(payload));
+ipcMain.handle("sentinel:get-advisory-prefs", () => advisoryPrefsPayload());
+ipcMain.handle("sentinel:set-advisory-prefs", (_event, payload) => setAdvisoryPrefs(payload));
 // RUN-CU / CU4 (fix f) — the "Keep fixes in dry-run" checkbox finally has a writer. true = always preview;
 // false = live (still gated); unset = follow the mode (RUN 29-A default).
 ipcMain.handle("sentinel:set-keep-dry-run", (_event, on) => {
@@ -4356,6 +6013,16 @@ ipcMain.handle("sentinel:voice-approve", async (_event, payload) => {
   return r;
 });
 ipcMain.handle("sentinel:ingest-kb", (_event, file) => ingestKnowledgeFile(file || {}));
+// PROD 2026-10-14 (audit M15) — configurable excluded folders (names only; never paths; never the locked default).
+ipcMain.handle("sentinel:get-excluded-folders", () => ({ ok: true, count: excludedFolderCount(), label: excludedFoldersLabel(), configured: configuredExcludedFolders() }));
+ipcMain.handle("sentinel:set-excluded-folders", (_event, names) => {
+  const list = (Array.isArray(names) ? names : []).map((n) => String(n == null ? "" : n).trim().slice(0, 120)).filter(Boolean).slice(0, 50);
+  store.set("excludedFolders", list);
+  configureExcludedFolders(list);
+  logEvent("SECURITY", `Excluded-folder list updated: ${excludedFolderCount()} folder(s) excluded (names stay on this device).`);
+  broadcastState();
+  return { ok: true, count: excludedFolderCount(), label: excludedFoldersLabel(), configured: configuredExcludedFolders() };
+});
 // RUN 19 §4 — triple-confirm delete prefs (per-ext opt-out).
 ipcMain.handle("sentinel:get-delete-prefs", () => readDeletePrefs());
 ipcMain.handle("sentinel:set-delete-pref", (_event, ext) => {
@@ -4416,6 +6083,17 @@ ipcMain.handle("sentinel:get-performance", () => performanceData());
 ipcMain.handle("sentinel:get-sla", () => slaData());
 ipcMain.handle("sentinel:get-compliance", () => complianceData());
 ipcMain.handle("sentinel:list-reports", () => reportsData());
+// PROD 2026-10-14 (F3 round 2) — open the local reports folder in the OS file manager. The raw path never goes to the renderer.
+ipcMain.handle("sentinel:open-reports-folder", async () => {
+  try {
+    const dir = REPORTS_DIR();
+    fs.mkdirSync(dir, { recursive: true });
+    const err = await shell.openPath(dir); // "" on success, an error string otherwise
+    if (err) { logEvent("REPORT", "Could not open the reports folder."); return { ok: false, path: null }; }
+    logEvent("REPORT", "Opened the reports folder.");
+    return { ok: true, path: null };
+  } catch { return { ok: false, path: null }; }
+});
 ipcMain.handle("sentinel:generate-report", (_event, opts) => generateReport(opts || {}));
 ipcMain.handle("sentinel:set-report-prefs", (_event, prefs) => setReportPrefs(prefs || {}));
 // RUN 23 — process-health stream · supervised fix pipeline · countdown abort.
@@ -4444,8 +6122,15 @@ ipcMain.handle("sentinel:is-vetted", (_event, recipeId) => {
 // never an app network call, account, or payment action. Kept in sync with the flow `open` URLs (proven by
 // tests/walkthrough-open-live.test.mjs, which asserts every flow URL matches this allowlist).
 const OPEN_EXTERNAL_ALLOW = /^https:\/\/(iisupp\.net|[\w.-]+\.service-now\.com|(www\.)?anthropic\.com|claude\.ai|(www\.)?openai\.com|chatgpt\.com|gemini\.google\.com|ai\.google\.dev|(www\.)?perplexity\.ai|(www\.)?microsoft\.com|support\.microsoft\.com|copilot\.microsoft\.com|(www\.)?microsoft365\.com|aka\.ms|chromewebstore\.google\.com|microsoftedge\.microsoft\.com)(\/|$)/;
+// PROD 2026-10-14 (audit M10) — the Settings → Support buttons send mailto:/tel:/WhatsApp links to the company's own
+// address, number and WhatsApp line; the https-only regex above silently dropped all three ("Call now" did nothing).
+// Exact-shape, company-only: a mailto to any other domain, any other number, or any other wa.me line is refused.
+export const OPEN_EXTERNAL_CONTACT_ALLOW = /^(mailto:[A-Za-z0-9._%+-]+@iisupp\.net(\?subject=[A-Za-z0-9%+._-]{0,120})?|tel:\+1647\d{7}|https:\/\/wa\.me\/1647\d{7})$/;
+export function isOpenExternalAllowed(url) {
+  return typeof url === "string" && (OPEN_EXTERNAL_ALLOW.test(url) || OPEN_EXTERNAL_CONTACT_ALLOW.test(url));
+}
 ipcMain.handle("sentinel:open-external", (_event, url) => {
-  if (typeof url === "string" && OPEN_EXTERNAL_ALLOW.test(url)) {
+  if (typeof url === "string" && (OPEN_EXTERNAL_ALLOW.test(url) || OPEN_EXTERNAL_CONTACT_ALLOW.test(url))) {
     shell.openExternal(url);
     return { ok: true };
   }
@@ -4514,18 +6199,24 @@ if (hasSingleInstanceLock) {
     initWhatsNew();
     // RUN 29-D — install the content-blind crash reporter early (after the audit verifier): captures uncaught
     // errors to a local queue + best-effort forwards last launch's queue to sentinel-crash (never blocks the UI).
-    installCrashReporter({ version: SENTINEL_VERSION, crashFile: path.join(os.homedir(), ".aria-sentinel", "crash.log"), endpoint: "https://iisupp.net/.netlify/functions/sentinel-crash", fs, log: logEvent });
+    crashReporter = installCrashReporter({ version: SENTINEL_VERSION, crashFile: path.join(os.homedir(), ".aria-sentinel", "crash.log"), endpoint: "https://iisupp.net/.netlify/functions/sentinel-crash", fs, log: logEvent,
+      fetchImpl: outbound.fetch, canSend: telemetryAllowed, headers: () => { const h = { "x-sentinel-device": deviceIdHash() }; const k = licenseKeyHash(); if (k) h["x-sentinel-key"] = k; return h; } });
     createMainWindow();
     createOverlayWindow();
     createTray();
+    if (isStartupLaunch(process.argv)) logEvent("STARTUP", "Launched at logon (--startup): window stays hidden; globe + watchers run.");
     ensureTrialStarted();
     try { maybeStampPilotTtfv(); } catch { /* RUN-E E1 — catch a first fix recorded in an earlier session; never blocks startup */ }
     try { maybeAutorunCaseStudy(); } catch { /* RUN-E E2 — a pilot that matured between sessions drafts its proof at startup; never blocks */ }
-    refreshLicense().catch(() => undefined); // RUN 24 A6 — silent server-side re-verify (skips network if cache fresh)
+    refreshLicense().catch(() => undefined); // RUN 24 A6 — silent server-side re-verify (skips network if a signed cache is fresh; before Setup consent it sends nothing — review P2-9)
     showOverlay({ expanded: false });
     applyModeBehavior(store.get("mode"));
     startBridge();
-    startDetection();
+    // KILL GATE 2026-10-14 (review P0-2) — a relaunch never re-arms a stopped ARIA: watchers + the Office Safety Net stay
+    // off (and every execution path stays refused) until the person presses Start ARIA.
+    const launchedWatching = startDetectionAtLaunch();
+    startFileAssociationGuard(); // JULY PORT 2026-10-14 — read-only .txt association guard (Windows only)
+    if (launchedWatching) startOfficeSafety(); // JULY PORT 2026-10-14 — Office Safety Net: runs ONLY when the person turned it on
     startProcessHealth(); // RUN 23 — 30s content-blind process-health poll feeding the globe status panel
     serviceNowDrain().catch(() => undefined); // flush any incidents queued while offline
     selfDiagnose("startup").catch((error) => handleSelfError(error, "startup-diagnose"));
@@ -4534,7 +6225,9 @@ if (hasSingleInstanceLock) {
       selfDiagnose("interval").catch((error) => handleSelfError(error, "interval-diagnose"));
     }, 5 * 60 * 1000).unref?.();
     // Health Score is refreshed every 60s so the tray tooltip stays current between detections.
-    setInterval(() => refreshHealthScore(), 60 * 1000).unref?.();
+    // REVIEW P1-3 — the same minute tick raises the trial clock's high-water mark (a clock rolled back never lowers it).
+    setInterval(() => { refreshHealthScore(); touchSlaLastSeen(); touchClockHighWater(); }, 60 * 1000).unref?.();
+    recordLaunchGapAsDowntime(); // (audit M12) a gap > 2 min since the last heartbeat-minute is real downtime
     // Self-hosted auto-update (electron-updater) — guarded; no-op if the dep isn't installed.
     initAutoUpdate();
     // RUN 15 §7 — hardened hotkeys: try primary, fall back, surface live status (no silent fail).
@@ -4550,13 +6243,21 @@ if (hasSingleInstanceLock) {
     // only when someone clicks "Update knowledge". The heartbeat reply is parsed for {killed} as well.
     updateKnowledge().catch(() => undefined);
     setInterval(updateTick, 60 * 60 * 1000).unref?.(); // hourly: advance strikes + take AUTO opportunities
-    setInterval(() => { runUpdateCheck("daily").catch(() => undefined); sendHeartbeat().catch(() => undefined); healStartupIfNeeded().catch(() => undefined); updateKnowledge().catch(() => undefined); }, 24 * 60 * 60 * 1000).unref?.();
+    // (audit M22) the license is re-verified on the SAME daily tick (and on wake), not only at launch — a desktop
+    // left running for days no longer degrades to the free tier with the network fine.
+    setInterval(() => { runUpdateCheck("daily").catch(() => undefined); sendHeartbeat().catch(() => undefined); healStartupIfNeeded().catch(() => undefined); refreshLicense().catch(() => undefined); updateKnowledge().catch(() => undefined); }, 24 * 60 * 60 * 1000).unref?.();
     // RUN-CU / CU4 — approvals: expire overdue asks + poll remote decisions while anything is pending; aggregate
     // report (daily/weekly per reportCadence) on launch + hourly.
     if (approvals.pending().length) ensureApprovalPolling();
+    // ADVISORY ESCALATION (2026-10-14) — resume persisted escalations conservatively + start the one 15 s interval.
+    startAdvisoryEscalation();
     setTimeout(() => maybeSendAggregateReport().catch(() => undefined), 20 * 1000).unref?.();
     setInterval(() => maybeSendAggregateReport().catch(() => undefined), 60 * 60 * 1000).unref?.();
-    try { powerMonitor.on("resume", () => runUpdateCheck("wake").catch(() => undefined)); } catch { /* powerMonitor may be unavailable */ }
+    try { powerMonitor.on("resume", () => { runUpdateCheck("wake").catch(() => undefined); refreshLicense().catch(() => undefined); }); } catch { /* powerMonitor may be unavailable */ }
+    // (audit M25) organization policy: file at launch + watched + daily; customer.json re-read daily.
+    loadPolicyOverlayFromDisk("launch");
+    watchPolicyFile();
+    setInterval(() => { loadPolicyOverlayFromDisk("daily"); reloadCustomerConfig(); }, 24 * 60 * 60 * 1000).unref?.();
     // RUN 22 — daily 02:00 data-retention cleanup + quarterly report on a quarter-start launch.
     scheduleDailyAt(2, runRetentionCleanup);
     maybeRunQuarterly();
@@ -4581,17 +6282,37 @@ app.on("window-all-closed", (event) => {
 
 app.on("render-process-gone", (_event, webContents, details) => {
   handleSelfError(new Error(`Renderer process gone: ${details.reason}`), "renderer-process");
-  if (webContents === mainWindow?.webContents && !isQuitting) createMainWindow();
+  if (webContents === mainWindow?.webContents && !isQuitting) {
+    // (audit M30) destroy the dead window before recreating — never a second mainWindow beside a zombie.
+    try { if (mainWindow && !mainWindow.isDestroyed()) mainWindow.destroy(); } catch { /* already gone */ }
+    mainWindow = null;
+    createMainWindow();
+  }
 });
 
 app.on("child-process-gone", (_event, details) => {
   handleSelfError(new Error(`Child process gone: ${details.type}`), "child-process");
 });
 
+/**
+ * REVIEW P2-6 — quitting during a pre-execution countdown CANCELS that fix (audited): the countdown is aborted before the
+ * process goes (an advise-first auto-fix is then closed as "countdown-cancelled" by its own abort listener — it does not
+ * come back after the relaunch). Returns how many were cancelled.
+ */
+function cancelCountdownsForQuit() {
+  let n = 0;
+  try { n = countdownManager.abortAll(); } catch { n = 0; }
+  if (n) { try { closeActionIndicator(); } catch { /* window may be gone */ } logEvent("CANCEL", `ARIA is quitting during ${n} countdown(s) — ${n === 1 ? "that fix was" : "those fixes were"} cancelled; nothing ran.`, { quit: true, cancelled: n }); }
+  return n;
+}
 app.on("before-quit", () => {
+  cancelCountdownsForQuit();
   isQuitting = true;
   stopOverlayPhysics();
   try { globalShortcut.unregisterAll(); } catch { /* nothing registered */ }
+  if (fileAssociationGuardTimer) { clearInterval(fileAssociationGuardTimer); fileAssociationGuardTimer = null; } // JULY PORT 2026-10-14
+  if (officeSafetyService) { try { officeSafetyService.stop(); } catch { /* stopping never blocks quit */ } } // JULY PORT 2026-10-14
+  if (advisoryTimer) { clearInterval(advisoryTimer); advisoryTimer = null; } // ADVISORY ESCALATION — state is already persisted
   if (detectionOrchestrator) detectionOrchestrator.stopAll();
   if (adminWindow && !adminWindow.isDestroyed()) adminWindow.destroy();
   if (overlayWindow && !overlayWindow.isDestroyed()) overlayWindow.destroy();

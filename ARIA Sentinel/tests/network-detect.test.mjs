@@ -42,6 +42,11 @@ assert.ok(recipe, "net-down recipe exists");
 assert.equal(recipe.risk, "yellow", "always confirms (restarts connectivity services)");
 const cmds = recipe.actions.map((a) => a.command).join(" ");
 assert.match(cmds, /ipconfig \/flushdns/);
-assert.match(cmds, /Restart-Service Dnscache,Dhcp/);
+// PROD 2026-10-14 (audit M3) — the DNS Client (Dnscache) service cannot be restarted by anyone on Windows 10 1809+ /
+// Windows 11, so the recipe restarts ONLY the DHCP client, and that step declares it needs administrator rights.
+assert.match(cmds, /Restart-Service Dhcp -Force/);
+assert.doesNotMatch(cmds, /Dnscache/i, "no recipe step targets the unstoppable Dnscache service");
+assert.equal(recipe.actions.find((a) => a.id === "restart-net-services").needsAdmin, true, "service restart is flagged needsAdmin");
+assert.equal(recipe.actions.find((a) => a.id === "renew-ip").needsAdmin, true, "ipconfig /release is flagged needsAdmin");
 
 console.log("Network-detect test passed (2 consec → NET.DOWN once · blip ignored · yellow troubleshoot recipe).");

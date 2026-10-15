@@ -7,7 +7,7 @@
 // license-features.mjs unchanged. 🔒 R11 — never touches a filesystem path.
 import { normalizePlan, getFeatures, getTier, isAdmin } from "./pricing-tiers.mjs";
 
-// RUN 23e (Ahmad 2026-06-22) — an ACTIVE trial demos the paid modes, so it unlocks the Pro tier. An EXPIRED
+// RUN 23e (2026-06-22) — an ACTIVE trial demos the paid modes, so it unlocks the Pro tier. An EXPIRED
 // trial / no license falls back to the FREE FLOOR — a genuine free tier whose feature set is STRICTLY a subset
 // of the lowest PAID tier (Personal), so buying Personal is a real upgrade. Never admin.
 export const TRIAL_PLAN = "pro";

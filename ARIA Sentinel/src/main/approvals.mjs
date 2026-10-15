@@ -16,7 +16,17 @@
 // Invariants proven by the suite: deny never executes · expired never executes unless onTimeout is
 // 'proceed-green-only' AND the fix is green · a decision is applied once (no double-run) · remote merge
 // only ever moves pending → approved|denied.
-export const APPROVAL_STATUSES = Object.freeze(["pending", "approved", "denied", "expired"]);
+//
+// KILL GATE 2026-10-14 (review P0-2) — an approval was the one execution path the panic switch did not reach: an emailed
+// "Approve" merged by the poll ran the fix with no countdown after Ctrl+Alt+K. Now:
+//   gate    () → "" | reason   (main: killGateReason) — while it returns a reason, approve() / mergeRemote(approved) are
+//           REFUSED before the record moves (the approval is not consumed), and an expiry never runs the timeout policy;
+//   hold()  Ctrl+Alt+K puts every pending approval ON HOLD (status "held"): nothing can approve, run or expire it into a
+//           run — not a click, not a link, not the timeout policy;
+//   reaskHeld()  Start ARIA (the deliberate resume) asks again: each held approval is pending once more with a FRESH expiry
+//           and NO remote id, so a link (or a decision) from before the kill can never run it — approvers get new links.
+// Deny is never gated: refusing a fix is always allowed.
+export const APPROVAL_STATUSES = Object.freeze(["pending", "approved", "denied", "expired", "held"]);
 export const APPROVALS_MAX = 100;
 export const APPROVALS_DECIDED_SHOWN = 10;
 
@@ -60,6 +70,41 @@ export function applyDecision(list = [], id, status, { decidedBy = "self", chann
   return { ok: true, reason: "", list: out, approval: next };
 }
 
+/** Pure: Ctrl+Alt+K — every PENDING record becomes "held" (nothing can approve, run or expire it into a run). */
+export function holdPending(list = [], { now = Date.now(), reason = "kill-switch" } = {}) {
+  const arr = Array.isArray(list) ? list : [];
+  const held = [];
+  const at = iso(Number(now) || Date.now());
+  const out = arr.map((a) => {
+    if (!a || a.status !== "pending") return a;
+    const next = { ...a, status: "held", decidedBy: String(reason || "kill-switch").slice(0, 40), decidedAt: at, channel: "kill-switch", heldAt: at };
+    held.push(next);
+    return next;
+  });
+  return { list: out, held };
+}
+
+/**
+ * Pure: the deliberate resume (Start ARIA) asks again. Every HELD record is pending once more with a fresh expiry and
+ * its remote id DROPPED — an approval link (or a server-side decision) from before the kill can never run it. A held
+ * record whose recipe already has a new pending ask stays held (one open ask per recipe).
+ */
+export function reaskHeld(list = [], { now = Date.now(), timeoutMinutes = 30 } = {}) {
+  const arr = Array.isArray(list) ? list : [];
+  const t = Number(now) || Date.now();
+  const reasked = [];
+  const pendingRecipes = new Set(arr.filter((a) => a && a.status === "pending").map((a) => a.recipeId));
+  const out = arr.map((a) => {
+    if (!a || a.status !== "held" || pendingRecipes.has(a.recipeId)) return a;
+    pendingRecipes.add(a.recipeId);
+    const next = { ...a, status: "pending", decidedBy: null, decidedAt: null, channel: null, remoteId: null, expiresAt: iso(t + clampMinutes(timeoutMinutes) * 60000), reaskedAt: iso(t) };
+    reasked.push(next);
+    return next;
+  });
+  return { list: out, reasked };
+}
+const reaskHeldPure = reaskHeld; // the flow's own reaskHeld() method shadows the name inside createApprovalsFlow
+
 /** Pure: which pending records are past expiresAt. */
 export function duePending(list = [], now = Date.now()) {
   return (Array.isArray(list) ? list : []).filter((a) => a && a.status === "pending" && Date.parse(a.expiresAt) <= Number(now));
@@ -94,6 +139,9 @@ export function createApprovalsFlow(deps = {}) {
   const store = deps.store || (() => { let v = []; return { get: () => v, set: (n) => { v = n; } }; })();
   const uuid = typeof deps.uuid === "function" ? deps.uuid : null;
   const onChange = typeof deps.onChange === "function" ? deps.onChange : () => {};
+  // KILL GATE (review P0-2) — "" = fixes may run; anything else = the reason nothing may run right now. A throwing gate
+  // reads as CLOSED (fail-safe: a broken gate never lets a fix through).
+  const gate = typeof deps.gate === "function" ? () => { try { return String(deps.gate() || ""); } catch { return "gate-unavailable"; } } : () => "";
   const running = new Set(); // approval ids whose runner is in flight — a decision executes at most once
 
   const read = () => { try { const v = store.get(); return Array.isArray(v) ? v : []; } catch { return []; } };
@@ -135,6 +183,13 @@ export function createApprovalsFlow(deps = {}) {
   }
 
   async function approve(id, { decidedBy = "self", channel = "desktop" } = {}) {
+    // KILL GATE (review P0-2) — refused BEFORE the record moves: the approval is not consumed, nothing runs.
+    const closed = gate();
+    if (closed) {
+      const cur = read().find((a) => a && a.id === id) || null;
+      log("APPROVAL_REFUSED", `Approval not applied${cur ? `: ${cur.title}` : ""} (via ${channel}) — ${closed}. Nothing was run.`, { recipeId: cur ? cur.recipeId : "", approvalId: id, channel, gate: closed });
+      return { ok: false, reason: "kill-gate", gate: closed, approval: cur };
+    }
     const r = applyDecision(read(), id, "approved", { decidedBy, channel, now: now() });
     if (!r.ok) return { ok: false, reason: r.reason, approval: r.approval };
     write(r.list);
@@ -161,7 +216,11 @@ export function createApprovalsFlow(deps = {}) {
       if (!r.ok) continue;
       write(r.list);
       out.expired.push(r.approval);
-      if (onTimeout === "proceed-green-only" && r.approval.color === "green") {
+      // KILL GATE (review P0-2) — the timeout policy never runs a fix while the gate is closed (stopped / killed / paused).
+      const closed = onTimeout === "proceed-green-only" && r.approval.color === "green" ? gate() : "";
+      if (closed) {
+        log("APPROVAL_TIMEOUT", `No answer in time — NOT run (${closed}): ${r.approval.title}. Nothing was changed.`, { recipeId: r.approval.recipeId, approvalId: a.id, gate: closed });
+      } else if (onTimeout === "proceed-green-only" && r.approval.color === "green") {
         log("APPROVAL_TIMEOUT", `No answer in time — green fix proceeds per your timeout setting: ${r.approval.title}.`, { recipeId: r.approval.recipeId, approvalId: a.id });
         out.executed.push({ approval: r.approval, result: await execute(r.approval, { decidedBy: "timeout-policy", channel: "timeout" }) });
       } else {
@@ -171,7 +230,7 @@ export function createApprovalsFlow(deps = {}) {
     return out;
   }
 
-  /** Merge a remote (server) decision for a pending record. */
+  /** Merge a remote (server) decision for a pending record. (An "approved" goes through approve(), so the gate holds.) */
   async function mergeRemote(id, body) {
     const decision = remoteDecisionOf(body);
     if (!decision) return { ok: false, reason: "no-decision" };
@@ -179,11 +238,40 @@ export function createApprovalsFlow(deps = {}) {
     return deny(id, { decidedBy: decision.decidedBy, channel: "remote" });
   }
 
+  /** Ctrl+Alt+K: every pending approval goes ON HOLD (audited). Returns the held records. */
+  function hold(reason = "kill-switch") {
+    const r = holdPending(read(), { now: now(), reason });
+    if (!r.held.length) return { held: [] };
+    write(r.list);
+    for (const a of r.held) log("APPROVAL_HELD", `On hold (${reason}): ${a.title} — it cannot be approved or run, and no earlier approval link works for it. Start ARIA asks again.`, { recipeId: a.recipeId, approvalId: a.id, reason });
+    return { held: r.held };
+  }
+
+  /** Start ARIA after Ctrl+Alt+K: every held approval is asked AGAIN (fresh expiry, new approval links, audited). */
+  function reaskHeld() {
+    const r = reaskHeldPure(read(), { now: now(), timeoutMinutes: approverPrefs().timeoutMinutes });
+    if (!r.reasked.length) return { reasked: [] };
+    write(r.list);
+    for (const rec of r.reasked) {
+      log("APPROVAL_REQUESTED", `Asked again after Start ARIA: ${rec.title} (${rec.color}) — the approval links sent before Ctrl+Alt+K no longer work; waits ${clampMinutes(approverPrefs().timeoutMinutes)} min.`, { recipeId: rec.recipeId, approvalId: rec.id, source: rec.source, reasked: true });
+      if (typeof deps.notify === "function") {
+        Promise.resolve(deps.notify("approval-requested", { title: rec.title, recipeId: rec.recipeId, severity: rec.color, approvalId: rec.id, expiresAt: rec.expiresAt, requestedBy: rec.requestedBy }))
+          .then((res) => {
+            const remoteId = res && res.remote && res.remote.approvalId;
+            if (remoteId) { const cur = read(); const i = cur.findIndex((a) => a && a.id === rec.id && a.status === "pending"); if (i >= 0) { cur[i] = { ...cur[i], remoteId: String(remoteId) }; write(cur); } }
+          })
+          .catch(() => undefined);
+      }
+    }
+    return { reasked: r.reasked };
+  }
+
   return {
     list: read,
     pending: () => read().filter((a) => a && a.status === "pending"),
+    held: () => read().filter((a) => a && a.status === "held"),
     forState: (limit) => approvalsForState(read(), limit),
-    request, approve, deny, expire, mergeRemote,
+    request, approve, deny, expire, mergeRemote, hold, reaskHeld,
     byId: (id) => read().find((a) => a && a.id === id) || null
   };
 }

@@ -11,7 +11,10 @@ assert.equal(ok.attempts, 0);
 assert.equal(ok.touched, false);
 assert.equal(ok.ok, true);
 assert.match(ok.statusLine, /0 attempted accesses/);
-assert.equal(ok.folder, "Private pics and Vids");
+// PROD 2026-10-14 (audit R7) — the status NEVER names a folder: customers see a count from their own settings.
+assert.doesNotMatch(ok.folder, /private pics and vids/i, "the compliance status never names the private folder");
+assert.equal(ok.folder, "your excluded folders");
+assert.equal(r11EnforcementStatus(0, null, { count: 2 }).folder, "excluded folders: 2", "a configured count renders as a count, not a name");
 // If anything ever attempted access, it surfaces (must always be 0 in practice).
 assert.equal(r11EnforcementStatus(3).ok, false);
 

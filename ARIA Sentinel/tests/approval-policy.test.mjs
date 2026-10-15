@@ -24,8 +24,12 @@ for (const color of COLORS) {
 t();
 
 // 3 — red is NEVER automated at any level (even full-auto, in window, with a restore point).
+// 2026-10-14 (review P1-1) — EXPECTATION CHANGED ON PURPOSE for safe-auto only: Confirmed asks once for EVERY colour, so a
+// red detection there is an approval request (a person decides; nothing red ever executes) instead of notify-only.
 for (const level of LEVELS) {
   const d = decideExecution({ level, color: "red", inWindow: true, hasRestorePoint: true });
+  assert.notEqual(d.action, "execute", `${level}/red is never executed`);
+  if (level === "safe-auto") { assert.equal(d.action, "request-approval", "safe-auto/red → asked once"); assert.equal(d.reason, "confirmed-asks-once"); continue; }
   assert.equal(d.action, "notify-only", `${level}/red → notify-only`);
   if (level !== "observe") assert.equal(d.reason, "red-never-automated");
 }
@@ -39,13 +43,19 @@ for (const color of ["green", "yellow"]) {
 }
 t();
 
-// 5 — safe-auto: green executes (and tells you after); yellow asks.
-{
-  const g = decideExecution({ level: "safe-auto", color: "green" });
-  assert.equal(g.action, "execute"); assert.equal(g.notifyAfter, true); assert.equal(g.requiresRestorePoint, false);
-  const y = decideExecution({ level: "safe-auto", color: "yellow", inWindow: true, hasRestorePoint: true });
-  assert.equal(y.action, "request-approval"); assert.equal(y.reason, "safe-auto-yellow-needs-approval");
+// 5 — safe-auto (Confirmed): asks ONCE for every colour; it never executes on its own.
+// 2026-10-14 (review P1-1) — EXPECTATION CHANGED ON PURPOSE. The owner's decision: "Confirmed = asks once, every time; it
+// never executes unattended. Unattended execution exists only in Autonomous mode via the 3-notice rule." safe-auto used to
+// EXECUTE a green fix on its own ("I fix the safe things myself and tell you after") while Settings said "applies the fix
+// only after you approve" — now the table does what Settings says.
+for (const color of COLORS) for (const inWindow of [true, false]) for (const hasRestorePoint of [true, false]) {
+  const d = decideExecution({ level: "safe-auto", color, inWindow, hasRestorePoint, tier: 0 });
+  assert.equal(d.action, "request-approval", `safe-auto/${color}/${inWindow}/${hasRestorePoint} → request-approval`);
+  assert.equal(d.reason, "confirmed-asks-once");
+  assert.equal(d.notifyBefore, true); assert.equal(d.notifyAfter, false);
+  assert.equal(d.requiresRestorePoint, color === "yellow", "a yellow fix still needs its restore point when it runs");
 }
+assert.match(describeDecision(decideExecution({ level: "safe-auto", color: "green" })), /asks once per fix: approve it on the card \(one click\)/);
 t();
 
 // 6 — full-auto: green executes any time; yellow executes only in window WITH a real restore point; else defers.
@@ -97,4 +107,4 @@ assert.match(describeDecision({ action: "defer-window" }), /maintenance window/i
 t();
 
 assert.equal(n, 9, "9 approval-policy groups");
-console.log(`approval-policy test passed (${n} groups · killed/blocked first · observe notify-only · red never automated · approve-first asks · safe-auto green exec/yellow asks · full-auto window + real restore point · safe defaults · honest copy).`);
+console.log(`approval-policy test passed (${n} groups · killed/blocked first · observe notify-only · red never automated · approve-first asks · safe-auto (Confirmed) asks once for every colour · full-auto window + real restore point · safe defaults · honest copy).`);

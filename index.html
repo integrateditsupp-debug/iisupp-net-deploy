@@ -1854,7 +1854,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
 
             <!-- 3 starter-service boxes -->
             <div class="hero-svc-grid max-w-5xl mx-auto mb-12 grid grid-cols-1 sm:grid-cols-3 gap-4 px-2">
-                <a href="/services#tier1-operational-foundation" class="hero-svc-card">
+                <a href="/services#managed-it" class="hero-svc-card">
                     <div class="hero-svc-icon" aria-hidden="true">
                         <svg viewBox="0 0 32 32" width="36" height="36"><path d="M16 3l11 4v9c0 7-4.7 11.3-11 13C9.7 27.3 5 23 5 16V7l11-4z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M11 16l3.5 3.5L21 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </div>
@@ -1888,7 +1888,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
                     </div>
                   </div>
                 </div>
-                <a href="/services#website-ai-intake" class="hero-svc-card">
+                <a href="/services#web-digital" class="hero-svc-card">
                     <div class="hero-svc-icon" aria-hidden="true">
                         <svg viewBox="0 0 32 32" width="36" height="36"><rect x="4" y="6" width="24" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M11 26h10M16 22v4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="12" r="1" fill="currentColor"/><circle cx="13" cy="12" r="1" fill="currentColor"/><circle cx="16" cy="12" r="1" fill="currentColor"/></svg>
                     </div>
@@ -3876,6 +3876,15 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             <div id="chatSuccessContainer" class="chat-success" style="display:none;"><div class="check-circle"><i data-lucide="check"></i></div><p>Thank you! <span id="successName"></span>, we will be in touch shortly. If issue is urgent please do not hesitate to call us at <a href="tel:+16475813182" style="color:#c5a059; text-decoration:underline; white-space:nowrap;">(647) 581-3182</a>.</p></div>
         </div>
     </div>
+
+    <!-- Netlify Forms registration for "get-it-support" (site sweep 2026-10-14). The Get IT Support modal
+         (assets/aria-core.js showGIS) posts form-name=get-it-support to "/", but that form only ever existed in the
+         runtime DOM, and Netlify registers forms by parsing the deployed HTML, never the live DOM, so those posts had
+         no registered form to land in. This hidden static copy (same name, same fields) registers it; it is never
+         shown. id="gisStaticForm" makes the runtime injector in aria-core.js skip its own copy on this page. -->
+    <form id="gisStaticForm" name="get-it-support" data-netlify="true" netlify-honeypot="bot-field" hidden aria-hidden="true">
+        <input type="hidden" name="form-name" value="get-it-support"><input name="bot-field"><input name="name"><input type="email" name="email"><input name="phone"><textarea name="issue"></textarea>
+    </form>
 
     <script>
         function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('active'); }
