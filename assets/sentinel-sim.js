@@ -44,8 +44,8 @@
         { title: "Detected: DNS lookup failed", tone: "gold", texts: ["Wi-Fi still shows connected, but websites stop loading because name lookups fail. ARIA's network check notices and matches the recipe below."], chip: "recipe: DNS lookup failed \u00b7 green \u00b7 no administrator rights" }
       ],
       safety: {
-        auto: ["Kill switch (Ctrl+Alt+K) not pressed", "Allowed by your organization's policy", "Vendor-vetted green fix: cleared to run unattended", "No administrator rights needed", "Restore point not needed: nothing to undo (yellow fixes always get one)", "Within the limits: at most 3 automatic fixes per problem a day, 30 minutes apart"],
-        person: ["Kill switch (Ctrl+Alt+K) not pressed", "Allowed by your organization's policy", "No administrator rights needed", "Restore point not needed: nothing to undo (yellow fixes always get one)"]
+        auto: ["Kill switch (Ctrl+Alt+K) not pressed", "Allowed by your organization's policy", "Vendor-vetted green fix: cleared to run unattended", "No administrator rights needed", "Restore point not needed: nothing to undo (yellow fixes require one first)", "Within the limits: at most 3 automatic fixes per problem a day, and 30 minutes between any two automatic fixes"],
+        person: ["Kill switch (Ctrl+Alt+K) not pressed", "Allowed by your organization's policy", "No administrator rights needed", "Restore point not needed: nothing to undo (yellow fixes require one first)"]
       },
       verified: ["The check afterwards resolves a name through your normal DNS again.", "Had it failed \u2014 say the real cause was a stale DHCP lease \u2014 ARIA would mark this not resolved and tell your IT contact. It never reports a fix that did not take."],
       changed: { title: "What changed: DNS cache \u2014 nothing else.", texts: ["The resolver cache was flushed and this PC's own DNS records re-sent. Nothing to restore: the cache refills itself on the next lookup."] },

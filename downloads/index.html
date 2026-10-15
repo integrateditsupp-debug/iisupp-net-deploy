@@ -186,7 +186,7 @@
     <p class="sim-lead">Three everyday problems, played the way ARIA Sentinel handles them with <b>Autonomous mode</b> and <b>live fixes</b> switched on. Out of the box it starts in Manual mode with live fixes off, so it only previews. Every notice below uses the app's own wording.</p>
     <div class="sim-modes" role="list" aria-label="The three modes">
       <div class="sim-mode" role="listitem"><span class="sim-mode-name">Manual</span><span class="sim-mode-short">Previews only</span><p>ARIA shows what a fix would do and changes nothing on the PC.</p></div>
-      <div class="sim-mode" role="listitem"><span class="sim-mode-name">Confirmed</span><span class="sim-mode-short">Asks once</span><p>Nothing runs until you say yes &mdash; except a green fix that is vendor-vetted or already proven on this device, which runs after the 10-second countdown you can cancel.</p></div>
+      <div class="sim-mode" role="listitem"><span class="sim-mode-name">Confirmed</span><span class="sim-mode-short">Asks once</span><p>Nothing runs until you say yes &mdash; except a green fix that needs no administrator rights and is vendor-vetted or already proven on this device: that one runs after the 10-second countdown you can cancel.</p></div>
       <div class="sim-mode sim-mode--auto" role="listitem"><span class="sim-mode-name">Autonomous</span><span class="sim-mode-short">The 3-notice rule</span><p id="sim-rule-autonomous">In Autonomous mode, when ARIA finds a problem it can fix, it tells you first — 3 times, 3 minutes apart. If nobody answers, it fixes the problem on its own after a 10-second countdown you can cancel, through the same safety checks as every fix. Problems that need administrator rights or a person are never fixed on their own: after 3 unanswered notices ARIA tells your IT contact instead. Every notice lets you choose Fix now, Not now (waits 4 hours) or Never for this.</p></div>
     </div>
     <p class="sim-modes-foot">Confirmed and Autonomous come with Pro and every business tier; Personal is Manual only. The 3 minutes and the 4 hours are defaults you can change in Settings &rarr; Autonomy.</p>
@@ -498,7 +498,7 @@
     .catch(function () { /* the pilot-build copy stays */ });
 })();
 </script>
-<script src="/assets/sentinel-sim.js?v=20261014a" defer></script>
+<script src="/assets/sentinel-sim.js?v=20261014b" defer></script>
 
   <script src="/assets/iis-motion.js?v=20260710L" defer></script>
 <!-- iis-fineprint:start -->
