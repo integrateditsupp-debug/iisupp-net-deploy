@@ -251,8 +251,11 @@ console.log('[recipes / stop-codes] served at every path the desktop declares (B
   // every SERVICE / UPDATE path the desktop declares maps to a deployed function file (static contract)
   const fs = await import('node:fs');
   const path = await import('node:path');
+  const { fileURLToPath } = await import('node:url');
   // Resolved from this file, not the cwd: the desktop registry runs suites with cwd = "ARIA Sentinel/".
-  const FN = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', 'netlify', 'functions');
+  // fileURLToPath, not URL.pathname: on Windows the pathname is "/C:/…", which path.resolve turns into
+  // "C:\C:\…" and the suite went red on the operator's PC (Node 24, 2026-10-15) while green on Linux.
+  const FN = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'netlify', 'functions');
   const fnFiles = fs.readdirSync(FN);
   const hasFn = (p) => { const name = p.replace('/.netlify/functions/', ''); return fnFiles.some((f) => f.replace(/\.(m?js|cjs|mts)$/, '') === name); };
   const missing = [...SERVICE_OUTBOUND_PATHS, ...UPDATE_OUTBOUND_PATHS].filter((p) => p.startsWith('/.netlify/functions/') && !hasFn(p));
