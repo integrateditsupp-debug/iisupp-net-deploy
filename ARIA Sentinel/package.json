@@ -203,6 +203,7 @@
       "src/shared/safety.mjs",
       "src/shared/security-banner.mjs",
       "src/shared/self-heal.mjs",
+      "src/shared/sentinel-resolve-pubkey.mjs",
       "src/shared/servicenow.mjs",
       "src/shared/setup-flow.mjs",
       "src/shared/start-stop.mjs",

@@ -36,7 +36,9 @@ export const MAIN_INTERNALS = Object.freeze([
   // KILL GATE 2026-10-14 (review P0-2) — the one gate, the launch-time watcher start, the bridge's /run-recipe and the poll.
   "killGateReason", "startDetectionAtLaunch", "bridgeRunRecipe", "approvalTick",
   // REVIEW P2-6 — the before-quit step that cancels a running countdown (a clean quit), so a suite can quit, then relaunch.
-  "cancelCountdownsForQuit"
+  "cancelCountdownsForQuit",
+  // REVIEW P1-3 / P2-9 — the licence + trial surface (what the cache is worth, the trial clock, the consent gate).
+  "refreshLicense", "enterLicense", "licenseStatus", "gateStatus", "trialState", "sendHeartbeat", "touchClockHighWater", "currentIsAdmin"
 ]);
 // Platform globals main.mjs reads that the lab must own (shadowed as function parameters).
 const SHADOWED = ["process", "Date", "setTimeout", "setInterval", "clearTimeout", "clearInterval", "fetch"];
@@ -255,6 +257,9 @@ function wrapWithLabDate(fn, LabDate) {
  *   storeSeed    — electron-store data to start from (a restart passes the previous snapshot)
  *   root         — a scratch directory for this machine (home + userData live under it)
  *   env          — process.env for main (default: empty → the stored live-fix consent decides)
+ *   respond      — (url, init) → JSON | undefined: answer an outbound call (default: { ok: true })
+ *   licenseVerify — (verdict, sig) → boolean: the licence-verdict check main's cache decisions use (default: the
+ *                  embedded production public key) — REVIEW P1-3, for verdicts signed with a throwaway test pair
  * @returns {{ main, ipc, windows, notifications, outbound, store, electronCalls }}
  */
 export async function bootMain(platform = {}) {
@@ -299,6 +304,13 @@ export async function bootMain(platform = {}) {
     createApprovalsFlow: (real) => (deps = {}) => real({ now: clock.now, ...deps }),
     createNotifyDispatcher: (real) => (deps = {}) => real({ now: clock.now, ...deps })
   };
+  // REVIEW P1-3 — `licenseVerify(verdict, sig)` (optional) replaces the embedded public key in main's cache decisions, so a
+  // suite can sign verdicts with a THROWAWAY Ed25519 pair. Test-only: main.mjs itself has no way to change the key.
+  if (typeof platform.licenseVerify === "function") {
+    const withVerify = (real) => wrapWithLabDate((cache, nowMs, opts = {}) => real(cache, nowMs, { ...opts, verify: platform.licenseVerify }), LabDate);
+    shims.effectiveFromCache = withVerify;
+    shims.cacheIsFresh = withVerify;
+  }
   const values = [];
   for (const imp of c.imports) {
     const mod = special[imp.spec] || c.realMods[imp.spec];

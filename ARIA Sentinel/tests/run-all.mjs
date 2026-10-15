@@ -520,6 +520,10 @@ const TESTS = [
   // RUN 24 A6 — server-side license resolve (secret stays server-side) + desktop offline cache tiers.
   "./sentinel-resolve.test.mjs",
   "./desktop-license-cache.test.mjs",
+  // 2026-10-14 (review P1-3 app half · P2-9) — a cached verdict counts only when signed for this device + key (unsigned:
+  // this run, ≤1 h, never admin); the trial clock cannot be rolled back or restarted by deleting trial.json; the earliest
+  // start (the server's first sight of this device) wins; a pre-seeded licence waits for Setup consent.
+  "./license-verdict-trust.test.mjs",
   // RUN 29-A — mode-based dry-run defaults (Manual ON · Confirmed/Autonomous OFF).
   "./dryrun-defaults.test.mjs",
   // RUN 29-D — $0 content-blind crash reporter.

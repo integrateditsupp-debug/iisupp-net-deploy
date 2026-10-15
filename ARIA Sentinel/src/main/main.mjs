@@ -116,7 +116,8 @@ import { modeOverlayBehavior } from "../shared/mode-behavior.mjs";
 // RUN 24 A6 — resolvePlanFromKey/verifyLicenseStatus are SERVER-SIDE ONLY now (they need the secret); the
 // desktop resolves via the sentinel-resolve endpoint + a local cache (license-cache.mjs hashes the key itself).
 import { enabledFeatures as planEnabledFeatures, licenseIsAdmin } from "../shared/license-features.mjs";
-import { buildCache, cacheIsFresh, cacheMatchesKey, effectiveFromCache, FREE_PLAN as CACHE_FREE_PLAN } from "./license-cache.mjs";
+// REVIEW P1-3 — a cached verdict counts only when signed for this device + key (or, unsigned, in the run that got it, ≤1 h).
+import { buildCache, cacheIsFresh, cacheMatchesKey, effectiveFromCache, unsignedFingerprint, highWaterOf, VERDICT_STATUSES, CLOCK_SKEW_MS as LICENSE_CLOCK_SKEW_MS, FREE_PLAN as CACHE_FREE_PLAN } from "./license-cache.mjs";
 import { installCrashReporter } from "./crash-reporter.mjs"; // RUN 29-D — $0 content-blind crash reporter
 import { bindAll, withRebinds, DEFAULT_HOTKEYS, selectDefaultHotkeys } from "../shared/hotkeys.mjs";
 import { applyRunState } from "../shared/start-stop.mjs";
@@ -159,7 +160,7 @@ function currentIsAdmin() { return licenseIsAdmin(gateStatus()); }
 function devModeNow() { try { return !app.isPackaged || Boolean(process.env.ARIA_SENTINEL_DEV); } catch { return false; } }
 let hotkeyStatus = [];
 let crashReporter = null; // PROD 2026-10-14 (audit M17) — { capture, flush }; flush runs only after Setup consent
-import { computeTrialStatus, isUnlocked as licenseUnlocked, trialBadge, TRIAL_DAYS } from "../shared/license.mjs";
+import { trialStatusFor, resolveTrialStart, isUnlocked as licenseUnlocked, trialBadge, TRIAL_DAYS } from "../shared/license.mjs";
 import { pilotStatus, pilotBadge, pilotUpgradePrompt, buildPilotRecord, stampTtfv, firstFixAtFromAudit, ttfvMinutes, ttfvLabel } from "../shared/pilot-state.mjs"; // RUN-E E1 — TTFV clock
 import { conversionMoment, buildCaseStudy, caseStudyReadiness, autorunCaseStudy, withConsent, publishableCaseStudy } from "../shared/case-study.mjs"; // RUN-D D2 pilot->paid capture + RUN-E E2 proof autorun (consent-gated)
 import { deflectionStats, recordOutcome as recordResolutionEvent, pilotProofMetrics, countLiveFixes } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — real deflection %; R6a — live fixes only
@@ -1269,6 +1270,8 @@ async function sendHeartbeat() {
       const body = res && res.ok && typeof res.json === "function" ? await res.json().catch(() => null) : null;
       const kill = parseControlPlaneKill(body);
       if (kill.present) applyControlPlaneKill(kill.killed, kill.reason);
+      // REVIEW P1-3 — the server's first sight of this device anchors the local trial (only ever moves its start earlier).
+      if (body && body.trialStartedAt) noteServerTrialStart(body.trialStartedAt);
     } catch { /* an unparseable reply never affects the kill state */ }
   } catch { store.set("lastHeartbeat", { ok: false, status: 0, ts: new Date().toISOString() }); /* offline is fine; next daily tick retries */ }
 }
@@ -2004,8 +2007,20 @@ function readLicense() {
 // { plan, status }. The verdict is cached at ~/.aria-sentinel/license-cache.json (hash-only, no raw key) so
 // the app keeps working offline; license-cache.mjs owns the 24h-fresh / 72h-degrade policy. A network blip
 // never locks a paying customer out — only a server-confirmed "revoked" or a >72h-unverified cache downgrades.
+// REVIEW P1-3 (2026-10-14) — the cache is believed only when the server SIGNED the verdict for this device + key
+// (license-cache.mjs); an unsigned answer counts for ≤1 h in the run that received it, never as admin.
 const RESOLVE_ENDPOINT = "https://iisupp.net/.netlify/functions/sentinel-resolve";
 const LICENSE_CACHE_FILE = path.join(os.homedir(), ".aria-sentinel", "license-cache.json");
+// REVIEW P1-3 — the trial clock's marks in the store: the monotonic last-seen high-water mark (also kept in the licence
+// cache as `last_seen`), a mirror of the local trial start, and the server's first sight of this device.
+const CLOCK_HIGH_WATER_KEY = "clockHighWater";
+const TRIAL_START_MIRROR_KEY = "trialStartedAt";
+const SERVER_TRIAL_START_KEY = "serverTrialStartedAt";
+const UNSIGNED_RECHECK_MS = 50 * 60 * 1000; // an unsigned verdict lasts 1 h: ask again before it lapses
+let unsignedVerdictThisRun = ""; // the fingerprint of the one UNSIGNED verdict this process itself received (never from disk)
+let unsignedRecheckTimer = null;
+let lastSigningState = "";
+let highWaterCacheWrittenAt = 0;
 
 function readLicenseCache() {
   try { return JSON.parse(fs.readFileSync(LICENSE_CACHE_FILE, "utf8")); } catch { return null; }
@@ -2013,26 +2028,111 @@ function readLicenseCache() {
 // The cache holds only a key HASH + plan + timestamps — deliberately no secret and no raw key, so even if
 // another local user could read it they gain nothing forgeable. We still scope it to the user profile dir
 // and best-effort user-only perms (consistent with license.json / trial.json alongside it).
-function writeLicenseCache(cache) {
+function writeLicenseCacheRaw(cache) {
   try {
     fs.mkdirSync(path.dirname(LICENSE_CACHE_FILE), { recursive: true });
     fs.writeFileSync(LICENSE_CACHE_FILE, JSON.stringify(cache, null, 2));
     try { fs.chmodSync(LICENSE_CACHE_FILE, 0o600); } catch { /* perms best-effort (no-op on some FS) */ }
   } catch { /* cache write best-effort */ }
 }
-function clearLicenseCache() { try { fs.rmSync(LICENSE_CACHE_FILE, { force: true }); } catch { /* already gone */ } }
+// REVIEW P1-3 — every write carries the last-seen high-water mark forward (never lowers it).
+function writeLicenseCache(cache) {
+  const keep = highWaterOf((readLicenseCache() || {}).last_seen, cache && cache.last_seen, store.get(CLOCK_HIGH_WATER_KEY));
+  writeLicenseCacheRaw({ ...cache, ...(keep > 0 ? { last_seen: new Date(keep).toISOString() } : {}) });
+}
+// REVIEW P1-3 — the verdict goes; the last-seen high-water mark stays (it is what stops a deleted trial.json from
+// meaning "never ran here").
+function clearLicenseCache() {
+  unsignedVerdictThisRun = "";
+  try {
+    const keep = highWaterOf((readLicenseCache() || {}).last_seen, store.get(CLOCK_HIGH_WATER_KEY));
+    if (keep > 0) writeLicenseCacheRaw({ last_seen: new Date(keep).toISOString() });
+    else fs.rmSync(LICENSE_CACHE_FILE, { force: true });
+  } catch { /* already gone */ }
+}
 
-// POST the key to sentinel-resolve. Returns { httpStatus, status, plan, verified_at }. Throws on a network
-// failure (caller falls back to the cache). The raw key never leaves over anything but this one HTTPS POST.
-async function resolveLicenseOnline(key, email = "") {
+// REVIEW P1-3 — the monotonic last-seen high-water mark: the latest time this app has seen (store + licence cache).
+function clockHighWaterMs(cache) {
+  let fromCache = 0;
+  try { fromCache = highWaterOf(((cache === undefined ? readLicenseCache() : cache) || {}).last_seen); } catch { fromCache = 0; }
+  return highWaterOf(store.get(CLOCK_HIGH_WATER_KEY), fromCache);
+}
+/** Raise the high-water mark to now (a clock rolled back never lowers it). The licence-cache copy is written ≤ every 10 min. */
+function touchClockHighWater() {
+  const now = Date.now();
+  try { if (now > (Number(store.get(CLOCK_HIGH_WATER_KEY)) || 0)) store.set(CLOCK_HIGH_WATER_KEY, now); } catch { /* best-effort */ }
+  if (highWaterCacheWrittenAt && now - highWaterCacheWrittenAt < 10 * 60 * 1000 && now >= highWaterCacheWrittenAt) return;
+  highWaterCacheWrittenAt = now;
+  try {
+    const cache = readLicenseCache() || {};
+    if (highWaterOf(cache.last_seen) < now) writeLicenseCacheRaw({ ...cache, last_seen: new Date(now).toISOString() });
+  } catch { /* best-effort */ }
+}
+/**
+ * A SIGNED verdict carries the server's clock. When it agrees with this device's clock but the high-water mark is
+ * ahead of both, the mark was poisoned by a clock that once ran fast — reset it to now, or a paying customer would be
+ * locked out for good. Only a verified signature can lower the mark; nothing unsigned ever does.
+ */
+function reconcileHighWaterWithSignedVerdict(cache) {
+  try {
+    const now = Date.now();
+    const server = Date.parse(String((cache && cache.verdict && cache.verdict.verified_at) || ""));
+    if (!Number.isFinite(server) || Math.abs(server - now) > LICENSE_CLOCK_SKEW_MS) return false;
+    if (clockHighWaterMs(cache) <= now + LICENSE_CLOCK_SKEW_MS) return false;
+    if (effectiveFromCache(cache, now, { ...licenseCacheOpts(), highWaterMs: 0 }).signed !== true) return false;
+    store.set(CLOCK_HIGH_WATER_KEY, now);
+    writeLicenseCacheRaw({ ...cache, last_seen: new Date(now).toISOString() });
+    logEvent("LICENSE", "The clock high-water mark was ahead of the licence server's signed time (this clock once ran fast) — reset to now.");
+    return true;
+  } catch { return false; }
+}
+/** REVIEW P1-3 — the server's first sight of this device (heartbeat / sentinel-resolve). Kept only if it is EARLIER. */
+function noteServerTrialStart(iso) {
+  try {
+    const t = Date.parse(String(iso || ""));
+    if (!Number.isFinite(t) || t <= 0 || t > Date.now() + LICENSE_CLOCK_SKEW_MS) return false; // a later start never matters
+    const prev = Date.parse(String(store.get(SERVER_TRIAL_START_KEY) || ""));
+    if (Number.isFinite(prev) && prev <= t) return false;
+    store.set(SERVER_TRIAL_START_KEY, new Date(t).toISOString());
+    return true;
+  } catch { return false; }
+}
+/** The options every cache decision is made with: this device, the high-water mark, the one unsigned answer of this run. */
+function licenseCacheOpts(cache) {
+  return { deviceHash: deviceIdHash(), highWaterMs: clockHighWaterMs(cache), trustedUnsigned: unsignedVerdictThisRun };
+}
+/** Store a sentinel-resolve answer (verdict + sig verbatim) and remember an unsigned one for THIS run only. */
+function storeVerdict(key, r) {
+  const cache = buildCache(key, r, Date.now());
+  writeLicenseCache(cache);
+  noteServerTrialStart(r.trialStartedAt);
+  if (cache.sig) {
+    unsignedVerdictThisRun = "";
+    reconcileHighWaterWithSignedVerdict(cache);
+  } else {
+    unsignedVerdictThisRun = unsignedFingerprint(cache);
+    try { clearTimeout(unsignedRecheckTimer); } catch { /* none */ }
+    unsignedRecheckTimer = setTimeout(() => { refreshLicense({ force: true }).catch(() => undefined); }, UNSIGNED_RECHECK_MS);
+    unsignedRecheckTimer?.unref?.();
+  }
+  if (cache.signing !== lastSigningState) {
+    lastSigningState = cache.signing;
+    if (!cache.sig) logEvent("LICENSE", `The licence server's answer was not signed (${cache.signing}) — it counts for at most 1 hour, never unlocks admin, and is checked again before it lapses and at the next launch.`);
+  }
+  return cache;
+}
+
+// POST the key to sentinel-resolve. Returns { httpStatus, status, plan, verified_at, verdict, sig, … }. Throws on a
+// network failure (caller falls back to the cache). The raw key never leaves over anything but this one HTTPS POST.
+async function resolveLicenseOnline(key, _email = "") {
   // RUN 34-3 — 10s timeout so license verification can NEVER hang the activation/trial flow on a slow or
   // mis-deployed endpoint. A timeout throws → enterLicense/refreshLicense treat it as offline (fail-closed).
-  // SENTINEL TRIAL GATING 2026-07-02 — email lets the server resolve a per-customer Walk-Through entitlement
-  // (looked up by email, never the shared plan key). Optional: a blank email just resolves the plan.
+  // REVIEW P1-3 — X-Sentinel-Device binds the signed verdict to this device. (The email is no longer sent: the
+  // server stopped reading it — review P2-2 — and an address the server ignores has no reason to leave the device.)
   const res = await outbound.fetch(RESOLVE_ENDPOINT, {
     method: "POST",
-    headers: { "content-type": "application/json", "user-agent": "aria-sentinel" },
-    body: JSON.stringify(email ? { key, email } : { key }),
+    headers: { "content-type": "application/json", "user-agent": "aria-sentinel", "x-sentinel-device": deviceIdHash() },
+    body: JSON.stringify({ key }),
     signal: AbortSignal.timeout ? AbortSignal.timeout(10000) : undefined
   });
   const data = await res.json().catch(() => ({}));
@@ -2043,45 +2143,55 @@ async function resolveLicenseOnline(key, email = "") {
     verified_at: data.verified_at || null,
     // SENTINEL TRIAL GATING 2026-07-02 — server-authoritative Walk-Through entitlement + real 30-day trial end.
     walkthroughEntitled: Boolean(data.walkthroughEntitled),
-    trialEndsAt: data.trialEndsAt || null
+    trialEndsAt: data.trialEndsAt || null,
+    // REVIEW P1-3 — the signed verdict, verbatim, and the server's first sight of this device.
+    verdict: data.verdict && typeof data.verdict === "object" && !Array.isArray(data.verdict) ? data.verdict : null,
+    sig: typeof data.sig === "string" ? data.sig : null,
+    signing: typeof data.signing === "string" ? data.signing : null,
+    trialStartedAt: typeof data.trialStartedAt === "string" ? data.trialStartedAt : null
   };
 }
 
-// Silent launch re-verify. A fresh, same-key cache skips the network; otherwise we re-resolve and refresh the
-// cache. Only "active"/"revoked" verdicts update the cache — "invalid"/429/5xx/offline keep the prior cache
-// (never downgrade on a non-revoked signal), and the staleness tiers in licenseStatus() handle the rest.
+// Silent launch re-verify. A fresh, same-key, SIGNED cache skips the network; otherwise we re-resolve and refresh the
+// cache. Only a server verdict (active / revoked / expired / past_due) updates the cache — "invalid"/429/5xx/offline
+// keep the prior cache (never downgrade on a non-verdict), and licenseStatus() decides what the cache is worth.
 async function refreshLicense({ force = false } = {}) {
+  // REVIEW P2-9 — nothing leaves the device before Setup consent: a pre-seeded license.json (Intune) is checked once
+  // the person finishes Setup (setup:complete runs this), never at a launch before it. A key the person pastes
+  // (enterLicense) is their own request and is not deferred.
+  if (!telemetryAllowed()) { logEvent("LICENSE", "Licence check deferred until Setup is completed (nothing leaves the device before consent)."); return { deferred: true, reason: "setup-not-completed" }; }
   const lic = readLicense();
   const key = lic && lic.key ? String(lic.key) : "";
   if (!/^[a-f0-9]{64}$/i.test(key)) { clearLicenseCache(); return; }
   const cache = readLicenseCache();
-  if (!force && cacheMatchesKey(cache, key) && cacheIsFresh(cache)) return;
+  if (!force && cacheMatchesKey(cache, key) && cacheIsFresh(cache, Date.now(), licenseCacheOpts(cache))) return;
   try {
-    const r = await resolveLicenseOnline(key, (lic && lic.email) || "");
-    if (r.status === "active" || r.status === "revoked") {
-      writeLicenseCache(buildCache(key, { plan: r.plan, status: r.status, walkthroughEntitled: r.walkthroughEntitled, trialEndsAt: r.trialEndsAt }));
+    const r = await resolveLicenseOnline(key);
+    noteServerTrialStart(r.trialStartedAt);
+    if (VERDICT_STATUSES.includes(r.status)) {
+      storeVerdict(key, r);
       if (r.status === "revoked") logEvent("LICENSE", "License revoked by issuer — downgraded to free.");
       else if (r.plan && lic.plan !== r.plan) {
         try { fs.writeFileSync(LICENSE_FILE, JSON.stringify({ ...lic, plan: r.plan, validated_at: new Date().toISOString() }, null, 2)); } catch { /* plan-sync best-effort */ }
       }
       broadcastState();
     }
-    // "invalid"/429/5xx → keep the prior cache; only "revoked" downgrades. Fail-open, like the old behavior.
+    // "invalid"/429/5xx → keep the prior cache; only a server verdict changes it. Fail-open, like the old behavior.
   } catch {
-    // Offline / endpoint down → keep cache; effectiveFromCache degrades by age (toast at 24h, Personal at 72h).
+    // Offline / endpoint down → keep cache; effectiveFromCache degrades by age (toast at 24h, free floor at 72h).
   }
 }
 
 // The effective plan + licensed flag come from the server's cached verdict, degraded by cache age. "licensed"
-// (a paid tier unlocked) holds while the cache is fresh (≤24h) or merely stale (24–72h, keeps the tier with a
-// reconnect nudge); a >72h-unverified or revoked cache, or no cache, falls back to Personal/Manual (fail-closed).
+// (a paid tier unlocked) holds while a trusted verdict is fresh (≤24h) or merely stale (24–72h, keeps the tier with a
+// reconnect nudge); an untrusted, >72h-unverified, revoked/expired/past-due cache, or no cache, falls back to the free floor.
 function licenseStatus() {
   const lic = readLicense();
   const key = lic && lic.key ? String(lic.key) : "";
   if (!/^[a-f0-9]{64}$/i.test(key)) return { mode: "manual", licensed: false, email: null, plan: null, ...trialFields(null), licenseSignal: "personal", licenseMessage: "" };
   const raw = readLicenseCache();
   const cache = cacheMatchesKey(raw, key) ? raw : null;
-  const eff = effectiveFromCache(cache, Date.now());
+  const eff = effectiveFromCache(cache, Date.now(), licenseCacheOpts(raw));
   const licensed = eff.action === "use" || eff.action === "toast"; // fresh or stale-but-trusted
   return {
     mode: licensed ? "licensed" : "manual",
@@ -2093,35 +2203,75 @@ function licenseStatus() {
     walkthroughEntitled: Boolean(eff.walkthroughEntitled),
     ...trialFields(eff.trialEndsAt || null),
     licenseSignal: eff.action,        // "use" | "toast" | "banner" | "personal" — drives the renderer nudge/banner
-    licenseMessage: eff.message || ""
+    licenseMessage: eff.message || "",
+    licenseSigned: eff.signed === true // REVIEW P1-3 — true only for a verified, device-bound signed verdict
   };
 }
 /**
  * PROD 2026-10-14 (R3) — the TRUE trial end + days left for the renderer: the server-issued entitlement end when the
  * server sent one, otherwise the local 30-day trial's end; null when no trial exists. Same numbers on every surface.
+ * REVIEW P1-3 — the local trial's days left come from its state (high-water mark, a start in the future refused), never
+ * from the raw end date, so a rolled-back clock or an edited trial.json cannot show days that are not there.
  */
 function trialFields(serverTrialEndsAt) {
   const local = trialState();
   const endsAt = serverTrialEndsAt || local.endsAt || null;
   const endsMs = endsAt ? Date.parse(endsAt) : NaN;
-  const daysLeft = Number.isFinite(endsMs) ? Math.max(0, Math.ceil((endsMs - Date.now()) / 86400000)) : null;
+  const daysLeft = !serverTrialEndsAt ? (local.daysLeft == null ? null : local.daysLeft)
+    : Number.isFinite(endsMs) ? Math.max(0, Math.ceil((endsMs - Math.max(Date.now(), clockHighWaterMs())) / 86400000)) : null;
   return { trialEndsAt: endsAt, daysLeft, trialDays: TRIAL_DAYS };
 }
 
 // RUN 13 §7 — the trial, stored at ~/.aria-sentinel/trial.json. PROD 2026-10-14 (audit M14 / R3): 30 DAYS from the
 // first launch, started exactly once (the file is write-once; a later "Start trial" click or relaunch never resets
 // it); the state carries the TRUE end date + days left so every surface shows the same number.
+// REVIEW P1-3 — and deleting it does not restart it: the start is mirrored in the store, the server remembers when it
+// first saw this device, and a device ARIA has run on before (a high-water mark exists) never starts a second trial.
 function readTrial() {
   try { return JSON.parse(fs.readFileSync(TRIAL_FILE, "utf8")); } catch { return null; }
 }
-function ensureTrialStarted(email = "") {
-  if (readTrial() || licenseStatus().licensed) return false;
+/** Every recorded trial start: trial.json, its store mirror, and the server's first sight (heartbeat / resolve). */
+function trialStarts(cache) {
+  const c = (cache === undefined ? readLicenseCache() : cache) || {};
+  return [readTrial()?.started_at, store.get(TRIAL_START_MIRROR_KEY), store.get(SERVER_TRIAL_START_KEY), c.trialStartedAt];
+}
+/** Has ARIA run on this device before? (any high-water mark or any recorded start — never "fresh" after the first run) */
+function trialHasRunBefore(cache) {
+  return clockHighWaterMs(cache) > 0 || Boolean(resolveTrialStart(store.get(TRIAL_START_MIRROR_KEY), store.get(SERVER_TRIAL_START_KEY)));
+}
+function writeTrialRecord(started, email = "", extra = {}) {
+  fs.mkdirSync(path.dirname(TRIAL_FILE), { recursive: true });
+  const record = { started_at: started, days: TRIAL_DAYS, ends_at: new Date(Date.parse(started) + TRIAL_DAYS * 86400000).toISOString(), device_id: os.hostname(), ...extra };
+  if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email))) record.email = String(email).trim().toLowerCase(); // local only, never sent
+  fs.writeFileSync(TRIAL_FILE, JSON.stringify(record, null, 2));
+  return record;
+}
+function mirrorTrialStart() {
   try {
-    fs.mkdirSync(path.dirname(TRIAL_FILE), { recursive: true });
+    const local = Date.parse(String(readTrial()?.started_at || ""));
+    const mirror = Date.parse(String(store.get(TRIAL_START_MIRROR_KEY) || ""));
+    if (Number.isFinite(local) && local > 0 && !(mirror <= local)) store.set(TRIAL_START_MIRROR_KEY, new Date(local).toISOString());
+  } catch { /* best-effort */ }
+}
+function ensureTrialStarted(email = "") {
+  const ranBefore = trialHasRunBefore(); // decided BEFORE this launch leaves its own marks
+  mirrorTrialStart();
+  touchClockHighWater();
+  if (readTrial() || licenseStatus().licensed) return false;
+  // REVIEW P1-3 — trial.json is missing. A start recorded anywhere else is restored (never a new 30 days); with none, a
+  // device ARIA has run on before keeps "trial ended" — only a first run ever starts a trial.
+  const prior = resolveTrialStart(trialStarts());
+  if (prior || ranBefore) {
+    try { if (prior) writeTrialRecord(prior, "", { restored: true }); } catch { /* best-effort */ }
+    logEvent("LICENSE", prior
+      ? `trial.json was missing — restored from the recorded start (${prior.slice(0, 10)}); the trial is not restarted.`
+      : "trial.json was missing on a device ARIA has run on before — the trial is not restarted (it counts as ended).");
+    return false;
+  }
+  try {
     const started = new Date().toISOString();
-    const record = { started_at: started, days: TRIAL_DAYS, ends_at: new Date(Date.parse(started) + TRIAL_DAYS * 86400000).toISOString(), device_id: os.hostname() };
-    if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email))) record.email = String(email).trim().toLowerCase(); // local only, never sent
-    fs.writeFileSync(TRIAL_FILE, JSON.stringify(record, null, 2));
+    const record = writeTrialRecord(started, email);
+    store.set(TRIAL_START_MIRROR_KEY, started);
     logEvent("LICENSE", `${TRIAL_DAYS}-day trial started (ends ${record.ends_at.slice(0, 10)}).`);
     return true;
   } catch {
@@ -2129,7 +2279,8 @@ function ensureTrialStarted(email = "") {
   }
 }
 function trialState() {
-  return computeTrialStatus(readTrial()?.started_at);
+  const cache = readLicenseCache();
+  return trialStatusFor({ starts: trialStarts(cache), hasRunBefore: trialHasRunBefore(cache), now: Date.now(), highWaterMs: clockHighWaterMs(cache) });
 }
 // RUN-C C2 — 14-day SMB free-pilot, stored at ~/.aria-sentinel/pilot.json. Local only, no external send;
 // distinct from the 12-hour trial gate above. Falls back to free Manual at expiry (never locks the user out).
@@ -2423,7 +2574,7 @@ async function enterLicense(payload = {}) {
   if (!/^[a-f0-9]{64}$/.test(key)) return { ok: false, error: "invalid_key" };
   let r;
   try {
-    r = await resolveLicenseOnline(key, String(payload.email || "").trim());
+    r = await resolveLicenseOnline(key);
   } catch {
     if (!persistLicense(key, payload.email, null)) return { ok: false, error: "store_failed" };
     clearLicenseCache();
@@ -2434,11 +2585,20 @@ async function enterLicense(payload = {}) {
   if (r.status === "invalid" || r.httpStatus === 400 || r.httpStatus === 401) return { ok: false, error: "invalid_key" };
   if (r.httpStatus >= 500 || r.status === "error") return { ok: false, error: "server_error" };
   if (!persistLicense(key, payload.email, r.plan)) return { ok: false, error: "store_failed" };
-  writeLicenseCache(buildCache(key, { plan: r.plan, status: r.status, walkthroughEntitled: r.walkthroughEntitled, trialEndsAt: r.trialEndsAt }));
+  // REVIEW P1-3 — the answer is stored verbatim (verdict + sig); what it unlocks is licenseStatus()'s decision (a signed
+  // verdict for this device + key, or an unsigned one for ≤1 h in this run and never as admin).
+  if (!VERDICT_STATUSES.includes(r.status)) return { ok: false, error: "server_error" };
+  storeVerdict(key, r);
   if (r.status === "revoked") {
     logEvent("LICENSE", "License key entered but revoked by issuer — Personal tier.");
     broadcastState();
     return { ok: false, error: "revoked", status: gateStatus() };
+  }
+  if (!licenseStatus().licensed) {
+    const error = r.status === "expired" ? "expired" : r.status === "past_due" ? "past_due" : "unverified";
+    logEvent("LICENSE", `License key entered but not unlocked (${error.replace(/_/g, " ")}) — free tier.`);
+    broadcastState();
+    return { ok: false, error, status: gateStatus() };
   }
   logEvent("LICENSE", "License key entered + verified.");
   broadcastState();
@@ -5782,6 +5942,7 @@ ipcMain.handle("setup:complete", (_event, prefs) => {
     runUpdateCheck("launch").catch(() => undefined);
     updateKnowledge().catch(() => undefined);
     if (crashReporter && typeof crashReporter.flush === "function") crashReporter.flush().catch(() => undefined);
+    refreshLicense().catch(() => undefined); // REVIEW P2-9 — a pre-seeded licence is checked now, not before consent
   }, 1500).unref?.();
   return { ok: true, setup: cfg.setup, applied };
 });
@@ -6036,7 +6197,7 @@ if (hasSingleInstanceLock) {
     ensureTrialStarted();
     try { maybeStampPilotTtfv(); } catch { /* RUN-E E1 — catch a first fix recorded in an earlier session; never blocks startup */ }
     try { maybeAutorunCaseStudy(); } catch { /* RUN-E E2 — a pilot that matured between sessions drafts its proof at startup; never blocks */ }
-    refreshLicense().catch(() => undefined); // RUN 24 A6 — silent server-side re-verify (skips network if cache fresh)
+    refreshLicense().catch(() => undefined); // RUN 24 A6 — silent server-side re-verify (skips network if a signed cache is fresh; before Setup consent it sends nothing — review P2-9)
     showOverlay({ expanded: false });
     applyModeBehavior(store.get("mode"));
     startBridge();
@@ -6053,7 +6214,8 @@ if (hasSingleInstanceLock) {
       selfDiagnose("interval").catch((error) => handleSelfError(error, "interval-diagnose"));
     }, 5 * 60 * 1000).unref?.();
     // Health Score is refreshed every 60s so the tray tooltip stays current between detections.
-    setInterval(() => { refreshHealthScore(); touchSlaLastSeen(); }, 60 * 1000).unref?.();
+    // REVIEW P1-3 — the same minute tick raises the trial clock's high-water mark (a clock rolled back never lowers it).
+    setInterval(() => { refreshHealthScore(); touchSlaLastSeen(); touchClockHighWater(); }, 60 * 1000).unref?.();
     recordLaunchGapAsDowntime(); // (audit M12) a gap > 2 min since the last heartbeat-minute is real downtime
     // Self-hosted auto-update (electron-updater) — guarded; no-op if the dep isn't installed.
     initAutoUpdate();

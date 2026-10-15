@@ -100,7 +100,7 @@ daily). Drop them with a logon script, Intune PowerShell script (user context) o
 
 | File | Purpose | Shape |
 |---|---|---|
-| `license.json` | pre-enter the organisation's licence key so users never paste it | `{ "key": "<64-hex key>", "email": "it@example.com" }` — verified online at launch; the plan is cached |
+| `license.json` | pre-enter the organisation's licence key so users never paste it | `{ "key": "<64-hex key>", "email": "it@example.com" }` — verified online once the user finishes Setup (nothing is sent before that; the email stays on the device); the server's signed answer is cached for this device |
 | `customer.json` | per-customer scoping and kill switch | `{ "customerId": "acme", "displayName": "Acme Inc.", "disabled": false }` — `"disabled": true` = detect-only |
 | `policy.json` | organisation policy overlay | `{ "recipes_disabled": ["printer-spooler-v1"], "business_hours": { "start": 8, "end": 18, "tz": "America/Toronto" }, "confirmation_threshold": "medium", "escalation_contacts": ["helpdesk@example.com"] }` — unknown recipe ids are ignored; nothing can be *enabled* from this file |
 

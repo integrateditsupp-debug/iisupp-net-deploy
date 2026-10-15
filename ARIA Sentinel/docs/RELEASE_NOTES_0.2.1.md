@@ -30,7 +30,14 @@ deploy. It is still an **unsigned** Windows build (see "What is NOT in this rele
   show *not measured yet* until there is real data. The kill switch says "nothing to undo" when nothing was undone.
 - **One 30-day trial.** The trial is 30 days and the screen says 30 days (it used to end after 12 hours). When it
   ends, the Dashboard, the ARIA knowledge chat and Settings (the buy path) stay open; monitoring and fixes need a
-  plan; the Walk-Through stays if it was part of your purchase.
+  plan; the Walk-Through stays if it was part of your purchase. It cannot be restarted by deleting `trial.json` or by
+  winding the clock back: the start is kept in more than one place, the licence server remembers when it first saw
+  this device (the earlier date wins), and time this device has already seen still counts after the clock is set back.
+- **A licence that a file edit cannot fake.** The licence server signs its answer for this device and this key, and
+  the app believes a cached answer only when that signature checks out — a hand-written `license-cache.json` unlocks
+  nothing, and admin features need a signed answer. An unsigned answer (the server's signing key not configured, or
+  its revocation list unreadable) counts for at most one hour, is asked again before the hour is up and at every
+  launch, and never unlocks admin.
 - **A buy path that lands somewhere real.** Every Subscribe / Upgrade control opens `iisupp.net/plans` (the old
   link was a 404); after checkout the licence key is emailed and `/downloads` tells you so, with the three steps
   (check your email → install → paste the key). Every price the app shows comes from the one pricing table the
@@ -53,8 +60,9 @@ deploy. It is still an **unsigned** Windows build (see "What is NOT in this rele
   (Windows does not let ARIA end an elevated process); nothing after that step runs.
 - **Keyboard shortcuts that do not steal AltGr.** The everyday chords are configurable and AltGr-safe for
   non-US layouts; the kill switch stays Ctrl+Alt+K.
-- **Nothing leaves the device before Setup is finished**, and the licence key never travels in a URL (the update
-  check sends a hash in a header).
+- **Nothing leaves the device before Setup is finished** — including the check of a licence key an IT department
+  pre-seeded in `license.json`, which now runs when the person finishes Setup, not at the first launch — and the
+  licence key never travels in a URL (the update check sends a hash in a header).
 - **Your folders, your names.** The excluded-folder rule is a configurable list shown as a count; no internal
   rule ids or anyone's folder names appear in the Compliance tab or the PDF.
 - **An organisation policy file** (`%USERPROFILE%\.aria-sentinel\policy.json`: disabled recipes, business hours,
@@ -97,7 +105,14 @@ deploy. It is still an **unsigned** Windows build (see "What is NOT in this rele
   re-registers instead.
 - Restore points need an account that can create them; where Windows refuses, the fix is held in preview and the
   app says why.
-- The trial starts on first launch; the licence key makes it irrelevant.
+- The trial starts on first launch; the licence key makes it irrelevant. The server's record of a device is keyed by
+  a hash of its computer name, so two computers with the same name share one trial start (the earlier one), and a
+  device kept fully offline whose every local record is deleted can still start a second trial.
+- **Before shipping, set `SENTINEL_RESOLVE_SIGNING_KEY` on the server** to the private half of the key pair whose
+  public half is embedded in the app (the website repository's `docs/SENTINEL-BACKEND-2026-10-14.md` says how to set
+  it and how to check it against the embedded key). Without it every licence answer is unsigned:
+  a paid plan holds only while the device is online (asked again every 50 minutes) and drops to the free floor an
+  hour after the last answer — and at a relaunch, until the server answers.
 - Licence keys are issued per plan tier; per-customer keys and seat counting are server-side work still in
   progress — see the server notes for the state at your purchase date.
 - The old `ARIA-Sentinel-0.1.0-unsigned.exe` (102 MB) is still tracked in the website repository and served at
