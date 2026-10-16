@@ -2,8 +2,8 @@
   "schema_version": "1.4",
   "label": "ARIA classifier + product autonomous loop",
   "last_run_iso": "2026-10-16",
-  "total_runs": 53,
-  "cumulative_scenarios": 2749250,
+  "total_runs": 54,
+  "cumulative_scenarios": 2787557,
   "last_session_scenarios": 38307,
   "last_pass_rate_pct": 98.9,
   "last_pass_count": 37868,
@@ -515,8 +515,8 @@
     "push_blocker": "No PAT at .cowork-github-pat this session; no env token; no embedded PAT in remote URL; HEAD on cc/master-fix-2026-07-02 (feature branch) not main. run-stats.json updated on disk via Cowork file API. AHMAD: from a /tmp clone with a valid PAT off origin/main -- git add tests/scenario-corpus.js tests/run-stats.json && git commit -m \"[autonomous] classifier loop 2026-07-17: 92.3% pass, 38307 corpus, 1 safe flip\" && git push origin main. Do NOT git-add through the corrupt mount.",
     "ran_at": "2026-07-17T15:53:36Z"
   },
-  "last_run_at": "2026-10-16T13:20:00Z",
-  "next_run_at": "2026-10-16T20:00:00Z",
+  "last_run_at": "2026-10-16T20:06:00Z",
+  "next_run_at": "2026-10-17T04:00:00Z",
   "this_session_2026_07_17_slot3": {
     "harness": "run-10k-scenarios.js",
     "scenarios": 38307,
@@ -838,7 +838,7 @@
     "pending_review_doc": "senior-director-state/aria-classifier-pending-fixes-2026-08-11.md",
     "patch_record": "tests/aria-classifier-measured-patches-2026-08-11.json"
   },
-  "last_run_note": "2026-10-16 slot1 (Fri 09:20 EDT): 98.9% (37,868/38,307), flat vs 10-14/10-15. 0 safe corpus flips (default-expectation clusters are negative controls). 25 regex clusters logged for review (aria-classifier-pending-fixes-2026-10-16.md). No Sunday growth (Friday). aria.html untouched. Earlier 10-16 attempt blocked by sandbox disk-full; this run succeeded.",
+  "last_run_note": "2026-10-16 slot2 (Fri 16:06 EDT): 98.9% (37,868/38,307), flat vs slot1. 0 safe corpus flips (default->shopping/trade/escalation clusters are out-of-scope negative controls). Same 25 regex clusters; appended to aria-classifier-pending-fixes-2026-10-16.md. No Sunday growth. aria.html untouched. Sandbox /sessions disk full; used /tmp for logs.",
   "this_session_2026_08_12": {
     "baseline_pct": 98.28,
     "final_pct": 98.9,
