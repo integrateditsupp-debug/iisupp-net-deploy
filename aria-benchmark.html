@@ -59,8 +59,39 @@
   footer{margin-top:44px;padding-top:22px;border-top:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);font-size:13px;text-align:center}
   footer a{color:#c5a059;text-decoration:none;border-bottom:1px solid rgba(197,160,89,.35)}
   .stamp{font-family:ui-monospace,monospace;font-size:12.5px;color:rgba(255,255,255,.42);margin-top:8px}
+  .verify-notice{background:rgba(234,179,8,.06);border:1px solid rgba(234,179,8,.4);border-left:3px solid #eab308;border-radius:10px;padding:20px 22px;margin:0 0 28px}
+  .verify-notice p{color:rgba(255,255,255,.8);font-size:14.5px;margin-bottom:10px}
+  .verify-notice p:last-child{margin-bottom:0}
+  .verify-notice b{color:#fff}
+  .verify-notice code{font-size:13px}
+  .vn-label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f5d547;font-weight:700;margin-bottom:10px}
+  .vn-foot{font-size:13px!important;color:rgba(255,255,255,.55)!important;border-top:1px solid rgba(234,179,8,.22);padding-top:10px;margin-top:4px}
   @media(max-width:640px){h1{font-size:29px}body{padding:32px 16px}.bar{max-width:90px}}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "ARIA Auto-Resolve Benchmark — three honest numbers, not one flattering one",
+  "description": "Integrated IT Support Inc. publishes its support AI's in-scope deflection rate, its out-of-scope false-answer rate and its control-hijack rate together, with the command to reproduce them. Figures stated on the page were measured 2026-07-14 as a self-test on a public corpus; they are not a customer-validated production resolution rate. See the verification notice on the page for the current reproduction status.",
+  "datePublished": "2026-07-16",
+  "dateModified": "2026-10-21",
+  "inLanguage": "en",
+  "url": "https://iisupp.net/aria-benchmark",
+  "author": {
+    "@type": "Organization",
+    "name": "Integrated IT Support Inc.",
+    "url": "https://iisupp.net"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Integrated IT Support Inc.",
+    "url": "https://iisupp.net"
+  },
+  "about": "Measurement and honest reporting of support-AI deflection, false-answer and control-hijack rates",
+  "proficiencyLevel": "Beginner"
+}
+</script>
   <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&display=swap"><link rel="stylesheet" href="/assets/xo-elite-theme.css">
 </head>
@@ -71,6 +102,14 @@
   <h1>We publish our support AI's <span class="gold">false-answer rate</span>.</h1>
   <p class="sub">Anyone can quote a resolution rate. Almost nobody tells you how often their bot confidently answers a question it had no business answering. Both numbers are below — plus the command to reproduce them.</p>
   <div class="privacy-pill">◆ Measured 2026-07-14 · reproducible in one command · no signup</div>
+
+  <div class="verify-notice" role="note" aria-label="Verification notice">
+    <div class="vn-label">Verification notice · found 2026-10-08 · re-run 2026-10-14 and 2026-10-21, same result</div>
+    <p><b>We re-ran our own reproduce-it command on 2026-10-08, 2026-10-14 and 2026-10-21, and it did not reproduce the figures below. We are telling you before you find out yourself.</b></p>
+    <p>The numbers on this page were measured on <b>2026-07-14</b> against a knowledge base of <b>31 patterns</b>. Running <code>node tools/measure-kb-selftest.mjs</code> against the knowledge base currently in our repository &mdash; <b>17 patterns</b> &mdash; returns <b>23.6% in-scope deflection, 6.7% out-of-scope false answers and 12% control hijacks</b>, with zero coverage for VPN, webcam, BitLocker recovery and onboarding. The 31-pattern coverage build-out described further down this page is <b>not present in the current tree</b>, so the published figures cannot be reproduced today.</p>
+    <p>We do not know yet whether that build-out was lost, reverted or never merged, and we will not guess in either direction. <b>Until it is restored and re-measured, treat every figure on this page as a dated historical measurement and not a current one.</b> The restore is logged as our highest-priority open defect; this notice is removed only when the command reproduces the numbers again, and the re-measured figures &mdash; whatever they turn out to be &mdash; get published here even if they are worse.</p>
+    <p class="vn-foot">Why we left the old numbers visible instead of quietly deleting them: a published figure you can check against a stated date is auditable. A page that silently changes is not. This is the same reason we publish a false-answer rate at all.</p>
+  </div>
 
   <div class="lede">
     <p><b>One number would lie.</b> A support bot can hit a beautiful "answered 90% of questions" score by answering <i>everything</i> — including the questions it should have handed to a human, and the ones that were never IT support in the first place. That is not coverage. That is a bot guessing with confidence.</p>

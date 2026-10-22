@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-08-13T03:18:04.174Z",
+  "generatedAt": "2026-10-22T02:42:20.172Z",
   "public": true,
   "note": "Counts only. Approval detail + live activity require an Aperture login (served via /api/axis-state).",
   "health": {
     "worker": "up",
-    "heartbeatAt": "2026-08-13T03:18:02.764Z",
-    "leadsQueued": 369,
-    "agentsTotal": 27,
-    "approvalsPending": 7,
+    "heartbeatAt": "2026-10-22T02:42:18.696Z",
+    "leadsQueued": 711,
+    "agentsTotal": 30,
+    "approvalsPending": 18,
     "classifierSelfTestPassPct": 98.9
   },
   "autoApprove": {
@@ -22,17 +22,17 @@
     "note": "Auto-sends fire only within the rails. Anything irreversible / anomalous waits in Approvals; a daily auto-fire digest lists what fired."
   },
   "approvalsSummary": {
-    "pending": 7,
+    "pending": 18,
     "byKind": {
-      "review": 7
+      "review": 18
     }
   },
   "activitySummary": {
     "recentCount": 8,
-    "lastActivityAt": "2026-08-13T03:02:55.032Z"
+    "lastActivityAt": "2026-10-22T02:31:51.338Z"
   },
   "agentsSummary": {
-    "total": 27,
+    "total": 30,
     "byFunction": {
       "Find Leads": 6,
       "Draft Emails": 2,
@@ -44,9 +44,11 @@
       "Ops Health": 3,
       "Brain": 2,
       "Approvals": 1,
-      "Research": 1,
+      "Research": 2,
       "Inbox Monitor": 1,
-      "Product Discovery": 1
+      "Product Discovery": 1,
+      "Executive Assistant": 1,
+      "Growth": 1
     }
   },
   "agents": [
@@ -210,6 +212,24 @@
       "name": "Miner",
       "fn": "Product Discovery",
       "does": "Logs recurring prospect needs → scored product/service opportunities",
+      "status": "scheduled"
+    },
+    {
+      "name": "Steward",
+      "fn": "Executive Assistant",
+      "does": "Every 10 min (Netlify): runs the Automate tab's tasks, watches the inboxes, emails 'Axis Needs your attention'",
+      "status": "scheduled"
+    },
+    {
+      "name": "Scholar",
+      "fn": "Research",
+      "does": "On demand: live-web research with per-claim sources → vault 15_Research (also the Grant Radar scan)",
+      "status": "scheduled"
+    },
+    {
+      "name": "Grantwright",
+      "fn": "Growth",
+      "does": "On Apply: builds the grant application packet into the vault — eligibility, narratives, portal steps — and stops at the portal",
       "status": "scheduled"
     }
   ],

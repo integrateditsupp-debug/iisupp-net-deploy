@@ -1,9 +1,9 @@
 {
   "schema_version": "1.4",
   "label": "ARIA classifier + product autonomous loop",
-  "last_run_iso": "2026-10-16",
-  "total_runs": 53,
-  "cumulative_scenarios": 2749250,
+  "last_run_iso": "2026-10-21",
+  "total_runs": 58,
+  "cumulative_scenarios": 2940785,
   "last_session_scenarios": 38307,
   "last_pass_rate_pct": 98.9,
   "last_pass_count": 37868,
@@ -515,8 +515,8 @@
     "push_blocker": "No PAT at .cowork-github-pat this session; no env token; no embedded PAT in remote URL; HEAD on cc/master-fix-2026-07-02 (feature branch) not main. run-stats.json updated on disk via Cowork file API. AHMAD: from a /tmp clone with a valid PAT off origin/main -- git add tests/scenario-corpus.js tests/run-stats.json && git commit -m \"[autonomous] classifier loop 2026-07-17: 92.3% pass, 38307 corpus, 1 safe flip\" && git push origin main. Do NOT git-add through the corrupt mount.",
     "ran_at": "2026-07-17T15:53:36Z"
   },
-  "last_run_at": "2026-10-16T13:20:00Z",
-  "next_run_at": "2026-10-16T20:00:00Z",
+  "last_run_at": "2026-10-21T20:06:00Z",
+  "next_run_at": "2026-10-22T04:00:00Z",
   "this_session_2026_07_17_slot3": {
     "harness": "run-10k-scenarios.js",
     "scenarios": 38307,
@@ -838,7 +838,7 @@
     "pending_review_doc": "senior-director-state/aria-classifier-pending-fixes-2026-08-11.md",
     "patch_record": "tests/aria-classifier-measured-patches-2026-08-11.json"
   },
-  "last_run_note": "2026-10-16 slot1 (Fri 09:20 EDT): 98.9% (37,868/38,307), flat vs 10-14/10-15. 0 safe corpus flips (default-expectation clusters are negative controls). 25 regex clusters logged for review (aria-classifier-pending-fixes-2026-10-16.md). No Sunday growth (Friday). aria.html untouched. Earlier 10-16 attempt blocked by sandbox disk-full; this run succeeded.",
+  "last_run_note": "2026-10-21 slot2 (Wed 16:06 EDT): 98.9% (37,868/38,307), flat (10th flat run). 0 safe corpus flips (default->shopping/trade/escalation are ARIA over-matches). Same 25 regex clusters appended to aria-classifier-pending-fixes-2026-10-21.md. No Sunday growth (Wednesday). aria.html untouched. Committed locally, not pushed (bootstrap hard stop #4).",
   "this_session_2026_08_12": {
     "baseline_pct": 98.28,
     "final_pct": 98.9,
@@ -883,5 +883,41 @@
     "regex_changes_pending_review": 25,
     "corpus_growth": 0,
     "aria_html_touched": false
+  },
+  "this_session_2026_10_20_slot2": {
+    "harness": "run-10k-scenarios.js",
+    "scenarios": 38307,
+    "pass_rate_pct": 98.9,
+    "fail": 439,
+    "delta_from_last_run_pct": 0,
+    "delta_pass_count": 0,
+    "safe_corpus_flips_applied": 0,
+    "regex_changes_pending_review": 25,
+    "corpus_growth": 0,
+    "aria_html_touched": false,
+    "pass": 37868
+  },
+  "this_session_2026_10_21_blocked": {
+    "status": "NOT_RUN",
+    "reason": "Linux sandbox failed to start: 'useradd: /etc/passwd: No space left on device' on 3 consecutive attempts (2nd occurrence; first was 2026-10-16). Node harness, auto-fix-engine, smoke tests and git could not execute. No scenarios ran, so total_runs / cumulative_scenarios / pass-rate / next_run_at fields were deliberately NOT changed.",
+    "corpus_flips_applied": 0,
+    "aria_html_touched": false,
+    "commit_pushed": false,
+    "ahmad_action": "Free disk space on the PC (sandbox VM disk lives on the host). Also still pending: delete stale .git/index.lock, .git/HEAD.lock, .git/refs/heads/main.lock; push main (4 local commits ahead).",
+    "superseded_by": "this_session_2026_10_21_slot1_retry"
+  },
+  "this_session_2026_10_21_slot1_retry": {
+    "harness": "run-10k-scenarios.js",
+    "scenarios": 38307,
+    "pass_rate_pct": 98.9,
+    "pass": 37868,
+    "fail": 439,
+    "delta_from_last_run_pct": 0,
+    "delta_pass_count": 0,
+    "safe_corpus_flips_applied": 0,
+    "regex_changes_pending_review": 25,
+    "corpus_growth": 0,
+    "aria_html_touched": false,
+    "commit_pushed": false
   }
 }

@@ -1,6 +1,6 @@
 # Mode × level behaviour matrix — ARIA Sentinel fault lab
 
-Generated 2026-10-15 by `tests/fault-lab-modes.test.mjs` from 166 scenarios run on the simulated Windows machine (`tests/lib/fault-lab.mjs`) against the real `src/main/main.mjs` (booted by `tests/lib/main-sandbox.mjs`). Every cell is what the lab OBSERVED; the test run rewrites this file — it is never edited by hand.
+Generated 2026-10-21 by `tests/fault-lab-modes.test.mjs` from 166 scenarios run on the simulated Windows machine (`tests/lib/fault-lab.mjs`) against the real `src/main/main.mjs` (booted by `tests/lib/main-sandbox.mjs`). Every cell is what the lab OBSERVED; the test run rewrites this file — it is never edited by hand.
 
 Setup: live fixes ON · a business device with one IT contact · the advise-first interval at 3 minutes · nobody answering anything · 40 minutes of (virtual) time · Sentinel on the standard user token (administrator rights only through a UAC prompt a person answers). **fresh** = nothing vetted locally yet (a new install) — except that, on Autonomous mode's advise-three-times track, a **vendor-vetted** green recipe (it ships a gating verify probe and a declared inverse) starts at the Tier-1 floor; **trusted** = the fault's recipe has earned 12 vetted runs (Tier 1, the minimum the execution policy requires before anything runs unattended). **Confirmed asks once, every time, and never executes unattended** (review P1-1): every Confirmed cell is one approval waiting.
 

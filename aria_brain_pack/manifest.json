@@ -1,8 +1,24 @@
 {
-  "pulledAt": "2026-08-12T15:50:55.768Z",
+  "pulledAt": "2026-10-21T13:55:08.050Z",
   "site": "https://iisupp.net",
-  "exportedAt": "2026-08-12T15:50:55.559Z",
-  "count": 800,
-  "written": 800,
-  "note": "Local owned copy of ARIA live bit-KB. Curated base is assets/aria-kb-local-bundle-v2.json."
+  "exportedAt": "2026-10-21T13:55:07.565Z",
+  "count": 3106,
+  "written": 3106,
+  "note": "Local owned copy of ARIA live bit-KB. Curated base is assets/aria-kb-local-bundle-v2.json.",
+  "pages": 11,
+  "total": 3106,
+  "complete": true,
+  "pageSizes": [
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300
+  ]
 }

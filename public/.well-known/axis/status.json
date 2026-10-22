@@ -1,12 +1,12 @@
 {
- "status": "active build — joined line: desktop checks all green; site suites green",
- "milestone": "The live human Aria voice and the AXIS executive assistant are now joined to the build line that asks who is responsible before ARIA Sentinel acts. Every check was taken on the joined line, not on either half alone; the five places they disagreed were fixed at the source, not hidden.",
- "readiness": "Built and tested this cycle. 1284 of 1341 desktop checks pass, none failing. 57 read an operator-only record absent here and are reported as not taken. 147 of 147 site suites pass. Publishing to the live site stays a deliberate manual step; nothing from this cycle is live until that click.",
- "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build and is voice-operable. Sent: 0. Meetings 0, revenue none. Checks this cycle: 1284 of 1341 desktop checks pass, none failing. 57 read an operator-only record absent here and are reported as not taken. 147 of 147 site suites pass.",
- "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
- "generatedAt": "2026-10-13T23:37:54.050Z",
  "schema": "axis-status/1",
+ "generatedAt": "2026-10-22T01:35:01.000Z",
  "public": true,
- "honest": true
+ "honest": true,
+ "status": "active build — desktop suites all green; AXIS dashboard redesign built and tested, not yet live",
+ "milestone": "AXIS is being rebuilt as one clear dashboard with the globe at its centre, and nothing renders before sign-in. Every existing function is kept. The live human Aria voice and the AXIS assistant remain on the build line.",
+ "readiness": "Built and tested this cycle. All 389 of 389 desktop test suites pass, none failing. Site suites: 160 of 164 pass on the operator machine; the 4 that do not are machine-only housekeeping checks and none of them touch a shipped page. Publishing to the live site stays a deliberate manual step; nothing from this cycle is live until that click.",
+ "revenueToDate": "none",
+ "headline": "ARIA / AXIS is in active build and is voice-operable. Sent: 0. Meetings 0, revenue none. All 389 of 389 desktop test suites pass, none failing. Site suites: 160 of 164 pass on the operator machine; the 4 that do not are machine-only housekeeping checks and none of them touch a shipped page.",
+ "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail."
 }

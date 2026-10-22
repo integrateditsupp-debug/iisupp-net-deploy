@@ -38,7 +38,7 @@
 <div class="wrap">
   <div class="crown">Book a discovery call</div>
   <h1>30 min with <span class="gold">Ahmad.</span></h1>
-  <p class="sub">Founder-direct. No sales rep. We talk about your IT setup, where ARIA fits, and whether a pilot makes sense for you. No pressure.</p>
+  <p class="sub" id="booking-subtitle">Founder-direct. No sales rep. We talk about your IT setup, where ARIA fits, and whether a pilot makes sense for you. No pressure.</p>
 
   <div class="form-card">
     <label>Your name *</label>
@@ -83,6 +83,14 @@
 </div>
 
 <script>
+var bookingParams = new URLSearchParams(window.location.search);
+var bookingSource = bookingParams.get('source') || 'book-page';
+var bookingSubject = bookingParams.get('subject') || '';
+var bookingContext = bookingParams.get('context') || '';
+if (bookingSubject) {
+  document.getElementById('booking-subtitle').textContent = 'Founder-direct. You are requesting a conversation about ' + bookingSubject + '. Tell us the essentials below and Ahmad will review the fit personally.';
+  document.getElementById('b-context').value = 'Requested service: ' + bookingSubject + (bookingContext ? '\n\n' + bookingContext : '');
+}
 document.getElementById('book-btn').onclick = async function(){
   var name = document.getElementById('b-name').value.trim();
   var email = document.getElementById('b-email').value.trim();
@@ -105,8 +113,8 @@ document.getElementById('book-btn').onclick = async function(){
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         name: name, email: email, company: company,
-        message: 'BOOK 30-MIN CALL.\n\nVertical: ' + (vertical || '(not specified)') + '\n\nProposed slots:\n' + (slots || '(no slots provided)') + '\n\nContext: ' + (context || '(none)'),
-        source: 'book-page', last_intent: 'demo_call_request'
+        message: 'BOOK 30-MIN CALL.\n\nRequested service: ' + (bookingSubject || '(general discovery)') + '\nSource: ' + bookingSource + '\n\nVertical: ' + (vertical || '(not specified)') + '\n\nProposed slots:\n' + (slots || '(no slots provided)') + '\n\nContext: ' + (context || '(none)'),
+        source: bookingSource, last_intent: 'demo_call_request'
       })
     });
     if (!r.ok) throw new Error('send failed');
