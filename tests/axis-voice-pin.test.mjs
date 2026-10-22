@@ -39,26 +39,27 @@ assert.ok((app.match(/setItem\('axis-voice-rev', VOICE_POLICY_REV\)/g) || []).le
 assert.ok(/window\.axisClearVoice/.test(app), 'there is an escape hatch to drop a pin');
 ok('a deliberate pick survives, and can be cleared');
 
-// ---- 5. the resulting voice is a natural UK woman — soft, composed, never synthetic ----
-// Ahmad, 2026-08-12: "revert the voice back to UK woman but none robotic, sound like a natural
-// human conversation." Natural means prosody near the voice's own training, not a stylised shift.
+// ---- 5. the resulting voice is ARIA's character (2026-10-21) — natural, North American, never a child ----
+// Ahmad, 2026-10-21: "check why Axis still has the old voice … remove the old british voice". The
+// browser fallback ranks "Microsoft Aria Online (Natural)" first and demotes the en-GB set (archived).
 const s = (n, l) => P.axisPersonaBonus(n, l);
+const aria = s('Microsoft Aria Online (Natural) - English (United States)', 'en-US');
 const sonia = s('Microsoft Sonia Online (Natural) - English (United Kingdom)', 'en-GB');
 assert.ok(P.AXIS_PROSODY.pitch > 1.0 && P.AXIS_PROSODY.pitch <= 1.05,
   'human register: barely above native pitch, never a cartoon lift');
-assert.ok(P.AXIS_PROSODY.volume <= 0.85, 'softer is volume, not pitch');
-assert.ok(P.AXIS_PROSODY.rate > 0.95 && P.AXIS_PROSODY.rate < 1,
+assert.ok(P.AXIS_PROSODY.volume <= 0.9, 'softer is volume, not pitch');
+assert.ok(P.AXIS_PROSODY.rate >= 0.95 && P.AXIS_PROSODY.rate < 1,
   'composed is just under the voice\'s own pace, not dragged');
-assert.ok(sonia > s('Microsoft Libby Online (Natural) - English (United Kingdom)', 'en-GB'),
-  'Sonia leads — the composed en-GB Natural voice is the house voice');
-assert.ok(sonia > s('Microsoft Ava Online (Natural) - English (United States)', 'en-US'),
-  'the UK voice outranks the en-US experiment\'s house voice');
+assert.ok(aria > sonia, 'Aria leads — the old UK house voice no longer wins');
+assert.ok(aria > s('Microsoft Jenny Online (Natural) - English (United States)', 'en-US'),
+  'Aria outranks the other en-US Natural women');
+assert.ok(s('Microsoft Clara Online (Natural) - English (Canada)', 'en-CA') > sonia,
+  'a Canadian natural woman outranks the archived British set');
 assert.ok(s('Microsoft Maisie Online (Natural) - English (United Kingdom)', 'en-GB') < 0,
-  '"UK woman" must never resolve to a child voice');
-// Every family softened, and none may collide with ARIA's own rate/pitch.
+  'never a child voice');
+assert.ok(sonia > s('Microsoft David Desktop', 'en-US'), 'a British woman still beats a male SAPI voice (demoted, not banned)');
+assert.equal(P.AXIS_UK_ARCHIVE.rev, '2026-08-12-uk-natural', 'the UK persona is archived with its revision');
 assert.ok(Object.values(P.VOICE_PROFILES).every((p) => p.volume <= 0.9), 'every family is softened');
-assert.ok(Object.values(P.VOICE_PROFILES).every((p) => !(p.rate === 0.95 && p.pitch === 1.05)),
-  'no family lands on ARIA rate/pitch');
-ok('a natural UK woman — soft, composed, and still never ARIA');
+ok('Aria\'s character — natural, North American, and the UK persona archived not deleted');
 
 console.log('ok — the voice changes, and a stale pin can no longer hide it');

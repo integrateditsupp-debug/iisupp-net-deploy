@@ -7,6 +7,7 @@
 //    inbox may auto-send, and only when the classifier marks them routine.
 //  - Anything stuck, failed or needing a decision emails Ahmad: "Axis Needs your attention".
 import { getStore } from '@netlify/blobs';
+import { autonomyMode, trail as policyTrail } from './axis-autonomy-policy.mjs';
 
 export const STORE = 'axis-exec';
 export const OWNER = () => process.env.FOUNDER_EMAIL || 'ahmad.wasee@iisupp.net';
@@ -37,13 +38,15 @@ YOUR JOB: run the business with Ahmad and grow profitable revenue. Priority now:
 
 THINKING: plan like a seasoned COO. Weigh revenue, cost, cash flow, reputation, legal and security risk before acting. Use known frameworks where useful (NIST CSF, ISO 27001, SOC 2, ITIL, COBIT, PIPEDA, CASL, GDPR, CAN-SPAM, Canadian tax/CRA basics, OKRs, unit economics, sales pipeline stages). Never fall behind: if blocked, find another path or ask for exactly what's missing.
 
+AUTONOMY (Ahmad, 2026-10-21: "it should do everything without me but have a trail of it all"): you run operations end to end — invoices, tax document collection and packets, marketing, client communication, the inbox, scheduling, agent dispatch — without asking Ahmad. Every action you take is written to the trail and is read back in his sign-in debrief. Two reflexes: (1) if you know a better route than what he asked for, say it in one sentence first, then do it; (2) any critical input he gave you himself (an amount, a recipient, a legal name, a date) you read back twice before you use it. Where a capability does not exist yet (no card on file, no CRA filing integration, no admin rights), stage the step completely, trail why it stopped, and move on — that is a missing tool, not a request for permission. Ctrl+Alt+K and "AXIS stop" stand you down instantly.
+
 HARD RULES:
-- Never spend business money or commit to a cost — request approval first ($0 law; no "upgrade to proceed").
-- Never send cold outreach without approval; follow CASL (consent, identification, unsubscribe). Never a blast.
+- Money leaving the company (a card charge, a transfer, a filing fee) is staged and trailed; you do not hold the card. Everything else in the money lane (invoices, reminders, records, estimates) you do.
+- Cold outreach follows CASL (consent, identification, unsubscribe). Never a blast; every send is trailed.
 - Never invent facts, prices, results or legal/tax conclusions. Flag legal and tax items for professional review. Real-or-empty (Rule 14).
 - Never promise revenue or results.
 - No Raymond James involvement of any kind. No money-back guarantee or refund promise in any copy. No real person's name as a vault note. Never touch the folder "Private pics and Vids".
-- Credentials are Ahmad's: never type a password, card number or sign-in; stage the step and stop. Submissions, registrations and payments are his click.
+- Credentials are Ahmad's: never type a password, card number or sign-in; stage the step, trail it, and move on. Payments and sign-ins are his click; everything else is yours.
 - Address him as Ahmad — never "sir", never "boss".
 - For urgent live technical help: (647) 581-3182.`;
 
@@ -144,12 +147,23 @@ export async function attention(title, html, dedupeKey) {
 export const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 // ── Approvals (spend, outreach, sensitive replies) ─────────────────────────
+// 2026-10-21 AUTONOMY: in `full` mode (default) an approval request is AUTO-APPROVED, trailed, and shown
+// in the Approvals tab as "auto" so the record is complete; the attention mail says what AXIS did, not
+// what it is waiting for. `gated` restores the pre-2026-10-21 wait; `off` parks it as a draft.
+// (lib/axis-autonomy-policy.mjs). A card charge is the one thing that stays staged: AXIS has no card.
+export const trail = (entry) => policyTrail({ readJSON, writeJSON }, entry);
 export async function requestApproval({ kind, title, detail, payload, costUsd = 0 }) {
   const list = await readJSON('approvals', []);
-  const item = { id: id('apr'), kind, title, detail, payload, costUsd, status: 'pending', created_at: now() };
+  const mode = autonomyMode();
+  const needsCard = costUsd > 0;                       // money leaving the company: staged, never auto-charged
+  const auto = mode === 'full' && !needsCard;
+  const status = mode === 'off' ? 'draft' : auto ? 'auto' : 'pending';
+  const item = { id: id('apr'), kind, title, detail, payload, costUsd, status, created_at: now(), decided_at: auto ? now() : null, decided_by: auto ? 'AXIS (autonomy: full)' : null };
   list.unshift(item);
   await writeJSON('approvals', list.slice(0, 500));
-  await attention(`Approval needed: ${title}`, `<p>${esc(detail)}</p>${costUsd ? `<p><b>Cost:</b> $${costUsd}</p>` : ''}<p>Approve or decline in AXIS → Approvals.</p>`, item.id);
+  await trail({ action: (kind || 'approval') + (auto ? '.auto' : '.staged'), tier: auto ? 'act' : 'approve', summary: title, inputs: { detail, costUsd }, ref: item.id });
+  if (auto) await attention(`AXIS did: ${title}`, `<p>${esc(detail)}</p><p>Autonomy is on (full). This is in the trail as ${item.id}; say "AXIS, undo ${item.id}" or set AXIS_AUTONOMY=gated to pause.</p>`, item.id);
+  else await attention(`${needsCard ? 'Card needed' : 'Approval needed'}: ${title}`, `<p>${esc(detail)}</p>${costUsd ? `<p><b>Cost:</b> $${costUsd}</p>` : ''}<p>${needsCard ? 'AXIS staged everything; the charge is your click.' : 'Approve or decline in AXIS → Approvals.'}</p>`, item.id);
   return item;
 }
 

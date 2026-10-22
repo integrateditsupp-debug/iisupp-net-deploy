@@ -12,10 +12,16 @@
 <link rel="stylesheet" href="/assets/axis-tokens.css?v=20260812g">
   <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&display=swap"><link rel="stylesheet" href="/assets/xo-elite-theme.css">
+<!-- AXIS DASHBOARD (2026-10-21, Ahmad: "transform the whole page into a nice dashboard, clear, simple and a
+     central globe in the middle for Axis … do not remove any functions and features"). Layout + theme only.
+     Every id, hook, tab, shortcut and endpoint from outputs/2026-10-21-AXIS-FEATURE-INVENTORY.md is still here. -->
+<link rel="stylesheet" href="/assets/axis-dashboard.css?v=20261021b">
 </head>
 <body>
 
-<!-- Login gate: the static page carries NO prospect data; everything renders only after a valid Aperture session. -->
+<!-- Login gate (2026-10-21): NOTHING renders before a valid Aperture session — no public panel, no orb,
+     no voice, no status feed, no fetch. The card is the whole page. A stored session is NOT applied on
+     load; "Sign in" is always a click (axis-app.js axisLoginMode / doLogin). -->
 <div class="login" id="login">
   <div class="login-card">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
@@ -28,37 +34,11 @@
     </div>
     <input id="email" type="email" placeholder="email" autocomplete="username">
     <input id="pass" type="password" placeholder="password" autocomplete="current-password">
+    <div id="loginNote" class="eyebrow" hidden style="margin-top:10px"></div>
     <button id="loginBtn">Sign in</button>
+    <a href="#" id="loginAlt" class="login-alt" hidden>Use a different account</a>
     <div id="loginErr" style="color:var(--crit);font-size:11px;margin-top:8px;min-height:14px"></div>
   </div>
-
-  <!-- Public AXIS — generic program status ONLY (headline feed + canned lines). No prospect data,
-       no counts, no names pre-auth. Voice is browser-local. -->
-  <section class="axis-public" id="axisPublic" aria-label="Ask AXIS — public status">
-    <div style="display:flex;align-items:center;gap:11px">
-      <span class="axis-orb axis-orb-sm" data-orb></span>
-      <div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="eyebrow" style="color:var(--gold)">AXIS · Director</span>
-          <span class="axis-state-word" id="axisPubState" aria-live="polite">idle</span>
-        </div>
-        <div style="font-size:12.5px;color:var(--txt-2);margin-top:2px">Ask AXIS what is live right now.</div>
-      </div>
-    </div>
-    <div class="axis-pub-log" id="axisPubLog" hidden></div>
-    <div class="axis-input" style="border-top:none;padding:0">
-      <input id="axisPubInput" placeholder="Ask AXIS…" autocomplete="off" aria-label="Ask AXIS a public question">
-      <button class="chip" id="axisPubMic" title="Push to talk (Chrome / Edge)" aria-label="Push to talk">🎙</button>
-      <button class="chip" id="axisPubVoice" title="Toggle spoken replies" aria-pressed="false" aria-label="Toggle spoken replies">🔊</button>
-      <button class="chip" id="axisPubSend">Ask</button>
-    </div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap">
-      <button class="chip" data-pub-q="status">Status</button>
-      <button class="chip" data-pub-q="next">Next</button>
-      <button class="chip" data-pub-q="help">Help</button>
-    </div>
-    <div class="eyebrow">public mode · general status only · sign in for the director view</div>
-  </section>
 </div>
 
 <!-- App shell (hidden until authed) -->
@@ -87,36 +67,53 @@
         <button class="iconbtn" id="logoutBtn" title="sign out">⎋</button>
       </div>
     </header>
-    <!-- The AXIS head band — ONE surface. Ahmad, 2026-08-12: "Remove the one above the globe and
-         ensure all its existing data, knowledge and knows is added to the Axis (globe) one."
-         The director field that used to sit here was a second door into the same room: its input fed
-         the same dock transcript and the same brain queue as the globe's own bar. What it uniquely
-         SHOWED — the honest-counts line and the quick chips — now lives on the orbit itself, so
-         nothing was lost by deleting it. The band still lives HERE rather than inside .content
-         because .content is the scroll container: a globe pinned over a scrolling pane always ends up
-         with content sliding under it. flex:none band, browser does the height arithmetic. -->
-    <div class="axis-head" id="axisHead">
-      <!-- AXIS orbit — the resting presence: the globe, the honest-counts line, a small type box and
-           the quick chips. No transcript until asked for. Clicking the globe opens the dock. -->
-      <div class="axis-orbit" id="axisOrbit">
-        <span class="axis-globe" data-globe id="axisOrbGlobe" role="button" tabindex="0"
-              aria-label="Open AXIS conversation" title="AXIS — click to open the conversation"></span>
-        <div class="axis-orb-status" id="axisOrbStatus" aria-live="polite"></div>
-        <div class="axis-bar">
-          <input id="axisQuick" placeholder="Ask AXIS…" autocomplete="off" aria-label="Ask AXIS">
-          <button class="chip" id="axisQuickWake" title="Hands-free: wake word &ldquo;AXIS&rdquo;" aria-pressed="false" aria-label="Toggle hands-free">&#9101;</button>
-          <button class="chip axis-live" id="axisLiveGlobe" title="Talk to AXIS live (Aria&rsquo;s voice, two-way)" aria-pressed="false" aria-label="Talk to AXIS live"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg></button>
-          <button class="chip" id="axisQuickHolo" title="Full-screen AXIS presence (Ctrl+Alt+A)" aria-label="Open AXIS presence">&#9906;</button><button class="chip" id="axisQuickOpen" title="Open the full conversation" aria-label="Open conversation">&#9711;</button>
-        </div>
-        <div class="axis-orb-chips" role="group" aria-label="AXIS quick questions">
-          <button class="chip" data-orb-q="status">Status</button>
-          <button class="chip" data-orb-q="what needs me now">Needs me</button>
-          <button class="chip" data-orb-q="what is next">Next</button>
-          <button class="chip" data-orb-q="approvals">Approvals</button>
+
+    <!-- DASHBOARD: the globe in the middle, six live cards around it (assets/axis-dashboard.js), then the
+         module screen below. The head band keeps every original child (globe, status line, quick bar, chips).
+         Ahmad, 2026-08-12 (kept): one surface, no second director field above the globe. -->
+    <!-- HUD strip: clock · board source · brain · autonomy · voice · hands-free. Live, read from AXIS_DASH. -->
+    <div class="axis-hud" id="axisHud" aria-label="AXIS status strip"></div>
+
+    <section class="axis-dash" id="axisDash" aria-label="AXIS dashboard">
+      <div class="axis-dash-col axis-dash-left" id="axisDashLeft"></div>
+      <div class="axis-head" id="axisHead">
+        <div class="axis-rings" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="axis-orbit" id="axisOrbit">
+          <span class="axis-globe" data-globe id="axisOrbGlobe" role="button" tabindex="0"
+                aria-label="Open AXIS conversation" title="AXIS — click to open the conversation"></span>
+          <div class="axis-orb-status" id="axisOrbStatus" aria-live="polite"></div>
+          <div class="axis-bar">
+            <input id="axisQuick" placeholder="Ask AXIS…" autocomplete="off" aria-label="Ask AXIS">
+            <button class="chip" id="axisQuickWake" title="Hands-free: wake word &ldquo;AXIS&rdquo;" aria-pressed="false" aria-label="Toggle hands-free">&#9101;</button>
+            <button class="chip axis-live" id="axisLiveGlobe" title="Talk to AXIS live (Aria&rsquo;s voice, two-way)" aria-pressed="false" aria-label="Talk to AXIS live"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg></button>
+            <button class="chip" id="axisQuickHolo" title="Full-screen AXIS presence (Ctrl+Alt+A)" aria-label="Open AXIS presence">&#9906;</button><button class="chip" id="axisQuickOpen" title="Open the full conversation" aria-label="Open conversation">&#9711;</button>
+          </div>
+          <div class="axis-orb-chips" role="group" aria-label="AXIS quick questions">
+            <button class="chip" data-orb-q="status">Status</button>
+            <button class="chip" data-orb-q="what needs me now">Needs me</button>
+            <button class="chip" data-orb-q="what is next">Next</button>
+            <button class="chip" data-orb-q="approvals">Approvals</button>
+          </div>
         </div>
       </div>
-    </div>
+      <div class="axis-dash-col axis-dash-right" id="axisDashRight"></div>
+    </section>
+
+    <!-- COMMAND DECK: every ⌘K action as a tile, every console tab as a launcher, every screen, every shortcut.
+         Nothing here is new — it is the palette, the tab strip, the nav and the key map laid out in the open. -->
+    <section class="axis-deck" id="axisDeck" aria-label="AXIS command deck"></section>
+
     <main class="content" id="content"><div class="skeleton" style="height:120px"></div></main>
+
+    <!-- iis-fineprint:start -->
+    <div class="iis-fineprint" role="note" aria-label="Site content disclaimer">
+      <div class="iis-fineprint__inner">
+        <span class="iis-fineprint__label">Disclaimer</span>
+        <p class="iis-fineprint__text">Content on iisupp.net and its sub-sites is general information only. Any troubleshooting step, instruction, tool, estimate or data taken from this site is <strong style="color:rgba(255,255,255,.5);font-weight:600">used at your own risk</strong>, and information may be out of date &mdash; please do your own due diligence before acting on it.</p>
+        <p class="iis-fineprint__text">No published guide can account for every factor in a live environment. If the system matters, don&rsquo;t guess &mdash; call <a href="tel:+16475813182">(647) 581-3182</a> and have it done safely. Full <a href="/disclaimer.html">disclaimer</a> &middot; <a href="/terms.html">terms</a> &middot; <a href="/governance/privacy">privacy</a>.</p>
+      </div>
+    </div>
+    <!-- iis-fineprint:end -->
   </div>
 
   <!-- AXIS dock -->
@@ -124,36 +121,24 @@
     <span class="axis-orb" data-orb></span>
     <span class="axis-fab-pill">Ask AXIS</span>
   </button>
-  <!-- The orbit used to live here, as a position:fixed overlay. It is now the second child of
-       .axis-head above, in the normal flow under the director field. -->
 
   <section class="axis-dock" id="axisDock" hidden aria-label="AXIS director">
     <!-- Head = the identity block. The globe anchors it top-left; name, live state and level meter
          read off it left-to-right. One row, no duplicate orb below it. -->
     <header class="axis-dock-head">
-      <!-- The globe: a real rotating 3-D wireframe sphere (assets/axis-globe.js), not an icon.
-           Every other [data-orb] slot keeps the original SVG mark, so only this one changes. -->
-      <!-- AXIS ONE (2026-10-13): one sphere on screen. The orbit globe in the head band is THE globe; the
-           console head carries the orb mark so the identity row (name · state · hear line · wave) keeps
-           its anchor without drawing a second rotating sphere beside the first. -->
+      <!-- AXIS ONE (2026-10-13): one sphere on screen. The orbit globe in the dashboard is THE globe; the
+           console head carries the orb mark so the identity row keeps its anchor. -->
       <span class="axis-orb axis-orb-hero" data-orb aria-hidden="true"></span>
       <div class="axis-head-meta">
         <div class="axis-hero-name">AXIS <span class="axis-state-word" id="axisStateWord" aria-live="polite">idle</span></div>
-        <!-- Live line: shows the interim transcript while listening, so it is always visible whether
-             AXIS is actually hearing you. Silence used to be indistinguishable from being broken. -->
         <div class="axis-hear" id="axisHear" aria-live="polite">Press the mic, or type. Say &ldquo;AXIS stop&rdquo; to stand me down.</div>
       </div>
       <div class="axis-wave" id="axisWave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <button class="iconbtn axis-close" id="axisClose" aria-label="Close AXIS dock">&times;</button>
     </header>
-    <!-- Brain-state badge: visible for as long as reasoning is unavailable, so "answering from the
-         board only" is never a surprise. Hidden entirely when the brain is healthy. -->
     <div class="axis-brain" id="axisBrain" hidden></div>
-    <!-- AXIS ONE tab strip (2026-10-13). Ahmad: "now there is two … merge the new voice and method and old
-         useful knowledge into one". The Lovable-era side panel (axis-exec.js: Work · To-do · Automate ·
-         Approvals · My PC · Inbox · Brief · Setup) and the floating Claude box (axis-collab.js) render
-         INSIDE this console as tabs; Talk is the original director transcript. Rule 15: nothing removed,
-         every surface reachable from one place behind one globe. -->
+    <!-- AXIS ONE tab strip (2026-10-13) + "Public" (2026-10-21): the pre-auth public panel moved in here.
+         Rule 15: nothing removed, every surface reachable from one place behind one globe. -->
     <nav class="axis-tabs" id="axisTabs" role="tablist" aria-label="AXIS console">
       <button class="axis-tab" role="tab" data-axis-tab="talk" aria-selected="true">Talk</button>
       <button class="axis-tab" role="tab" data-axis-tab="work" aria-selected="false">Work</button>
@@ -165,11 +150,40 @@
       <button class="axis-tab" role="tab" data-axis-tab="brief" aria-selected="false">Brief</button>
       <button class="axis-tab" role="tab" data-axis-tab="claude" aria-selected="false">Claude</button>
       <button class="axis-tab" role="tab" data-axis-tab="setup" aria-selected="false">Setup</button>
+      <button class="axis-tab" role="tab" data-axis-tab="public" aria-selected="false" title="What a visitor sees — generic program status only">Public</button>
     </nav>
     <div class="axis-pri" id="axisPri" hidden></div>
     <div class="axis-log" id="axisLog"></div>
     <div class="axis-panel" id="axisPanel" role="tabpanel" hidden></div>
-    <!-- Compact input + one grouped control cluster, rather than a row of loose buttons. -->
+
+    <!-- Public AXIS — formerly the pre-auth panel on the login screen (R4). Same ids, same canned
+         public-safe answers (axis-app.js pubAsk / pubAnswer), now a console tab so nothing shows pre-auth. -->
+    <section class="axis-public" id="axisPublic" aria-label="Ask AXIS — public status" hidden>
+      <div style="display:flex;align-items:center;gap:11px">
+        <span class="axis-orb axis-orb-sm" data-orb></span>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="eyebrow" style="color:var(--gold)">AXIS · Director</span>
+            <span class="axis-state-word" id="axisPubState" aria-live="polite">idle</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--txt-2);margin-top:2px">Ask AXIS what is live right now.</div>
+        </div>
+      </div>
+      <div class="axis-pub-log" id="axisPubLog" hidden></div>
+      <div class="axis-input" style="border-top:none;padding:0">
+        <input id="axisPubInput" placeholder="Ask AXIS…" autocomplete="off" aria-label="Ask AXIS a public question">
+        <button class="chip" id="axisPubMic" title="Push to talk (Chrome / Edge)" aria-label="Push to talk">🎙</button>
+        <button class="chip" id="axisPubVoice" title="Toggle spoken replies" aria-pressed="false" aria-label="Toggle spoken replies">🔊</button>
+        <button class="chip" id="axisPubSend">Ask</button>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="chip" data-pub-q="status">Status</button>
+        <button class="chip" data-pub-q="next">Next</button>
+        <button class="chip" data-pub-q="help">Help</button>
+      </div>
+      <div class="eyebrow">public mode · general status only · this is the visitor view</div>
+    </section>
+
     <div class="axis-input">
       <input id="axisInput" placeholder="Tell AXIS…" autocomplete="off">
       <span class="axis-ctl" role="group" aria-label="AXIS controls">
@@ -179,8 +193,6 @@
       </span>
       <button class="chip axis-send" id="axisSend">Send</button>
     </div>
-    <!-- Voice picker: Edge and Chrome ship different voice inventories, so the same page can sound
-         different per browser. This exposes what THIS browser actually has and pins a choice. -->
     <div class="axis-foot">
       <select id="axisVoicePick" aria-label="AXIS voice"><option value="">Voice · automatic</option></select>
       <button class="chip" id="axisVoiceTest" title="Hear the selected voice">Test</button>
@@ -198,22 +210,13 @@
 </div>
 
 <!-- AXIS ONE (2026-10-13): one globe, one voice, one console. axis-unify.js is no longer loaded — it hid
-     the dock, the wake word and the mic and re-mounted a second globe; its three useful behaviours (globe
-     click opens the console, Enter on the quick bar reaches the brain, double-click starts the live call)
-     live in axis-app.js. The file stays in the repo for reference. -->
+     the dock, the wake word and the mic and re-mounted a second globe; its three useful behaviours live
+     in axis-app.js. The file stays in the repo for reference. -->
 <script src="/assets/aria-live.js?v=20261009c" defer></script>
 <script src="/assets/aria-live-voice.js?v=20261009d" defer></script>
 <script src="/assets/axis-exec.js?v=20261015a" defer></script>
-<script type="module" src="/assets/axis-app.js?v=20261013a"></script>
-<script src="/assets/axis-collab.js?v=20261013a" defer></script>
-<!-- iis-fineprint:start -->
-<div class="iis-fineprint" role="note" aria-label="Site content disclaimer">
-  <div class="iis-fineprint__inner">
-    <span class="iis-fineprint__label">Disclaimer</span>
-    <p class="iis-fineprint__text">Content on iisupp.net and its sub-sites is general information only. Any troubleshooting step, instruction, tool, estimate or data taken from this site is <strong style="color:rgba(255,255,255,.5);font-weight:600">used at your own risk</strong>, and information may be out of date &mdash; please do your own due diligence before acting on it.</p>
-    <p class="iis-fineprint__text">No published guide can account for every factor in a live environment. If the system matters, don&rsquo;t guess &mdash; call <a href="tel:+16475813182">(647) 581-3182</a> and have it done safely. Full <a href="/disclaimer.html">disclaimer</a> &middot; <a href="/terms.html">terms</a> &middot; <a href="/governance/privacy">privacy</a>.</p>
-  </div>
-</div>
-<!-- iis-fineprint:end -->
+<script type="module" src="/assets/axis-app.js?v=20261021b"></script>
+<script src="/assets/axis-collab.js?v=20261021a" defer></script>
+<script src="/assets/axis-dashboard.js?v=20261021b" defer></script>
 </body>
 </html>

@@ -316,3 +316,14 @@ design: `docs/AXIS-ONE-2026-10-13.md`. Guard: `tests/axis-one.test.mjs` (in the 
   "Today — needs you" (badges, Open / Work it / one-click, "AXIS is handling N", sources line); the orbit status
   leads with "N need you"; the Talk rail / Priorities / board text carry the ledger rows. Guard:
   `tests/axis-situation.test.mjs`. Write-up: `docs/AXIS-SITUATION.md`.
+
+## 2026-10-21 — Director-of-Operations upgrade (branch `cc/axis-director-ops-2026-10-21`)
+
+- **No auto sign-in.** `state.token` starts empty; `axisLoginMode()` shows the card; the Sign in click verifies a stored token (`/api/axis/snapshot`) before `showApp()`. `axis-collab.js` boots on `axis:signed-in`, not on a stored token.
+- **Nothing pre-auth.** The public "Ask AXIS" panel (`#axisPublic`) moved inside the console as the `public` tab; the fine print moved inside `#app`. `#login` is the whole page.
+- **Voice = Aria.** Root cause + fix: `outputs/2026-10-21-VOICE-ROOT-CAUSE.md`. UK persona archived in `AXIS_UK_ARCHIVE`.
+- **Debrief → standby.** `axisDebriefText()` speaks board, inbox, money, follow-ups, fleet, brain and the autonomy trail; `axisStandby()` then turns hands-free ON (wake word "AXIS").
+- **Autonomy policy + trail.** `netlify/functions/lib/axis-autonomy-policy.mjs` (`AXIS_AUTONOMY=full|gated|off`, default full). `requestApproval()` auto-approves in full mode (except money leaving the company) and trails. API: `/api/axis/exec` `trail.list` / `trail.add`.
+- **Dashboard.** `assets/axis-dashboard.css` + `assets/axis-dashboard.js`: globe centred, cards Debrief · Needs me · Inbox | Pipeline · Money · Agents · Trail · Review, reading `window.AXIS_DASH`. Layout only; inventory: `outputs/2026-10-21-AXIS-FEATURE-INVENTORY.md`.
+- **Agents.** `senior-director-state/auto-created-agents/axis-service-agents/` (paste-ready scheduled-task prompts: ops-director, voice-ux-qa, vault-sync, access-watch).
+- **Access.** `outputs/2026-10-21-ACCESS-AUDIT.md` (repo is PUBLIC — Ahmad's click-list inside). `netlify.toml` now 404s `/public/.well-known/*` and `/.well-known/axis/brain-index.json`.

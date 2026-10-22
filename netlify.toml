@@ -443,6 +443,19 @@
   to = "/404.html"
   status = 404
   force = true
+# ACCESS AUDIT 2026-10-21 (outputs/2026-10-21-ACCESS-AUDIT.md F5): the vault note index leaked at
+# /.well-known/axis/brain-index.json (92 vault titles). The public status feed /.well-known/axis/status.json
+# stays; everything under /public/ is build input and is never a URL.
+[[redirects]]
+  from = "/public/.well-known/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/.well-known/axis/brain-index.json"
+  to = "/404.html"
+  status = 404
+  force = true
 
 [[redirects]]
   from = "/forums"

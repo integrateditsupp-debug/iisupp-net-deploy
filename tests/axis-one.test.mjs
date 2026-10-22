@@ -53,7 +53,7 @@ for (const id of ['axisQuick', 'axisQuickWake', 'axisQuickHolo', 'axisQuickOpen'
   t(`orbit control #${id} still present`, new RegExp(`id="${id}"`).test(shell));
 
 // ── 5. axis-app.js owns the console: tabs, events, live call, mic policy ──
-t('app defines the tab list', /const AXIS_TABS = \['talk', 'work', 'todo', 'auto', 'apr', 'pc', 'inbox', 'brief', 'claude', 'setup'\]/.test(app));
+t('app defines the tab list', /const AXIS_TABS = \['talk', 'work', 'todo', 'auto', 'apr', 'pc', 'inbox', 'brief', 'claude', 'setup', 'public'\]/.test(app));   // 'public' added 2026-10-21 (pre-auth panel moved inside)
 t('app has setAxisTab()', /function setAxisTab\(tab/.test(app));
 t('openDock accepts a tab', /function openDock\(tab\)/.test(app));
 for (const ev of ['axis:open', 'axis:say', 'axis:transcript', 'axis:live-state', 'axis:tab'])

@@ -39,10 +39,9 @@ assert.ok(!P.AXIS_MALE_DEMOTE.some((w) => new RegExp(w, 'i').test('Google UK Eng
   '"Female" is not caught by the male demote pattern');
 assert.ok(P.AXIS_MALE_DEMOTE.some((w) => new RegExp(w, 'i').test('Google UK English Male')),
   '…while "Male" still is');
-// Prosody is deliberately apart from ARIA's en-US rate .95 / pitch 1.05 — and it is now the whole
-// separation, because the accent no longer differs. Assert both values are clear of ARIA's.
-assert.notEqual(P.AXIS_PROSODY.pitch, 1.05, 'AXIS never shares ARIAs pitch');
-assert.notEqual(P.AXIS_PROSODY.rate, 0.95, 'AXIS never shares ARIAs rate');
+// 2026-10-21: AXIS speaks WITH Aria's voice (Ahmad). Prosody is Aria's own pair.
+assert.equal(P.AXIS_PROSODY.pitch, 1.05, 'AXIS shares Aria\'s pitch');
+assert.equal(P.AXIS_PROSODY.rate, 0.95, 'AXIS shares Aria\'s rate');
 assert.ok(P.AXIS_PROSODY.volume < 1, 'AXIS is softly spoken, not full-blast');
 assert.ok(P.AXIS_PROSODY.rate < 1, 'AXIS is unhurried');
 ok();

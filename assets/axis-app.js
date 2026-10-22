@@ -32,7 +32,8 @@ import { axisPersonaBonus, AXIS_PROSODY, VOICE_POLICY_REV, ackLine, greetLine, r
 const TOKEN_KEY = 'aperture_jwt';
 
 const ACTIONABLE = ['reply_to_outreach', 'new_inbound_request'];
-const state = { token: localStorage.getItem(TOKEN_KEY) || '', snap: {}, version: null, module: 'overview', programStatus: null, situation: null, situationErr: null,
+// token starts EMPTY on purpose (2026-10-21, no auto sign-in): doLogin() fills it after the Sign in click.
+const state = { token: '', snap: {}, version: null, module: 'overview', programStatus: null, situation: null, situationErr: null,
   ui: { inboxFilter: 'all', thread: null, apTab: 'pending', apOpen: null, apSel: new Set(), apCursor: 0, crmTab: 'contact', crmFilter: '', crmDrawer: null,
     prospect: null, prospectFilter: '', realOnly: false, pipeView: 'kanban', fuView: 'due_today', doc: null, anTab: 'research' } };
 const authHeaders = (extra = {}) => ({ Authorization: 'Bearer ' + state.token, ...extra });
@@ -1657,6 +1658,7 @@ async function fetchSnapshots() {
   if (j && j.ok) {
     state.snap = j.snapshots || {}; state.version = j.version; state.source = j.source;
     renderTick(); renderNav(); renderAxisPri();   // the console rail tracks the snapshot, not the dock
+    try { window.dispatchEvent(new CustomEvent('axis:snapshot', { detail: { version: j.version } })); } catch {}
     if (overlayOpen()) { state.ui.repaintPending = true; return; }
     renderModule();
   }
@@ -2546,13 +2548,39 @@ function axisSpeak(text) {
       const a = new Audio(url); ariaAudio = a;
       a.onended = () => { URL.revokeObjectURL(url); play(i + 1); };
       a.onerror = () => { URL.revokeObjectURL(url); play(i + 1); };
-      a.play().catch(() => { URL.revokeObjectURL(url); if (i === 0) { ariaGen++; axisSpeakBrowser(text); } else finish(false); });
+      a.play().catch((err) => {
+        URL.revokeObjectURL(url);
+        // AUTOPLAY BLOCK ≠ VOICE DOWN (2026-10-21 root cause of "Axis still has the old voice"). When
+        // the browser refuses playback for lack of a user gesture (NotAllowedError), the Aria voice is
+        // fine — the page just has not been clicked yet. Switching to the browser voice here is how the
+        // British fallback used to take over every reload. So: hold the line, speak it on the next
+        // click/keypress, and tell Ahmad why. Only a real media error still falls back.
+        if (i === 0 && /NotAllowed|interact|gesture/i.test(String(err && (err.name + ' ' + err.message)))) {
+          ariaGen++; axisDeferSpeech(text); return;
+        }
+        if (i === 0) { ariaGen++; axisSpeakBrowser(text); } else finish(false);
+      });
     };
     load(0); play(0);
     return true;
   } catch { return axisSpeakBrowser(text); }
 }
 
+// Speech held back by the autoplay policy. Replayed, in Aria's voice, on the first user gesture.
+let __deferredSpeech = '';
+function axisDeferSpeech(text) {
+  __deferredSpeech = String(text || '');
+  if (document.documentElement.dataset.axisState === 'speaking') setAxisState('idle');
+  axisSetHear('Click anywhere and I will say that out loud.', true);
+  const replay = () => {
+    const t = __deferredSpeech; __deferredSpeech = '';
+    document.removeEventListener('pointerdown', replay, true); document.removeEventListener('keydown', replay, true);
+    axisSetHear('', false);
+    if (t) { try { if (axisSpeak(t)) __turnDone = axisTurnDone; } catch {} }
+  };
+  document.addEventListener('pointerdown', replay, true);
+  document.addEventListener('keydown', replay, true);
+}
 function axisVoiceStatus() { return Date.now() >= ariaVoiceDown; }
 window.axisVoiceStatus = axisVoiceStatus;
 let __voiceNoted = '';
@@ -2605,12 +2633,13 @@ function axisSpeakBrowser(text) {
       const u = new SpeechSynthesisUtterance(part);
       if (v) { u.voice = v; u.lang = v.lang; }
       // No rankable voice even after waiting (a browser that exposes none). Pin the LANGUAGE at
-      // least, so the engine resolves a British voice rather than whatever the system locale
-      // happens to be — an unset lang is how a wrong-accent default gets through.
-      else u.lang = 'en-GB';
-      // Cross-engine parity: each voice family is rate/pitch-corrected toward Edge's en-GB Sonia,
-      // so AXIS sounds like the same character in Chrome and Edge even though the two ship
-      // different voices. Still deliberately apart from ARIA's en-US .95/1.05.
+      // least, so the engine resolves a North-American voice (Aria's register, 2026-10-21) rather
+      // than whatever the system locale happens to be — an unset lang is how a wrong-accent
+      // default gets through. (Was 'en-GB' under the archived UK persona.)
+      else u.lang = 'en-US';
+      // Cross-engine parity: each voice family is rate/pitch-corrected toward Edge's en-US Aria
+      // Natural, so AXIS sounds like the same character in Chrome and Edge even though the two
+      // ship different voices.
       // Volume comes from the profile now. It was pinned at 1, which is why AXIS always arrived at
       // full blast — "softer" (Ahmad, 2026-08-12) is volume and pace, not a lower pitch.
       const prof = voiceProfile(v);
@@ -3195,6 +3224,8 @@ function renderPalette() {
 
 // ── Auth ──
 function showApp() { $('login').style.display = 'none'; $('app').style.display = 'grid'; renderNav(); renderModule(); fetchSnapshots();
+  try { window.dispatchEvent(new CustomEvent('axis:signed-in', { detail: { at: Date.now() } })); } catch {}   // axis-collab.js / axis-dashboard.js boot on this
+  axisFetchTrail();   // what AXIS did on its own since last sign-in — read back in the debrief
   startTasks(); // RUN-AX3: the live task list — every 30 s, and at once after a chat or voice action
   clearInterval(window.__axisPoll); window.__axisPoll = setInterval(() => { if (!document.hidden) pollVersion(); }, 15000);
   // The situation re-ranks itself every two minutes (deadlines roll over; the worker queue moves) —
@@ -3206,22 +3237,105 @@ function showApp() { $('login').style.display = 'none'; $('app').style.display =
   axisBootBriefing();
 }
 
-// Spoken boot briefing — the JARVIS "good morning" — once per authed session, from the real snapshot.
+// Spoken boot DEBRIEF — once per authed session, from the real snapshot + situation + fleet.
+// Ahmad, 2026-10-21: "soon as I am in it should debrief me of everything and wait for me to say Axis".
 // Rule 14: it waits for the snapshot rather than guessing, and if the board never lands it says so
-// instead of reporting "all quiet", which would be a claim about data it does not have.
+// instead of reporting "all quiet", which would be a claim about data it does not have. After the
+// debrief finishes, hands-free goes ON by itself: AXIS stands by for the wake word "AXIS".
 function axisBootBriefing() {
   try { if (sessionStorage.getItem('axisBriefed') === '1') return; } catch {}
   let tries = 0;
   const tick = setInterval(() => {
     const k = data('overview').kpis;
     const ready = k && ['awaiting_approval', 'messages_waiting', 'followups_due'].some(f => typeof k[f] === 'number');
-    if (!ready && ++tries < 12) return;         // ~6s grace for the first snapshot
+    // ~8s grace: the situation + fleet usually land a beat after the snapshot.
+    if ((!ready || !state.situation || state.trail === null) && ++tries < 16) return;
     clearInterval(tick);
     try { sessionStorage.setItem('axisBriefed', '1'); } catch {}
-    const line = greetLine(ready ? k : null);
-    dockLog.push({ role: 'axis', text: line }); renderDock();
-    if (axisSpeak(line)) __turnDone = axisTurnDone;
+    const text = axisDebriefText(ready ? k : null);
+    dockLog.push({ role: 'axis', text }); renderDock();
+    try { window.dispatchEvent(new CustomEvent('axis:debrief', { detail: { text } })); } catch {}
+    __turnDone = axisStandby;
+    if (!axisSpeak(text)) axisStandby();
   }, 500);
+}
+// The trail (2026-10-21 autonomy): every action AXIS took on its own, summarised since the last sign-in.
+async function axisFetchTrail() {
+  state.trail = null;
+  let since = ''; try { since = localStorage.getItem('axis-last-signin') || ''; } catch {}
+  try {
+    const r = await fetch('/api/axis/exec', { method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders() }, body: JSON.stringify({ action: 'trail.list', since, limit: 20 }) });
+    const j = await r.json().catch(() => null);
+    if (j && j.ok) state.trail = j;
+  } catch {}
+  try { localStorage.setItem('axis-last-signin', new Date().toISOString()); } catch {}
+  try { window.dispatchEvent(new CustomEvent('axis:trail', { detail: state.trail })); } catch {}
+}
+// The debrief: everything, in order, from data the page actually holds. Each line is skipped when its
+// source is absent — never a number AXIS does not have. Returns one spoken paragraph.
+function axisDebriefText(k) {
+  const lines = [greetLine(k)];
+  const pick = (v) => (typeof v === 'number' && isFinite(v) ? v : null);
+  const n = (v, one, many) => `${v} ${v === 1 ? one : many}`;
+  try {
+    const s = state.situation;
+    if (s && s.counts) {
+      const c = s.counts; const bits = [];
+      if (c.needsAhmad) bits.push(n(c.needsAhmad, 'item needs you', 'items need you'));
+      if (c.overdue) bits.push(n(c.overdue, 'is overdue', 'are overdue'));
+      if (c.today) bits.push(n(c.today, 'is due today', 'are due today'));
+      if (bits.length) lines.push('On the board: ' + bits.join(', ') + '.');
+      const top = Array.isArray(s.needsAhmad) ? s.needsAhmad.slice(0, 3) : [];
+      const titles = top.map(it => it && it.title ? it.title + (it.dueLabel ? ' (' + it.dueLabel + ')' : '') : '').filter(Boolean);
+      const can = Array.isArray(s.axisCanDo) ? s.axisCanDo.length : 0;
+      if (can) lines.push(`I am handling ${can} ${can === 1 ? 'item' : 'items'} myself.`);
+      if (titles.length) lines.push('Top of the list: ' + titles.join('; ') + '.');
+    } else if (state.situationErr) lines.push('I could not rank the situation: ' + state.situationErr + '.');
+  } catch {}
+  try {
+    const inbox = data('inbox');
+    const rows = inbox.rows || [];
+    const open = rows.filter(m => ACTIONABLE.includes(m.classification) && !m.actioned && !m.snoozed_until).length;
+    if (open) lines.push('Inbox: ' + n(open, 'message needs action', 'messages need action') + '.');
+    const senders = rows.filter(m => !m.actioned).slice(0, 2).map(m => businessName(m.business_id) || m.from_email).filter(Boolean);
+    if (senders.length) lines.push('Latest from ' + senders.join(' and ') + '.');
+  } catch {}
+  try {
+    const kk = k || {};
+    const pv = pick(kk.pipeline_value), mrr = pick(kk.mrr), mt = pick(kk.meetings_week);
+    const bits = [];
+    if (pv) bits.push('pipeline ' + fmtMoney(pv));
+    if (mrr) bits.push('recurring ' + fmtMoney(mrr) + ' a month');
+    if (mt) bits.push(n(mt, 'meeting this week', 'meetings this week'));
+    if (bits.length) lines.push('Money: ' + bits.join(', ') + '.');
+    const fu = data('followups'); const od = (fu.overdue || []).length;
+    if (od) lines.push(n(od, 'follow-up is overdue', 'follow-ups are overdue') + '.');
+  } catch {}
+  try {
+    const agents = data('fleet').agents || [];
+    const failed = agents.filter(a => /fail|error|down|stale/i.test(String(a.status || a.state || ''))).map(a => a.name || a.id).filter(Boolean);
+    if (agents.length) lines.push(`Fleet: ${agents.length} agents${failed.length ? ', ' + failed.length + ' need attention: ' + failed.slice(0, 3).join(', ') : ', all reporting'}.`);
+  } catch {}
+  try {
+    const bj = data('brain') || {};
+    if (bj.status && /down|off|unavailable/i.test(String(bj.status))) lines.push('The reasoning brain is ' + bj.status + '; I am answering from the board.');
+  } catch {}
+  try { if (state.trail && state.trail.summary) lines.push(state.trail.summary + (state.trail.mode && state.trail.mode !== 'full' ? ' Autonomy is ' + state.trail.mode + '.' : '')); } catch {}
+  lines.push('That is the debrief. Say AXIS when you need me.');
+  return lines.join(' ');
+}
+// Standby after the debrief: hands-free ON, wake word armed, mic auto-opened by the same gesture that
+// signed in. If the browser refuses the recognizer (no gesture, no permission) the button says so and
+// one click resumes — nothing is silently off.
+function axisStandby() {
+  try {
+    if (axisHandsFree || window.axisLiveActive) return;
+    if (!(window.SpeechRecognition || window.webkitSpeechRecognition)) { axisSetHear('Standing by. Type, or use Chrome / Edge for the wake word.', false); return; }
+    axisHandsFree = true; axisSyncWakeBtn();
+    try { localStorage.setItem('axis-hands-free', '1'); } catch {}
+    axisWakeStart();
+    axisSetHear('Standing by — say “AXIS”.', true);
+  } catch {}
 }
 // Returning to the login screen must not leave the last session on it. logout() used to clear only
 // the token, so the public panel still showed the previous exchange and the authed transcript was
@@ -3235,15 +3349,34 @@ function axisResetTranscripts() {
   try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch {}
   setAxisState('idle');
 }
-function logout() { localStorage.removeItem(TOKEN_KEY); state.token = ''; $('app').style.display = 'none'; $('login').style.display = 'grid'; clearInterval(window.__axisPoll); axisResetTranscripts(); stopTasks(); }
+function logout() { localStorage.removeItem(TOKEN_KEY); state.token = ''; $('app').style.display = 'none'; $('login').style.display = 'grid'; clearInterval(window.__axisPoll); clearInterval(window.__axisSitPoll); axisResetTranscripts(); stopTasks(); try { sessionStorage.removeItem('axisBriefed'); } catch {} axisLoginMode(); }
+// NO AUTO SIGN-IN (Ahmad, 2026-10-21: "it should not auto sign in unless I click sign in"). A stored
+// session is never applied on load. The login card shows a "Sign in" button either way: with a stored
+// token the click verifies it server-side and resumes (no password); without one it needs email +
+// password. Either way the click is a real user gesture, which is also what lets Aria's voice play.
+function axisLoginMode() {
+  const has = !!localStorage.getItem(TOKEN_KEY);
+  const note = $('loginNote'); const alt = $('loginAlt');
+  for (const id of ['email', 'pass']) { const i = $(id); if (i) i.hidden = has; }
+  if (note) { note.hidden = !has; note.textContent = has ? 'A session is on file. Click Sign in to resume.' : ''; }
+  if (alt) alt.hidden = !has;
+}
 async function doLogin() {
   $('loginErr').textContent = '';
+  const stored = localStorage.getItem(TOKEN_KEY) || '';
   try {
+    if (stored && $('email').hidden) {
+      // Resume: prove the token still works before showing anything.
+      const r = await fetch('/api/axis/snapshot', { headers: { Authorization: 'Bearer ' + stored }, cache: 'no-store' });
+      if (r.ok) { state.token = stored; showApp(); return; }
+      localStorage.removeItem(TOKEN_KEY); axisLoginMode(); $('loginErr').textContent = 'session expired — sign in again'; return;
+    }
     const r = await fetch('/.netlify/functions/aperture-auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: $('email').value.trim(), password: $('pass').value }) });
     const j = await r.json();
     if (j && j.ok && j.token) { state.token = j.token; localStorage.setItem(TOKEN_KEY, j.token); showApp(); } else $('loginErr').textContent = j.error || 'invalid credentials';
   } catch { $('loginErr').textContent = 'login failed — check connection'; }
 }
+$('loginAlt')?.addEventListener('click', (e) => { e.preventDefault(); localStorage.removeItem(TOKEN_KEY); state.token = ''; axisLoginMode(); $('email')?.focus(); });
 
 // ── Theme + dock + wiring ──
 function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('axis_theme', t); }
@@ -3261,13 +3394,16 @@ function openDock(tab) {
 // Talk is the original director transcript. Every other tab is drawn into #axisPanel by the module
 // that owns it (axis-exec.js: work/todo/auto/apr/pc/inbox/brief/setup · axis-collab.js: claude) when
 // it hears 'axis:tab'. The strip is static DOM, so the choice survives every snapshot repaint.
-const AXIS_TABS = ['talk', 'work', 'todo', 'auto', 'apr', 'pc', 'inbox', 'brief', 'claude', 'setup'];
+// 'public' (2026-10-21): the old pre-auth "Ask AXIS — public status" panel now lives INSIDE the console
+// as a tab, so nothing renders before sign-in and nothing was deleted (same ids, same pubAsk pipeline).
+const AXIS_TABS = ['talk', 'work', 'todo', 'auto', 'apr', 'pc', 'inbox', 'brief', 'claude', 'setup', 'public'];
 function setAxisTab(tab, { silent = false } = {}) {
   if (!AXIS_TABS.includes(tab)) tab = 'talk';
   document.documentElement.dataset.axisTab = tab;
   document.querySelectorAll('#axisTabs [data-axis-tab]').forEach((b) => b.setAttribute('aria-selected', b.dataset.axisTab === tab ? 'true' : 'false'));
+  const pub = $('axisPublic'); if (pub) pub.hidden = tab !== 'public';
   const panel = $('axisPanel');
-  if (panel) { panel.hidden = tab === 'talk'; if (tab !== 'talk' && !panel.childElementCount) panel.innerHTML = '<p class="k" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)">Loading…</p>'; }
+  if (panel) { panel.hidden = tab === 'talk' || tab === 'public'; if (!panel.hidden && !panel.childElementCount) panel.innerHTML = '<p class="k" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)">Loading…</p>'; }
   try { sessionStorage.setItem('axisTab', tab); } catch {}
   if (!silent) window.dispatchEvent(new CustomEvent('axis:tab', { detail: { tab } }));
 }
@@ -3440,4 +3576,26 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-if (state.token) showApp();
+// 2026-10-21: a stored token no longer opens the app by itself. state.token stays EMPTY until the
+// Sign in click verifies it (doLogin), so no authed fetch, poll, voice or panel runs pre-auth.
+state.token = '';
+axisLoginMode();
+
+// ── Dashboard hook (2026-10-21) ───────────────────────────────────────────────
+// Read-only window into module state for assets/axis-dashboard.js (the ring of cards around the
+// globe). Everything it exposes already exists; nothing here adds a second brain or a second voice.
+window.AXIS_DASH = Object.freeze({
+  data, go, nav: () => NAV, module: () => state.module, token: () => state.token,
+  situation: () => state.situation, situationErr: () => state.situationErr,
+  inboxOpen: inboxBadgeCount, approvalsPending, waitingReply: waitingReplyCount,
+  openConsole: (tab) => axisOpenConsole(tab), ask: askAxis, say: (t, speak) => axisConsoleSay(t, speak),
+  handsFree: () => axisHandsFree, debrief: () => { try { sessionStorage.removeItem('axisBriefed'); } catch {} axisBootBriefing(); },
+  fmtMoney, ago,
+  // Every action the ⌘K palette knows, so the dashboard's command deck IS the palette, laid out.
+  palette: paletteItems, tabs: () => AXIS_TABS.slice(),
+  openPalette, handsFreeToggle: axisHandsFreeToggle, voiceToggle: axisVoiceToggle, voiceOn: () => axisVoiceOn,
+  liveToggle: axisLiveToggleFromUi, hologram: () => toggleHologram(), standDown: () => axisStandDown(),
+  theme: () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'),
+  logout, version: () => state.version, source: () => state.source, trail: () => state.trail,
+  state: () => document.documentElement.dataset.axisState || 'idle',
+});

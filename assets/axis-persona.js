@@ -10,61 +10,59 @@
 //   2. HOW A TURN FLOWS — wake word, instant acknowledgement, hands-free turn-taking, stand-down.
 
 // ── 1. Voice identity ────────────────────────────────────────────────────────
-// AXIS is a woman's voice with a BRITISH register: refined, unhurried, conversational — a person,
-// not an announcer. ARIA (the customer orb, assets/aria-core.js) speaks en-US at rate 0.95 /
-// pitch 1.05, so with AXIS back on en-GB the accent alone separates the two assistants again.
+// AXIS SPEAKS WITH ARIA'S VOICE (Ahmad, 2026-10-09: "update the voice to sound like Aria"; 2026-10-21:
+// "check why Axis still has the old voice … remove the old British voice"). The primary voice is the
+// server-side Aria MP3 stream from the XO bridge (axis-app.js ARIA_VOICE_URL) and the live call. This
+// module only decides the BROWSER FALLBACK — what AXIS sounds like for the seconds the bridge is
+// unreachable — and that fallback now targets the same character as Aria: a warm, natural, North
+// American woman's voice, not the British register that used to leak through every fallback.
 //
-// Ahmad, 2026-08-12 (reverting the same day's en-US experiment): "revert the voice back to UK
-// woman but none robotic, sound like a natural human conversation."
+// WHY THE OLD VOICE KEPT COMING BACK (root cause, 2026-10-21, outputs/2026-10-21-VOICE-ROOT-CAUSE.md):
+// the page auto-signed-in from a stored token on every load, the boot briefing then called
+// axisSpeak() with no user gesture, Chrome's autoplay policy rejected the Aria <audio>.play(), and the
+// catch handler fell straight into axisSpeakBrowser() — whose ranker awarded +40 to any en-GB voice.
+// So the first thing Ahmad heard after every reload was Microsoft Sonia. The globe was never the cause
+// (assets/axis-globe.js is purely visual). Fix = sign-in is now a click (a gesture), an autoplay block
+// retries after the next gesture instead of switching voices, and this ranker prefers Aria's register.
 
-// Preferred, in order. Edge/Windows exposes the "Online (Natural)" neural set; macOS exposes Siri/
-// premium; Chrome exposes the Google network voices.
-// Short tokens are word-bounded on purpose: an unbounded 'ava' would also match "Savannah", and an
-// unbounded 'male' in the demote list below would match "English Female" and demote every one of them.
-// Ordered best-UK-woman first. Sonia leads: it is Edge's flagship en-GB Natural female and the one
-// that reads as a composed adult rather than a chirpy assistant. Libby is the warmer, younger
-// alternate; Hollie, Abbi and Bella are the remaining en-GB Natural women on current Edge builds.
-//
-// The en-US voices that led during the brief American experiment (Ava, Emma, …) are kept BELOW the
-// UK set rather than deleted: a machine with no en-GB Natural voice should still get a refined
-// woman's voice rather than falling through to a robotic SAPI one — an American AXIS is a better
-// failure than a mechanical one.
-//
-// Maisie stays OUT of this list: it is Microsoft's en-GB *child* voice, so a +34 preference score
-// could let it win outright on a machine without the others. It is demoted below instead.
+// Preferred, in order, best-first. Edge/Windows exposes the "Online (Natural)" neural set; macOS exposes
+// Siri/premium; Chrome exposes the Google network voices. Word-bounded on purpose: an unbounded 'ava'
+// would also match "Savannah", and an unbounded 'male' would match "English Female".
+// "Microsoft Aria Online (Natural)" leads: it is literally the Aria character on Edge/Windows.
 export const AXIS_FEMALE_PREF = [
-  '\\bsonia\\b',    // Microsoft Sonia Online (Natural) — en-GB. The AXIS house voice.
-  '\\blibby\\b',    // en-GB Natural, warm and a touch younger
-  '\\bhollie\\b',   // en-GB Natural
-  '\\babbi\\b',     // en-GB Natural
-  '\\bbella\\b',    // en-GB Natural
-  '\\bolivia\\b',   // en-AU Natural — nearest register if no en-GB voice exists
-  '\\bava\\b', '\\bemma\\b', '\\bmichelle\\b', '\\bjenny\\b', // en-US Natural fallbacks, best-first
+  '\\baria\\b',     // Microsoft Aria Online (Natural) — en-US. THE fallback voice: same name, same character.
+  '\\bjenny\\b',    // en-US Natural, warm — nearest to Aria's register
+  '\\bmichelle\\b', // en-US Natural
+  '\\bava\\b', '\\bemma\\b', // en-US Natural
+  '\\bclara\\b',    // en-CA Natural (Microsoft Clara) — Canadian, matches IIS
   '\\bnova\\b', '\\bsara\\b', '\\bnancy\\b', '\\bamber\\b',   // further en-US Natural women
-  '\\bzoe\\b',      // macOS Zoe (Premium) — refined
-  '\\bclara\\b', '\\bmartha\\b', '\\bfemale\\b',
+  '\\bsamantha\\b', // macOS default woman — refined
+  '\\bzoe\\b',      // macOS Zoe (Premium)
+  '\\bmartha\\b', '\\bfemale\\b',
 ];
+
+// ARCHIVED, NOT DELETED (Ahmad 2026-10-21: "do not get rid of valuable info when you remove … the old
+// british voice"). The 2026-08-12 UK persona, kept for reference and for tests/axis-voice-pin.test.mjs
+// history. It is NOT consulted by axisPersonaBonus(). To restore the British register: set
+// AXIS_FEMALE_PREF = [...AXIS_UK_ARCHIVE.pref, ...AXIS_FEMALE_PREF] and re-add the en-GB bonus.
+export const AXIS_UK_ARCHIVE = Object.freeze({
+  rev: '2026-08-12-uk-natural',
+  pref: ['\\bsonia\\b', '\\blibby\\b', '\\bhollie\\b', '\\babbi\\b', '\\bbella\\b', '\\bolivia\\b'],
+  langBonus: { 'en-GB': 40, other: -14 },
+  prosody: { rate: 0.97, pitch: 1.02, volume: 0.85 },
+  note: 'Sonia = Edge en-GB Natural flagship; Libby warmer/younger; Hollie/Abbi/Bella remaining en-GB Natural women; Olivia en-AU nearest register. Maisie is the en-GB child voice — never prefer it.',
+});
 
 // Not male, not ARIA — just wrong for AXIS. Child and novelty voices must never win the ranking.
 export const AXIS_CHILD_DEMOTE = ['\\bmaisie\\b', '\\bana\\b', '\\bkid\\b', '\\bchild\\b'];
 
-// Voices AXIS must not wear because ARIA actually lands on them. AXIS DEMOTES these rather than
-// banning them: a penalty keeps AXIS off ARIA's voice whenever any alternative exists, but still
-// lets a bare browser fall back to a real female voice instead of a male or robotic one.
-//
-// PRUNED on the return to en-GB (2026-08-12). During the en-US experiment this list carried ARIA's
-// entire fallback roster — including most of the good UK women (Google UK English Female, Karen,
-// Hazel, Fiona, Moira, Serena, Catherine) — because accent no longer separated the assistants and
-// every shared name was a real collision. With AXIS British again, ARIA (en-US, and in practice
-// Samantha on macOS / Zira on Windows) only collides on its actual top picks, and hard-demoting the
-// UK female voices would suppress exactly the voices AXIS is now supposed to prefer: on a Chrome
-// with no en-GB Natural set, Google UK English Female IS the natural-sounding UK woman.
-//
-// '\\baria\\b' stays: Edge ships "Microsoft Aria Online (Natural)", and AXIS speaking in a voice
-// literally named Aria is the confusion this section exists to prevent. Word-bounded so it cannot
-// catch "Maria" or "Bavaria".
+// Since 2026-10-21 AXIS deliberately WEARS Aria's voice, so the old "collision" list no longer demotes
+// Aria or Samantha. Only Zira stays here: it is the robotic legacy SAPI voice, not an Aria character.
+// (History: before 2026-10-21 this list was ['aria','samantha','zira'] to keep AXIS off the customer
+// orb's voice; before 2026-08-12 it carried ARIA's whole fallback roster. Kept as a constant so the
+// export surface and tests stay intact.)
 export const AXIS_ARIA_COLLISION = [
-  '\\baria\\b', '\\bsamantha\\b', '\\bzira\\b',
+  '\\bzira\\b',
 ];
 
 // AXIS is never male. These are demoted hard so the ranker cannot land on one.
@@ -89,7 +87,9 @@ export const AXIS_MALE_DEMOTE = [
 //
 // ARIA is en-US rate 0.95 / pitch 1.05; accent now separates the assistants, and the shared-voice
 // worst case (both forced onto the same en voice) still lands on a different rate/pitch pair.
-export const AXIS_PROSODY = { rate: 0.97, pitch: 1.02, legacyRate: 1.0, volume: 0.85 };
+// 2026-10-21: AXIS = Aria's character, so the fallback prosody is Aria's own pair (aria-core.js:
+// rate 0.95 / pitch 1.05). The UK pair (0.97 / 1.02) is archived in AXIS_UK_ARCHIVE.prosody.
+export const AXIS_PROSODY = { rate: 0.95, pitch: 1.05, legacyRate: 1.0, volume: 0.88 };
 
 // Bump this whenever the voice POLICY changes (preferred names or prosody). A voice pinned in
 // localStorage under an older revision is released back to the ranker on next load.
@@ -98,7 +98,7 @@ export const AXIS_PROSODY = { rate: 0.97, pitch: 1.02, legacyRate: 1.0, volume: 
 // ranks, so a voice pinned once — including by a single axisVoiceNext() cycle — silently
 // outranked every later persona change. That is why 2026-08-12's voice change "did not change".
 // A deliberate pick still persists: axisSetVoice/axisVoiceNext stamp the current revision.
-export const VOICE_POLICY_REV = '2026-08-12-uk-natural';
+export const VOICE_POLICY_REV = '2026-10-21-aria-voice';
 
 // CROSS-ENGINE PARITY (2026-08-11, Ahmad: "on edge its one voice and chrome another").
 // Edge and Chrome ship different voice inventories — Edge has the "Online (Natural)" neural set
@@ -112,11 +112,12 @@ export const VOICE_POLICY_REV = '2026-08-12-uk-natural';
 //
 // No profile sits at ARIA's exact rate 0.95 / pitch 1.05 pair, so even a forced shared voice never
 // sounds like the customer orb.
+// 2026-10-21: reference is now Edge's en-US "Microsoft Aria Online (Natural)" at Aria's pair.
 export const VOICE_PROFILES = {
-  neural:  { rate: 0.97, pitch: 1.02, volume: 0.85 }, // Edge "Online (Natural)" en-GB — THE REFERENCE
-  google:  { rate: 0.92, pitch: 1.00, volume: 0.85 }, // Chrome network voices run fast + bright
-  premium: { rate: 0.96, pitch: 1.02, volume: 0.85 }, // macOS Siri/premium/enhanced
-  legacy:  { rate: 0.96, pitch: 1.03, volume: 0.90 }, // SAPI desktop — heavy shifts sound artificial
+  neural:  { rate: 0.95, pitch: 1.05, volume: 0.88 }, // Edge "Online (Natural)" en-US Aria — THE REFERENCE
+  google:  { rate: 0.91, pitch: 1.03, volume: 0.88 }, // Chrome network voices run fast + bright
+  premium: { rate: 0.95, pitch: 1.04, volume: 0.88 }, // macOS Siri/premium/enhanced
+  legacy:  { rate: 0.95, pitch: 1.05, volume: 0.90 }, // SAPI desktop — heavy shifts sound artificial
 };
 export function voiceFamily(name) {
   const n = String(name || '');
@@ -245,14 +246,12 @@ export function axisPersonaBonus(name, lang) {
   // both landed on +34 and the choice between them fell back to whatever order the browser
   // enumerated voices in. Caught by tests/axis-voice-pin.test.mjs.
   if (pref >= 0) s += 34 + (AXIS_FEMALE_PREF.length - pref);   // a named AXIS voice, best-first
-  // British English, per Ahmad 2026-08-12 ("revert the voice back to UK woman"). This bonus also
-  // does separating work again: ARIA is en-US, so the accent alone keeps the two assistants apart.
-  if (/^en(-|_)?GB/i.test(l)) s += 40;
-  // Other English accents stay eligible but rank below British, so a machine with no en-GB Natural
-  // voice still lands on a refined woman rather than a robotic one — an American AXIS is a better
-  // failure than a mechanical AXIS. Small enough that any en-GB voice outranks them.
-  else if (/^en(-|_)?(US|AU|NZ|IE|CA|ZA)/i.test(l)) s -= 14;
-  if (hasAny(n, AXIS_ARIA_COLLISION)) s -= 45;       // don't wear the customer orb's voice
+  // Aria's register is North American (2026-10-21). en-US / en-CA win; the British set is demoted
+  // (not banned) so a machine with ONLY en-GB voices still gets a natural woman rather than SAPI.
+  if (/^en(-|_)?(US|CA)/i.test(l)) s += 40;
+  else if (/^en(-|_)?GB/i.test(l)) s -= 30;
+  else if (/^en(-|_)?(AU|NZ|IE|ZA)/i.test(l)) s -= 14;
+  if (hasAny(n, AXIS_ARIA_COLLISION)) s -= 45;       // legacy SAPI (Zira) — robotic
   if (hasAny(n, AXIS_MALE_DEMOTE)) s -= 60;          // AXIS is never male
   if (hasAny(n, AXIS_CHILD_DEMOTE)) s -= 70;         // "younger" means young woman, not a child
   // "More human like": the Natural/Neural set is the only genuinely non-robotic family in a free

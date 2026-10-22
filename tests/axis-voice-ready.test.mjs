@@ -60,8 +60,8 @@ let n = 0; const ok = (m) => { n++; if (m) console.log('  ok —', m); };
 // ---- 3. With no rankable voice, the language is still pinned ----
 // An unset lang is how a wrong-accent default got through in the first place.
 {
-  assert.ok(/else u\.lang = 'en-GB'/.test(code),
-    'when no voice ranks, u.lang must still be pinned to en-GB');
+  assert.ok(/else u\.lang = 'en-US'/.test(code),
+    'when no voice ranks, u.lang must still be pinned (en-US since 2026-10-21, Aria\'s register)');
   ok('language is pinned even with no voice to rank');
 }
 
@@ -79,9 +79,8 @@ let n = 0; const ok = (m) => { n++; if (m) console.log('  ok —', m); };
   ok('the two-voice machine still resolves to a woman');
 }
 
-// ---- 5. …and a British woman wherever a real choice exists ----
-// Ahmad, 2026-08-12: "revert the voice back to UK woman." In Chrome the only natural UK woman is
-// Google's — she must not lose to the US voice or to robotic SAPI Zira.
+// ---- 5. …and Aria's North American register wherever a real choice exists (2026-10-21) ----
+// Ahmad: "remove the old british voice". In Chrome, Google's US woman beats the UK woman and SAPI Zira.
 {
   const chrome = [
     ['Google US English', 'en-US'],
@@ -89,8 +88,14 @@ let n = 0; const ok = (m) => { n++; if (m) console.log('  ok —', m); };
     ['Microsoft Zira Desktop - English (United States)', 'en-US'],
   ];
   const win = chrome.map(([nm, l]) => ({ nm, s: P.axisPersonaBonus(nm, l) })).sort((a, b) => b.s - a.s)[0];
-  assert.equal(win.nm, 'Google UK English Female', 'in Chrome the UK woman must win, not the US voice');
-  ok('the UK woman wins wherever the browser offers a choice');
+  assert.equal(win.nm, 'Google US English', 'in Chrome the North American voice wins, not the UK one');
+  const edge = [
+    ['Microsoft Sonia Online (Natural) - English (United Kingdom)', 'en-GB'],
+    ['Microsoft Aria Online (Natural) - English (United States)', 'en-US'],
+  ];
+  const ewin = edge.map(([nm, l]) => ({ nm, s: P.axisPersonaBonus(nm, l) })).sort((a, b) => b.s - a.s)[0];
+  assert.match(ewin.nm, /Aria/, 'in Edge, Microsoft Aria Natural wins over Sonia');
+  ok('Aria\'s register wins wherever the browser offers a choice');
 }
 
 console.log(`axis-voice-ready: ${n} checks passed`);

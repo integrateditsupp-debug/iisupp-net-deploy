@@ -8,7 +8,13 @@
 (() => {
   const TOKEN_KEY = 'aperture_jwt';
   const token = () => localStorage.getItem(TOKEN_KEY);
-  if (!token()) return;
+  // 2026-10-21 (no auto sign-in): a stored token is not a session. Boot only once the page says the
+  // Sign in click succeeded ('axis:signed-in'), or immediately when the login gate is already gone.
+  const gateOpen = () => !!token() && document.getElementById('login')?.offsetParent == null;
+  if (!gateOpen()) { window.addEventListener('axis:signed-in', () => { if (!window.__axCollabBooted) boot(); }, { once: true }); return; }
+  boot();
+  function boot() {
+  window.__axCollabBooted = true;
   const Q = '/.netlify/functions/axis-brain-queue';
   const call = (body) => fetch(Q, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token() }, body: JSON.stringify(body) }).then((r) => r.json()).catch(() => null);
   const say = (text) => window.dispatchEvent(new CustomEvent('axis:say', { detail: { text } }));
@@ -180,4 +186,5 @@
     mountFloating();
   }
   refresh(); setInterval(refresh, 15000);
+  }
 })();

@@ -7,8 +7,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   PERSONA, claude, pickTier, parseJSON, readJSON, writeJSON, id, now, requestApproval, apollo,
-  integrationStatus, monthSpend, attention, esc,
+  integrationStatus, monthSpend, attention, esc, trail,
 } from './lib/axis-exec-core.mjs';
+import { autonomyMode, AUTONOMY_REV, trailSummary } from './lib/axis-autonomy-policy.mjs';
 import { getStore as blobStore } from '@netlify/blobs';
 import { loadSituationSafe, situationInstruction } from './lib/axis-situation.cjs';
 import { listTasks, tasksBlock } from './lib/axis-tasks.cjs';
@@ -134,6 +135,15 @@ export default async (request) => {
       await writeJSON('approvals', list);
       // Approved sends are executed by the cron on its next tick (one place sends mail).
       return json(200, { ok: true, approval: a });
+    }
+    // 2026-10-21 trail: the full record of what AXIS did on its own (lib/axis-autonomy-policy.mjs).
+    if (action === 'trail.list') {
+      const list = await readJSON('trail', []);
+      return json(200, { ok: true, mode: autonomyMode(), rev: AUTONOMY_REV, summary: trailSummary(list, body.since), trail: list.slice(0, Number(body.limit) || 50) });
+    }
+    if (action === 'trail.add') {
+      const row = await trail({ action: String(body.kind || 'manual'), tier: 'act', summary: String(body.summary || ''), inputs: body.inputs || null, result: body.result || null, ref: body.ref || null, who: body.who || 'AXIS' });
+      return json(200, { ok: true, row });
     }
     if (action === 'approvals.request') {
       const a = await requestApproval({ kind: 'spend', title: String(body.title || 'Expense'), detail: String(body.detail || ''), costUsd: Number(body.costUsd) || 0, payload: null });
